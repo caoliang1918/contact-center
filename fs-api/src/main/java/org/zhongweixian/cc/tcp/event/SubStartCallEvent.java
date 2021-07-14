@@ -1,0 +1,9 @@
+package org.zhongweixian.cc.tcp.event;
+
+import org.zhongweixian.cc.tcp.event.base.SubBaseEvent;
+
+/**
+ * Create by caoliang on 2020/11/3
+ */
+public class SubStartCallEvent extends SubBaseEvent {
+}

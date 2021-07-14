@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.RouteGetwayMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.RouteGetway">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="media_host" jdbcType="VARCHAR" property="mediaHost" />
+    <result column="media_port" jdbcType="INTEGER" property="mediaPort" />
+    <result column="caller_prefix" jdbcType="VARCHAR" property="callerPrefix" />
+    <result column="called_prefix" jdbcType="VARCHAR" property="calledPrefix" />
+    <result column="sip_header1" jdbcType="VARCHAR" property="sipHeader1" />
+    <result column="sip_header2" jdbcType="VARCHAR" property="sipHeader2" />
+    <result column="sip_header3" jdbcType="VARCHAR" property="sipHeader3" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, name, media_host, media_port, caller_prefix, called_prefix, sip_header1, 
+    sip_header2, sip_header3, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_route_getway
+    where id = #{id,jdbcType=BIGINT} and status = 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_route_getway
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.RouteGetway">
+    insert into cc_route_getway (id, cts, uts, name, 
+      media_host, media_port, caller_prefix, 
+      called_prefix, sip_header1, sip_header2, 
+      sip_header3, status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{mediaHost,jdbcType=VARCHAR}, #{mediaPort,jdbcType=INTEGER}, #{callerPrefix,jdbcType=VARCHAR}, 
+      #{calledPrefix,jdbcType=VARCHAR}, #{sipHeader1,jdbcType=VARCHAR}, #{sipHeader2,jdbcType=VARCHAR}, 
+      #{sipHeader3,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.RouteGetway">
+    insert into cc_route_getway
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="mediaHost != null">
+        media_host,
+      </if>
+      <if test="mediaPort != null">
+        media_port,
+      </if>
+      <if test="callerPrefix != null">
+        caller_prefix,
+      </if>
+      <if test="calledPrefix != null">
+        called_prefix,
+      </if>
+      <if test="sipHeader1 != null">
+        sip_header1,
+      </if>
+      <if test="sipHeader2 != null">
+        sip_header2,
+      </if>
+      <if test="sipHeader3 != null">
+        sip_header3,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaHost != null">
+        #{mediaHost,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaPort != null">
+        #{mediaPort,jdbcType=INTEGER},
+      </if>
+      <if test="callerPrefix != null">
+        #{callerPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="calledPrefix != null">
+        #{calledPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="sipHeader1 != null">
+        #{sipHeader1,jdbcType=VARCHAR},
+      </if>
+      <if test="sipHeader2 != null">
+        #{sipHeader2,jdbcType=VARCHAR},
+      </if>
+      <if test="sipHeader3 != null">
+        #{sipHeader3,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.RouteGetway">
+    update cc_route_getway
+    <set>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaHost != null">
+        media_host = #{mediaHost,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaPort != null">
+        media_port = #{mediaPort,jdbcType=INTEGER},
+      </if>
+      <if test="callerPrefix != null">
+        caller_prefix = #{callerPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="calledPrefix != null">
+        called_prefix = #{calledPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="sipHeader1 != null">
+        sip_header1 = #{sipHeader1,jdbcType=VARCHAR},
+      </if>
+      <if test="sipHeader2 != null">
+        sip_header2 = #{sipHeader2,jdbcType=VARCHAR},
+      </if>
+      <if test="sipHeader3 != null">
+        sip_header3 = #{sipHeader3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.RouteGetway">
+    update cc_route_getway
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      media_host = #{mediaHost,jdbcType=VARCHAR},
+      media_port = #{mediaPort,jdbcType=INTEGER},
+      caller_prefix = #{callerPrefix,jdbcType=VARCHAR},
+      called_prefix = #{calledPrefix,jdbcType=VARCHAR},
+      sip_header1 = #{sipHeader1,jdbcType=VARCHAR},
+      sip_header2 = #{sipHeader2,jdbcType=VARCHAR},
+      sip_header3 = #{sipHeader3,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectListByMap"  parameterType="java.util.Map" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from
+    cc_route_getway
+    <where>
+      <if test="name!=null"> name like CONCAT(#{name},"%")</if>
+      <if test="routeName!=null"> name = #{routeName}</if>
+      <if test="id!=null" >and id = #{id}</if>
+      <if test="true" >and status = 1</if>
+    </where>
+  </select>
+
+  <select id="selectByIds" parameterType="List" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+    cc_route_getway where id in  <foreach collection ="list" item="id" separator ="," open="(" close=")"> #{id} </foreach>
+  </select>
+
+  <select id="selectByGroupId" parameterType="Long" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_route_getway where id in (select getway_id from cc_route_getway_group where route_group_id = {id}) and status = 1
+  </select>
+</mapper>

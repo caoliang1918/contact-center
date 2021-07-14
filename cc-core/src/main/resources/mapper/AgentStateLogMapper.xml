@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.AgentStateLogMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.AgentStateLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="agent_id" jdbcType="BIGINT" property="agentId" />
+    <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="call_id" jdbcType="BIGINT" property="callId" />
+    <result column="login_type" jdbcType="INTEGER" property="loginType" />
+    <result column="work_type" jdbcType="INTEGER" property="workType" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
+    <result column="remote_address" jdbcType="VARCHAR" property="remoteAddress" />
+    <result column="before_state" jdbcType="VARCHAR" property="beforeState" />
+    <result column="before_time" jdbcType="BIGINT" property="beforeTime" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="state_time" jdbcType="BIGINT" property="stateTime" />
+    <result column="duration" jdbcType="INTEGER" property="duration" />
+    <result column="busy_desc" jdbcType="VARCHAR" property="busyDesc" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, group_id, agent_id, agent_key, call_id, login_type, work_type, 
+    host, remote_address, before_state, before_time, state, state_time, duration, busy_desc, 
+    status, ext1, ext2, ext3
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_agent_state_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_agent_state_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.AgentStateLog">
+    insert into cc_agent_state_log (id, cts, uts, company_id, 
+      group_id, agent_id, agent_key, 
+      call_id, login_type, work_type, 
+      host, remote_address, before_state, 
+      before_time, state, state_time, 
+      duration, busy_desc, status, 
+      ext1, ext2, ext3)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{groupId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{agentKey,jdbcType=VARCHAR}, 
+      #{callId,jdbcType=BIGINT}, #{loginType,jdbcType=INTEGER}, #{workType,jdbcType=INTEGER}, 
+      #{host,jdbcType=VARCHAR}, #{remoteAddress,jdbcType=VARCHAR}, #{beforeState,jdbcType=VARCHAR}, 
+      #{beforeTime,jdbcType=BIGINT}, #{state,jdbcType=VARCHAR}, #{stateTime,jdbcType=BIGINT}, 
+      #{duration,jdbcType=INTEGER}, #{busyDesc,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.AgentStateLog">
+    insert into cc_agent_state_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="agentId != null">
+        agent_id,
+      </if>
+      <if test="agentKey != null">
+        agent_key,
+      </if>
+      <if test="callId != null">
+        call_id,
+      </if>
+      <if test="loginType != null">
+        login_type,
+      </if>
+      <if test="workType != null">
+        work_type,
+      </if>
+      <if test="host != null">
+        host,
+      </if>
+      <if test="remoteAddress != null">
+        remote_address,
+      </if>
+      <if test="beforeState != null">
+        before_state,
+      </if>
+      <if test="beforeTime != null">
+        before_time,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="stateTime != null">
+        state_time,
+      </if>
+      <if test="duration != null">
+        duration,
+      </if>
+      <if test="busyDesc != null">
+        busy_desc,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="ext3 != null">
+        ext3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="agentId != null">
+        #{agentId,jdbcType=BIGINT},
+      </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="callId != null">
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="loginType != null">
+        #{loginType,jdbcType=INTEGER},
+      </if>
+      <if test="workType != null">
+        #{workType,jdbcType=INTEGER},
+      </if>
+      <if test="host != null">
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteAddress != null">
+        #{remoteAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeState != null">
+        #{beforeState,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeTime != null">
+        #{beforeTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="stateTime != null">
+        #{stateTime,jdbcType=BIGINT},
+      </if>
+      <if test="duration != null">
+        #{duration,jdbcType=INTEGER},
+      </if>
+      <if test="busyDesc != null">
+        #{busyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        #{ext3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AgentStateLog">
+    update cc_agent_state_log
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="agentId != null">
+        agent_id = #{agentId,jdbcType=BIGINT},
+      </if>
+      <if test="agentKey != null">
+        agent_key = #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="callId != null">
+        call_id = #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="loginType != null">
+        login_type = #{loginType,jdbcType=INTEGER},
+      </if>
+      <if test="workType != null">
+        work_type = #{workType,jdbcType=INTEGER},
+      </if>
+      <if test="host != null">
+        host = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteAddress != null">
+        remote_address = #{remoteAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeState != null">
+        before_state = #{beforeState,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeTime != null">
+        before_time = #{beforeTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="stateTime != null">
+        state_time = #{stateTime,jdbcType=BIGINT},
+      </if>
+      <if test="duration != null">
+        duration = #{duration,jdbcType=INTEGER},
+      </if>
+      <if test="busyDesc != null">
+        busy_desc = #{busyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="ext1 != null">
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        ext3 = #{ext3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AgentStateLog">
+    update cc_agent_state_log
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      group_id = #{groupId,jdbcType=BIGINT},
+      agent_id = #{agentId,jdbcType=BIGINT},
+      agent_key = #{agentKey,jdbcType=VARCHAR},
+      call_id = #{callId,jdbcType=BIGINT},
+      login_type = #{loginType,jdbcType=INTEGER},
+      work_type = #{workType,jdbcType=INTEGER},
+      host = #{host,jdbcType=VARCHAR},
+      remote_address = #{remoteAddress,jdbcType=VARCHAR},
+      before_state = #{beforeState,jdbcType=VARCHAR},
+      before_time = #{beforeTime,jdbcType=BIGINT},
+      state = #{state,jdbcType=VARCHAR},
+      state_time = #{stateTime,jdbcType=BIGINT},
+      duration = #{duration,jdbcType=INTEGER},
+      busy_desc = #{busyDesc,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR},
+      ext3 = #{ext3,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.AdminPermissionRoleMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.AdminPermissionRole">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="permission_id" jdbcType="BIGINT" property="permissionId" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, role_id, permission_id, company_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_admin_permission_role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_admin_permission_role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.AdminPermissionRole">
+    insert into cc_admin_permission_role (id, cts, uts, role_id, 
+      permission_id, company_id)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, 
+      #{permissionId,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.AdminPermissionRole">
+    insert into cc_admin_permission_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="permissionId != null">
+        permission_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionId != null">
+        #{permissionId,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AdminPermissionRole">
+    update cc_admin_permission_role
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionId != null">
+        permission_id = #{permissionId,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AdminPermissionRole">
+    update cc_admin_permission_role
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      role_id = #{roleId,jdbcType=BIGINT},
+      permission_id = #{permissionId,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

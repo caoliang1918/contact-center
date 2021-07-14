@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <classPathEntry location="mysql-connector-java-5.1.47.jar" />
+
+    <context id="mysqlGenarator"  targetRuntime="MyBatis3">
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"></plugin>
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"></plugin>
+        <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>
+
+        <!-- 自定义注释生成器 -->
+        <commentGenerator type="org.cti.mybatis.generator.MySQLCommentGenerator">
+            <property name="author" value="caoliang"/>
+            <property name="dateFormat" value="yyyy/MM/dd"/>
+        </commentGenerator>
+        <!--数据库链接URL，用户名、密码 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://115.159.101.178:3306/cti?useSSL=false"
+                        userId="root" password="q11111111">
+            <property name="useInformationSchema" value="true"/>
+        </jdbcConnection>
+        <javaTypeResolver type="org.cti.mybatis.generator.JavaTypeResolverDefaultImpl"/>
+        <!-- 生成模型的包名和位置 -->
+        <javaModelGenerator targetPackage="org.cti.cc.entity" targetProject="target">
+            <property name="enableSubPackages" value="ture"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!-- 生成映射文件的包名和位置 -->
+        <sqlMapGenerator targetPackage="resource.mapper" targetProject="target">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <!-- 生成DAO的包名和位置 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="org.cti.cc.mapper"
+                             targetProject="target">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!--
+                <table tableName="cc_agent" domainObjectName="Agent" enableCountByExample="false"
+                       enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                       selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_agent_group" domainObjectName="AgentGroup" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_agent_sip" domainObjectName="AgentSip" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_agent_state_log" domainObjectName="AgentStateLog" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_call_detail" domainObjectName="CallDetail" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_call_device" domainObjectName="CallDevice" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_call_log" domainObjectName="CallLog" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_company" domainObjectName="Company" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_company_display" domainObjectName="CompanyDisplay" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_company_phone" domainObjectName="CompanyPhone" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_company_phone_group" domainObjectName="CompanyPhoneGroup" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_group" domainObjectName="Group" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_group_lineup_strategy" domainObjectName="GroupLineupStrategy" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_group_memory" domainObjectName="GroupMemory" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_group_memory_config" domainObjectName="GroupMemoryConfig" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_group_overflow" domainObjectName="GroupOverflow" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_group_strategy_exp" domainObjectName="GroupStrategyExp" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_overflow_config" domainObjectName="OverflowConfig" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_overflow_exp" domainObjectName="OverflowExp" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_overflow_front" domainObjectName="OverflowFront" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_route_call" domainObjectName="RouteCall" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_route_getway" domainObjectName="RouteGetway" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_route_getway_group" domainObjectName="RouteGetwayGroup" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_route_group" domainObjectName="RouteGroup" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_skill" domainObjectName="Skill" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_skill_agent" domainObjectName="SkillAgent" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="cc_skill_group" domainObjectName="SkillGroup" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>
+
+                 <table tableName="location" domainObjectName="PhoneLocation" enableCountByExample="false"
+                        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                        selectByExampleQueryId="false"></table>-->
+<!--
+
+        <table tableName="cc_schedule_config" domainObjectName="ScheduleConfig" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="cc_vdn_code" domainObjectName="VdnCode" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="cc_vdn_Phone" domainObjectName="VdnPhone" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="cc_vdn_schedule" domainObjectName="VdnSchedule" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="cc_vdn_schedule_dtmf" domainObjectName="VdnScheduleDtmf" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="cc_playback" domainObjectName="Playback" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="cc_admin_account" domainObjectName="AdminAccount" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+-->
+
+
+
+        <table tableName="cc_call_device" domainObjectName="CallDevice" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+
+
+
+
+    </context>
+
+</generatorConfiguration>

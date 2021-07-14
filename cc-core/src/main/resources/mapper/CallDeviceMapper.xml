@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.CallDeviceMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.CallDevice">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="call_id" jdbcType="BIGINT" property="callId" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="device_type" jdbcType="INTEGER" property="deviceType" />
+    <result column="cdr_type" jdbcType="INTEGER" property="cdrType" />
+    <result column="caller" jdbcType="VARCHAR" property="caller" />
+    <result column="called" jdbcType="VARCHAR" property="called" />
+    <result column="display" jdbcType="VARCHAR" property="display" />
+    <result column="called_location" jdbcType="VARCHAR" property="calledLocation" />
+    <result column="caller_location" jdbcType="VARCHAR" property="callerLocation" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="ring_start_time" jdbcType="BIGINT" property="ringStartTime" />
+    <result column="ring_end_time" jdbcType="BIGINT" property="ringEndTime" />
+    <result column="answer_time" jdbcType="BIGINT" property="answerTime" />
+    <result column="bridge_time" jdbcType="BIGINT" property="bridgeTime" />
+    <result column="end_time" jdbcType="BIGINT" property="endTime" />
+    <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
+    <result column="sip_protocol" jdbcType="VARCHAR" property="sipProtocol" />
+    <result column="channel_name" jdbcType="VARCHAR" property="channelName" />
+    <result column="hangup_cause" jdbcType="VARCHAR" property="hangupCause" />
+    <result column="ring_cause" jdbcType="VARCHAR" property="ringCause" />
+    <result column="sip_status" jdbcType="VARCHAR" property="sipStatus" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, call_id, device_id, agent_key, device_type, cdr_type, caller, called, 
+    display, called_location, caller_location, call_time, ring_start_time, ring_end_time, 
+    answer_time, bridge_time, end_time, talk_time, sip_protocol, channel_name, hangup_cause, 
+    ring_cause, sip_status, ext1, ext2, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_call_device
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_call_device
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.CallDevice">
+    insert into cc_call_device (id, cts, uts, call_id, 
+      device_id, agent_key, device_type, 
+      cdr_type, caller, called, 
+      display, called_location, caller_location, 
+      call_time, ring_start_time, ring_end_time, 
+      answer_time, bridge_time, end_time, 
+      talk_time, sip_protocol, channel_name, 
+      hangup_cause, ring_cause, sip_status, 
+      ext1, ext2, status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, 
+      #{deviceId,jdbcType=VARCHAR}, #{agentKey,jdbcType=VARCHAR}, #{deviceType,jdbcType=INTEGER}, 
+      #{cdrType,jdbcType=INTEGER}, #{caller,jdbcType=VARCHAR}, #{called,jdbcType=VARCHAR}, 
+      #{display,jdbcType=VARCHAR}, #{calledLocation,jdbcType=VARCHAR}, #{callerLocation,jdbcType=VARCHAR}, 
+      #{callTime,jdbcType=BIGINT}, #{ringStartTime,jdbcType=BIGINT}, #{ringEndTime,jdbcType=BIGINT}, 
+      #{answerTime,jdbcType=BIGINT}, #{bridgeTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, 
+      #{talkTime,jdbcType=BIGINT}, #{sipProtocol,jdbcType=VARCHAR}, #{channelName,jdbcType=VARCHAR}, 
+      #{hangupCause,jdbcType=VARCHAR}, #{ringCause,jdbcType=VARCHAR}, #{sipStatus,jdbcType=VARCHAR}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.CallDevice">
+    insert into cc_call_device
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="callId != null">
+        call_id,
+      </if>
+      <if test="deviceId != null">
+        device_id,
+      </if>
+      <if test="agentKey != null">
+        agent_key,
+      </if>
+      <if test="deviceType != null">
+        device_type,
+      </if>
+      <if test="cdrType != null">
+        cdr_type,
+      </if>
+      <if test="caller != null">
+        caller,
+      </if>
+      <if test="called != null">
+        called,
+      </if>
+      <if test="display != null">
+        display,
+      </if>
+      <if test="calledLocation != null">
+        called_location,
+      </if>
+      <if test="callerLocation != null">
+        caller_location,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="ringStartTime != null">
+        ring_start_time,
+      </if>
+      <if test="ringEndTime != null">
+        ring_end_time,
+      </if>
+      <if test="answerTime != null">
+        answer_time,
+      </if>
+      <if test="bridgeTime != null">
+        bridge_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="talkTime != null">
+        talk_time,
+      </if>
+      <if test="sipProtocol != null">
+        sip_protocol,
+      </if>
+      <if test="channelName != null">
+        channel_name,
+      </if>
+      <if test="hangupCause != null">
+        hangup_cause,
+      </if>
+      <if test="ringCause != null">
+        ring_cause,
+      </if>
+      <if test="sipStatus != null">
+        sip_status,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null">
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="deviceId != null">
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        #{deviceType,jdbcType=INTEGER},
+      </if>
+      <if test="cdrType != null">
+        #{cdrType,jdbcType=INTEGER},
+      </if>
+      <if test="caller != null">
+        #{caller,jdbcType=VARCHAR},
+      </if>
+      <if test="called != null">
+        #{called,jdbcType=VARCHAR},
+      </if>
+      <if test="display != null">
+        #{display,jdbcType=VARCHAR},
+      </if>
+      <if test="calledLocation != null">
+        #{calledLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="callerLocation != null">
+        #{callerLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="ringStartTime != null">
+        #{ringStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="ringEndTime != null">
+        #{ringEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerTime != null">
+        #{answerTime,jdbcType=BIGINT},
+      </if>
+      <if test="bridgeTime != null">
+        #{bridgeTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="talkTime != null">
+        #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="sipProtocol != null">
+        #{sipProtocol,jdbcType=VARCHAR},
+      </if>
+      <if test="channelName != null">
+        #{channelName,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupCause != null">
+        #{hangupCause,jdbcType=VARCHAR},
+      </if>
+      <if test="ringCause != null">
+        #{ringCause,jdbcType=VARCHAR},
+      </if>
+      <if test="sipStatus != null">
+        #{sipStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallDevice">
+    update cc_call_device
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null">
+        call_id = #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="deviceId != null">
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentKey != null">
+        agent_key = #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        device_type = #{deviceType,jdbcType=INTEGER},
+      </if>
+      <if test="cdrType != null">
+        cdr_type = #{cdrType,jdbcType=INTEGER},
+      </if>
+      <if test="caller != null">
+        caller = #{caller,jdbcType=VARCHAR},
+      </if>
+      <if test="called != null">
+        called = #{called,jdbcType=VARCHAR},
+      </if>
+      <if test="display != null">
+        display = #{display,jdbcType=VARCHAR},
+      </if>
+      <if test="calledLocation != null">
+        called_location = #{calledLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="callerLocation != null">
+        caller_location = #{callerLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        call_time = #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="ringStartTime != null">
+        ring_start_time = #{ringStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="ringEndTime != null">
+        ring_end_time = #{ringEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerTime != null">
+        answer_time = #{answerTime,jdbcType=BIGINT},
+      </if>
+      <if test="bridgeTime != null">
+        bridge_time = #{bridgeTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="talkTime != null">
+        talk_time = #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="sipProtocol != null">
+        sip_protocol = #{sipProtocol,jdbcType=VARCHAR},
+      </if>
+      <if test="channelName != null">
+        channel_name = #{channelName,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupCause != null">
+        hangup_cause = #{hangupCause,jdbcType=VARCHAR},
+      </if>
+      <if test="ringCause != null">
+        ring_cause = #{ringCause,jdbcType=VARCHAR},
+      </if>
+      <if test="sipStatus != null">
+        sip_status = #{sipStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CallDevice">
+    update cc_call_device
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      call_id = #{callId,jdbcType=BIGINT},
+      device_id = #{deviceId,jdbcType=VARCHAR},
+      agent_key = #{agentKey,jdbcType=VARCHAR},
+      device_type = #{deviceType,jdbcType=INTEGER},
+      cdr_type = #{cdrType,jdbcType=INTEGER},
+      caller = #{caller,jdbcType=VARCHAR},
+      called = #{called,jdbcType=VARCHAR},
+      display = #{display,jdbcType=VARCHAR},
+      called_location = #{calledLocation,jdbcType=VARCHAR},
+      caller_location = #{callerLocation,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      ring_start_time = #{ringStartTime,jdbcType=BIGINT},
+      ring_end_time = #{ringEndTime,jdbcType=BIGINT},
+      answer_time = #{answerTime,jdbcType=BIGINT},
+      bridge_time = #{bridgeTime,jdbcType=BIGINT},
+      end_time = #{endTime,jdbcType=BIGINT},
+      talk_time = #{talkTime,jdbcType=BIGINT},
+      sip_protocol = #{sipProtocol,jdbcType=VARCHAR},
+      channel_name = #{channelName,jdbcType=VARCHAR},
+      hangup_cause = #{hangupCause,jdbcType=VARCHAR},
+      ring_cause = #{ringCause,jdbcType=VARCHAR},
+      sip_status = #{sipStatus,jdbcType=VARCHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByCallId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from
+    cc_call_device
+    where
+    call_id = #{id,jdbcType=BIGINT} order by call_time asc
+  </select>
+</mapper>

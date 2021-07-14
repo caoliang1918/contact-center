@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.SkillGroupMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.SkillGroup">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="skill_id" jdbcType="BIGINT" property="skillId" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="rank_about" jdbcType="INTEGER" property="rankAbout" />
+    <result column="rank_value_start" jdbcType="INTEGER" property="rankValueStart" />
+    <result column="rank_value" jdbcType="INTEGER" property="rankValue" />
+    <result column="rate" jdbcType="INTEGER" property="rate" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <insert id="insert" parameterType="org.cti.cc.entity.SkillGroup">
+    insert into cc_skill_group (id, uts, cts, company_id, 
+      skill_id, group_id, rank_about, 
+      rank_value_start, rank_value, rate, 
+      status)
+    values (#{id,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{skillId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{rankAbout,jdbcType=INTEGER}, 
+      #{rankValueStart,jdbcType=INTEGER}, #{rankValue,jdbcType=INTEGER}, #{rate,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+
+
+
+  <insert id="batchInsert" parameterType="List"  useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
+    insert into cc_skill_group (cts, company_id, skill_id, group_id, rank_about,  rank_value_start, rank_value, rate,  status) values
+    <foreach collection ="list" item="item" separator =",">
+      (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT}, #{item.skillId,jdbcType=BIGINT}, #{item.groupId,jdbcType=BIGINT}, #{item.rankAbout,jdbcType=INTEGER},
+      #{item.rankValueStart,jdbcType=INTEGER}, #{item.rankValue,jdbcType=INTEGER}, #{item.rate,jdbcType=INTEGER},#{item.status,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+  <insert id="batchInsert" parameterType="List"   databaseId="oracle">
+    BEGIN
+    insert into cc_skill_group (cts, company_id, skill_id, group_id, rank_about,  rank_value_start, rank_value, rate,  status) values
+    <foreach collection ="list" item="item" separator =",">
+      (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT}, #{item.skillId,jdbcType=BIGINT}, #{item.groupId,jdbcType=BIGINT}, #{item.rankAbout,jdbcType=INTEGER},
+      #{item.rankValueStart,jdbcType=INTEGER}, #{item.rankValue,jdbcType=INTEGER}, #{item.rate,jdbcType=INTEGER},#{item.status,jdbcType=INTEGER})
+    </foreach>
+    COMMIT;
+    END;
+  </insert>
+</mapper>

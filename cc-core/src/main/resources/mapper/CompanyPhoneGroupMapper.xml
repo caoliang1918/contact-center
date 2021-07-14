@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.CompanyPhoneGroupMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.CompanyPhoneGroup">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="display_id" jdbcType="BIGINT" property="displayId" />
+    <result column="phone_id" jdbcType="BIGINT" property="phoneId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, display_id, phone_id
+  </sql>
+
+  <!-- 通过号码池id查询号码 -->
+  <select id="selectDisplayByGroupId" parameterType="Long" resultType="java.lang.String">
+      select phone from  cc_company_phone  a , cc_company_phone_group b  where a.id = b.phone_id and b.display_id = #{displayId} and a.status = 1
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_company_phone_group
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_company_phone_group
+    where display_id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.CompanyPhoneGroup">
+    insert into cc_company_phone_group (id, cts, uts, company_id, 
+      display_id, phone_id)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{displayId,jdbcType=BIGINT}, #{phoneId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.CompanyPhoneGroup">
+    insert into cc_company_phone_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="displayId != null">
+        display_id,
+      </if>
+      <if test="phoneId != null">
+        phone_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="displayId != null">
+        #{displayId,jdbcType=BIGINT},
+      </if>
+      <if test="phoneId != null">
+        #{phoneId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CompanyPhoneGroup">
+    update cc_company_phone_group
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="displayId != null">
+        display_id = #{displayId,jdbcType=BIGINT},
+      </if>
+      <if test="phoneId != null">
+        phone_id = #{phoneId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CompanyPhoneGroup">
+    update cc_company_phone_group
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      display_id = #{displayId,jdbcType=BIGINT},
+      phone_id = #{phoneId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

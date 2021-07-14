@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.RouteGroupMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.RouteGroup">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="route_group" jdbcType="VARCHAR" property="routeGroup" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, route_group, status
+  </sql>
+
+  <select id="selectGetway" parameterType="Long" resultType="org.cti.cc.entity.RouteGetway">
+     select
+        a.id, a.cts, a.uts, a.name, a.media_host as mediaHost , a.media_port as mediaPort
+     from
+        cc_route_getway a , cc_route_getway_group b where a.id = b.getway_id and b.route_group_id = #{id} and a.status = 1
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_route_group
+    where id = #{route_group_id,jdbcType=BIGINT} and status = 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_route_group
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.RouteGroup">
+    insert into cc_route_group (id, cts, uts, route_group, 
+      status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{routeGroup,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.RouteGroup" >
+    insert into cc_route_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="routeGroup != null">
+        route_group,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="routeGroup != null">
+        #{routeGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.RouteGroup">
+    update cc_route_group
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="routeGroup != null">
+        route_group = #{routeGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.RouteGroup">
+    update cc_route_group
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      route_group = #{routeGroup,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <resultMap id="RouteGroupMap" type="org.cti.cc.po.RouteGroupPo" extends="BaseResultMap">
+    <collection property="routeGetways" column="id" select="selectGetway"></collection>
+  </resultMap>
+
+  <select id="selectById" parameterType="Long" resultMap="RouteGroupMap">
+        select <include refid="Base_Column_List" /> from cc_route_group where id = #{id} and status = 1
+  </select>
+
+  <select id="selectByGetwayId" parameterType="Long" resultMap="RouteGroupMap">
+     select <include refid="Base_Column_List" /> from cc_route_group where id in (select route_group_id  from cc_route_getway_group where getway_id = #{getwayId}) and status = 1
+  </select>
+
+
+  <select id="selectListByMap"  parameterType="java.util.Map" resultMap="BaseResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_route_group
+    <where>
+      <if test="routeGroup!=null"> route_group like CONCAT(#{routeGroup},"%")</if>
+      <if test="routeGroupName!=null"> route_group = #{routeGroupName} </if>
+      <if test="true" >and status = 1</if>
+    </where>
+  </select>
+
+
+</mapper>

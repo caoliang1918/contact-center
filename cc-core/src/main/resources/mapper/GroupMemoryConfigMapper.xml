@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.GroupMemoryConfigMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.GroupMemoryConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="success_strategy" jdbcType="INTEGER" property="successStrategy" />
+    <result column="success_strategy_value" jdbcType="BIGINT" property="successStrategyValue" />
+    <result column="fail_strategy" jdbcType="INTEGER" property="failStrategy" />
+    <result column="fail_strategy_value" jdbcType="BIGINT" property="failStrategyValue" />
+    <result column="memory_day" jdbcType="INTEGER" property="memoryDay" />
+    <result column="inbound_cover" jdbcType="INTEGER" property="inboundCover" />
+    <result column="outbound_cover" jdbcType="INTEGER" property="outboundCover" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, uts, cts, group_id, success_strategy, success_strategy_value, fail_strategy, 
+    fail_strategy_value, memory_day, inbound_cover, outbound_cover, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_group_memory_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_group_memory_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.GroupMemoryConfig">
+    insert into cc_group_memory_config (id, uts, cts, group_id, 
+      success_strategy, success_strategy_value, fail_strategy, 
+      fail_strategy_value, memory_day, inbound_cover, 
+      outbound_cover, status)
+    values (#{id,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, 
+      #{successStrategy,jdbcType=INTEGER}, #{successStrategyValue,jdbcType=BIGINT}, #{failStrategy,jdbcType=INTEGER}, 
+      #{failStrategyValue,jdbcType=BIGINT}, #{memoryDay,jdbcType=INTEGER}, #{inboundCover,jdbcType=INTEGER}, 
+      #{outboundCover,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.GroupMemoryConfig">
+    insert into cc_group_memory_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="successStrategy != null">
+        success_strategy,
+      </if>
+      <if test="successStrategyValue != null">
+        success_strategy_value,
+      </if>
+      <if test="failStrategy != null">
+        fail_strategy,
+      </if>
+      <if test="failStrategyValue != null">
+        fail_strategy_value,
+      </if>
+      <if test="memoryDay != null">
+        memory_day,
+      </if>
+      <if test="inboundCover != null">
+        inbound_cover,
+      </if>
+      <if test="outboundCover != null">
+        outbound_cover,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="successStrategy != null">
+        #{successStrategy,jdbcType=INTEGER},
+      </if>
+      <if test="successStrategyValue != null">
+        #{successStrategyValue,jdbcType=BIGINT},
+      </if>
+      <if test="failStrategy != null">
+        #{failStrategy,jdbcType=INTEGER},
+      </if>
+      <if test="failStrategyValue != null">
+        #{failStrategyValue,jdbcType=BIGINT},
+      </if>
+      <if test="memoryDay != null">
+        #{memoryDay,jdbcType=INTEGER},
+      </if>
+      <if test="inboundCover != null">
+        #{inboundCover,jdbcType=INTEGER},
+      </if>
+      <if test="outboundCover != null">
+        #{outboundCover,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.GroupMemoryConfig">
+    update cc_group_memory_config
+    <set>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="successStrategy != null">
+        success_strategy = #{successStrategy,jdbcType=INTEGER},
+      </if>
+      <if test="successStrategyValue != null">
+        success_strategy_value = #{successStrategyValue,jdbcType=BIGINT},
+      </if>
+      <if test="failStrategy != null">
+        fail_strategy = #{failStrategy,jdbcType=INTEGER},
+      </if>
+      <if test="failStrategyValue != null">
+        fail_strategy_value = #{failStrategyValue,jdbcType=BIGINT},
+      </if>
+      <if test="memoryDay != null">
+        memory_day = #{memoryDay,jdbcType=INTEGER},
+      </if>
+      <if test="inboundCover != null">
+        inbound_cover = #{inboundCover,jdbcType=INTEGER},
+      </if>
+      <if test="outboundCover != null">
+        outbound_cover = #{outboundCover,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.GroupMemoryConfig">
+    update cc_group_memory_config
+    set uts = #{uts,jdbcType=BIGINT},
+      cts = #{cts,jdbcType=BIGINT},
+      group_id = #{groupId,jdbcType=BIGINT},
+      success_strategy = #{successStrategy,jdbcType=INTEGER},
+      success_strategy_value = #{successStrategyValue,jdbcType=BIGINT},
+      fail_strategy = #{failStrategy,jdbcType=INTEGER},
+      fail_strategy_value = #{failStrategyValue,jdbcType=BIGINT},
+      memory_day = #{memoryDay,jdbcType=INTEGER},
+      inbound_cover = #{inboundCover,jdbcType=INTEGER},
+      outbound_cover = #{outboundCover,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--技能组配置 -->
+  <select id="selectByGroupId" parameterType="Long" resultMap="BaseResultMap" >
+     select
+        <include refid="Base_Column_List" />
+     from
+        cc_group_memory_config
+     where
+        group_id = #{groupId}
+  </select>
+</mapper>

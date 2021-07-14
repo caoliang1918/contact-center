@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.VdnScheduleMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.VdnSchedule">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="vdn_id" jdbcType="BIGINT" property="vdnId" />
+    <result column="schedule_id" jdbcType="BIGINT" property="scheduleId" />
+    <result column="route_type" jdbcType="INTEGER" property="routeType" />
+    <result column="route_value" jdbcType="VARCHAR" property="routeValue" />
+    <result column="play_type" jdbcType="INTEGER" property="playType" />
+    <result column="play_value" jdbcType="BIGINT" property="playValue" />
+    <result column="dtmf_end" jdbcType="VARCHAR" property="dtmfEnd" />
+    <result column="retry" jdbcType="INTEGER" property="retry" />
+    <result column="dtmf_max" jdbcType="INTEGER" property="dtmfMax" />
+    <result column="dtmf_min" jdbcType="INTEGER" property="dtmfMin" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+
+  <resultMap id="BaseResultMapPo" type="org.cti.cc.po.VdnSchedulePo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="vdn_id" jdbcType="BIGINT" property="vdnId" />
+    <result column="schedule_id" jdbcType="BIGINT" property="scheduleId" />
+    <result column="route_type" jdbcType="INTEGER" property="routeType" />
+    <result column="route_value" jdbcType="VARCHAR" property="routeValue" />
+    <result column="play_type" jdbcType="INTEGER" property="playType" />
+    <result column="play_value" jdbcType="BIGINT" property="playValue" />
+    <result column="dtmf_end" jdbcType="VARCHAR" property="dtmfEnd" />
+    <result column="retry" jdbcType="INTEGER" property="retry" />
+    <result column="dtmf_max" jdbcType="INTEGER" property="dtmfMax" />
+    <result column="dtmf_min" jdbcType="INTEGER" property="dtmfMin" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+
+    <!-- 日程 -->
+    <association property="scheduleConfig" select="org.cti.cc.mapper.ScheduleConfigMapper.selectByPrimaryKey" column="schedule_id"></association>
+    <!-- 按键导航 -->
+    <collection property="dtmfList"  select="org.cti.cc.mapper.VdnScheduleDtmfMapper.selectByNavagite" column="id"></collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, name, vdn_id, schedule_id, route_type, route_value, play_type, 
+    play_value, dtmf_end, retry, dtmf_max, dtmf_min, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_vdn_schedule
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByVdn" parameterType="Long" resultMap="BaseResultMapPo">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_vdn_schedule
+    where
+        vdn_id = #{id} and status = 1
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_vdn_schedule
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.VdnSchedule">
+    insert into cc_vdn_schedule (id, cts, uts, company_id, 
+      name, vdn_id, schedule_id, 
+      route_type, route_value, play_type, 
+      play_value, dtmf_end, retry, 
+      dtmf_max, dtmf_min, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{name,jdbcType=VARCHAR}, #{vdnId,jdbcType=BIGINT}, #{scheduleId,jdbcType=BIGINT}, 
+      #{routeType,jdbcType=INTEGER}, #{routeValue,jdbcType=VARCHAR}, #{playType,jdbcType=INTEGER}, 
+      #{playValue,jdbcType=BIGINT}, #{dtmfEnd,jdbcType=VARCHAR}, #{retry,jdbcType=INTEGER}, 
+      #{dtmfMax,jdbcType=INTEGER}, #{dtmfMin,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.VdnSchedule">
+    insert into cc_vdn_schedule
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="vdnId != null">
+        vdn_id,
+      </if>
+      <if test="scheduleId != null">
+        schedule_id,
+      </if>
+      <if test="routeType != null">
+        route_type,
+      </if>
+      <if test="routeValue != null">
+        route_value,
+      </if>
+      <if test="playType != null">
+        play_type,
+      </if>
+      <if test="playValue != null">
+        play_value,
+      </if>
+      <if test="dtmfEnd != null">
+        dtmf_end,
+      </if>
+      <if test="retry != null">
+        retry,
+      </if>
+      <if test="dtmfMax != null">
+        dtmf_max,
+      </if>
+      <if test="dtmfMin != null">
+        dtmf_min,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="vdnId != null">
+        #{vdnId,jdbcType=BIGINT},
+      </if>
+      <if test="scheduleId != null">
+        #{scheduleId,jdbcType=BIGINT},
+      </if>
+      <if test="routeType != null">
+        #{routeType,jdbcType=INTEGER},
+      </if>
+      <if test="routeValue != null">
+        #{routeValue,jdbcType=VARCHAR},
+      </if>
+      <if test="playType != null">
+        #{playType,jdbcType=INTEGER},
+      </if>
+      <if test="playValue != null">
+        #{playValue,jdbcType=BIGINT},
+      </if>
+      <if test="dtmfEnd != null">
+        #{dtmfEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="retry != null">
+        #{retry,jdbcType=INTEGER},
+      </if>
+      <if test="dtmfMax != null">
+        #{dtmfMax,jdbcType=INTEGER},
+      </if>
+      <if test="dtmfMin != null">
+        #{dtmfMin,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.VdnSchedule">
+    update cc_vdn_schedule
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="vdnId != null">
+        vdn_id = #{vdnId,jdbcType=BIGINT},
+      </if>
+      <if test="scheduleId != null">
+        schedule_id = #{scheduleId,jdbcType=BIGINT},
+      </if>
+      <if test="routeType != null">
+        route_type = #{routeType,jdbcType=INTEGER},
+      </if>
+      <if test="routeValue != null">
+        route_value = #{routeValue,jdbcType=VARCHAR},
+      </if>
+      <if test="playType != null">
+        play_type = #{playType,jdbcType=INTEGER},
+      </if>
+      <if test="playValue != null">
+        play_value = #{playValue,jdbcType=BIGINT},
+      </if>
+      <if test="dtmfEnd != null">
+        dtmf_end = #{dtmfEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="retry != null">
+        retry = #{retry,jdbcType=INTEGER},
+      </if>
+      <if test="dtmfMax != null">
+        dtmf_max = #{dtmfMax,jdbcType=INTEGER},
+      </if>
+      <if test="dtmfMin != null">
+        dtmf_min = #{dtmfMin,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.VdnSchedule">
+    update cc_vdn_schedule
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      vdn_id = #{vdnId,jdbcType=BIGINT},
+      schedule_id = #{scheduleId,jdbcType=BIGINT},
+      route_type = #{routeType,jdbcType=INTEGER},
+      route_value = #{routeValue,jdbcType=VARCHAR},
+      play_type = #{playType,jdbcType=INTEGER},
+      play_value = #{playValue,jdbcType=BIGINT},
+      dtmf_end = #{dtmfEnd,jdbcType=VARCHAR},
+      retry = #{retry,jdbcType=INTEGER},
+      dtmf_max = #{dtmfMax,jdbcType=INTEGER},
+      dtmf_min = #{dtmfMin,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

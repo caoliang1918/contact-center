@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.GroupMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.Group">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="control_flag" jdbcType="INTEGER" property="controlFlag" />
+    <result column="after_interval" jdbcType="INTEGER" property="afterInterval" />
+    <result column="caller_display_id" jdbcType="BIGINT" property="callerDisplayId" />
+    <result column="level_value" jdbcType="INTEGER" property="levelValue" />
+    <result column="called_display_id" jdbcType="BIGINT" property="calledDisplayId" />
+    <result column="tts_play" jdbcType="INTEGER" property="ttsPlay" />
+    <result column="tts_content" jdbcType="VARCHAR" property="ttsContent" />
+    <result column="evaluate" jdbcType="BIGINT" property="evaluate" />
+    <result column="queue_play" jdbcType="BIGINT" property="queuePlay" />
+    <result column="transfer_play" jdbcType="BIGINT" property="transferPlay" />
+    <result column="group_type" jdbcType="INTEGER" property="groupType" />
+    <result column="notify_position" jdbcType="INTEGER" property="notifyPosition" />
+    <result column="notify_rate" jdbcType="INTEGER" property="notifyRate" />
+    <result column="notify_content" jdbcType="VARCHAR" property="notifyContent" />
+    <result column="call_memory" jdbcType="INTEGER" property="callMemory" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="ext4" jdbcType="VARCHAR" property="ext4" />
+    <result column="ext5" jdbcType="VARCHAR" property="ext5" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    </resultMap>
+
+  <resultMap id="GroupInfoResultMap" extends="BaseResultMap"  type="org.cti.cc.po.GroupInfo">
+    <!-- 记忆坐席配置 -->
+    <association property="groupMemoryConfig" select="org.cti.cc.mapper.GroupMemoryConfigMapper.selectByGroupId" column="id" />
+    <!-- 坐席空闲策略 -->
+    <association property="lineupStrategy" select="org.cti.cc.mapper.GroupLineupStrategyMapper.selectByGroupId" column="id"></association>
+    <!-- 技能组技能 -->
+    <collection property="skills" select="org.cti.cc.mapper.SkillMapper.selectByGroup" column="id" ></collection>
+    <!-- 主叫显号 -->
+    <collection property="callerDisplays" select="org.cti.cc.mapper.CompanyPhoneGroupMapper.selectDisplayByGroupId" column="caller_display_id" ></collection>
+    <!-- 被叫显号 -->
+    <collection property="calledDisplays" select="org.cti.cc.mapper.CompanyPhoneGroupMapper.selectDisplayByGroupId" column="called_display_id" ></collection>
+    <!-- 电话排队溢出策略 -->
+    <collection property="groupOverflows" select="org.cti.cc.mapper.GroupOverflowMapper.selectByOverflow" column="id" ></collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, name, control_flag, after_interval, caller_display_id,
+    level_value, called_display_id, tts_play, tts_content, evaluate, queue_play, transfer_play,
+    group_type, notify_position, notify_rate, notify_content, call_memory,
+    ext1, ext2, ext3, ext4, ext5, status
+  </sql>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+       <include refid="Base_Column_List" />
+    from cc_group
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_group
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.Group">
+    insert into cc_group (id, cts, uts, company_id,
+      name, control_flag, after_interval,
+      caller_display_id, level_value, called_display_id,
+      tts_play, tts_content, evaluate,
+      queue_play, transfer_play, group_type,
+      notify_position, notify_rate, notify_content,
+      call_memory, ext1,
+      ext2, ext3, ext4, ext5,
+      status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
+      #{name,jdbcType=VARCHAR}, #{controlFlag,jdbcType=INTEGER}, #{afterInterval,jdbcType=INTEGER},
+      #{callerDisplayId,jdbcType=BIGINT}, #{levelValue,jdbcType=INTEGER}, #{calledDisplayId,jdbcType=BIGINT},
+      #{ttsPlay,jdbcType=INTEGER}, #{ttsContent,jdbcType=VARCHAR}, #{evaluate,jdbcType=BIGINT},
+      #{queuePlay,jdbcType=BIGINT}, #{transferPlay,jdbcType=BIGINT}, #{groupType,jdbcType=INTEGER},
+      #{notifyPosition,jdbcType=INTEGER}, #{notifyRate,jdbcType=INTEGER}, #{notifyContent,jdbcType=VARCHAR},
+      #{callMemory,jdbcType=INTEGER}, #{ext1,jdbcType=VARCHAR},
+      #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR},
+      #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.Group" useGeneratedKeys="true" keyProperty="id">
+    insert into cc_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="controlFlag != null">
+        control_flag,
+      </if>
+      <if test="afterInterval != null">
+        after_interval,
+      </if>
+      <if test="callerDisplayId != null">
+        caller_display_id,
+      </if>
+      <if test="levelValue != null">
+        level_value,
+      </if>
+      <if test="calledDisplayId != null">
+        called_display_id,
+      </if>
+      <if test="ttsPlay != null">
+        tts_play,
+      </if>
+      <if test="ttsContent != null">
+        tts_content,
+      </if>
+      <if test="evaluate != null">
+        evaluate,
+      </if>
+      <if test="queuePlay != null">
+        queue_play,
+      </if>
+      <if test="transferPlay != null">
+        transfer_play,
+      </if>
+      <if test="groupType != null">
+        group_type,
+      </if>
+      <if test="notifyPosition != null">
+        notify_position,
+      </if>
+      <if test="notifyRate != null">
+        notify_rate,
+      </if>
+      <if test="notifyContent != null">
+        notify_content,
+      </if>
+      <if test="callMemory != null">
+        call_memory,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="ext3 != null">
+        ext3,
+      </if>
+      <if test="ext4 != null">
+        ext4,
+      </if>
+      <if test="ext5 != null">
+        ext5,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="controlFlag != null">
+        #{controlFlag,jdbcType=INTEGER},
+      </if>
+      <if test="afterInterval != null">
+        #{afterInterval,jdbcType=INTEGER},
+      </if>
+      <if test="callerDisplayId != null">
+        #{callerDisplayId,jdbcType=BIGINT},
+      </if>
+      <if test="levelValue != null">
+        #{levelValue,jdbcType=INTEGER},
+      </if>
+      <if test="calledDisplayId != null">
+        #{calledDisplayId,jdbcType=BIGINT},
+      </if>
+      <if test="ttsPlay != null">
+        #{ttsPlay,jdbcType=INTEGER},
+      </if>
+      <if test="ttsContent != null">
+        #{ttsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="evaluate != null">
+        #{evaluate,jdbcType=BIGINT},
+      </if>
+      <if test="queuePlay != null">
+        #{queuePlay,jdbcType=BIGINT},
+      </if>
+      <if test="transferPlay != null">
+        #{transferPlay,jdbcType=BIGINT},
+      </if>
+      <if test="groupType != null">
+        #{groupType,jdbcType=INTEGER},
+      </if>
+      <if test="notifyPosition != null">
+        #{notifyPosition,jdbcType=INTEGER},
+      </if>
+      <if test="notifyRate != null">
+        #{notifyRate,jdbcType=INTEGER},
+      </if>
+      <if test="notifyContent != null">
+        #{notifyContent,jdbcType=VARCHAR},
+      </if>
+      <if test="callMemory != null">
+        #{callMemory,jdbcType=INTEGER},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="ext4 != null">
+        #{ext4,jdbcType=VARCHAR},
+      </if>
+      <if test="ext5 != null">
+        #{ext5,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.Group">
+    update cc_group
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="controlFlag != null">
+        control_flag = #{controlFlag,jdbcType=INTEGER},
+      </if>
+      <if test="afterInterval != null">
+        after_interval = #{afterInterval,jdbcType=INTEGER},
+      </if>
+      <if test="callerDisplayId != null">
+        caller_display_id = #{callerDisplayId,jdbcType=BIGINT},
+      </if>
+      <if test="levelValue != null">
+        level_value = #{levelValue,jdbcType=INTEGER},
+      </if>
+      <if test="calledDisplayId != null">
+        called_display_id = #{calledDisplayId,jdbcType=BIGINT},
+      </if>
+      <if test="ttsPlay != null">
+        tts_play = #{ttsPlay,jdbcType=INTEGER},
+      </if>
+      <if test="ttsContent != null">
+        tts_content = #{ttsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="evaluate != null">
+        evaluate = #{evaluate,jdbcType=BIGINT},
+      </if>
+      <if test="queuePlay != null">
+        queue_play = #{queuePlay,jdbcType=BIGINT},
+      </if>
+      <if test="transferPlay != null">
+        transfer_play = #{transferPlay,jdbcType=BIGINT},
+      </if>
+      <if test="groupType != null">
+        group_type = #{groupType,jdbcType=INTEGER},
+      </if>
+      <if test="notifyPosition != null">
+        notify_position = #{notifyPosition,jdbcType=INTEGER},
+      </if>
+      <if test="notifyRate != null">
+        notify_rate = #{notifyRate,jdbcType=INTEGER},
+      </if>
+      <if test="notifyContent != null">
+        notify_content = #{notifyContent,jdbcType=VARCHAR},
+      </if>
+      <if test="callMemory != null">
+        call_memory = #{callMemory,jdbcType=INTEGER},
+      </if>
+      <if test="ext1 != null">
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        ext3 = #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="ext4 != null">
+        ext4 = #{ext4,jdbcType=VARCHAR},
+      </if>
+      <if test="ext5 != null">
+        ext5 = #{ext5,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.Group">
+    update cc_group
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      control_flag = #{controlFlag,jdbcType=INTEGER},
+      after_interval = #{afterInterval,jdbcType=INTEGER},
+      caller_display_id = #{callerDisplayId,jdbcType=BIGINT},
+      level_value = #{levelValue,jdbcType=INTEGER},
+      called_display_id = #{calledDisplayId,jdbcType=BIGINT},
+      tts_play = #{ttsPlay,jdbcType=INTEGER},
+      tts_content = #{ttsContent,jdbcType=VARCHAR},
+      evaluate = #{evaluate,jdbcType=BIGINT},
+      queue_play = #{queuePlay,jdbcType=BIGINT},
+      transfer_play = #{transferPlay,jdbcType=BIGINT},
+      group_type = #{groupType,jdbcType=INTEGER},
+      notify_position = #{notifyPosition,jdbcType=INTEGER},
+      notify_rate = #{notifyRate,jdbcType=INTEGER},
+      notify_content = #{notifyContent,jdbcType=VARCHAR},
+      call_memory = #{callMemory,jdbcType=INTEGER},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR},
+      ext3 = #{ext3,jdbcType=VARCHAR},
+      ext4 = #{ext4,jdbcType=VARCHAR},
+      ext5 = #{ext5,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="selectGroupInfoList"  parameterType="java.util.Map" resultMap="GroupInfoResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_group
+    <where>
+      <if test="name!=null"> name = #{name}</if>
+      <if test="companyId!=null">and company_id = #{companyId}</if>
+      <if test="true" > and status = 1 </if>
+    </where>
+  </select>
+
+  <select id="selectListByMap"  parameterType="java.util.Map" resultMap="BaseResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_group
+    <where>
+      <if test="name!=null"> name like CONCAT(#{name},"%")</if>
+      <if test="companyId!=null">and company_id = #{companyId}</if>
+      <if test="true" >and status = 1</if>
+    </where>
+  </select>
+
+
+
+  <select id="selectGroupInfo"  parameterType="java.util.Map" resultMap="GroupInfoResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_group
+    <where>
+      <if test="id!=null"> id = #{id}</if>
+      <if test="name!=null"> name = #{name}</if>
+      <if test="companyId!=null">and company_id = #{companyId}</if>
+      <if test="true" > and status = 1 </if>
+    </where>
+  </select>
+</mapper>

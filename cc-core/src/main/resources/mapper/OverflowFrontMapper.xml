@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.OverflowFrontMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.OverflowFront">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="overflow_id" jdbcType="BIGINT" property="overflowId" />
+    <result column="front_key" jdbcType="VARCHAR" property="frontKey" />
+    <result column="compare_condition" jdbcType="INTEGER" property="compareCondition" />
+    <result column="rank_value_start" jdbcType="INTEGER" property="rankValueStart" />
+    <result column="rank_value" jdbcType="INTEGER" property="rankValue" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, overflow_id, front_key, compare_condition, rank_value_start, rank_value,
+    status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_overflow_front
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_overflow_front
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.OverflowFront">
+    insert into cc_overflow_front (id, cts, uts, company_id, 
+      overflow_id, front_key, compare_condition,
+      rank_value_start, rank_value, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{overflowId,jdbcType=BIGINT}, #{frontKey,jdbcType=VARCHAR}, #{compareCondition,jdbcType=INTEGER},
+      #{rankValueStart,jdbcType=INTEGER}, #{rankValue,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.OverflowFront">
+    insert into cc_overflow_front
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="overflowId != null">
+        overflow_id,
+      </if>
+      <if test="frontKey != null">
+        front_key,
+      </if>
+      <if test="compareCondition != null">
+        compare_condition,
+      </if>
+      <if test="rankValueStart != null">
+        rank_value_start,
+      </if>
+      <if test="rankValue != null">
+        rank_value,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="overflowId != null">
+        #{overflowId,jdbcType=BIGINT},
+      </if>
+      <if test="frontKey != null">
+        #{frontKey,jdbcType=VARCHAR},
+      </if>
+      <if test="compareCondition != null">
+        #{compareCondition,jdbcType=INTEGER},
+      </if>
+      <if test="rankValueStart != null">
+        #{rankValueStart,jdbcType=INTEGER},
+      </if>
+      <if test="rankValue != null">
+        #{rankValue,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.OverflowFront">
+    update cc_overflow_front
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="overflowId != null">
+        overflow_id = #{overflowId,jdbcType=BIGINT},
+      </if>
+      <if test="frontKey != null">
+        front_key = #{frontKey,jdbcType=VARCHAR},
+      </if>
+      <if test="compareCondition != null">
+        compare_condition = #{compareCondition,jdbcType=INTEGER},
+      </if>
+      <if test="rankValueStart != null">
+        rank_value_start = #{rankValueStart,jdbcType=INTEGER},
+      </if>
+      <if test="rankValue != null">
+        rank_value = #{rankValue,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.OverflowFront">
+    update cc_overflow_front
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      overflow_id = #{overflowId,jdbcType=BIGINT},
+      front_key = #{frontKey,jdbcType=VARCHAR},
+      compare_condition = #{compareCondition,jdbcType=INTEGER},
+      rank_value_start = #{rankValueStart,jdbcType=INTEGER},
+      rank_value = #{rankValue,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByOverflowId" parameterType="Long" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from cc_overflow_front where overflow_id = #{overflowId} and status = 1
+  </select>
+</mapper>

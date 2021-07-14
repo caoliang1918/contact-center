@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.CallDetailMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.CallDetail">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="start_time" jdbcType="BIGINT" property="startTime" />
+    <result column="end_time" jdbcType="BIGINT" property="endTime" />
+    <result column="call_id" jdbcType="BIGINT" property="callId" />
+    <result column="detail_index" jdbcType="INTEGER" property="detailIndex" />
+    <result column="transfer_type" jdbcType="INTEGER" property="transferType" />
+    <result column="transfer_id" jdbcType="BIGINT" property="transferId" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, start_time, end_time, call_id, detail_index, transfer_type, transfer_id, 
+    reason, ext1, ext2, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_call_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_call_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.CallDetail">
+    insert into cc_call_detail (id, cts, start_time, 
+      end_time, call_id, detail_index, 
+      transfer_type, transfer_id, reason, 
+      ext1, ext2, status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{startTime,jdbcType=BIGINT}, 
+      #{endTime,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, #{detailIndex,jdbcType=INTEGER}, 
+      #{transferType,jdbcType=INTEGER}, #{transferId,jdbcType=BIGINT}, #{reason,jdbcType=VARCHAR}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.CallDetail">
+    insert into cc_call_detail
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="callId != null">
+        call_id,
+      </if>
+      <if test="detailIndex != null">
+        detail_index,
+      </if>
+      <if test="transferType != null">
+        transfer_type,
+      </if>
+      <if test="transferId != null">
+        transfer_id,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null">
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="detailIndex != null">
+        #{detailIndex,jdbcType=INTEGER},
+      </if>
+      <if test="transferType != null">
+        #{transferType,jdbcType=INTEGER},
+      </if>
+      <if test="transferId != null">
+        #{transferId,jdbcType=BIGINT},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallDetail">
+    update cc_call_detail
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null">
+        call_id = #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="detailIndex != null">
+        detail_index = #{detailIndex,jdbcType=INTEGER},
+      </if>
+      <if test="transferType != null">
+        transfer_type = #{transferType,jdbcType=INTEGER},
+      </if>
+      <if test="transferId != null">
+        transfer_id = #{transferId,jdbcType=BIGINT},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CallDetail">
+    update cc_call_detail
+    set cts = #{cts,jdbcType=BIGINT},
+      start_time = #{startTime,jdbcType=BIGINT},
+      end_time = #{endTime,jdbcType=BIGINT},
+      call_id = #{callId,jdbcType=BIGINT},
+      detail_index = #{detailIndex,jdbcType=INTEGER},
+      transfer_type = #{transferType,jdbcType=INTEGER},
+      transfer_id = #{transferId,jdbcType=BIGINT},
+      reason = #{reason,jdbcType=VARCHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByCallId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_call_detail
+    where
+        call_id = #{id,jdbcType=BIGINT}
+  </select>
+</mapper>

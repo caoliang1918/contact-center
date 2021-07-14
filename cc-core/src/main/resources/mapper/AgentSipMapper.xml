@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.AgentSipMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.AgentSip">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="sip" jdbcType="VARCHAR" property="sip" />
+    <result column="agent_id" jdbcType="BIGINT" property="agentId" />
+    <result column="sip_pwd" jdbcType="VARCHAR" property="sipPwd" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+  <resultMap id="AgentSipResultMap"  extends="BaseResultMap"  type="org.cti.cc.po.AgentSipPo">
+    <association property="agent"  column="agent_id" select="org.cti.cc.mapper.AgentMapper.selectSimpleAgent" ></association>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, sip, agent_id, sip_pwd, status
+  </sql>
+
+  <select id="selectByAgent" parameterType="Long" resultType="String">
+    select sip from cc_agent_sip where agent_id = #{agentId} and status = 1
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_agent_sip
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_agent_sip
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.AgentSip">
+    insert into cc_agent_sip (id, cts, uts, company_id, 
+      sip, agent_id, sip_pwd, 
+      status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{sip,jdbcType=VARCHAR}, #{agentId,jdbcType=BIGINT}, #{sipPwd,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.AgentSip">
+    insert into cc_agent_sip
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="sip != null">
+        sip,
+      </if>
+      <if test="agentId != null">
+        agent_id,
+      </if>
+      <if test="sipPwd != null">
+        sip_pwd,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="sip != null">
+        #{sip,jdbcType=VARCHAR},
+      </if>
+      <if test="agentId != null">
+        #{agentId,jdbcType=BIGINT},
+      </if>
+      <if test="sipPwd != null">
+        #{sipPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AgentSip">
+    update cc_agent_sip
+    <set>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="sip != null">
+        sip = #{sip,jdbcType=VARCHAR},
+      </if>
+      <if test="agentId != null">
+        agent_id = #{agentId,jdbcType=BIGINT},
+      </if>
+      <if test="sipPwd != null">
+        sip_pwd = #{sipPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AgentSip">
+    update cc_agent_sip
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      sip = #{sip,jdbcType=VARCHAR},
+      agent_id = #{agentId,jdbcType=BIGINT},
+      sip_pwd = #{sipPwd,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <insert id="batchInsert" parameterType="List">
+    insert into cc_agent_sip (cts, company_id, agent_id , sip , sip_pwd) values
+    <foreach collection ="list" item="sip" separator =",">
+      (#{sip.cts}, #{sip.companyId},
+      (select id from cc_agent where agent_key = #{sip.agentKey}),
+      #{sip.sip,jdbcType=VARCHAR},
+      #{sip.sipPwd,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <select id="selectAgentSip" parameterType="Map" resultMap="AgentSipResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_agent_sip
+        <where>
+          <if test="companyId!=null">company_id = #{companyId}</if>
+          <if test="sip!=null">and sip = #{sip}</if>
+          <if test="agentId!=null">and agent_id = #{agentId,jdbcType=BIGINT}</if>
+          <if test="true" >and status = 1</if>
+        </where>
+  </select>
+
+  <select id="selectById" parameterType="Long" resultMap="BaseResultMap">
+     select
+        <include refid="Base_Column_List" />
+     from
+        cc_agent_sip
+    where
+        company_id = #{companyId} and id = #{id} and status = 1
+  </select>
+</mapper>

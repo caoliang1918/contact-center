@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.RouteCallMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.po.RouteCallInfo" extends="ResultMap">
+    <association property="routeGroupPo" select="org.cti.cc.mapper.RouteGroupMapper.selectById" column="route_group_id"> </association>
+  </resultMap>
+
+  <resultMap id="ResultMap" type="org.cti.cc.entity.RouteCall">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="route_group_id" jdbcType="BIGINT" property="routeGroupId" />
+    <result column="route_num" jdbcType="VARCHAR" property="routeNum" />
+    <result column="num_max" jdbcType="INTEGER" property="numMax" />
+    <result column="num_min" jdbcType="INTEGER" property="numMin" />
+    <result column="caller_change" jdbcType="INTEGER" property="callerChange" />
+    <result column="caller_change_num" jdbcType="VARCHAR" property="callerChangeNum" />
+    <result column="called_change" jdbcType="INTEGER" property="calledChange" />
+    <result column="called_change_num" jdbcType="VARCHAR" property="calledChangeNum" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, route_group_id, route_num, num_max, num_min, caller_change, 
+    caller_change_num, called_change, called_change_num, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_route_call
+    where id = #{id,jdbcType=BIGINT} and  status = 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_route_call
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.RouteCall">
+    insert into cc_route_call (id, cts, uts, company_id, 
+      route_group_id, route_num, num_max, 
+      num_min, caller_change, caller_change_num, 
+      called_change, called_change_num, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{routeGroupId,jdbcType=BIGINT}, #{routeNum,jdbcType=VARCHAR}, #{numMax,jdbcType=INTEGER}, 
+      #{numMin,jdbcType=INTEGER}, #{callerChange,jdbcType=INTEGER}, #{callerChangeNum,jdbcType=VARCHAR}, 
+      #{calledChange,jdbcType=INTEGER}, #{calledChangeNum,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.RouteCall">
+    insert into cc_route_call
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="routeGroupId != null">
+        route_group_id,
+      </if>
+      <if test="routeNum != null">
+        route_num,
+      </if>
+      <if test="numMax != null">
+        num_max,
+      </if>
+      <if test="numMin != null">
+        num_min,
+      </if>
+      <if test="callerChange != null">
+        caller_change,
+      </if>
+      <if test="callerChangeNum != null">
+        caller_change_num,
+      </if>
+      <if test="calledChange != null">
+        called_change,
+      </if>
+      <if test="calledChangeNum != null">
+        called_change_num,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="routeGroupId != null">
+        #{routeGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="routeNum != null">
+        #{routeNum,jdbcType=VARCHAR},
+      </if>
+      <if test="numMax != null">
+        #{numMax,jdbcType=INTEGER},
+      </if>
+      <if test="numMin != null">
+        #{numMin,jdbcType=INTEGER},
+      </if>
+      <if test="callerChange != null">
+        #{callerChange,jdbcType=INTEGER},
+      </if>
+      <if test="callerChangeNum != null">
+        #{callerChangeNum,jdbcType=VARCHAR},
+      </if>
+      <if test="calledChange != null">
+        #{calledChange,jdbcType=INTEGER},
+      </if>
+      <if test="calledChangeNum != null">
+        #{calledChangeNum,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.RouteCall">
+    update cc_route_call
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="routeGroupId != null">
+        route_group_id = #{routeGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="routeNum != null">
+        route_num = #{routeNum,jdbcType=VARCHAR},
+      </if>
+      <if test="numMax != null">
+        num_max = #{numMax,jdbcType=INTEGER},
+      </if>
+      <if test="numMin != null">
+        num_min = #{numMin,jdbcType=INTEGER},
+      </if>
+      <if test="callerChange != null">
+        caller_change = #{callerChange,jdbcType=INTEGER},
+      </if>
+      <if test="callerChangeNum != null">
+        caller_change_num = #{callerChangeNum,jdbcType=VARCHAR},
+      </if>
+      <if test="calledChange != null">
+        called_change = #{calledChange,jdbcType=INTEGER},
+      </if>
+      <if test="calledChangeNum != null">
+        called_change_num = #{calledChangeNum,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.RouteCall">
+    update cc_route_call
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      route_group_id = #{routeGroupId,jdbcType=BIGINT},
+      route_num = #{routeNum,jdbcType=VARCHAR},
+      num_max = #{numMax,jdbcType=INTEGER},
+      num_min = #{numMin,jdbcType=INTEGER},
+      caller_change = #{callerChange,jdbcType=INTEGER},
+      caller_change_num = #{callerChangeNum,jdbcType=VARCHAR},
+      called_change = #{calledChange,jdbcType=INTEGER},
+      called_change_num = #{calledChangeNum,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+     select
+        <include refid="Base_Column_List" />
+     from
+        cc_route_call
+        <where>
+          <if test="id!=null">id = #{id}</if>
+          <if test="companyId!=null"> and company_id = #{companyId}</if>
+          <if test="routeNum!=null"> and route_num like CONCAT(#{routeNum},"%")</if>
+          <if test="true" > and status = 1</if>
+        </where>
+        order by length(route_num) desc
+  </select>
+
+  <select id="selectList" parameterType="java.util.Map" resultMap="ResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_route_call
+    <where>
+      <if test="id!=null">id = #{id}</if>
+      <if test="companyId!=null"> and  company_id = #{companyId}</if>
+      <if test="name != null"> and route_num = #{name}</if>
+      <if test="true" >and status = 1</if>
+    </where>
+    order by length(route_num) desc
+  </select>
+</mapper>

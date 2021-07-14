@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.SkillAgentMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.SkillAgent">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="skill_id" jdbcType="BIGINT" property="skillId" />
+    <result column="agent_id" jdbcType="BIGINT" property="agentId" />
+    <result column="rank" jdbcType="INTEGER" property="rank" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <insert id="insert" parameterType="org.cti.cc.entity.SkillAgent">
+    insert into cc_skill_agent (id, cts, uts, company_id, skill_id, agent_id, rank, status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
+      #{skillId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{rank,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+
+
+
+  <insert id="batchInsert" parameterType="List"  useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
+    insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank, status) values
+    <foreach collection ="list" item="item" separator =",">
+      (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT},#{item.skillId,jdbcType=BIGINT},
+       (select id from cc_agent where id = #{item.agentId} and company_id = #{item.companyId} as agentId, #{item.rank,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+  <insert id="batchInsert" parameterType="List"   databaseId="oracle">
+    BEGIN
+    insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank, status) values
+    <foreach collection ="list" item="item" separator =",">
+      (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT},#{item.skillId,jdbcType=BIGINT},
+      (select id from cc_agent where id = #{item.agentId} and company_id = #{item.companyId} as agentId, #{item.rank,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
+    </foreach>
+    COMMIT;
+    END;
+  </insert>
+
+
+</mapper>

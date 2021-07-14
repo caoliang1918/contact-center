@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.ScheduleConfigMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.ScheduleConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="level_value" jdbcType="INTEGER" property="levelValue" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="start_day" jdbcType="VARCHAR" property="startDay" />
+    <result column="end_day" jdbcType="VARCHAR" property="endDay" />
+    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="mon" jdbcType="INTEGER" property="mon" />
+    <result column="tue" jdbcType="INTEGER" property="tue" />
+    <result column="wed" jdbcType="INTEGER" property="wed" />
+    <result column="thu" jdbcType="INTEGER" property="thu" />
+    <result column="fri" jdbcType="INTEGER" property="fri" />
+    <result column="sat" jdbcType="INTEGER" property="sat" />
+    <result column="sun" jdbcType="INTEGER" property="sun" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, name, level_value, type, start_day, end_day, start_time, 
+    end_time, mon, tue, wed, thu, fri, sat, sun, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_schedule_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_schedule_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.ScheduleConfig">
+    insert into cc_schedule_config (id, cts, uts, company_id, 
+      name, level_value, type, 
+      start_day, end_day, start_time, 
+      end_time, mon, tue, 
+      wed, thu, fri, sat, 
+      sun, status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{name,jdbcType=VARCHAR}, #{levelValue,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+      #{startDay,jdbcType=VARCHAR}, #{endDay,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, 
+      #{endTime,jdbcType=VARCHAR}, #{mon,jdbcType=INTEGER}, #{tue,jdbcType=INTEGER}, 
+      #{wed,jdbcType=INTEGER}, #{thu,jdbcType=INTEGER}, #{fri,jdbcType=INTEGER}, #{sat,jdbcType=INTEGER}, 
+      #{sun,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.ScheduleConfig">
+    insert into cc_schedule_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="levelValue != null">
+        level_value,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="startDay != null">
+        start_day,
+      </if>
+      <if test="endDay != null">
+        end_day,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="mon != null">
+        mon,
+      </if>
+      <if test="tue != null">
+        tue,
+      </if>
+      <if test="wed != null">
+        wed,
+      </if>
+      <if test="thu != null">
+        thu,
+      </if>
+      <if test="fri != null">
+        fri,
+      </if>
+      <if test="sat != null">
+        sat,
+      </if>
+      <if test="sun != null">
+        sun,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="levelValue != null">
+        #{levelValue,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="startDay != null">
+        #{startDay,jdbcType=VARCHAR},
+      </if>
+      <if test="endDay != null">
+        #{endDay,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="mon != null">
+        #{mon,jdbcType=INTEGER},
+      </if>
+      <if test="tue != null">
+        #{tue,jdbcType=INTEGER},
+      </if>
+      <if test="wed != null">
+        #{wed,jdbcType=INTEGER},
+      </if>
+      <if test="thu != null">
+        #{thu,jdbcType=INTEGER},
+      </if>
+      <if test="fri != null">
+        #{fri,jdbcType=INTEGER},
+      </if>
+      <if test="sat != null">
+        #{sat,jdbcType=INTEGER},
+      </if>
+      <if test="sun != null">
+        #{sun,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.ScheduleConfig">
+    update cc_schedule_config
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="levelValue != null">
+        level_value = #{levelValue,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="startDay != null">
+        start_day = #{startDay,jdbcType=VARCHAR},
+      </if>
+      <if test="endDay != null">
+        end_day = #{endDay,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="mon != null">
+        mon = #{mon,jdbcType=INTEGER},
+      </if>
+      <if test="tue != null">
+        tue = #{tue,jdbcType=INTEGER},
+      </if>
+      <if test="wed != null">
+        wed = #{wed,jdbcType=INTEGER},
+      </if>
+      <if test="thu != null">
+        thu = #{thu,jdbcType=INTEGER},
+      </if>
+      <if test="fri != null">
+        fri = #{fri,jdbcType=INTEGER},
+      </if>
+      <if test="sat != null">
+        sat = #{sat,jdbcType=INTEGER},
+      </if>
+      <if test="sun != null">
+        sun = #{sun,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.ScheduleConfig">
+    update cc_schedule_config
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      level_value = #{levelValue,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      start_day = #{startDay,jdbcType=VARCHAR},
+      end_day = #{endDay,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=VARCHAR},
+      end_time = #{endTime,jdbcType=VARCHAR},
+      mon = #{mon,jdbcType=INTEGER},
+      tue = #{tue,jdbcType=INTEGER},
+      wed = #{wed,jdbcType=INTEGER},
+      thu = #{thu,jdbcType=INTEGER},
+      fri = #{fri,jdbcType=INTEGER},
+      sat = #{sat,jdbcType=INTEGER},
+      sun = #{sun,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

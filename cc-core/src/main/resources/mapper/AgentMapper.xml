@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.AgentMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.Agent">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="agent_id" jdbcType="VARCHAR" property="agentId" />
+    <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+    <result column="agent_code" jdbcType="VARCHAR" property="agentCode" />
+    <result column="agent_type" jdbcType="INTEGER" property="agentType" />
+    <result column="passwd" jdbcType="VARCHAR" property="passwd" />
+    <result column="sip_phone" jdbcType="VARCHAR" property="sipPhone" />
+    <result column="record" jdbcType="INTEGER" property="record" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="after_interval" jdbcType="INTEGER" property="afterInterval" />
+    <result column="diaplay" jdbcType="VARCHAR" property="diaplay" />
+    <result column="ring_time" jdbcType="INTEGER" property="ringTime" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+  <resultMap id="SimpleResultMap" type="org.cti.cc.entity.Agent">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="agent_id" jdbcType="VARCHAR" property="agentId" />
+    <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+    <result column="agent_code" jdbcType="VARCHAR" property="agentCode" />
+    <result column="agent_type" jdbcType="INTEGER" property="agentType" />
+    <result column="sip_phone" jdbcType="VARCHAR" property="sipPhone" />
+    <result column="record" jdbcType="INTEGER" property="record" />
+  </resultMap>
+
+  <resultMap id="AgentInfoResultMap" extends="BaseResultMap" type="org.cti.cc.po.AgentInfo">
+      <collection property="groupIds" select="org.cti.cc.mapper.AgentGroupMapper.selectByAgent" column="id"/>
+      <collection property="sips" select="org.cti.cc.mapper.AgentSipMapper.selectByAgent" column="id"/>
+      <collection property="skills" select="org.cti.cc.mapper.SkillMapper.selectByAgent" column="id"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type,
+    sip_phone, record, group_id, after_interval, diaplay, ring_time, ext1,
+    ext2, ext3, status
+  </sql>
+
+  <sql id="ALL_Column_List">
+    id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type,
+    passwd, sip_phone, record, group_id, after_interval, diaplay, ring_time, ext1,
+    ext2, ext3, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_agent
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAgent" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="ALL_Column_List" />
+    from cc_agent where agent_key = #{agentKey}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_agent
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.Agent">
+    insert into cc_agent (id, cts, uts, company_id, 
+      agent_id, agent_key, agent_name, 
+      agent_code, agent_type, passwd,
+      sip_phone, record, group_id, 
+      after_interval, diaplay, ring_time, 
+      ext1, ext2, ext3, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{agentId,jdbcType=VARCHAR}, #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR}, 
+      #{agentCode,jdbcType=VARCHAR}, #{agentType,jdbcType=INTEGER}, #{passwd,jdbcType=VARCHAR},
+      #{sipPhone,jdbcType=VARCHAR}, #{record,jdbcType=INTEGER}, #{groupId,jdbcType=BIGINT}, 
+      #{afterInterval,jdbcType=INTEGER}, #{diaplay,jdbcType=VARCHAR}, #{ringTime,jdbcType=INTEGER}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.Agent">
+    insert into cc_agent
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="agentId != null">
+        agent_id,
+      </if>
+      <if test="agentKey != null">
+        agent_key,
+      </if>
+      <if test="agentName != null">
+        agent_name,
+      </if>
+      <if test="agentCode != null">
+        agent_code,
+      </if>
+      <if test="agentType != null">
+        agent_type,
+      </if>
+      <if test="passwd != null">
+        passwd,
+      </if>
+      <if test="sipPhone != null">
+        sip_phone,
+      </if>
+      <if test="record != null">
+        record,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="afterInterval != null">
+        after_interval,
+      </if>
+      <if test="diaplay != null">
+        diaplay,
+      </if>
+      <if test="ringTime != null">
+        ring_time,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="ext3 != null">
+        ext3,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="agentId != null">
+        #{agentId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="agentName != null">
+        #{agentName,jdbcType=VARCHAR},
+      </if>
+      <if test="agentCode != null">
+        #{agentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="agentType != null">
+        #{agentType,jdbcType=INTEGER},
+      </if>
+      <if test="passwd != null">
+        #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="sipPhone != null">
+        #{sipPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null">
+        #{record,jdbcType=INTEGER},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="afterInterval != null">
+        #{afterInterval,jdbcType=INTEGER},
+      </if>
+      <if test="diaplay != null">
+        #{diaplay,jdbcType=VARCHAR},
+      </if>
+      <if test="ringTime != null">
+        #{ringTime,jdbcType=INTEGER},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.Agent">
+    update cc_agent
+    <set>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="agentName != null">
+        agent_name = #{agentName,jdbcType=VARCHAR},
+      </if>
+      <if test="agentCode != null">
+        agent_code = #{agentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="agentType != null">
+        agent_type = #{agentType,jdbcType=INTEGER},
+      </if>
+      <if test="passwd != null">
+        passwd = #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="sipPhone != null">
+        sip_phone = #{sipPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null">
+        record = #{record,jdbcType=INTEGER},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="afterInterval != null">
+        after_interval = #{afterInterval,jdbcType=INTEGER},
+      </if>
+      <if test="diaplay != null">
+        diaplay = #{diaplay,jdbcType=VARCHAR},
+      </if>
+      <if test="ringTime != null">
+        ring_time = #{ringTime,jdbcType=INTEGER},
+      </if>
+      <if test="ext1 != null">
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        ext3 = #{ext3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and company_id = #{companyId,jdbcType=BIGINT}
+  </update>
+
+  <insert id="batchInsert" parameterType="List"  useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
+    insert into cc_agent (cts, company_id, agent_id, agent_key, agent_name, agent_type, passwd) values
+    <foreach collection ="list" item="agent" separator =",">
+      (#{agent.cts,jdbcType=BIGINT}, #{agent.companyId,jdbcType=BIGINT},#{agent.agentId,jdbcType=VARCHAR},
+       #{agent.agentKey,jdbcType=VARCHAR}, #{agent.agentName,jdbcType=VARCHAR},#{agent.agentType,jdbcType=INTEGER}, #{agent.passwd,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <insert id="batchInsert" parameterType="List"   databaseId="oracle">
+    BEGIN
+    insert into cc_agent (cts, company_id, agent_id, agent_key, agent_name, agent_type, passwd) values
+    <foreach collection ="list" item="agent" separator =",">
+      (#{agent.cts,jdbcType=BIGINT}, #{agent.companyId,jdbcType=BIGINT},#{agent.agentId,jdbcType=VARCHAR},
+      #{agent.agentKey,jdbcType=VARCHAR}, #{agent.agentName,jdbcType=VARCHAR},#{agent.agentType,jdbcType=INTEGER}, #{agent.passwd,jdbcType=VARCHAR})
+    </foreach>
+    COMMIT;
+    END;
+  </insert>
+
+  <insert id="addAgent" parameterType="org.cti.cc.entity.Agent"  useGeneratedKeys="true" keyProperty="id">
+    insert into cc_agent (cts, company_id, agent_id, agent_key, agent_name, agent_type, passwd) values
+    (#{cts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},#{agentId,jdbcType=VARCHAR},
+    #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR},#{agentType,jdbcType=INTEGER}, #{passwd,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectListByMap"  parameterType="java.util.Map" resultMap="BaseResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_agent
+    <where>
+      <if test="agentKey!=null"> agent_key like CONCAT(#{agentKey},"%")</if>
+      <if test="companyId!=null">and company_id = #{companyId}</if>
+      <if test="agentId!=null">and agent_id = #{agentId}</if>
+      <if test="true" >and status = 1</if>
+    </where>
+  </select>
+
+  <delete id="deleteAgent" parameterType="org.cti.cc.entity.Agent" >
+     update cc_agent  set uts = #{cts}, agent_id = #{agentId}, agent_key = #{agentKey}, status = #{status}  where id = #{id}
+  </delete>
+
+  <select id="selectCountByMap"  parameterType="java.util.Map" resultType="Long" >
+    select
+        count(id)
+    from
+        cc_agent
+    <where>
+      <if test="agentKey!=null"> agent_key like CONCAT(#{agentKey},"%")</if>
+      <if test="companyId!=null">and company_id = #{companyId}</if>
+      <if test="true" >and status = 1</if>
+    </where>
+  </select>
+
+  <select id="selectAgentInfo" parameterType="java.util.Map"  resultMap="AgentInfoResultMap">
+        select
+            <include refid="Base_Column_List" />
+        from
+            cc_agent
+        <where>
+          <if test="id!=null"> id = #{id}</if>
+          <if test="agentId!=null">and agent_id = #{agentId}</if>
+          <if test="companyId!=null">and company_id = #{companyId}</if>
+          <if test="true" >and status = 1</if>
+        </where>
+  </select>
+
+  <select id="selectSimpleAgent" parameterType="Long" resultMap="SimpleResultMap">
+    select
+        id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, group_id
+   from
+        cc_agent where id = #{id} and status =1
+  </select>
+ </mapper>

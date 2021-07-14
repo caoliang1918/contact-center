@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.PhoneLocationMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.PhoneLocation">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="ruid" jdbcType="VARCHAR" property="ruid" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="domain" jdbcType="VARCHAR" property="domain" />
+    <result column="contact" jdbcType="VARCHAR" property="contact" />
+    <result column="received" jdbcType="VARCHAR" property="received" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="expires" jdbcType="TIMESTAMP" property="expires" />
+    <result column="q" jdbcType="REAL" property="q" />
+    <result column="callid" jdbcType="VARCHAR" property="callid" />
+    <result column="cseq" jdbcType="INTEGER" property="cseq" />
+    <result column="last_modified" jdbcType="TIMESTAMP" property="lastModified" />
+    <result column="flags" jdbcType="INTEGER" property="flags" />
+    <result column="cflags" jdbcType="INTEGER" property="cflags" />
+    <result column="user_agent" jdbcType="VARCHAR" property="userAgent" />
+    <result column="socket" jdbcType="VARCHAR" property="socket" />
+    <result column="methods" jdbcType="INTEGER" property="methods" />
+    <result column="instance" jdbcType="VARCHAR" property="instance" />
+    <result column="reg_id" jdbcType="INTEGER" property="regId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, ruid, username, domain, contact, received, path, expires, q, callid, cseq, last_modified, 
+    flags, cflags, user_agent, socket, methods, instance, reg_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from location
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from location
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.PhoneLocation">
+    insert into location (id, ruid, username, 
+      domain, contact, received, 
+      path, expires, q, callid, 
+      cseq, last_modified, flags, 
+      cflags, user_agent, socket, 
+      methods, instance, reg_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{ruid,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{domain,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR}, #{received,jdbcType=VARCHAR}, 
+      #{path,jdbcType=VARCHAR}, #{expires,jdbcType=TIMESTAMP}, #{q,jdbcType=REAL}, #{callid,jdbcType=VARCHAR}, 
+      #{cseq,jdbcType=INTEGER}, #{lastModified,jdbcType=TIMESTAMP}, #{flags,jdbcType=INTEGER}, 
+      #{cflags,jdbcType=INTEGER}, #{userAgent,jdbcType=VARCHAR}, #{socket,jdbcType=VARCHAR}, 
+      #{methods,jdbcType=INTEGER}, #{instance,jdbcType=VARCHAR}, #{regId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.PhoneLocation">
+    insert into location
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="ruid != null">
+        ruid,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="domain != null">
+        domain,
+      </if>
+      <if test="contact != null">
+        contact,
+      </if>
+      <if test="received != null">
+        received,
+      </if>
+      <if test="path != null">
+        path,
+      </if>
+      <if test="expires != null">
+        expires,
+      </if>
+      <if test="q != null">
+        q,
+      </if>
+      <if test="callid != null">
+        callid,
+      </if>
+      <if test="cseq != null">
+        cseq,
+      </if>
+      <if test="lastModified != null">
+        last_modified,
+      </if>
+      <if test="flags != null">
+        flags,
+      </if>
+      <if test="cflags != null">
+        cflags,
+      </if>
+      <if test="userAgent != null">
+        user_agent,
+      </if>
+      <if test="socket != null">
+        socket,
+      </if>
+      <if test="methods != null">
+        methods,
+      </if>
+      <if test="instance != null">
+        instance,
+      </if>
+      <if test="regId != null">
+        reg_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="ruid != null">
+        #{ruid,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="domain != null">
+        #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="received != null">
+        #{received,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="expires != null">
+        #{expires,jdbcType=TIMESTAMP},
+      </if>
+      <if test="q != null">
+        #{q,jdbcType=REAL},
+      </if>
+      <if test="callid != null">
+        #{callid,jdbcType=VARCHAR},
+      </if>
+      <if test="cseq != null">
+        #{cseq,jdbcType=INTEGER},
+      </if>
+      <if test="lastModified != null">
+        #{lastModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="flags != null">
+        #{flags,jdbcType=INTEGER},
+      </if>
+      <if test="cflags != null">
+        #{cflags,jdbcType=INTEGER},
+      </if>
+      <if test="userAgent != null">
+        #{userAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="socket != null">
+        #{socket,jdbcType=VARCHAR},
+      </if>
+      <if test="methods != null">
+        #{methods,jdbcType=INTEGER},
+      </if>
+      <if test="instance != null">
+        #{instance,jdbcType=VARCHAR},
+      </if>
+      <if test="regId != null">
+        #{regId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.PhoneLocation">
+    update location
+    <set>
+      <if test="ruid != null">
+        ruid = #{ruid,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="domain != null">
+        domain = #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        contact = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="received != null">
+        received = #{received,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        path = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="expires != null">
+        expires = #{expires,jdbcType=TIMESTAMP},
+      </if>
+      <if test="q != null">
+        q = #{q,jdbcType=REAL},
+      </if>
+      <if test="callid != null">
+        callid = #{callid,jdbcType=VARCHAR},
+      </if>
+      <if test="cseq != null">
+        cseq = #{cseq,jdbcType=INTEGER},
+      </if>
+      <if test="lastModified != null">
+        last_modified = #{lastModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="flags != null">
+        flags = #{flags,jdbcType=INTEGER},
+      </if>
+      <if test="cflags != null">
+        cflags = #{cflags,jdbcType=INTEGER},
+      </if>
+      <if test="userAgent != null">
+        user_agent = #{userAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="socket != null">
+        socket = #{socket,jdbcType=VARCHAR},
+      </if>
+      <if test="methods != null">
+        methods = #{methods,jdbcType=INTEGER},
+      </if>
+      <if test="instance != null">
+        instance = #{instance,jdbcType=VARCHAR},
+      </if>
+      <if test="regId != null">
+        reg_id = #{regId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.PhoneLocation">
+    update location
+    set ruid = #{ruid,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      domain = #{domain,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      received = #{received,jdbcType=VARCHAR},
+      path = #{path,jdbcType=VARCHAR},
+      expires = #{expires,jdbcType=TIMESTAMP},
+      q = #{q,jdbcType=REAL},
+      callid = #{callid,jdbcType=VARCHAR},
+      cseq = #{cseq,jdbcType=INTEGER},
+      last_modified = #{lastModified,jdbcType=TIMESTAMP},
+      flags = #{flags,jdbcType=INTEGER},
+      cflags = #{cflags,jdbcType=INTEGER},
+      user_agent = #{userAgent,jdbcType=VARCHAR},
+      socket = #{socket,jdbcType=VARCHAR},
+      methods = #{methods,jdbcType=INTEGER},
+      instance = #{instance,jdbcType=VARCHAR},
+      reg_id = #{regId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

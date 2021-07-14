@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.OverflowConfigMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.OverflowConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="handle_type" jdbcType="INTEGER" property="handleType" />
+    <result column="busy_type" jdbcType="INTEGER" property="busyType" />
+    <result column="queue_timeout" jdbcType="INTEGER" property="queueTimeout" />
+    <result column="busy_timeout_type" jdbcType="INTEGER" property="busyTimeoutType" />
+    <result column="overflow_type" jdbcType="INTEGER" property="overflowType" />
+    <result column="overflow_value" jdbcType="INTEGER" property="overflowValue" />
+    <result column="lineup_expression" jdbcType="VARCHAR" property="lineupExpression" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, name, handle_type, busy_type, queue_timeout, busy_timeout_type, 
+    overflow_type, overflow_value, lineup_expression
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_overflow_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_overflow_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.OverflowConfig">
+    insert into cc_overflow_config (id, cts, uts, company_id, 
+      name, handle_type, busy_type, 
+      queue_timeout, busy_timeout_type, overflow_type, 
+      overflow_value, lineup_expression)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{name,jdbcType=VARCHAR}, #{handleType,jdbcType=INTEGER}, #{busyType,jdbcType=INTEGER}, 
+      #{queueTimeout,jdbcType=INTEGER}, #{busyTimeoutType,jdbcType=INTEGER}, #{overflowType,jdbcType=INTEGER}, 
+      #{overflowValue,jdbcType=INTEGER}, #{lineupExpression,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.OverflowConfig">
+    insert into cc_overflow_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="handleType != null">
+        handle_type,
+      </if>
+      <if test="busyType != null">
+        busy_type,
+      </if>
+      <if test="queueTimeout != null">
+        queue_timeout,
+      </if>
+      <if test="busyTimeoutType != null">
+        busy_timeout_type,
+      </if>
+      <if test="overflowType != null">
+        overflow_type,
+      </if>
+      <if test="overflowValue != null">
+        overflow_value,
+      </if>
+      <if test="lineupExpression != null">
+        lineup_expression,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="handleType != null">
+        #{handleType,jdbcType=INTEGER},
+      </if>
+      <if test="busyType != null">
+        #{busyType,jdbcType=INTEGER},
+      </if>
+      <if test="queueTimeout != null">
+        #{queueTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="busyTimeoutType != null">
+        #{busyTimeoutType,jdbcType=INTEGER},
+      </if>
+      <if test="overflowType != null">
+        #{overflowType,jdbcType=INTEGER},
+      </if>
+      <if test="overflowValue != null">
+        #{overflowValue,jdbcType=INTEGER},
+      </if>
+      <if test="lineupExpression != null">
+        #{lineupExpression,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.OverflowConfig">
+    update cc_overflow_config
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="handleType != null">
+        handle_type = #{handleType,jdbcType=INTEGER},
+      </if>
+      <if test="busyType != null">
+        busy_type = #{busyType,jdbcType=INTEGER},
+      </if>
+      <if test="queueTimeout != null">
+        queue_timeout = #{queueTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="busyTimeoutType != null">
+        busy_timeout_type = #{busyTimeoutType,jdbcType=INTEGER},
+      </if>
+      <if test="overflowType != null">
+        overflow_type = #{overflowType,jdbcType=INTEGER},
+      </if>
+      <if test="overflowValue != null">
+        overflow_value = #{overflowValue,jdbcType=INTEGER},
+      </if>
+      <if test="lineupExpression != null">
+        lineup_expression = #{lineupExpression,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.OverflowConfig">
+    update cc_overflow_config
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      handle_type = #{handleType,jdbcType=INTEGER},
+      busy_type = #{busyType,jdbcType=INTEGER},
+      queue_timeout = #{queueTimeout,jdbcType=INTEGER},
+      busy_timeout_type = #{busyTimeoutType,jdbcType=INTEGER},
+      overflow_type = #{overflowType,jdbcType=INTEGER},
+      overflow_value = #{overflowValue,jdbcType=INTEGER},
+      lineup_expression = #{lineupExpression,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

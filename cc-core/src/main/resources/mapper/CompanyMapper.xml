@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.CompanyMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.Company">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="id_path" jdbcType="VARCHAR" property="idPath" />
+    <result column="pid" jdbcType="BIGINT" property="pid" />
+    <result column="company_code" jdbcType="VARCHAR" property="companyCode" />
+    <result column="contact" jdbcType="VARCHAR" property="contact" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="balance" jdbcType="BIGINT" property="balance" />
+    <result column="bill_type" jdbcType="INTEGER" property="billType" />
+    <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="hidden_customer" jdbcType="INTEGER" property="hiddenCustomer" />
+    <result column="secret_key" jdbcType="VARCHAR" property="secretKey" />
+    <result column="ivr_limit" jdbcType="INTEGER" property="ivrLimit" />
+    <result column="agent_limit" jdbcType="INTEGER" property="agentLimit" />
+    <result column="group_limit" jdbcType="INTEGER" property="groupLimit" />
+    <result column="group_agent_limit" jdbcType="INTEGER" property="groupAgentLimit" />
+    <result column="agent_state" jdbcType="INTEGER" property="agentState" />
+    <result column="inbound_stat" jdbcType="INTEGER" property="inboundStat" />
+    <result column="outbound_stat" jdbcType="INTEGER" property="outboundStat" />
+    <result column="group_wait_stat" jdbcType="INTEGER" property="groupWaitStat" />
+    <result column="blacklist" jdbcType="BIGINT" property="blacklist" />
+    <result column="notify_url" jdbcType="VARCHAR" property="notifyUrl" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="ext4" jdbcType="VARCHAR" property="ext4" />
+    <result column="ext5" jdbcType="VARCHAR" property="ext5" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, name, id_path, pid, company_code, contact, phone, balance, bill_type, 
+    pay_type, hidden_customer, secret_key, ivr_limit, agent_limit, group_limit, group_agent_limit,
+    agent_state, inbound_stat, outbound_stat, group_wait_stat, blacklist, notify_url,
+    ext1, ext2, ext3, ext4, ext5, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_company
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_company
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.Company">
+    insert into cc_company (id, cts, uts, name,
+      id_path, pid, company_code,
+      contact, phone, balance,
+      bill_type, pay_type,hidden_customer, secret_key,
+      ivr_limit, agent_limit, group_limit,
+      group_agent_limit, agent_state, inbound_stat,
+      outbound_stat, group_wait_stat, blacklist,
+      notify_url, ext1, ext2,
+      ext3, ext4, ext5, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
+      #{idPath,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, #{companyCode,jdbcType=VARCHAR},
+      #{contact,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{balance,jdbcType=BIGINT},
+      #{billType,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{hiddenCustomer,jdbcType=INTEGER}, #{secretKey,jdbcType=VARCHAR},
+      #{ivrLimit,jdbcType=INTEGER}, #{agentLimit,jdbcType=INTEGER}, #{groupLimit,jdbcType=INTEGER},
+      #{groupAgentLimit,jdbcType=INTEGER}, #{agentState,jdbcType=INTEGER}, #{inboundStat,jdbcType=INTEGER},
+      #{outboundStat,jdbcType=INTEGER}, #{groupWaitStat,jdbcType=INTEGER}, #{blacklist,jdbcType=BIGINT},
+      #{notifyUrl,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR},
+      #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.Company">
+    insert into cc_company
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="idPath != null">
+        id_path,
+      </if>
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="companyCode != null">
+        company_code,
+      </if>
+      <if test="contact != null">
+        contact,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="balance != null">
+        balance,
+      </if>
+      <if test="billType != null">
+        bill_type,
+      </if>
+      <if test="payType != null">
+        pay_type,
+      </if>
+      <if test="hiddenCustomer != null">
+        hidden_customer,
+      </if>
+      <if test="secretKey != null">
+        secret_key,
+      </if>
+      <if test="ivrLimit != null">
+        ivr_limit,
+      </if>
+      <if test="agentLimit != null">
+        agent_limit,
+      </if>
+      <if test="groupLimit != null">
+        group_limit,
+      </if>
+      <if test="groupAgentLimit != null">
+        group_agent_limit,
+      </if>
+      <if test="agentState != null">
+        agent_state,
+      </if>
+      <if test="inboundStat != null">
+        inbound_stat,
+      </if>
+      <if test="outboundStat != null">
+        outbound_stat,
+      </if>
+      <if test="groupWaitStat != null">
+        group_wait_stat,
+      </if>
+      <if test="blacklist != null">
+        blacklist,
+      </if>
+      <if test="notifyUrl != null">
+        notify_url,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="ext3 != null">
+        ext3,
+      </if>
+      <if test="ext4 != null">
+        ext4,
+      </if>
+      <if test="ext5 != null">
+        ext5,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idPath != null">
+        #{idPath,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=BIGINT},
+      </if>
+      <if test="companyCode != null">
+        #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null">
+        #{balance,jdbcType=BIGINT},
+      </if>
+      <if test="billType != null">
+        #{billType,jdbcType=INTEGER},
+      </if>
+      <if test="payType != null">
+        #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="hiddenCustomer != null">
+        #{hiddenCustomer,jdbcType=INTEGER},
+      </if>
+      <if test="secretKey != null">
+        #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="ivrLimit != null">
+        #{ivrLimit,jdbcType=INTEGER},
+      </if>
+      <if test="agentLimit != null">
+        #{agentLimit,jdbcType=INTEGER},
+      </if>
+      <if test="groupLimit != null">
+        #{groupLimit,jdbcType=INTEGER},
+      </if>
+      <if test="groupAgentLimit != null">
+        #{groupAgentLimit,jdbcType=INTEGER},
+      </if>
+      <if test="agentState != null">
+        #{agentState,jdbcType=INTEGER},
+      </if>
+      <if test="inboundStat != null">
+        #{inboundStat,jdbcType=INTEGER},
+      </if>
+      <if test="outboundStat != null">
+        #{outboundStat,jdbcType=INTEGER},
+      </if>
+      <if test="groupWaitStat != null">
+        #{groupWaitStat,jdbcType=INTEGER},
+      </if>
+      <if test="blacklist != null">
+        #{blacklist,jdbcType=BIGINT},
+      </if>
+      <if test="notifyUrl != null">
+        #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="ext4 != null">
+        #{ext4,jdbcType=VARCHAR},
+      </if>
+      <if test="ext5 != null">
+        #{ext5,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.Company">
+    update cc_company
+    <set>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idPath != null">
+        id_path = #{idPath,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        pid = #{pid,jdbcType=BIGINT},
+      </if>
+      <if test="companyCode != null">
+        company_code = #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        contact = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null">
+        balance = #{balance,jdbcType=BIGINT},
+      </if>
+      <if test="billType != null">
+        bill_type = #{billType,jdbcType=INTEGER},
+      </if>
+      <if test="payType != null">
+        pay_type = #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="hiddenCustomer != null">
+        hidden_customer = #{hiddenCustomer,jdbcType=INTEGER},
+      </if>
+      <if test="secretKey != null">
+        secret_key = #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="ivrLimit != null">
+        ivr_limit = #{ivrLimit,jdbcType=INTEGER},
+      </if>
+      <if test="agentLimit != null">
+        agent_limit = #{agentLimit,jdbcType=INTEGER},
+      </if>
+      <if test="groupLimit != null">
+        group_limit = #{groupLimit,jdbcType=INTEGER},
+      </if>
+      <if test="groupAgentLimit != null">
+        group_agent_limit = #{groupAgentLimit,jdbcType=INTEGER},
+      </if>
+      <if test="agentState != null">
+        agent_state = #{agentState,jdbcType=INTEGER},
+      </if>
+      <if test="inboundStat != null">
+        inbound_stat = #{inboundStat,jdbcType=INTEGER},
+      </if>
+      <if test="outboundStat != null">
+        outbound_stat = #{outboundStat,jdbcType=INTEGER},
+      </if>
+      <if test="groupWaitStat != null">
+        group_wait_stat = #{groupWaitStat,jdbcType=INTEGER},
+      </if>
+      <if test="blacklist != null">
+        blacklist = #{blacklist,jdbcType=BIGINT},
+      </if>
+      <if test="notifyUrl != null">
+        notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        ext3 = #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="ext4 != null">
+        ext4 = #{ext4,jdbcType=VARCHAR},
+      </if>
+      <if test="ext5 != null">
+        ext5 = #{ext5,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.Company">
+    update cc_company
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      id_path = #{idPath,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=BIGINT},
+      company_code = #{companyCode,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      balance = #{balance,jdbcType=BIGINT},
+      bill_type = #{billType,jdbcType=INTEGER},
+      pay_type = #{payType,jdbcType=INTEGER},
+      hidden_customer = #{hiddenCustomer,jdbcType=INTEGER},
+      secret_key = #{secretKey,jdbcType=VARCHAR},
+      ivr_limit = #{ivrLimit,jdbcType=INTEGER},
+      agent_limit = #{agentLimit,jdbcType=INTEGER},
+      group_limit = #{groupLimit,jdbcType=INTEGER},
+      group_agent_limit = #{groupAgentLimit,jdbcType=INTEGER},
+      agent_state = #{agentState,jdbcType=INTEGER},
+      inbound_stat = #{inboundStat,jdbcType=INTEGER},
+      outbound_stat = #{outboundStat,jdbcType=INTEGER},
+      group_wait_stat = #{groupWaitStat,jdbcType=INTEGER},
+      blacklist = #{blacklist,jdbcType=BIGINT},
+      notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR},
+      ext3 = #{ext3,jdbcType=VARCHAR},
+      ext4 = #{ext4,jdbcType=VARCHAR},
+      ext5 = #{ext5,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <resultMap id="CompanyInfoResultMap"  type="org.cti.cc.po.CompanyInfo"  extends="BaseResultMap">
+
+  </resultMap>
+
+
+  <select id="selectListByMap"  parameterType="java.util.Map" resultMap="BaseResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_company
+    <where>
+      <if test="companyId!=null"> id = #{companyId}</if>
+      <if test="name!=null">and name like CONCAT(#{name},"%")</if>
+      <if test="companyCode!=null">and company_code = #{companyCode}</if>
+      <if test="true" >and status = 1 </if>
+    </where>
+  </select>
+
+  <update id="deleteCompany" parameterType="org.cti.cc.entity.Company">
+    update cc_company set name = #{name}, company_code = #{companyCode}, status = 0 , uts = #{uts} where id = #{id}
+  </update>
+
+  <select id="selectCompanyInfoList" parameterType="java.util.Map" resultMap="CompanyInfoResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_company
+    <where>
+      <if test="companyId!=null"> id = #{id}</if>
+      <if test="name!=null">and name like CONCAT(#{name},"%")</if>
+      <if test="companyCode!=null">and company_code = #{companyCode}</if>
+      <if test="true" >and status = 1 </if>
+    </where>
+  </select>
+
+  <select id="selectById" parameterType="Long" resultMap="CompanyInfoResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_company
+    where
+        id = #{id} and status = 1
+  </select>
+</mapper>

@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.CallLogMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.CallLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="call_id" jdbcType="BIGINT" property="callId" />
+    <result column="caller_display" jdbcType="VARCHAR" property="callerDisplay" />
+    <result column="caller" jdbcType="VARCHAR" property="caller" />
+    <result column="called_display" jdbcType="VARCHAR" property="calledDisplay" />
+    <result column="called" jdbcType="VARCHAR" property="called" />
+    <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="login_type" jdbcType="INTEGER" property="loginType" />
+    <result column="task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="ivr_id" jdbcType="BIGINT" property="ivrId" />
+    <result column="bot_id" jdbcType="BIGINT" property="botId" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="answer_time" jdbcType="BIGINT" property="answerTime" />
+    <result column="end_time" jdbcType="BIGINT" property="endTime" />
+    <result column="call_type" jdbcType="VARCHAR" property="callType" />
+    <result column="direction" jdbcType="VARCHAR" property="direction" />
+    <result column="answer_flag" jdbcType="INTEGER" property="answerFlag" />
+    <result column="wait_time" jdbcType="BIGINT" property="waitTime" />
+    <result column="answer_count" jdbcType="INTEGER" property="answerCount" />
+    <result column="hangup_dir" jdbcType="INTEGER" property="hangupDir" />
+    <result column="hangup_cause" jdbcType="VARCHAR" property="hangupCause" />
+    <result column="media" jdbcType="VARCHAR" property="media" />
+    <result column="record" jdbcType="VARCHAR" property="record" />
+    <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
+    <result column="follow_data" jdbcType="VARCHAR" property="followData" />
+    <result column="uuid1" jdbcType="VARCHAR" property="uuid1" />
+    <result column="uuid2" jdbcType="VARCHAR" property="uuid2" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, call_id, caller_display, caller, called_display, called, 
+    agent_key, group_id, login_type, task_id, ivr_id, bot_id, call_time, answer_time, 
+    end_time, call_type, direction, answer_flag, wait_time, answer_count, hangup_dir, 
+    hangup_cause, media, record, talk_time, follow_data, uuid1, uuid2, ext1, ext2, ext3, 
+    status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_call_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_call_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.CallLog">
+    insert into cc_call_log (id, cts, uts, company_id, 
+      call_id, caller_display, caller, 
+      called_display, called, agent_key, 
+      group_id, login_type, task_id, 
+      ivr_id, bot_id, call_time, 
+      answer_time, end_time, call_type, 
+      direction, answer_flag, wait_time, 
+      answer_count, hangup_dir, hangup_cause, 
+      media, record, talk_time, 
+      follow_data, uuid1, uuid2, 
+      ext1, ext2, ext3, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{callId,jdbcType=BIGINT}, #{callerDisplay,jdbcType=VARCHAR}, #{caller,jdbcType=VARCHAR}, 
+      #{calledDisplay,jdbcType=VARCHAR}, #{called,jdbcType=VARCHAR}, #{agentKey,jdbcType=VARCHAR}, 
+      #{groupId,jdbcType=BIGINT}, #{loginType,jdbcType=INTEGER}, #{taskId,jdbcType=BIGINT}, 
+      #{ivrId,jdbcType=BIGINT}, #{botId,jdbcType=BIGINT}, #{callTime,jdbcType=BIGINT}, 
+      #{answerTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{callType,jdbcType=VARCHAR}, 
+      #{direction,jdbcType=VARCHAR}, #{answerFlag,jdbcType=INTEGER}, #{waitTime,jdbcType=BIGINT}, 
+      #{answerCount,jdbcType=INTEGER}, #{hangupDir,jdbcType=INTEGER}, #{hangupCause,jdbcType=VARCHAR}, 
+      #{media,jdbcType=VARCHAR}, #{record,jdbcType=VARCHAR}, #{talkTime,jdbcType=BIGINT}, 
+      #{followData,jdbcType=VARCHAR}, #{uuid1,jdbcType=VARCHAR}, #{uuid2,jdbcType=VARCHAR}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.CallLog">
+    insert into cc_call_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="callId != null">
+        call_id,
+      </if>
+      <if test="callerDisplay != null">
+        caller_display,
+      </if>
+      <if test="caller != null">
+        caller,
+      </if>
+      <if test="calledDisplay != null">
+        called_display,
+      </if>
+      <if test="called != null">
+        called,
+      </if>
+      <if test="agentKey != null">
+        agent_key,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="loginType != null">
+        login_type,
+      </if>
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="ivrId != null">
+        ivr_id,
+      </if>
+      <if test="botId != null">
+        bot_id,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="answerTime != null">
+        answer_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="callType != null">
+        call_type,
+      </if>
+      <if test="direction != null">
+        direction,
+      </if>
+      <if test="answerFlag != null">
+        answer_flag,
+      </if>
+      <if test="waitTime != null">
+        wait_time,
+      </if>
+      <if test="answerCount != null">
+        answer_count,
+      </if>
+      <if test="hangupDir != null">
+        hangup_dir,
+      </if>
+      <if test="hangupCause != null">
+        hangup_cause,
+      </if>
+      <if test="media != null">
+        media,
+      </if>
+      <if test="record != null">
+        record,
+      </if>
+      <if test="talkTime != null">
+        talk_time,
+      </if>
+      <if test="followData != null">
+        follow_data,
+      </if>
+      <if test="uuid1 != null">
+        uuid1,
+      </if>
+      <if test="uuid2 != null">
+        uuid2,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="ext3 != null">
+        ext3,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null">
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="callerDisplay != null">
+        #{callerDisplay,jdbcType=VARCHAR},
+      </if>
+      <if test="caller != null">
+        #{caller,jdbcType=VARCHAR},
+      </if>
+      <if test="calledDisplay != null">
+        #{calledDisplay,jdbcType=VARCHAR},
+      </if>
+      <if test="called != null">
+        #{called,jdbcType=VARCHAR},
+      </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="loginType != null">
+        #{loginType,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="ivrId != null">
+        #{ivrId,jdbcType=BIGINT},
+      </if>
+      <if test="botId != null">
+        #{botId,jdbcType=BIGINT},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerTime != null">
+        #{answerTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="callType != null">
+        #{callType,jdbcType=VARCHAR},
+      </if>
+      <if test="direction != null">
+        #{direction,jdbcType=VARCHAR},
+      </if>
+      <if test="answerFlag != null">
+        #{answerFlag,jdbcType=INTEGER},
+      </if>
+      <if test="waitTime != null">
+        #{waitTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerCount != null">
+        #{answerCount,jdbcType=INTEGER},
+      </if>
+      <if test="hangupDir != null">
+        #{hangupDir,jdbcType=INTEGER},
+      </if>
+      <if test="hangupCause != null">
+        #{hangupCause,jdbcType=VARCHAR},
+      </if>
+      <if test="media != null">
+        #{media,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null">
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="talkTime != null">
+        #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="followData != null">
+        #{followData,jdbcType=VARCHAR},
+      </if>
+      <if test="uuid1 != null">
+        #{uuid1,jdbcType=VARCHAR},
+      </if>
+      <if test="uuid2 != null">
+        #{uuid2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallLog">
+    update cc_call_log
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null">
+        call_id = #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="callerDisplay != null">
+        caller_display = #{callerDisplay,jdbcType=VARCHAR},
+      </if>
+      <if test="caller != null">
+        caller = #{caller,jdbcType=VARCHAR},
+      </if>
+      <if test="calledDisplay != null">
+        called_display = #{calledDisplay,jdbcType=VARCHAR},
+      </if>
+      <if test="called != null">
+        called = #{called,jdbcType=VARCHAR},
+      </if>
+      <if test="agentKey != null">
+        agent_key = #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="loginType != null">
+        login_type = #{loginType,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="ivrId != null">
+        ivr_id = #{ivrId,jdbcType=BIGINT},
+      </if>
+      <if test="botId != null">
+        bot_id = #{botId,jdbcType=BIGINT},
+      </if>
+      <if test="callTime != null">
+        call_time = #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerTime != null">
+        answer_time = #{answerTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="callType != null">
+        call_type = #{callType,jdbcType=VARCHAR},
+      </if>
+      <if test="direction != null">
+        direction = #{direction,jdbcType=VARCHAR},
+      </if>
+      <if test="answerFlag != null">
+        answer_flag = #{answerFlag,jdbcType=INTEGER},
+      </if>
+      <if test="waitTime != null">
+        wait_time = #{waitTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerCount != null">
+        answer_count = #{answerCount,jdbcType=INTEGER},
+      </if>
+      <if test="hangupDir != null">
+        hangup_dir = #{hangupDir,jdbcType=INTEGER},
+      </if>
+      <if test="hangupCause != null">
+        hangup_cause = #{hangupCause,jdbcType=VARCHAR},
+      </if>
+      <if test="media != null">
+        media = #{media,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null">
+        record = #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="talkTime != null">
+        talk_time = #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="followData != null">
+        follow_data = #{followData,jdbcType=VARCHAR},
+      </if>
+      <if test="uuid1 != null">
+        uuid1 = #{uuid1,jdbcType=VARCHAR},
+      </if>
+      <if test="uuid2 != null">
+        uuid2 = #{uuid2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        ext3 = #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CallLog">
+    update cc_call_log
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      call_id = #{callId,jdbcType=BIGINT},
+      caller_display = #{callerDisplay,jdbcType=VARCHAR},
+      caller = #{caller,jdbcType=VARCHAR},
+      called_display = #{calledDisplay,jdbcType=VARCHAR},
+      called = #{called,jdbcType=VARCHAR},
+      agent_key = #{agentKey,jdbcType=VARCHAR},
+      group_id = #{groupId,jdbcType=BIGINT},
+      login_type = #{loginType,jdbcType=INTEGER},
+      task_id = #{taskId,jdbcType=BIGINT},
+      ivr_id = #{ivrId,jdbcType=BIGINT},
+      bot_id = #{botId,jdbcType=BIGINT},
+      call_time = #{callTime,jdbcType=BIGINT},
+      answer_time = #{answerTime,jdbcType=BIGINT},
+      end_time = #{endTime,jdbcType=BIGINT},
+      call_type = #{callType,jdbcType=VARCHAR},
+      direction = #{direction,jdbcType=VARCHAR},
+      answer_flag = #{answerFlag,jdbcType=INTEGER},
+      wait_time = #{waitTime,jdbcType=BIGINT},
+      answer_count = #{answerCount,jdbcType=INTEGER},
+      hangup_dir = #{hangupDir,jdbcType=INTEGER},
+      hangup_cause = #{hangupCause,jdbcType=VARCHAR},
+      media = #{media,jdbcType=VARCHAR},
+      record = #{record,jdbcType=VARCHAR},
+      talk_time = #{talkTime,jdbcType=BIGINT},
+      follow_data = #{followData,jdbcType=VARCHAR},
+      uuid1 = #{uuid1,jdbcType=VARCHAR},
+      uuid2 = #{uuid2,jdbcType=VARCHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR},
+      ext3 = #{ext3,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <resultMap id="BaseResultMapPo" type="org.cti.cc.po.CallLogPo" >
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="call_id" jdbcType="BIGINT" property="callId" />
+    <result column="caller_display" jdbcType="VARCHAR" property="callerDisplay" />
+    <result column="caller" jdbcType="VARCHAR" property="caller" />
+    <result column="called_display" jdbcType="VARCHAR" property="calledDisplay" />
+    <result column="called" jdbcType="VARCHAR" property="called" />
+    <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="login_type" jdbcType="INTEGER" property="loginType" />
+    <result column="task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="ivr_id" jdbcType="BIGINT" property="ivrId" />
+    <result column="bot_id" jdbcType="BIGINT" property="botId" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="answer_time" jdbcType="BIGINT" property="answerTime" />
+    <result column="end_time" jdbcType="BIGINT" property="endTime" />
+    <result column="call_type" jdbcType="VARCHAR" property="callType" />
+    <result column="direction" jdbcType="VARCHAR" property="direction" />
+    <result column="answer_flag" jdbcType="INTEGER" property="answerFlag" />
+    <result column="wait_time" jdbcType="BIGINT" property="waitTime" />
+    <result column="answer_count" jdbcType="INTEGER" property="answerCount" />
+    <result column="hangup_dir" jdbcType="INTEGER" property="hangupDir" />
+    <result column="hangup_cause" jdbcType="VARCHAR" property="hangupCause" />
+    <result column="media" jdbcType="VARCHAR" property="media" />
+    <result column="record" jdbcType="VARCHAR" property="record" />
+    <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
+    <result column="follow_data" jdbcType="VARCHAR" property="followData" />
+    <result column="uuid1" jdbcType="VARCHAR" property="uuid1" />
+    <result column="uuid2" jdbcType="VARCHAR" property="uuid2" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <collection property="callDeviceList" column="call_id" select="org.cti.cc.mapper.CallDeviceMapper.selectByCallId"></collection>
+    <collection property="callDetailList" column="call_id" select="org.cti.cc.mapper.CallDetailMapper.selectByCallId"></collection>
+  </resultMap>
+
+  <update id="updateByCallId" parameterType="org.cti.cc.entity.CallLog">
+    update cc_call_log
+    <set>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="agentKey != null">
+        agent_key = #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="loginType != null">
+        login_type = #{loginType,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="ivrId != null">
+        ivr_id = #{ivrId,jdbcType=BIGINT},
+      </if>
+      <if test="answerTime != null">
+        answer_time = #{answerTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="callType != null">
+        call_type = #{callType,jdbcType=VARCHAR},
+      </if>
+      <if test="direction != null">
+        direction = #{direction,jdbcType=VARCHAR},
+      </if>
+      <if test="answerFlag != null">
+        answer_flag = #{answerFlag,jdbcType=INTEGER},
+      </if>
+      <if test="waitTime != null">
+        wait_time = #{waitTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerCount != null">
+        answer_count = #{answerCount,jdbcType=INTEGER},
+      </if>
+      <if test="hangupDir != null">
+        hangup_dir = #{hangupDir,jdbcType=INTEGER},
+      </if>
+      <if test="hangupCause != null">
+        hangup_cause = #{hangupCause,jdbcType=VARCHAR},
+      </if>
+      <if test="media != null">
+        media = #{media,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null">
+        record = #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="talkTime != null">
+        talk_time = #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="followData != null">
+        follow_data = #{followData,jdbcType=VARCHAR},
+      </if>
+      <if test="uuid1 != null">
+        uuid1 = #{uuid1,jdbcType=VARCHAR},
+      </if>
+      <if test="uuid2 != null">
+        uuid2 = #{uuid2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        ext3 = #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where call_id = #{callId,jdbcType=BIGINT}
+  </update>
+
+  <select id="getCall" parameterType="Long" resultMap="BaseResultMapPo" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_call_log
+    <where>
+      <if test="callId!=null"> call_id = #{callId}</if>
+      <if test="companyId!=null"> and company_id = #{companyId}</if>
+    </where>
+  </select>
+
+  <select id="getCallByUuid1" resultMap="BaseResultMapPo">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_call_log
+    <where>
+      <if test="companyId!=null"> company_id = #{companyId}</if>
+      <if test="startTime!=null"> and call_time >= #{startTime}</if>
+      <if test="endTime!=null"> and call_time &lt; #{endTime}</if>
+      <if test="uuid1!=null"> and uuid1 = #{uuid1}</if>
+      <if test="uuid2!=null"> and uuid2 = #{uuid2}</if>
+    </where>
+  </select>
+</mapper>

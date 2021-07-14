@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.SkillMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.Skill">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, name,company_id, remark, status
+  </sql>
+
+  <!--查询技能组的技能 -->
+  <select id="selectByGroup" parameterType="Long" resultMap="BaseResultMap">
+     select a.id, a.cts, a.uts, a.name, a.remark, a.status from cc_skill a , cc_skill_group b where a.company_id = b.company_id and a.id = b.skill_id and b.group_id = #{id} and a.status = 1
+  </select>
+
+  <!-- 查询坐席的技能 -->
+  <select id="selectByAgent" parameterType="Long" resultMap="BaseResultMap">
+    select a.id, a.cts, a.uts, a.name, a.remark, a.status from cc_skill a , cc_skill_agent b where a.company_id = b.company_id and a.id = b.skill_id and b.agent_id = #{id} and a.status = 1
+  </select>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_skill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_skill
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.Skill">
+    insert into cc_skill (id, cts, uts, name, company_id,
+      remark, status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{companyId,jdbcType=BIGINT},
+      #{remark,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.Skill">
+    insert into cc_skill
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.Skill">
+    update cc_skill
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.Skill">
+    update cc_skill
+    set cts = #{cts,jdbcType=BIGINT},
+        uts = #{uts,jdbcType=BIGINT},
+        name = #{name,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        company_id = #{companyId,jdbcType=BIGINT},
+        status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_skill
+    where
+        id = #{id,jdbcType=BIGINT} and company_id = #{companyId,jdbcType=BIGINT} and status = 1
+  </select>
+</mapper>

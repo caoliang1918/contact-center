@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.GroupOverflowMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.GroupOverflow">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="overflow_id" jdbcType="BIGINT" property="overflowId" />
+    <result column="level_value" jdbcType="INTEGER" property="levelValue" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, cts, uts, group_id, overflow_id, level_value, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from cc_group_overflow
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_group_overflow
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.GroupOverflow">
+    insert into cc_group_overflow (id, cts, uts, group_id,
+      overflow_id, level_value, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
+      #{overflowId,jdbcType=BIGINT}, #{levelValue,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.GroupOverflow">
+    insert into cc_group_overflow
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="overflowId != null">
+        overflow_id,
+      </if>
+      <if test="levelValue != null">
+        level_value,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="overflowId != null">
+        #{overflowId,jdbcType=BIGINT},
+      </if>
+      <if test="levelValue != null">
+        #{levelValue,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.GroupOverflow">
+    update cc_group_overflow
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="overflowId != null">
+        overflow_id = #{overflowId,jdbcType=BIGINT},
+      </if>
+      <if test="levelValue != null">
+        level_value = #{levelValue,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.GroupOverflow">
+    update cc_group_overflow
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      group_id = #{groupId,jdbcType=BIGINT},
+      overflow_id = #{overflowId,jdbcType=BIGINT},
+      level_value = #{levelValue,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <resultMap id="GroupOverFlowResult" type="org.cti.cc.po.GroupOverFlow" >
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="handle_type" jdbcType="INTEGER" property="handleType" />
+    <result column="busy_type" jdbcType="INTEGER" property="busyType" />
+    <result column="queue_timeout" jdbcType="INTEGER" property="queueTimeout" />
+    <result column="busy_timeout_type" jdbcType="INTEGER" property="busyTimeoutType" />
+    <result column="overflow_type" jdbcType="INTEGER" property="overflowType" />
+    <result column="overflow_value" jdbcType="INTEGER" property="overflowValue" />
+    <result column="lineup_expression" jdbcType="VARCHAR" property="lineupExpression" />
+    <!-- 前置条件 -->
+    <collection property="overflowFronts" select="org.cti.cc.mapper.OverflowFrontMapper.selectByOverflowId" column="id"  ></collection>
+    <!-- 自定义策略 -->
+    <collection property="overflowExps" select="org.cti.cc.mapper.OverflowExpMapper.selectByOverflowId" column="id" ></collection>
+
+  </resultMap>
+
+  <resultMap id="BaseResultMapPo" type="org.cti.cc.po.GroupOverflowPo" extends="GroupOverFlowResult" >
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="overflow_id" jdbcType="BIGINT" property="overflowId" />
+    <result column="level_value" jdbcType="INTEGER" property="levelValue" />
+  </resultMap>
+
+
+  <!-- 查询技能组所有的溢出策略 -->
+  <select id="selectByOverflow" parameterType="Long" resultMap="BaseResultMapPo" >
+     select
+        b.id , handle_type, busy_type, queue_timeout, busy_timeout_type,  overflow_type,
+        overflow_value, lineup_expression , group_id, overflow_id, level_value
+     from
+        cc_group_overflow a , cc_overflow_config b  where a.overflow_id = b.id  and  a.group_id = #{groupId} and a.status = 1
+  </select>
+</mapper>

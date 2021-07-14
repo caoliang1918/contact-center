@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.AdminPermissionMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.AdminPermission">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+    <result column="permission_url" jdbcType="VARCHAR" property="permissionUrl" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="permission_order" jdbcType="INTEGER" property="permissionOrder" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="is_front" jdbcType="INTEGER" property="isFront" />
+    <result column="is_interface" jdbcType="INTEGER" property="isInterface" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="permission_level" jdbcType="INTEGER" property="permissionLevel" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, permission_name, permission_url, parent_id, permission_order, 
+    icon, is_front, is_interface, status, permission_level
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_admin_permission
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_admin_permission
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.AdminPermission">
+    insert into cc_admin_permission (id, cts, uts, company_id, 
+      permission_name, permission_url, parent_id, 
+      permission_order, icon, is_front, 
+      is_interface, status, permission_level
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{permissionName,jdbcType=VARCHAR}, #{permissionUrl,jdbcType=VARCHAR}, #{parentId,jdbcType=BIGINT}, 
+      #{permissionOrder,jdbcType=INTEGER}, #{icon,jdbcType=VARCHAR}, #{isFront,jdbcType=INTEGER}, 
+      #{isInterface,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{permissionLevel,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.AdminPermission">
+    insert into cc_admin_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="permissionName != null">
+        permission_name,
+      </if>
+      <if test="permissionUrl != null">
+        permission_url,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="permissionOrder != null">
+        permission_order,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="isFront != null">
+        is_front,
+      </if>
+      <if test="isInterface != null">
+        is_interface,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="permissionLevel != null">
+        permission_level,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionName != null">
+        #{permissionName,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionUrl != null">
+        #{permissionUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionOrder != null">
+        #{permissionOrder,jdbcType=INTEGER},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="isFront != null">
+        #{isFront,jdbcType=INTEGER},
+      </if>
+      <if test="isInterface != null">
+        #{isInterface,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="permissionLevel != null">
+        #{permissionLevel,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AdminPermission">
+    update cc_admin_permission
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionName != null">
+        permission_name = #{permissionName,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionUrl != null">
+        permission_url = #{permissionUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionOrder != null">
+        permission_order = #{permissionOrder,jdbcType=INTEGER},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="isFront != null">
+        is_front = #{isFront,jdbcType=INTEGER},
+      </if>
+      <if test="isInterface != null">
+        is_interface = #{isInterface,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="permissionLevel != null">
+        permission_level = #{permissionLevel,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AdminPermission">
+    update cc_admin_permission
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      permission_name = #{permissionName,jdbcType=VARCHAR},
+      permission_url = #{permissionUrl,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      permission_order = #{permissionOrder,jdbcType=INTEGER},
+      icon = #{icon,jdbcType=VARCHAR},
+      is_front = #{isFront,jdbcType=INTEGER},
+      is_interface = #{isInterface,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      permission_level = #{permissionLevel,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

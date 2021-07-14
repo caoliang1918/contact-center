@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.VdnScheduleDtmfMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.VdnScheduleDtmf">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="navigate_id" jdbcType="BIGINT" property="navigateId" />
+    <result column="dtmf" jdbcType="VARCHAR" property="dtmf" />
+    <result column="route_type" jdbcType="INTEGER" property="routeType" />
+    <result column="route_value" jdbcType="BIGINT" property="routeValue" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, navigate_id, dtmf, route_type, route_value, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_vdn_schedule_dtmf
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByNavagite"  parameterType="Long" resultMap="BaseResultMap">
+     select
+     <include refid="Base_Column_List" />
+     from   cc_vdn_schedule_dtmf
+      where navigate_id = #{id} and status = 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_vdn_schedule_dtmf
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.VdnScheduleDtmf">
+    insert into cc_vdn_schedule_dtmf (id, cts, uts, company_id, 
+      navigate_id, dtmf, route_type, 
+      route_value, status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{navigateId,jdbcType=BIGINT}, #{dtmf,jdbcType=VARCHAR}, #{routeType,jdbcType=INTEGER}, 
+      #{routeValue,jdbcType=BIGINT}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.VdnScheduleDtmf">
+    insert into cc_vdn_schedule_dtmf
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="navigateId != null">
+        navigate_id,
+      </if>
+      <if test="dtmf != null">
+        dtmf,
+      </if>
+      <if test="routeType != null">
+        route_type,
+      </if>
+      <if test="routeValue != null">
+        route_value,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="navigateId != null">
+        #{navigateId,jdbcType=BIGINT},
+      </if>
+      <if test="dtmf != null">
+        #{dtmf,jdbcType=VARCHAR},
+      </if>
+      <if test="routeType != null">
+        #{routeType,jdbcType=INTEGER},
+      </if>
+      <if test="routeValue != null">
+        #{routeValue,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.VdnScheduleDtmf">
+    update cc_vdn_schedule_dtmf
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="navigateId != null">
+        navigate_id = #{navigateId,jdbcType=BIGINT},
+      </if>
+      <if test="dtmf != null">
+        dtmf = #{dtmf,jdbcType=VARCHAR},
+      </if>
+      <if test="routeType != null">
+        route_type = #{routeType,jdbcType=INTEGER},
+      </if>
+      <if test="routeValue != null">
+        route_value = #{routeValue,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.VdnScheduleDtmf">
+    update cc_vdn_schedule_dtmf
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      navigate_id = #{navigateId,jdbcType=BIGINT},
+      dtmf = #{dtmf,jdbcType=VARCHAR},
+      route_type = #{routeType,jdbcType=INTEGER},
+      route_value = #{routeValue,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
