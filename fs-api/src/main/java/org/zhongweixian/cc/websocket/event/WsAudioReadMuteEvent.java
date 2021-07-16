@@ -3,9 +3,10 @@ package org.zhongweixian.cc.websocket.event;
 import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 
 /**
- * Create by caoliang on 2020/12/7
+ * Created by caoliang on 2021/7/16
+ * <p>
+ * 坐席静音
  */
-public class WsCancelHoldEvent extends WsBaseEvent {
-
+public class WsAudioReadMuteEvent extends WsBaseEvent {
 
 }

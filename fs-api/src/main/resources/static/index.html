@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>demo1</title>
@@ -152,33 +152,20 @@
             <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
         </div>
         <div>
-            <textarea id="loginText" style="width: 350px;height: 50px">{"cmd":"LOGIN","loginType":"1","workType":"1","agentKey":"1001@test","passwd":"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92","time":"123456789"}</textarea>
+            <textarea id="loginText" style="width: 350px;height: 30px">{"cmd":"LOGIN","loginType":"1","workType":"1","agentKey":"1001@test","passwd":"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92","time":"123456789"}</textarea>
         </div>
-        <!--<div>
-            <button id="loginBut" onclick="echo(document.getElementById('loginText').value);" disabled="disabled">登 录
-            </button>
-        </div>-->
-        </br>
-
 
         <div>
-            <textarea id="READY_Text"
-                      style="width: 350px;height: 30px">{"cmd":"READY","sequence":1604584634704}</textarea>
+            <textarea id="READY_Text" hidden>{"cmd":"READY","sequence":1604584634704}</textarea>
         </div>
         <div>
-            <button id="READY" onclick="echo(document.getElementById('READY_Text').value);"> READY</button>
-        </div>
-        </br>
+            <button id="READY" onclick=echo("{'cmd':'READY','sequence':'1604584634704'}")> READY</button>
+            <button id="NOT_READY" onclick=echo("{'cmd':'NOT_READY','sequence':'1604584634704'}")> NOT_READY</button>
+            <button id="answer" onclick=echo("{'cmd':'ANSWER'}")> 应答</button>
+            <button id="hangupCall" onclick=echo("{'cmd':'HANGUP_CALL'}")> 挂机</button>
 
 
-        <div>
-            <textarea id="NOT_READY_Text"
-                      style="width: 350px;height: 30px">{"cmd":"NOT_READY","sequence":1604584634704}</textarea>
         </div>
-        <div>
-            <button id="NOT_READY" onclick="echo(document.getElementById('NOT_READY_Text').value);"> NOT_READY</button>
-        </div>
-        </br>
 
         <div>
             <textarea id="calloutText" style="width: 350px;height: 50px">{ "cmd":"MAKE_CALL", "caller":"", "called":"14400010002", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"}, "sequence":1604584634704}</textarea>
@@ -186,7 +173,6 @@
         <div>
             <button id="callout" onclick="echo(document.getElementById('calloutText').value);"> 外呼</button>
         </div>
-        </br>
 
         <div>
             <textarea id="consultText" style="width: 350px;height: 50px">{ "cmd":"COONSULT", "caller":"", "called":"14400010002", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"}, "sequence":1604584634704}</textarea>
@@ -205,21 +191,9 @@
         </br>
 
         <div>
-            <textarea id="answerText"
-                      style="width: 350px;height: 30px">{ "cmd":"ANSWER", "sequence":1604584634704}</textarea>
+            <button id="audioReadMute" onclick=echo("{'cmd':'AUDIO_READ_MUTE'}")>静音</button>
+            <button id="audioStop" onclick=echo("{'cmd':'AUDIO_STOP'}")>取消静音</button>
         </div>
-        <div>
-            <button id="answer" onclick="echo(document.getElementById('answerText').value);"> 应答</button>
-        </div>
-        </br>
-
-        <div>
-            <textarea id="hangupCallText" style="width: 350px;height: 30px">{ "cmd":"HANGUP_CALL", "callId":"", "sequence":1604584634704}</textarea>
-        </div>
-        <div>
-            <button id="hangupCall" onclick="echo(document.getElementById('hangupCallText').value);"> 挂机</button>
-        </div>
-        </br>
 
         </br>
     </div>

@@ -2,6 +2,7 @@ package org.zhongweixian.cc.command;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.cti.cc.entity.CallDetail;
+import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,11 +134,15 @@ public class GroupHandler extends BaseHandler {
                 break;
 
             case 2:
-                overFlowHandler.overflow(callInfo, deviceId);
+                overFlowHandler.overflow(callInfo, deviceId, groupId);
                 break;
 
             case 3:
                 logger.info("group:{} handleType is hangup, callId:{}", groupInfo.getName(), callInfo.getCallId());
+                //技能组策略挂机
+                callInfo.setHangupDir(3);
+                callInfo.setHangupCause(CauseEnums.OVERFLOW_TIMEOUT.name());
+                hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
                 break;
 
             default:
@@ -239,7 +244,7 @@ public class GroupHandler extends BaseHandler {
      * @param groupInfo
      * @return
      */
-    private GroupOverflowPo getEffectiveOverflow(GroupInfo groupInfo) {
+    public GroupOverflowPo getEffectiveOverflow(GroupInfo groupInfo) {
         if (CollectionUtils.isEmpty(groupInfo.getGroupOverflows())) {
             return null;
         }
@@ -258,7 +263,7 @@ public class GroupHandler extends BaseHandler {
         CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.deviceId);
         GroupOverflowPo groupOverflowPo = callQueue.getGroupOverflowPo();
-        logger.info("callId:{} queueTimeoout, busyTimeoutType:{}", callQueue.getCallId(), groupOverflowPo.getBusyTimeoutType());
+        logger.info("callId:{} queueTimeout, busyTimeoutType:{}", callQueue.getCallId(), groupOverflowPo.getBusyTimeoutType());
         switch (groupOverflowPo.getBusyTimeoutType()) {
             case 1:
                 //排队超时走溢出策略,1:group,2:ivr,3:vdn
@@ -275,7 +280,9 @@ public class GroupHandler extends BaseHandler {
                 }
                 break;
             case 2:
-                //挂机
+                //排队超时挂机
+                callInfo.setHangupDir(3);
+                callInfo.setHangupCause(CauseEnums.QUEUE_TIMEOUT.name());
                 deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_HANGUP, groupOverflowPo.getOverflowValue().toString()));
                 break;
 

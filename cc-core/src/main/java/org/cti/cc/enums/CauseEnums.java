@@ -62,7 +62,22 @@ public enum CauseEnums {
      */
     ORIGINATOR_CANCEL(1010),
 
-    TIMEOUT(1011);
+    TIMEOUT(1011),
+
+    /**
+     * 溢出挂机
+     */
+    OVERFLOW_TIMEOUT(1012),
+
+    /**
+     * 排队挂机
+     */
+    QUEUE_TIMEOUT(1012),
+
+    /**
+     * 参数错误
+     */
+    PARAMTER_ERROR(1099);
 
     private Integer causeCode;
 

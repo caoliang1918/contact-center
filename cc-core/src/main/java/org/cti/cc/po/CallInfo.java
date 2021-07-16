@@ -118,7 +118,7 @@ public class CallInfo implements Serializable {
     private Integer answerCount;
 
     /**
-     * 1主叫挂机，2:被叫挂机
+     * 1主叫挂机, 2:被叫挂机, 3:平台挂机
      */
     private Integer hangupDir;
 

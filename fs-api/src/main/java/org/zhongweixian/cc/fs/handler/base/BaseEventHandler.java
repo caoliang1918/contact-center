@@ -228,8 +228,11 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
     }
 
     protected String hiddenNumber(String number) {
-        if (number.length() == 11) {
-            return number.substring(0, 3) + "****" + number.substring(7, 11);
+        if (number.length() >= 11) {
+            return number.substring(0, 3) + "****" + number.substring(7);
+        }
+        if (number.length() < 3) {
+            return number;
         }
         return number.substring(0, 3) + randomHidden(number.length());
     }

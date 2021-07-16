@@ -114,6 +114,29 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
     }
 
     /**
+     * 坐席静音
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    protected void audioReadMute(String media, Long callId, String deviceId) {
+        fsListen.sendBgapiMessage(media, "uuid_audio", deviceId + " start read mute 1");
+    }
+
+    /**
+     * 取消静音
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    protected void audioStop(String media, Long callId, String deviceId) {
+        fsListen.sendBgapiMessage(media, "uuid_audio", deviceId + " stop");
+    }
+
+
+    /**
      * 随机生成deviceId
      *
      * @return

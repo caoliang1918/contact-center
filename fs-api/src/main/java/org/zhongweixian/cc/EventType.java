@@ -1,9 +1,9 @@
 package org.zhongweixian.cc;
 
+import org.zhongweixian.cc.fs.event.*;
 import org.zhongweixian.cc.tcp.event.SubMakeCallEvent;
 import org.zhongweixian.cc.tcp.event.SubStopCallEvent;
 import org.zhongweixian.cc.websocket.event.*;
-import org.zhongweixian.cc.fs.event.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,9 +123,15 @@ public enum EventType {
     WS_CANCEL_HOLD(2010, WsCancelHoldEvent.class),
 
     /**
-     * 挂机
+     * 坐席静音
      */
-    WS_HANGUP_CALL(2011, WsHangupCallEvent.class),
+    WS_AUDIO_READ_MUTE(2011, WsAudioReadMuteEvent.class),
+
+    /**
+     * 取消静音
+     */
+    WS_AUDIO_STOP(2012, WsAudioStopEvent.class),
+
 
     /**
      * 通话中更新随路数据
@@ -201,6 +207,13 @@ public enum EventType {
      * 取消坐席监控
      */
     WS_MONITOR_CANCEL(2043, WsMonitorCancelEvent.class),
+
+
+    /**
+     * 挂机
+     */
+    WS_HANGUP_CALL(2049, WsHangupCallEvent.class),
+
     /**
      * 坐席退出系统
      */

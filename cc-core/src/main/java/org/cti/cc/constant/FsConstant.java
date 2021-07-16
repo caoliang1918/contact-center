@@ -5,6 +5,8 @@ package org.cti.cc.constant;
  */
 public class FsConstant {
 
+    public final static String SPACE = " ";
+
     public final static String SET = "set";
 
     public final static String EXECUTE = "execute";
