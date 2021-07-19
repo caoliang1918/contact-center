@@ -13,10 +13,13 @@ import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 /**
  * Created by caoliang on 2020/11/6
+ * <p>
+ * 坐席发起挂机
  */
 @Component
 @HandlerType("WS_HANGUP_CALL")
-public class WsStopCallHandler extends WsBaseHandler<WsHangupCallEvent> {
+public class WsHangupCallHandler extends WsBaseHandler<WsHangupCallEvent> {
+
     @Override
     public void handleEvent(WsHangupCallEvent event) {
         logger.info("{}", event.toString());

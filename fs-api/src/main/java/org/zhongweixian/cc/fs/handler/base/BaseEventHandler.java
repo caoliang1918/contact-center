@@ -17,7 +17,6 @@ import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
-import org.zhongweixian.cc.util.Constants;
 import org.zhongweixian.cc.util.SnowflakeIdWorker;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
@@ -109,13 +108,7 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
      * @param device2
      */
     protected void callBridge(String media, String device1, String device2) {
-        fsListen.sendArgs(media, device1, FsConstant.SET, FsConstant.PARK_AFTER_BRIDGE);
-        fsListen.sendArgs(media, device1, FsConstant.SET, FsConstant.HANGUP_AFTER_BRIDGE);
-        fsListen.sendArgs(media, device2, FsConstant.SET, FsConstant.HANGUP_AFTER_BRIDGE);
-        fsListen.sendArgs(media, device2, FsConstant.SET, FsConstant.PARK_AFTER_BRIDGE);
-        StringBuilder builder = new StringBuilder();
-        builder.append(device1).append(Constants.SPACE).append(device2);
-        fsListen.sendBgapiMessage(media, Constants.BRIDGE, builder.toString());
+        fsListen.callBridge(media, device1, device2);
     }
 
     /**

@@ -60,6 +60,10 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
         if (deviceInfo2 != null && deviceInfo2.getBridgeTime() == null) {
             deviceInfo2.setBridgeTime(event.getTimestamp() / 1000);
         }
+        if (!callInfo.getAnswerTime().equals(event.getTimestamp() / 1000)) {
+
+        }
+
         logger.info("桥接成功 callId:{}, device:{}, otherDevice:{}", callInfo.getCallId(), event.getDeviceId(), event.getOtherUniqueId());
         String record = recordPath +
                 DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";

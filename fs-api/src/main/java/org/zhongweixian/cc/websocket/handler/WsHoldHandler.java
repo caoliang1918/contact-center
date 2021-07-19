@@ -4,20 +4,19 @@ import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CallInfo;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.configration.HandlerType;
-import org.zhongweixian.cc.websocket.event.WsCancelHoldEvent;
+import org.zhongweixian.cc.websocket.event.WsHoldEvent;
 import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
 
 /**
- * Created by caoliang on 2021/7/16
+ * Created by caoliang on 2021/7/19
  * <p>
- * 取消保持
+ * 呼叫保持
  */
 @Component
-@HandlerType("WS_CANCEL_HOLD")
-public class WsCancelHoldHandler extends WsBaseHandler<WsCancelHoldEvent> {
-
+@HandlerType("WS_HOLD")
+public class WsHoldHandler extends WsBaseHandler<WsHoldEvent> {
     @Override
-    public void handleEvent(WsCancelHoldEvent event) {
+    public void handleEvent(WsHoldEvent event) {
         AgentInfo agentInfo = getAgent(event);
         if (agentInfo == null || agentInfo.getCallId() == null) {
 
@@ -26,8 +25,10 @@ public class WsCancelHoldHandler extends WsBaseHandler<WsCancelHoldEvent> {
         String deviceId = agentInfo.getDeviceId();
         CallInfo callInfo = cacheService.getCallInfo(agentInfo.getCallId());
         if (deviceId == null || callInfo == null) {
+
             return;
         }
-        callBridge(callInfo.getMedia(), callInfo.getDeviceList().get(0), callInfo.getDeviceList().get(1));
+        this.hold(callInfo.getMedia(), callInfo.getCallId(), deviceId);
     }
+
 }

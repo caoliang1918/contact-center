@@ -36,7 +36,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
-        <springboot.version>2.5.2</springboot.version>
         <fastdfs.version>1.27.2</fastdfs.version>
         <guava.version>28.1-jre</guava.version>
         <websocket-api.version>2.0.3</websocket-api.version>

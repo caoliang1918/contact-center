@@ -2,7 +2,6 @@ package org.zhongweixian.cc.fs.handler;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.CallDetail;
-import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.Direction;
@@ -48,8 +47,10 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         if (StringUtils.isBlank(callInfo.getAgentKey())) {
             return;
         }
+
         deviceInfo.setRingStartTime(event.getTimestamp() / 1000);
         logger.info("callId:{}, device:{} park", callInfo.getCallId(), event.getDeviceId());
+
         Integer deviceType = deviceInfo.getDeviceType();
         WsCallEntity ringEntity = new WsCallEntity();
         AgentInfo agentInfo = cacheService.getAgentInfo(callInfo.getAgentKey());

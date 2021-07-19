@@ -425,6 +425,23 @@ public class FsListen {
     }
 
     /**
+     * 桥接电话
+     *
+     * @param media
+     * @param deviceId1
+     * @param deviceId2
+     */
+    public void callBridge(String media, String deviceId1, String deviceId2) {
+        this.sendArgs(media, deviceId1, FsConstant.SET, FsConstant.PARK_AFTER_BRIDGE);
+        this.sendArgs(media, deviceId1, FsConstant.SET, FsConstant.HANGUP_AFTER_BRIDGE);
+        this.sendArgs(media, deviceId2, FsConstant.SET, FsConstant.HANGUP_AFTER_BRIDGE);
+        this.sendArgs(media, deviceId2, FsConstant.SET, FsConstant.PARK_AFTER_BRIDGE);
+        StringBuilder builder = new StringBuilder();
+        builder.append(deviceId1).append(Constants.SPACE).append(deviceId2);
+        sendBgapiMessage(media, Constants.BRIDGE, builder.toString());
+    }
+
+    /**
      * @param media
      * @param from
      * @param to
@@ -518,6 +535,18 @@ public class FsListen {
         msg.addExecuteAppArg(arg);
         msg.addAsync();
         this.sendMessage(media, msg);
+    }
+
+    /**
+     * bgapi uuid_transfer  sswitch-301-60f4c396-59-85 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
+     *
+     * @param media
+     * @param deviceId
+     */
+    public void hold(String media, String deviceId) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(deviceId).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
+        fsClient.get(media).sendBackgroundApiCommand(Constants.TRANSFER, builder.toString());
     }
 
 }

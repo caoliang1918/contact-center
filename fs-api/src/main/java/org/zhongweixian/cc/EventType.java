@@ -4,6 +4,7 @@ import org.zhongweixian.cc.fs.event.*;
 import org.zhongweixian.cc.tcp.event.SubMakeCallEvent;
 import org.zhongweixian.cc.tcp.event.SubStopCallEvent;
 import org.zhongweixian.cc.websocket.event.*;
+import org.zhongweixian.cc.websocket.handler.WsUpdateFollowDataHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,9 +104,9 @@ public enum EventType {
     WS_MAKE_CALL(2006, WsMakeCallEvent.class),
 
     /**
-     * 取消拨打
+     * 更新随路数据
      */
-    WS_CANCEL_MAKECALL(2007, WsCancelMakeCallEvent.class),
+    WS_UPDATE_FOLLOWDATA(2007 , WsUpdateFollowDataEvent.class),
 
     /**
      * 接起

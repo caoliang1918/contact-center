@@ -135,6 +135,39 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
         fsListen.sendBgapiMessage(media, "uuid_audio", deviceId + " stop");
     }
 
+    /**
+     * 呼叫保持
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    protected void hold(String media, Long callId, String deviceId) {
+        fsListen.hold(media, deviceId);
+    }
+
+
+    /**
+     * 桥接电话
+     *
+     * @param media
+     * @param device1
+     * @param device2
+     */
+    protected void callBridge(String media, String device1, String device2) {
+        fsListen.callBridge(media, device1, device2);
+    }
+
+    /**
+     * 取消保持
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    protected void cancelHold(String media, Long callId, String deviceId) {
+        fsListen.hold(media, deviceId);
+    }
 
     /**
      * 随机生成deviceId

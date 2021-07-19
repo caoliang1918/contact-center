@@ -121,12 +121,6 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         cacheService.addDevice(deviceId, callInfo.getCallId());
     }
 
-    /**
-     *
-     */
-    private void transferCall() {
-
-    }
 
 
     /**
