@@ -96,9 +96,9 @@
                 <version>${fastdfs.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.oracle</groupId>
-                <artifactId>ojdbc6</artifactId>
-                <version>12.1.0.1-atlassian-hosted</version>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc10</artifactId>
+                <version>19.11.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ulisesbocchio</groupId>
