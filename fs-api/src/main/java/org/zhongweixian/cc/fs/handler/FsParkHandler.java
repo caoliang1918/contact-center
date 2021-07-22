@@ -41,7 +41,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         }
         callInfo.setMedia(event.getHostname());
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(event.getDeviceId());
-        if (deviceInfo == null) {
+        if (deviceInfo == null || event.getHangup() != null) {
             return;
         }
         if (StringUtils.isBlank(callInfo.getAgentKey())) {

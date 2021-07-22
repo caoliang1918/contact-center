@@ -40,7 +40,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
 
     private RestTemplate restTemplate;
 
-    public FsHangupHandler(@Value("${cdr.notify.timeout:100}") Integer connectTimeout, @Value("${cdr.notify.timeout:1000}") Integer readTimeout) {
+    public FsHangupHandler(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout, @Value("${cdr.notify.readTimeout:1000}") Integer readTimeout) {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
         simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
@@ -49,14 +49,13 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
 
     @Override
     public void handleEvent(FsHangupEvent event) {
-        logger.info("======= {}, {}", event.getSipStatus(), event.getSipProtocol());
         CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
         if (callInfo == null) {
             return;
         }
         Integer count = callInfo.getDeviceList().size();
         String cause = event.getHangupCause();
-        logger.info("callId:{} called:{} hangup sipStatus:{} hangupCause:{}", callInfo.getCallId(), event.getChannelName(), event.getSipStatus(), event.getHangupCause());
+        logger.info("callId:{}, deviceId:{}, called:{} hangup sipStatus:{} hangupCause:{}", callInfo.getCallId(), event.getDeviceId(), event.getChannelName(), event.getSipStatus(), event.getHangupCause());
 
         /**
          * 挂机原因

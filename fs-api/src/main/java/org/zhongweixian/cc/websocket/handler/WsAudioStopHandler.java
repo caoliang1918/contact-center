@@ -1,11 +1,13 @@
 package org.zhongweixian.cc.websocket.handler;
 
 import org.cti.cc.po.AgentInfo;
+import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CallInfo;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.websocket.event.WsAudioStopEvent;
 import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
+import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 /**
  * Created by caoliang on 2021/7/16
@@ -29,5 +31,6 @@ public class WsAudioStopHandler extends WsBaseHandler<WsAudioStopEvent> {
             return;
         }
         this.audioStop(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+        sendMessgae(event, new WsResponseEntity<>(AgentState.TALKING.name(), event.getAgentKey()));
     }
 }

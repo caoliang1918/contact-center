@@ -93,5 +93,12 @@ public enum AgentState {
     /**
      * 通话中
      */
-    TALKING;
+    TALKING,
+
+    /**
+     * 静音中
+     */
+    AUDIO_READY_MUTE;
+
+
 }

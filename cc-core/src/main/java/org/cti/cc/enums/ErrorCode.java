@@ -38,6 +38,7 @@ public enum ErrorCode {
     AGENT_NOT_ONLINE(2008, "坐席不在线"),
     //不处于READY NOT_READY
     AGENT_BUSY(2009, "坐席忙碌"),
+    CALL_ANSWERED(2010, "电话已经应答"),
 
 
     CALLTYPE_ERROR(3001, "呼叫类型错误"),

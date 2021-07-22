@@ -24,6 +24,24 @@ public class FsParkEvent extends FsBaseEvent {
     @JSONField(name = "Caller-Destination-Number")
     private String called;
 
+    /**
+     * 是否挂机,OK
+     */
+    @JSONField(name = "variable_sip_hangup_phrase")
+    private String hangup;
+
+    /**
+     * 当前状态
+     */
+    @JSONField(name = "Channel-Call-State")
+    private String state;
+
+    /**
+     * 桥接之后的对端deviceId
+     */
+    @JSONField(name = "variable_last_bridge_to")
+    private String lastBridgeTo;
+
 
     public String getDirection() {
         return direction;
@@ -49,12 +67,37 @@ public class FsParkEvent extends FsBaseEvent {
         this.caller = caller;
     }
 
+    public String getHangup() {
+        return hangup;
+    }
+
+    public void setHangup(String hangup) {
+        this.hangup = hangup;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getLastBridgeTo() {
+        return lastBridgeTo;
+    }
+
+    public void setLastBridgeTo(String lastBridgeTo) {
+        this.lastBridgeTo = lastBridgeTo;
+    }
+
     @Override
     public String toString() {
         return "FsParkEvent{" +
                 "direction='" + direction + '\'' +
-                ", called='" + called + '\'' +
                 ", caller='" + caller + '\'' +
+                ", called='" + called + '\'' +
+                ", state='" + state + '\'' +
                 ", eventName='" + eventName + '\'' +
                 ", context=" + context +
                 ", coreUuid='" + coreUuid + '\'' +

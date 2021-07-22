@@ -45,7 +45,8 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         }
         AgentInfo agentInfo = getAgent(event);
         if (agentInfo.getAgentState().name().contains("CALL") || agentInfo.getAgentState() == AgentState.TALKING) {
-
+            sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_CALLING, event.getCmd(), event.getAgentKey()));
+            return;
         }
 
         /**
