@@ -82,7 +82,7 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
         ringEntity.setAgentState(AgentState.TALKING);
         ringEntity.setCaller(callInfo.getCaller());
         ringEntity.setCalled(callInfo.getCalled());
-        AgentInfo agentInfo = cacheService.getAgentInfo(callInfo.getAgentKey());
+        AgentInfo agentInfo = cacheService.getAgentInfo(deviceInfo1.getAgentKey());
         if (agentInfo.getHiddenCustomer() == 1) {
             if (callInfo.getDirection() == Direction.OUTBOUND) {
                 ringEntity.setCalled(hiddenNumber(callInfo.getCalled()));

@@ -62,6 +62,11 @@ public enum AgentState {
     OUT_CALLED_RING,
 
     /**
+     * 转接振铃
+     */
+    TRANSFER_CALL_RING,
+
+    /**
      * 外呼通话中
      */
     OUT_CALLING,

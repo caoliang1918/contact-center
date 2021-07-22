@@ -66,12 +66,21 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             if (1 == deviceType) {
                 CallType callType = callInfo.getCallType();
                 if (callType == CallType.OUTBOUNT_CALL) {
-                    //外呼坐席振铃
-                    ringEntity.setAgentState(AgentState.OUT_CALLER_RING);
-                    if (agentInfo.getHiddenCustomer() == 1) {
-                        ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
+                    if (deviceInfo.getCdrType() == 4) {
+                        //外呼转接坐席
+                        ringEntity.setAgentState(AgentState.TRANSFER_CALL_RING);
+                        if (agentInfo.getHiddenCustomer() == 1) {
+                            ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
+                        }
+                        sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.TRANSFER_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
+                    } else {
+                        //外呼坐席振铃
+                        ringEntity.setAgentState(AgentState.OUT_CALLER_RING);
+                        if (agentInfo.getHiddenCustomer() == 1) {
+                            ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
+                        }
+                        sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLER_RING.name(), callInfo.getAgentKey(), ringEntity));
                     }
-                    sendAgentMessage(callInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLER_RING.name(), callInfo.getAgentKey(), ringEntity));
                 } else if (callType == CallType.INNER_CALL) {
                     //内呼坐席振铃
                     ringEntity.setAgentState(AgentState.IN_CALL_RING);
