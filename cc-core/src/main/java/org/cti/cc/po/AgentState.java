@@ -103,7 +103,12 @@ public enum AgentState {
     /**
      * 静音中
      */
-    AUDIO_READY_MUTE;
+    AUDIO_READY_MUTE,
+
+    /**
+     * 保持中
+     */
+    HOLD;
 
 
 }

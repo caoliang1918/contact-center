@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zhongweixian.cc.cache.CacheService;
-import org.zhongweixian.cc.command.GroupHandler;
-import org.zhongweixian.cc.command.TransferAgentHandler;
-import org.zhongweixian.cc.command.TransferCallHandler;
-import org.zhongweixian.cc.command.TransferIvrHandler;
+import org.zhongweixian.cc.command.*;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.esl.transport.SendMsg;
 
@@ -39,6 +36,9 @@ public class BaseHandler {
 
     @Autowired
     protected TransferAgentHandler transferAgentHandler;
+
+    @Autowired
+    protected VdnHandler vdnHandler;
 
 
     /**

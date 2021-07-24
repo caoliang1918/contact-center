@@ -11,11 +11,13 @@ import java.time.Instant;
 
 /**
  * Created by caoliang on 2020/11/6
+ * <p>
+ * 电话进vdn流程
  */
 @Component
 public class VdnHandler extends BaseHandler {
 
-    public void hanlder(Long vdnId, CallInfo callInfo, DeviceInfo deviceInfo) {
+    public void hanlder(CallInfo callInfo, DeviceInfo deviceInfo, Long vdnId) {
         String deviceId = deviceInfo.getDeviceId();
         VdnCodePo vdnCodePo = cacheService.getCompany(callInfo.getCompanyId()).getVdnCodeMap().get(vdnId);
         if (vdnCodePo == null || vdnCodePo.getStatus() == 0) {

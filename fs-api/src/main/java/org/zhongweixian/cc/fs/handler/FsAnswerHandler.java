@@ -34,11 +34,8 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         //接听时间也是振铃结束时间
         deviceInfo.setAnswerTime(event.getTimestamp() / 1000);
         deviceInfo.setRingEndTime(event.getTimestamp() / 1000);
-        if (callInfo.getAnswerCount() == null) {
-            callInfo.setAnswerCount(1);
-        } else {
-            callInfo.setAnswerCount(callInfo.getAnswerCount() + 1);
-        }
+
+        callInfo.setAnswerCount(callInfo.getAnswerCount() + 1);
         if (nextCommand == null) {
             return;
         }
@@ -122,7 +119,6 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
     }
 
 
-
     /**
      * 呼入电话进入vdn
      *
@@ -138,7 +134,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceInfo.getDeviceId());
             return;
         }
-        vdnHandler.hanlder(vdnPhone.getVdnId(), callInfo, deviceInfo);
+        vdnHandler.hanlder(callInfo, deviceInfo, vdnPhone.getVdnId());
         return;
     }
 

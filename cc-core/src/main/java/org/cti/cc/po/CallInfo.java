@@ -115,7 +115,7 @@ public class CallInfo implements Serializable {
     /**
      * 应答设备数
      */
-    private Integer answerCount;
+    private int answerCount;
 
     /**
      * 1主叫挂机, 2:被叫挂机, 3:平台挂机
@@ -144,6 +144,11 @@ public class CallInfo implements Serializable {
     private Long talkTime;
 
     /**
+     * 第一次进队列时间
+     */
+    private Long fristQueueTime;
+
+    /**
      * 进入技能组时间
      */
     private Long queueStartTime;
@@ -156,7 +161,7 @@ public class CallInfo implements Serializable {
     /**
      * 溢出次数
      */
-    private Integer overflowCount;
+    private int overflowCount;
 
     /**
      * uuid1
@@ -348,11 +353,11 @@ public class CallInfo implements Serializable {
         this.waitTime = waitTime;
     }
 
-    public Integer getAnswerCount() {
+    public int getAnswerCount() {
         return answerCount;
     }
 
-    public void setAnswerCount(Integer answerCount) {
+    public void setAnswerCount(int answerCount) {
         this.answerCount = answerCount;
     }
 
@@ -420,6 +425,14 @@ public class CallInfo implements Serializable {
         this.callDetails = callDetails;
     }
 
+    public Long getFristQueueTime() {
+        return fristQueueTime;
+    }
+
+    public void setFristQueueTime(Long fristQueueTime) {
+        this.fristQueueTime = fristQueueTime;
+    }
+
     public Long getQueueStartTime() {
         return queueStartTime;
     }
@@ -436,11 +449,11 @@ public class CallInfo implements Serializable {
         this.queueEndTime = queueEndTime;
     }
 
-    public Integer getOverflowCount() {
+    public int getOverflowCount() {
         return overflowCount;
     }
 
-    public void setOverflowCount(Integer overflowCount) {
+    public void setOverflowCount(int overflowCount) {
         this.overflowCount = overflowCount;
     }
 
@@ -594,7 +607,7 @@ public class CallInfo implements Serializable {
             return this;
         }
 
-        public CallInfoBuilder withAnswerCount(Integer answerCount) {
+        public CallInfoBuilder withAnswerCount(int answerCount) {
             this.answerCount = answerCount;
             return this;
         }

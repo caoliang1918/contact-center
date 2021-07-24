@@ -175,6 +175,25 @@ public class CallLogPo  {
     private Long talkTime;
 
     /**
+     * 第一次进队列时间
+     */
+    @JSONField(defaultValue = "0")
+    private Long fristQueueTime;
+
+    /**
+     * 进入技能组时间
+     */
+    @JSONField(defaultValue = "0")
+    private Long queueStartTime;
+
+    /**
+     * 出技能组时间
+     */
+    @JSONField(defaultValue = "0")
+    private Long queueEndTime;
+
+
+    /**
      * 通话随路数据(2048)
      */
     @JSONField(defaultValue = "")
@@ -433,6 +452,30 @@ public class CallLogPo  {
 
     public void setTalkTime(Long talkTime) {
         this.talkTime = talkTime;
+    }
+
+    public Long getFristQueueTime() {
+        return fristQueueTime;
+    }
+
+    public void setFristQueueTime(Long fristQueueTime) {
+        this.fristQueueTime = fristQueueTime;
+    }
+
+    public Long getQueueStartTime() {
+        return queueStartTime;
+    }
+
+    public void setQueueStartTime(Long queueStartTime) {
+        this.queueStartTime = queueStartTime;
+    }
+
+    public Long getQueueEndTime() {
+        return queueEndTime;
+    }
+
+    public void setQueueEndTime(Long queueEndTime) {
+        this.queueEndTime = queueEndTime;
     }
 
     public String getFollowData() {

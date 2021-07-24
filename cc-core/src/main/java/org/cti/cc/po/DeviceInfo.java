@@ -120,6 +120,11 @@ public class DeviceInfo {
      */
     private NextCommand nextCommand;
 
+    /**
+     * 当前设备状态
+     */
+    private String state;
+
 
     public Long getCallId() {
         return callId;
@@ -303,6 +308,14 @@ public class DeviceInfo {
 
     public void setNextCommand(NextCommand nextCommand) {
         this.nextCommand = nextCommand;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public static final class DeviceInfoBuilder {

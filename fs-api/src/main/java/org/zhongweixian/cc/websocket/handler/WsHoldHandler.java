@@ -1,11 +1,13 @@
 package org.zhongweixian.cc.websocket.handler;
 
 import org.cti.cc.po.AgentInfo;
+import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CallInfo;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.websocket.event.WsHoldEvent;
 import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
+import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 /**
  * Created by caoliang on 2021/7/19
@@ -29,6 +31,9 @@ public class WsHoldHandler extends WsBaseHandler<WsHoldEvent> {
             return;
         }
         this.hold(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+        agentInfo.setAgentState(AgentState.HOLD);
+        sendMessgae(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
+        callInfo.getDeviceInfoMap().get(deviceId).setState(AgentState.HOLD.name());
     }
 
 }

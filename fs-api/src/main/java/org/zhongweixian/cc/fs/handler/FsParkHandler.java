@@ -60,6 +60,22 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         ringEntity.setGroupId(callInfo.getGroupId());
         ringEntity.setCallId(callInfo.getCallId());
         ringEntity.setDirection(callInfo.getDirection());
+        if (deviceInfo.getState() != null) {
+            switch (deviceInfo.getState()){
+                case "HOLD":
+                    ringEntity.setAgentState(AgentState.HOLD);
+                    agentInfo.setAgentState(AgentState.HOLD);
+                    break;
+            }
+
+            sendAgentMessage(callInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(ringEntity.getAgentState().name(), callInfo.getAgentKey(), ringEntity));
+            agentInfo.setBeforeState(agentInfo.getAgentState());
+            agentInfo.setBeforeTime(agentInfo.getStateTime());
+            agentInfo.setStateTime(Instant.now().toEpochMilli());
+            agentService.sendAgentStateMessage(agentInfo);
+            return;
+
+        }
 
         Direction direction = callInfo.getDirection();
         if (direction == Direction.OUTBOUND) {

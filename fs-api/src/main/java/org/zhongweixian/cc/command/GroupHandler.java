@@ -77,36 +77,40 @@ public class GroupHandler extends BaseHandler {
         }
         logger.info("callId:{} on group:{}", callInfo.getCallId(), groupInfo.getName());
         CallDetail joinGroup = null;
-        if (callInfo.getQueueStartTime() == null) {
-            //电话经过技能组
-            joinGroup = new CallDetail();
-            joinGroup.setCallId(callInfo.getCallId());
-            joinGroup.setStartTime(Instant.now().toEpochMilli());
-            joinGroup.setDetailIndex(callInfo.getCallDetails().size() + 1);
-            joinGroup.setTransferType(3);
-            joinGroup.setTransferId(callInfo.getGroupId());
-            callInfo.getCallDetails().add(joinGroup);
-            callInfo.setQueueStartTime(Instant.now().toEpochMilli());
+        Long now = Instant.now().toEpochMilli();
+        if (callInfo.getFristQueueTime() == null) {
+            callInfo.setFristQueueTime(now);
         }
+        //电话经过技能组
+        joinGroup = new CallDetail();
+        joinGroup.setCallId(callInfo.getCallId());
+        joinGroup.setStartTime(now);
+        joinGroup.setDetailIndex(callInfo.getCallDetails().size() + 1);
+        joinGroup.setTransferType(3);
+        joinGroup.setTransferId(callInfo.getGroupId());
+        callInfo.getCallDetails().add(joinGroup);
+        callInfo.setQueueStartTime(now);
+
         Long groupId = callInfo.getGroupId();
         AgentInfo agentInfo = getAgentQueue(groupId);
         if (agentInfo != null) {
             logger.info("callId:{} get free agent:{} on group:{}", callInfo.getCallId(), agentInfo.getAgentKey(), groupId);
             //呼叫坐席
-            callInfo.setQueueEndTime(Instant.now().toEpochMilli());
+            Long end = Instant.now().toEpochMilli();
+            callInfo.setQueueEndTime(end);
             agentNotReady(agentInfo);
             if (joinGroup == null) {
                 joinGroup = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
             }
-            joinGroup.setEndTime(Instant.now().toEpochMilli());
+            joinGroup.setEndTime(end);
             callAgent(agentInfo, callInfo, deviceId);
             return;
         }
         logger.info("callId:{} join group:{} agent busy", callInfo.getCallId(), groupInfo.getName());
 
         //排队溢出策略
-        GroupOverflowPo groupOverflow = getEffectiveOverflow(groupInfo);
-        if (groupOverflow == null) {
+        GroupOverflowPo groupOverFlow = getEffectiveOverflow(groupInfo);
+        if (groupOverFlow == null) {
             logger.warn("groupName:{} of groupOverflow is null, callId:{}", groupInfo.getName(), callInfo.getCallId());
             return;
         }
@@ -115,14 +119,14 @@ public class GroupHandler extends BaseHandler {
         /**
          * 1:排队,2:溢出,3:挂机
          */
-        switch (groupOverflow.getHandleType()) {
+        switch (groupOverFlow.getHandleType()) {
             case 1:
-                logger.info("group:{} handleType is lineUp, queueTimeout:{}, busyTimeoutType:{}, overflowType:{}, overflowValue:{}, callId:{}", groupInfo.getName(), groupOverflow.getQueueTimeout(), groupOverflow.getBusyTimeoutType(), groupOverflow.getOverflowType(), groupOverflow.getOverflowValue(), callInfo.getCallId());
+                logger.info("group:{} handleType is lineUp, queueTimeout:{}, busyTimeoutType:{}, overflowType:{}, overflowValue:{}, callId:{}", groupInfo.getName(), groupOverFlow.getQueueTimeout(), groupOverFlow.getBusyTimeoutType(), groupOverFlow.getOverflowType(), groupOverFlow.getOverflowValue(), callInfo.getCallId());
                 PriorityQueue<CallQueue> callQueues = callInfoMap.get(groupId);
                 if (callQueues == null) {
                     callQueues = new PriorityQueue<CallQueue>();
                 }
-                callQueues.add(new CallQueue(callInfo.getQueueStartTime(), callInfo.getCallId(), deviceId, callInfo.getQueueStartTime() / 1000, groupId, groupOverflow));
+                callQueues.add(new CallQueue(callInfo.getQueueStartTime(), callInfo.getCallId(), deviceId, callInfo.getQueueStartTime() / 1000, groupId, groupOverFlow));
                 callInfoMap.put(callInfo.getGroupId(), callQueues);
 
                 /**

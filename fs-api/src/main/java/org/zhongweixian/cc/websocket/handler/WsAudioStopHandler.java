@@ -1,5 +1,6 @@
 package org.zhongweixian.cc.websocket.handler;
 
+import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CallInfo;
@@ -27,7 +28,7 @@ public class WsAudioStopHandler extends WsBaseHandler<WsAudioStopEvent> {
         String deviceId = agentInfo.getDeviceId();
         CallInfo callInfo = cacheService.getCallInfo(agentInfo.getCallId());
         if (deviceId == null || callInfo == null) {
-
+            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
             return;
         }
         this.audioStop(callInfo.getMedia(), callInfo.getCallId(), deviceId);
