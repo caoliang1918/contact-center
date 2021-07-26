@@ -52,6 +52,7 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
             }
             callCdrService.saveOrUpdateCallLog(callLog);
         }
+        logger.info("桥接成功 callId:{}, device:{}, otherDevice:{}", callInfo.getCallId(), event.getDeviceId(), event.getOtherUniqueId());
         DeviceInfo deviceInfo1 = callInfo.getDeviceInfoMap().get(event.getDeviceId());
         DeviceInfo deviceInfo2 = callInfo.getDeviceInfoMap().get(event.getOtherUniqueId());
         if (deviceInfo1 != null && deviceInfo1.getBridgeTime() == null) {
@@ -64,7 +65,6 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
 
         }
 
-        logger.info("桥接成功 callId:{}, device:{}, otherDevice:{}", callInfo.getCallId(), event.getDeviceId(), event.getOtherUniqueId());
         String record = recordPath +
                 DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
         super.record(event.getHostname(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
@@ -90,7 +90,7 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
                 ringEntity.setCaller(hiddenNumber(callInfo.getCaller()));
             }
         }
-        sendAgentMessage(callInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), callInfo.getAgentKey(), ringEntity));
+        sendAgentMessage(agentInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), agentInfo.getAgentKey(), ringEntity));
 
         /**
          * 坐席状态变更

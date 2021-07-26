@@ -35,7 +35,7 @@ public class CallInfo implements Serializable {
     /**
      * 隐藏客户号码(0:不隐藏;1:隐藏)
      */
-    private Integer hiddenCustomer;
+    private int hiddenCustomer;
 
     /**
      * 主叫显号
@@ -225,11 +225,11 @@ public class CallInfo implements Serializable {
         this.groupId = groupId;
     }
 
-    public Integer getHiddenCustomer() {
+    public int getHiddenCustomer() {
         return hiddenCustomer;
     }
 
-    public void setHiddenCustomer(Integer hiddenCustomer) {
+    public void setHiddenCustomer(int hiddenCustomer) {
         this.hiddenCustomer = hiddenCustomer;
     }
 
@@ -494,7 +494,7 @@ public class CallInfo implements Serializable {
         private Long callId;
         private Long companyId;
         private Long groupId;
-        private Integer hiddenCustomer;
+        private int hiddenCustomer;
         private String callerDisplay;
         private String caller;
         private String calledDisplay;
@@ -509,7 +509,7 @@ public class CallInfo implements Serializable {
         private Direction direction;
         private Integer hangupDir;
         private Long answerTime;
-        private Integer answerCount;
+        private int answerCount;
         private Long endTime;
         private Long talkTime;
         private List<String> deviceList = new ArrayList<>();
@@ -542,7 +542,7 @@ public class CallInfo implements Serializable {
             this.groupId = groupId;
             return this;
         }
-        public CallInfoBuilder withHiddenCustomer(Integer hiddenCustomer){
+        public CallInfoBuilder withHiddenCustomer(int hiddenCustomer){
             this.hiddenCustomer = hiddenCustomer;
             return this;
         }

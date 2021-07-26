@@ -19,6 +19,16 @@ public class FsConstant {
 
     public final static String ANSWER = "answer";
 
+    public final static String START = "start";
+
+    public final  static String BRIDGE = "uuid_bridge";
+
+    public final  static String RECORD = "uuid_record";
+
+    public final  static String ORIGINATE = "originate";
+
+    public final  static String TRANSFER = "uuid_transfer";
+
     public final static String NORMAL_CLEARING = "NORMAL_CLEARING";
 
     public final static String PARK_AFTER_BRIDGE = "park_after_bridge=true";

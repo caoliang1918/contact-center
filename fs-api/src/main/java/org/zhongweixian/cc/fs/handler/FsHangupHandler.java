@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.fs.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
@@ -189,9 +190,10 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             callLogPo.setCaller(callInfo.getCaller());
             callLogPo.setCalled(callInfo.getCalled());
             ResponseEntity<String> responseEntity = null;
+            String payload = JSON.toJSONString(callLogPo, SerializerFeature.WriteNullStringAsEmpty);
             try {
-                logger.info("send push data:{}", JSON.toJSONString(callLogPo));
-                responseEntity = restTemplate.postForEntity(callInfo.getCdrNotifyUrl(), JSON.toJSONString(callLogPo), String.class);
+                logger.info("send push data:{}", payload);
+                responseEntity = restTemplate.postForEntity(callInfo.getCdrNotifyUrl(), payload, String.class);
                 logger.info("push call:{} to {} success:{}", callInfo.getCallId(), callInfo.getCdrNotifyUrl(), responseEntity.getBody());
                 return;
             } catch (Exception e) {
@@ -205,7 +207,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             pushFailLog.setCompanyId(callLogPo.getCompanyId());
             pushFailLog.setSendTimes(1);
             pushFailLog.setSendUrl(callInfo.getCdrNotifyUrl());
-            pushFailLog.setContent(JSON.toJSONString(callLogPo));
+            pushFailLog.setContent(payload);
             pushFailLog.setStatus(1);
             callCdrService.savePushFailLog(pushFailLog);
         }

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by caoliang on 2020/11/14
  */
-public class CallLogPo  {
+public class CallLogPo {
     /**
      *
      */
@@ -39,31 +39,26 @@ public class CallLogPo  {
     /**
      * 主叫显号
      */
-    @JSONField(defaultValue = "")
     private String callerDisplay;
 
     /**
      * 主叫
      */
-    @JSONField(defaultValue = "")
     private String caller;
 
     /**
      * 被叫显号
      */
-    @JSONField(defaultValue = "")
     private String calledDisplay;
 
     /**
      * 被叫
      */
-    @JSONField(defaultValue = "")
     private String called;
 
     /**
      * 坐席
      */
-    @JSONField(defaultValue = "")
     private String agentKey;
 
     /**
@@ -117,13 +112,11 @@ public class CallLogPo  {
     /**
      * 呼叫类型
      */
-    @JSONField(defaultValue = "")
     private String callType;
 
     /**
      * 呼叫方向
      */
-    @JSONField(defaultValue = "")
     private String direction;
 
     /**
@@ -153,19 +146,16 @@ public class CallLogPo  {
     /**
      * 挂机原因
      */
-    @JSONField(defaultValue = "")
     private String hangupCause;
 
     /**
      * 媒体服务器
      */
-    @JSONField(defaultValue = "")
     private String media;
 
     /**
      * 录音地址
      */
-    @JSONField(defaultValue = "")
     private String record;
 
     /**
@@ -196,19 +186,16 @@ public class CallLogPo  {
     /**
      * 通话随路数据(2048)
      */
-    @JSONField(defaultValue = "")
     private String followData;
 
     /**
      * 扩展1
      */
-    @JSONField(defaultValue = "")
     private String uuid1;
 
     /**
      * 扩展2
      */
-    @JSONField(defaultValue = "")
     private String uuid2;
 
     /**

@@ -12,7 +12,7 @@ import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 /**
  * Created by caoliang on 2021/7/19
  * <p>
- * 呼叫保持
+ * 呼叫保持:坐席听不到用户声音，用户听到的是保持音
  */
 @Component
 @HandlerType("WS_HOLD")

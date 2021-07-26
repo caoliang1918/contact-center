@@ -397,7 +397,7 @@ public class FsListen {
             builder.append(SPLIT).append(sipBuffer);
         }
         builder.append("}").append("sofia/external/").append(called).append(" &park");
-        CompletableFuture future = fsClient.get(fsIpv4s.get(0)).sendBackgroundApiCommand(Constants.ORIGINATE, builder.toString());
+        CompletableFuture future = fsClient.get(fsIpv4s.get(0)).sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
         try {
             logger.info("call response: {}", future.get());
         } catch (Exception e) {
@@ -420,7 +420,7 @@ public class FsListen {
                 .append("origination_caller_id_name=").append(display).append(SPLIT)
                 .append("origination_uuid=").append(deviceId)
                 .append("}").append("sofia/external/").append(called).append(" &park");
-        fsClient.get(media).sendBackgroundApiCommand(Constants.ORIGINATE, builder.toString());
+        fsClient.get(media).sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
     }
 
     /**
@@ -436,8 +436,8 @@ public class FsListen {
         this.sendArgs(media, deviceId2, FsConstant.SET, FsConstant.HANGUP_AFTER_BRIDGE);
         this.sendArgs(media, deviceId2, FsConstant.SET, FsConstant.PARK_AFTER_BRIDGE);
         StringBuilder builder = new StringBuilder();
-        builder.append(deviceId1).append(Constants.SPACE).append(deviceId2);
-        sendBgapiMessage(media, Constants.BRIDGE, builder.toString());
+        builder.append(deviceId1).append(FsConstant.SPACE).append(deviceId2);
+        sendBgapiMessage(media, FsConstant.BRIDGE, builder.toString());
     }
 
     /**
@@ -451,7 +451,7 @@ public class FsListen {
     public void transferCall(String media, String from, String to) {
         StringBuilder builder = new StringBuilder();
         builder.append(from).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
-        fsClient.get(media).sendBackgroundApiCommand(Constants.TRANSFER, builder.toString());
+        fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
     }
 
 
@@ -545,7 +545,7 @@ public class FsListen {
     public void hold(String media, String deviceId) {
         StringBuilder builder = new StringBuilder();
         builder.append(deviceId).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
-        fsClient.get(media).sendBackgroundApiCommand(Constants.TRANSFER, builder.toString());
+        fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
     }
 
 }

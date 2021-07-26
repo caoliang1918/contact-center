@@ -17,7 +17,7 @@ import java.time.Instant;
 /**
  * Created by caoliang on 2021/7/16
  * <p>
- * 坐席静音
+ * 静音:坐席可以听到用户声音，用户听不到坐席声音
  */
 @Component
 @HandlerType("WS_AUDIO_READ_MUTE")

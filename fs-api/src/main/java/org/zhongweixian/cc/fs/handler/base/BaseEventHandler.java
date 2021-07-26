@@ -1,8 +1,6 @@
 package org.zhongweixian.cc.fs.handler.base;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CallInfo;
@@ -111,15 +109,6 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
         fsListen.callBridge(media, device1, device2);
     }
 
-    /**
-     * 随机生成deviceId
-     *
-     * @return
-     */
-    protected String getDeviceId() {
-        return RandomStringUtils.randomNumeric(16);
-    }
-
 
     /**
      * 开始录音
@@ -132,50 +121,17 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
      * @param file
      */
     protected void record(String media, Long callId, String deviceId, String file) {
-//        fsListen.sendArgs(media, deviceId, "record_sample_rate", "8000");
-       /* logger.info("开始录音 callId:{}, deviceId:{}, file:{}", callId, deviceId, file);
+        fsListen.sendArgs(media, deviceId, FsConstant.SET, "record_sample_rate=8000");
+        logger.info("开始录音 callId:{}, deviceId:{}, file:{}", callId, deviceId, file);
         StringBuilder sb = new StringBuilder();
-        sb.append(deviceId).append(Constants.SPACE).append(Constants.START).append(Constants.SPACE).append(file);
-        fsListen.sendBgapiMessage(media, Constants.RECORD, sb.toString());*/
+        sb.append(deviceId).append(FsConstant.SPACE).append(FsConstant.START).append(FsConstant.SPACE).append(file);
+        fsListen.sendBgapiMessage(media, FsConstant.RECORD, sb.toString());
     }
 
     protected void transferCall(String media, String from, String to) {
         fsListen.transferCall(media, from, to);
     }
 
-
-    /**
-     * 放音
-     *
-     * @param media
-     * @param deviceId
-     * @param file
-     */
-    protected void playback(String media, String deviceId, String file) {
-        SendMsg playback = new SendMsg(deviceId);
-        playback.addCallCommand(FsConstant.EXECUTE);
-        playback.addExecuteAppName(FsConstant.PLAYBACK);
-        playback.addExecuteAppArg(file);
-        fsListen.sendMessage(media, playback);
-    }
-
-    /**
-     * 被叫挂机时，需要把主叫挂机，主叫挂机时不需要单独挂被叫
-     *
-     * @param callId
-     * @param deviceId
-     */
-    protected void hangupCall(String media, Long callId, String deviceId) {
-        if (StringUtils.isBlank(deviceId)) {
-            return;
-        }
-        SendMsg hangupMsg = new SendMsg(deviceId);
-        hangupMsg.addCallCommand(FsConstant.EXECUTE);
-        hangupMsg.addExecuteAppName(FsConstant.HANGUP);
-        hangupMsg.addExecuteAppArg(FsConstant.NORMAL_CLEARING);
-        logger.info("hangup callId:{}, device:{}", callId, deviceId);
-        fsListen.sendMessage(media, hangupMsg);
-    }
 
     /**
      * uuid应答
@@ -190,24 +146,6 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
         fsListen.sendMessage(media, answer);
     }
 
-    /**
-     * @param media
-     * @param callId
-     * @param deviceId
-     */
-    protected void receiveDtmf(String media, Long callId, String deviceId) {
-        SendMsg play = new SendMsg(deviceId);
-        play.addCallCommand(FsConstant.EXECUTE);
-        play.addExecuteAppName(FsConstant.SET);
-        play.addExecuteAppArg(FsConstant.PLAYBACK_DELIMITER);
-        fsListen.sendMessage(media, play);
-
-        SendMsg digits = new SendMsg(deviceId);
-        digits.addCallCommand(FsConstant.EXECUTE);
-        digits.addExecuteAppName(FsConstant.PLAY_AND_GET_DIGITS);
-        digits.addExecuteAppArg("1 1 1 5000 # /app/clpms/sounds/1295e6a58f9e2115332666.wav silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ 3000");
-        fsListen.sendMessage(media, digits);
-    }
 
     protected String getDeviceId(CallInfo callInfo, String... deviceIds) {
         for (String deviceId : callInfo.getDeviceList()) {

@@ -48,8 +48,6 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             return;
         }
 
-        deviceInfo.setRingStartTime(event.getTimestamp() / 1000);
-        logger.info("callId:{}, device:{} park", callInfo.getCallId(), event.getDeviceId());
 
         Integer deviceType = deviceInfo.getDeviceType();
         WsCallEntity ringEntity = new WsCallEntity();
@@ -61,14 +59,14 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         ringEntity.setCallId(callInfo.getCallId());
         ringEntity.setDirection(callInfo.getDirection());
         if (deviceInfo.getState() != null) {
-            switch (deviceInfo.getState()){
+            switch (deviceInfo.getState()) {
                 case "HOLD":
                     ringEntity.setAgentState(AgentState.HOLD);
                     agentInfo.setAgentState(AgentState.HOLD);
                     break;
             }
 
-            sendAgentMessage(callInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(ringEntity.getAgentState().name(), callInfo.getAgentKey(), ringEntity));
+            sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(ringEntity.getAgentState().name(), callInfo.getAgentKey(), ringEntity));
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
@@ -76,6 +74,11 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             return;
 
         }
+        if (deviceInfo.getRingStartTime() != null) {
+            return;
+        }
+        deviceInfo.setRingStartTime(event.getTimestamp() / 1000);
+        logger.info("callId:{}, device:{} park", callInfo.getCallId(), event.getDeviceId());
 
         Direction direction = callInfo.getDirection();
         if (direction == Direction.OUTBOUND) {
@@ -119,7 +122,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             if (agentInfo.getHiddenCustomer() == 1) {
                 ringEntity.setCaller(hiddenNumber(ringEntity.getCaller()));
             }
-            sendAgentMessage(callInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
+            sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), deviceInfo.getAgentKey(), ringEntity));
 
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
