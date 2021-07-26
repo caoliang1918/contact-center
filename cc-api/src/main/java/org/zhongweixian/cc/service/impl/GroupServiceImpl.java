@@ -10,14 +10,14 @@ import org.cti.cc.mapper.GroupMapper;
 import org.cti.cc.mapper.SkillGroupMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.GroupInfo;
+import org.cti.cc.vo.GroupInfoVo;
+import org.cti.cc.vo.SkillGroupVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.exception.BusinessException;
 import org.zhongweixian.cc.service.GroupService;
-import org.zhongweixian.cc.vo.GroupInfoVo;
-import org.zhongweixian.cc.vo.SkillGroupVo;
 
 import java.time.Instant;
 import java.util.ArrayList;

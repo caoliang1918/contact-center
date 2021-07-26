@@ -1,4 +1,4 @@
-package org.zhongweixian.cc.vo;
+package org.cti.cc.vo;
 
 import javax.validation.constraints.NotNull;
 

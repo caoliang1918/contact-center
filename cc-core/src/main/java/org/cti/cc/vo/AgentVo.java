@@ -1,21 +1,14 @@
 package org.cti.cc.vo;
 
-import org.cti.cc.entity.Skill;
-import org.cti.cc.po.AgentState;
-
-import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
- * Created by caoliang on 2020/12/17
+ * Created by caoliang on 2021/4/21
  */
 public class AgentVo {
 
-    /**
-     * PK
-     */
     private Long id;
-
-
 
     /**
      * 企业ID
@@ -25,6 +18,8 @@ public class AgentVo {
     /**
      * 坐席工号
      */
+    @NotNull(message = "坐席工号不能为空")
+    @Size(min = 4,max = 16,message = "坐席工号必须在4,16个字符")
     private String agentId;
 
     /**
@@ -48,6 +43,12 @@ public class AgentVo {
     private Integer agentType;
 
     /**
+     * 座席密码
+     */
+    @Size(min = 6,max = 16,message = "坐席密码必须在6,16字符")
+    private String passwd;
+
+    /**
      * 绑定的电话号码
      */
     private String sipPhone;
@@ -56,11 +57,6 @@ public class AgentVo {
      * 是否录音 0 no 1 yes
      */
     private Integer record;
-
-    /**
-     * 座席主要技能组  不能为空 必填项
-     */
-    private Long groupId;
 
     /**
      * 话后自动空闲间隔时长
@@ -77,104 +73,22 @@ public class AgentVo {
      */
     private Integer ringTime;
 
-    /**
-     * 登录服务地址
-     */
-    private String host;
 
     /**
-     * 所属技能组
+     * 扩展1
      */
-    private List<Long> groupIds;
+    private String ext1;
 
     /**
-     * 坐席sip
+     * 扩展2
      */
-    private List<String> sips;
+    private String ext2;
 
     /**
-     * 坐席技能
+     * 扩展3
      */
-    private List<Skill> skills;
+    private String ext3;
 
-    /**
-     *
-     */
-    private Long callId;
-
-    /**
-     *
-     */
-    private Long loginTime = 0L;
-
-    /**
-     *
-     */
-    private AgentState agentState;
-
-    /**
-     * 1：坐席sip号
-     * 2：webrtc
-     * 3：坐席手机号
-     */
-    private Integer loginType;
-
-    /**
-     *
-     */
-    private Integer workType;
-
-
-    /**
-     *
-     */
-    private Long stateTime = 0L;
-
-    /**
-     *
-     */
-    private AgentState beforeState;
-
-    /**
-     *
-     */
-    private Long beforeTime = 0L;
-
-    /**
-     *
-     */
-    private Long logoutTime = 0L;
-
-    /**
-     * 最大空闲时长
-     */
-    private Long maxFreeTime = 0L;
-
-    /**
-     * 累计空闲
-     */
-    private Long totalFreeTime = 0L;
-
-    /**
-     * 最大通话时长
-     */
-    private Long maxTalkTime = 0L;
-
-
-    /**
-     * 当日累计通话时长
-     */
-    private Long totalTalkTime = 0L;
-
-    /**
-     * 振铃次数
-     */
-    private Long totalRingTime = 0L;
-
-    /**
-     * 当日累计接听次数
-     */
-    private Long totalAnswerTime = 0L;
 
     public Long getId() {
         return id;
@@ -232,6 +146,14 @@ public class AgentVo {
         this.agentType = agentType;
     }
 
+    public String getPasswd() {
+        return passwd;
+    }
+
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
+    }
+
     public String getSipPhone() {
         return sipPhone;
     }
@@ -248,13 +170,6 @@ public class AgentVo {
         this.record = record;
     }
 
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
 
     public Integer getAfterInterval() {
         return afterInterval;
@@ -280,156 +195,28 @@ public class AgentVo {
         this.ringTime = ringTime;
     }
 
-    public String getHost() {
-        return host;
+    public String getExt1() {
+        return ext1;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setExt1(String ext1) {
+        this.ext1 = ext1;
     }
 
-    public List<Long> getGroupIds() {
-        return groupIds;
+    public String getExt2() {
+        return ext2;
     }
 
-    public void setGroupIds(List<Long> groupIds) {
-        this.groupIds = groupIds;
+    public void setExt2(String ext2) {
+        this.ext2 = ext2;
     }
 
-    public List<String> getSips() {
-        return sips;
+    public String getExt3() {
+        return ext3;
     }
 
-    public void setSips(List<String> sips) {
-        this.sips = sips;
-    }
-
-    public List<Skill> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(List<Skill> skills) {
-        this.skills = skills;
-    }
-
-    public Long getCallId() {
-        return callId;
-    }
-
-    public void setCallId(Long callId) {
-        this.callId = callId;
-    }
-
-    public Long getLoginTime() {
-        return loginTime;
-    }
-
-    public void setLoginTime(Long loginTime) {
-        this.loginTime = loginTime;
-    }
-
-    public AgentState getAgentState() {
-        return agentState;
-    }
-
-    public void setAgentState(AgentState agentState) {
-        this.agentState = agentState;
-    }
-
-    public Integer getLoginType() {
-        return loginType;
-    }
-
-    public void setLoginType(Integer loginType) {
-        this.loginType = loginType;
-    }
-
-    public Integer getWorkType() {
-        return workType;
-    }
-
-    public void setWorkType(Integer workType) {
-        this.workType = workType;
-    }
-
-    public Long getStateTime() {
-        return stateTime;
-    }
-
-    public void setStateTime(Long stateTime) {
-        this.stateTime = stateTime;
-    }
-
-    public AgentState getBeforeState() {
-        return beforeState;
-    }
-
-    public void setBeforeState(AgentState beforeState) {
-        this.beforeState = beforeState;
-    }
-
-    public Long getBeforeTime() {
-        return beforeTime;
-    }
-
-    public void setBeforeTime(Long beforeTime) {
-        this.beforeTime = beforeTime;
-    }
-
-    public Long getLogoutTime() {
-        return logoutTime;
-    }
-
-    public void setLogoutTime(Long logoutTime) {
-        this.logoutTime = logoutTime;
-    }
-
-    public Long getMaxFreeTime() {
-        return maxFreeTime;
-    }
-
-    public void setMaxFreeTime(Long maxFreeTime) {
-        this.maxFreeTime = maxFreeTime;
-    }
-
-    public Long getTotalFreeTime() {
-        return totalFreeTime;
-    }
-
-    public void setTotalFreeTime(Long totalFreeTime) {
-        this.totalFreeTime = totalFreeTime;
-    }
-
-    public Long getMaxTalkTime() {
-        return maxTalkTime;
-    }
-
-    public void setMaxTalkTime(Long maxTalkTime) {
-        this.maxTalkTime = maxTalkTime;
-    }
-
-    public Long getTotalTalkTime() {
-        return totalTalkTime;
-    }
-
-    public void setTotalTalkTime(Long totalTalkTime) {
-        this.totalTalkTime = totalTalkTime;
-    }
-
-    public Long getTotalRingTime() {
-        return totalRingTime;
-    }
-
-    public void setTotalRingTime(Long totalRingTime) {
-        this.totalRingTime = totalRingTime;
-    }
-
-    public Long getTotalAnswerTime() {
-        return totalAnswerTime;
-    }
-
-    public void setTotalAnswerTime(Long totalAnswerTime) {
-        this.totalAnswerTime = totalAnswerTime;
+    public void setExt3(String ext3) {
+        this.ext3 = ext3;
     }
 
     @Override
@@ -442,31 +229,15 @@ public class AgentVo {
                 ", agentName='" + agentName + '\'' +
                 ", agentCode='" + agentCode + '\'' +
                 ", agentType=" + agentType +
+                ", passwd='" + passwd + '\'' +
                 ", sipPhone='" + sipPhone + '\'' +
                 ", record=" + record +
-                ", groupId=" + groupId +
                 ", afterInterval=" + afterInterval +
                 ", diaplay='" + diaplay + '\'' +
                 ", ringTime=" + ringTime +
-                ", host='" + host + '\'' +
-                ", groupIds=" + groupIds +
-                ", sips=" + sips +
-                ", skills=" + skills +
-                ", callId=" + callId +
-                ", loginTime=" + loginTime +
-                ", agentState=" + agentState +
-                ", loginType=" + loginType +
-                ", workType=" + workType +
-                ", stateTime=" + stateTime +
-                ", beforeState=" + beforeState +
-                ", beforeTime=" + beforeTime +
-                ", logoutTime=" + logoutTime +
-                ", maxFreeTime=" + maxFreeTime +
-                ", totalFreeTime=" + totalFreeTime +
-                ", maxTalkTime=" + maxTalkTime +
-                ", totalTalkTime=" + totalTalkTime +
-                ", totalRingTime=" + totalRingTime +
-                ", totalAnswerTime=" + totalAnswerTime +
+                ", ext1='" + ext1 + '\'' +
+                ", ext2='" + ext2 + '\'' +
+                ", ext3='" + ext3 + '\'' +
                 '}';
     }
 }

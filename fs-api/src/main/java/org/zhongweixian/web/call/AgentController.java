@@ -1,26 +1,65 @@
 package org.zhongweixian.web.call;
 
+import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CommonResponse;
 import org.cti.cc.po.GroupInfo;
 import org.cti.cc.vo.AgentVo;
-import org.cti.cc.vo.GroupVo;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.zhongweixian.cc.websocket.event.WsLoginEvnet;
+import org.zhongweixian.cc.service.AgentService;
+import org.zhongweixian.cc.util.BcryptUtil;
+import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
+import org.zhongweixian.cc.websocket.event.WsNotReadyEvent;
+import org.zhongweixian.cc.websocket.event.WsReadyEvent;
+import org.zhongweixian.cc.websocket.handler.WsLoginHandler;
+import org.zhongweixian.cc.websocket.handler.WsLogoutHandler;
+import org.zhongweixian.cc.websocket.handler.WsNotReadyHandler;
+import org.zhongweixian.cc.websocket.handler.WsReadyHandler;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 import org.zhongweixian.web.base.BaseController;
 
 /**
  * Created by caoliang on 2020/12/17
+ * <p>
+ * rest api for agent
  */
 @RestController
 @RequestMapping("/v1/cti/agent")
 public class AgentController extends BaseController {
 
+    @Autowired
+    private AgentService agentService;
+
+    @Autowired
+    private WsReadyHandler readyHandler;
+
+    @Autowired
+    private WsNotReadyHandler notReadyHandler;
+
+    @Autowired
+    private WsLogoutHandler logoutHandler;
+
 
     /**
-     * 查看坐席信息
+     * 1.1 坐席登录
+     *
+     * @param agentVo
+     * @return
+     */
+    @GetMapping("agentInfo")
+    public CommonResponse<AgentInfo> login(AgentVo agentVo) {
+        AgentInfo agentInfo = agentService.getAgentInfo(agentVo.getAgentKey());
+        if (!BcryptUtil.checkPwd(agentVo.getPasswd(), agentInfo.getPasswd())) {
+            logger.error("agent:{}  password {} is error", agentVo.getAgentKey(), agentVo.getPasswd());
+            return new CommonResponse<>(ErrorCode.ACCOUNT_ERROR);
+        }
+        return new CommonResponse<AgentInfo>(agentInfo);
+    }
+
+    /**
+     * 1.2 查看坐席信息
      *
      * @param agentInfo
      * @return
@@ -33,26 +72,47 @@ public class AgentController extends BaseController {
     }
 
     /**
-     * 坐席上班
+     * 1.3坐席空闲
      *
      * @param agentInfo
      * @return
      */
     @PostMapping("ready")
     public CommonResponse ready(@ModelAttribute("agentInfo") AgentInfo agentInfo) {
-
+        WsReadyEvent event = new WsReadyEvent();
+        event.setAgentKey(agentInfo.getAgentKey());
+        event.setCmd("READY");
+        readyHandler.handleEvent(event);
         return new CommonResponse<>();
     }
 
     /**
-     * 坐席上班
+     * 1.4 坐席忙碌
      *
      * @param agentInfo
      * @return
      */
     @PostMapping("notReady")
     public CommonResponse notReady(@ModelAttribute("agentInfo") AgentInfo agentInfo) {
+        WsNotReadyEvent event = new WsNotReadyEvent();
+        event.setAgentKey(agentInfo.getAgentKey());
+        event.setCmd("NOT_READY");
+        notReadyHandler.handleEvent(event);
+        return new CommonResponse<>();
+    }
 
+    /**
+     * 1.5 坐席退出
+     *
+     * @param agentInfo
+     * @return
+     */
+    @PostMapping("logout")
+    public CommonResponse logout(@ModelAttribute("agentInfo") AgentInfo agentInfo) {
+        WsLogoutEvent event = new WsLogoutEvent();
+        event.setAgentKey(agentInfo.getAgentKey());
+        event.setCmd("LOGOUT");
+        logoutHandler.handleEvent(event);
         return new CommonResponse<>();
     }
 
@@ -68,9 +128,7 @@ public class AgentController extends BaseController {
         if (groupInfo == null || !agentInfo.getGroupIds().contains(groupInfo.getId())) {
             return new CommonResponse();
         }
-        GroupVo groupVo = new GroupVo();
-        BeanUtils.copyProperties(groupInfo, groupVo);
-        return new CommonResponse(groupVo);
+        return new CommonResponse(groupInfo);
     }
 
     /**

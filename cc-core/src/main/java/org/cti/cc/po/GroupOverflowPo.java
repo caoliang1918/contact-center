@@ -11,7 +11,7 @@ public class GroupOverflowPo extends GroupOverFlow {
     private Long groupId;
 
     /**
-     *
+     * 溢出策略id
      */
     private Long overflowId;
 

@@ -4,7 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.stereotype.Component;
-import org.zhongweixian.cc.CcOpenapiApplication;
+import org.zhongweixian.cc.CcApiApplication;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
 @Component
 public class HandlerProcessor implements BeanFactoryPostProcessor {
 
-    private String handlerPackage = CcOpenapiApplication.class.getPackage().getName();
+    private String handlerPackage = CcApiApplication.class.getPackage().getName();
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {

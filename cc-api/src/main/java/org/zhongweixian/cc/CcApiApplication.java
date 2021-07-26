@@ -10,10 +10,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableEncryptableProperties
 @MapperScan("org.cti.cc.mapper")
-public class CcOpenapiApplication {
+public class CcApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CcOpenapiApplication.class, args);
+        SpringApplication.run(CcApiApplication.class, args);
     }
 
 }

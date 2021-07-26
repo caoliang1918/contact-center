@@ -10,6 +10,7 @@ import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentSipPo;
+import org.cti.cc.vo.AgentVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,6 @@ import org.zhongweixian.cc.exception.BusinessException;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.util.BcryptUtil;
 import org.zhongweixian.cc.vo.AgentSipVo;
-import org.zhongweixian.cc.vo.AgentVo;
 
 import java.time.Instant;
 import java.util.ArrayList;

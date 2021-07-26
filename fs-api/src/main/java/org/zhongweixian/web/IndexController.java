@@ -1,5 +1,8 @@
 package org.zhongweixian.web;
 
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.CallLogPo;
@@ -21,6 +24,7 @@ import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.util.SnowflakeIdWorker;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
@@ -32,82 +36,15 @@ import java.util.concurrent.TimeUnit;
 public class IndexController {
     private Logger logger = LoggerFactory.getLogger(IndexController.class);
 
-    @Autowired
-    private FsListen fsListen;
 
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
-
-    @Autowired
-    private CacheService cacheService;
 
     @Autowired
     private CallCdrService callCdrService;
 
     @Autowired
     private StringEncryptor encrypt;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-
-    /**
-     * 模拟手动外呼
-     *
-     * @return
-     */
-    @GetMapping("outCall")
-    public DeferredResult<CommonResponse<CallInfo>> outCall(@RequestParam() String display, @RequestParam String caller, @RequestParam String called) {
-        DeferredResult<CommonResponse<CallInfo>> output = new DeferredResult<>();
-
-        //先呼坐席sip号
-        Long callId = snowflakeIdWorker.nextId();
-        String device = RandomStringUtils.randomNumeric(16);
-        fsListen.makeCall("", display, caller + "@115.159.101.178:8880", device);
-
-        Long now = Instant.now().toEpochMilli();
-        CallInfo callInfo = new CallInfo();
-        callInfo.setCallId(callId);
-        callInfo.setCallTime(now);
-        callInfo.setCaller(display);
-        callInfo.setCalled(called);
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setDeviceId(device);
-        deviceInfo.setDisplay(display);
-        deviceInfo.setCaller("1002");
-        deviceInfo.setCalled(caller);
-        deviceInfo.setCallTime(now);
-        callInfo.getDeviceInfoMap().put(device, deviceInfo);
-        callInfo.getDeviceList().add(device);
-        cacheService.addCallInfo(callInfo);
-        logger.info("callout caller:{} , callId:{}, device:{}", caller, callId, device);
-        cacheService.addDevice(device, callId);
-
-        ForkJoinPool.commonPool().submit(() -> {
-            logger.info("Processing in separate thread");
-            Integer timeout = 0;
-            while (true) {
-                CallInfo callInfoCache = cacheService.getCallInfo(callId);
-                if (callInfoCache.getDeviceInfoMap().size() == 2) {
-                    output.setResult(new CommonResponse<CallInfo>(callInfoCache));
-                    logger.info("get second device");
-                    break;
-                }
-                if (timeout > 10) {
-                    output.setResult(new CommonResponse<CallInfo>());
-                    break;
-                }
-                try {
-                    logger.info("sleep {}s", timeout);
-                    TimeUnit.SECONDS.sleep(1);
-                    timeout++;
-                } catch (InterruptedException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-        });
-        return output;
-    }
 
 
     /**
@@ -128,6 +65,47 @@ public class IndexController {
     @GetMapping("/decrypt")
     public CommonResponse decrypt(@RequestParam String text) {
         return new CommonResponse(encrypt.decrypt(text));
+    }
+
+    /**
+     * 测试
+     *
+     * @return
+     */
+    //@GetMapping("timer")
+    public Long hashedWheelTimer() {
+        //设置每个格子是 100ms, 总共 102400 个格子
+        HashedWheelTimer hashedWheelTimer = new HashedWheelTimer(100, TimeUnit.MILLISECONDS, 102400);
+
+        Long now = Instant.now().toEpochMilli();
+        for (int i = 0; i < 10000; i++) {
+            logger.info("加入一个任务，ID = {}, time= {}", i, LocalDateTime.now());
+            hashedWheelTimer.newTimeout(new QueueTime(snowflakeIdWorker.nextId()), i, TimeUnit.SECONDS);
+        }
+        logger.info("创建10000个任务耗时 {} 毫秒", Instant.now().toEpochMilli() - now);
+        return Instant.now().toEpochMilli() - now;
+    }
+
+    class QueueTime implements TimerTask {
+
+        private Long taskId;
+
+        public Long getTaskId() {
+            return taskId;
+        }
+
+        public void setTaskId(Long taskId) {
+            this.taskId = taskId;
+        }
+
+        public QueueTime(Long taskId) {
+            this.taskId = taskId;
+        }
+
+        @Override
+        public void run(Timeout timeout) throws Exception {
+            logger.info("任务执行, callId = {}, time= {}", taskId, LocalDateTime.now());
+        }
     }
 }
 

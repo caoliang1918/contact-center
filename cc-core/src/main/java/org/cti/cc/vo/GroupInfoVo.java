@@ -1,6 +1,5 @@
-package org.zhongweixian.cc.vo;
+package org.cti.cc.vo;
 
-import org.cti.cc.entity.Skill;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
