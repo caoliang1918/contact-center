@@ -13,8 +13,8 @@
 ## 流程图
 
 <p align="center">
-    <img    src="https://github.com/caoliang1918/callcenter/fs-api/src/main/resources/static/fs-api.png" alt="流程图">
-    <img    src="https://github.com/caoliang1918/callcenter/fs-api/src/main/resources/static/freeswitch流程.png" alt="流程图">
+    <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/fs-api.png" alt="流程图">
+    <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/freeswitch流程.png" alt="流程图">
 </p>
 
 
