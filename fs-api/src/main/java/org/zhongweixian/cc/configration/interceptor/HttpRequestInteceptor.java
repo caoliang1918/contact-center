@@ -97,7 +97,7 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
             writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_ERROR)));
             writer.flush();
             writer.close();
-            return true;
+            return false;
         }
         logger.info("agentInfo:{}", agentInfo);
         PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(agentInfo, agentInfo.getPasswd(), null);

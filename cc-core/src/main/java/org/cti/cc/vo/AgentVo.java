@@ -1,5 +1,7 @@
 package org.cti.cc.vo;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -18,18 +20,20 @@ public class AgentVo {
     /**
      * 坐席工号
      */
-    @NotNull(message = "坐席工号不能为空")
-    @Size(min = 4,max = 16,message = "坐席工号必须在4,16个字符")
-    private String agentId;
+    private Long agentId;
 
     /**
      * 坐席账户
      */
+    @NotNull
+    @Size(min = 4,max = 16,message = "坐席工号必须在4,16个字符")
     private String agentKey;
 
     /**
      * 坐席名称
      */
+    @NotBlank
+    @Email(message = "邮箱格式不正确")
     private String agentName;
 
     /**
@@ -106,11 +110,11 @@ public class AgentVo {
         this.companyId = companyId;
     }
 
-    public String getAgentId() {
+    public Long getAgentId() {
         return agentId;
     }
 
-    public void setAgentId(String agentId) {
+    public void setAgentId(Long agentId) {
         this.agentId = agentId;
     }
 

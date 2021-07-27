@@ -57,6 +57,7 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
         return new SnowflakeIdWorker(0, 0);
     }
 
+
     public static void main(String[] args) {
         SpringApplication.run(FsApiApplication.class, args);
     }

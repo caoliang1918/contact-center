@@ -7,6 +7,7 @@ import org.cti.cc.po.GroupInfo;
 import org.cti.cc.vo.AgentVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.util.BcryptUtil;
@@ -48,8 +49,8 @@ public class AgentController extends BaseController {
      * @param agentVo
      * @return
      */
-    @GetMapping("agentInfo")
-    public CommonResponse<AgentInfo> login(AgentVo agentVo) {
+    @PostMapping("login")
+    public CommonResponse<AgentInfo> login(@RequestBody @Validated AgentVo agentVo) {
         AgentInfo agentInfo = agentService.getAgentInfo(agentVo.getAgentKey());
         if (!BcryptUtil.checkPwd(agentVo.getPasswd(), agentInfo.getPasswd())) {
             logger.error("agent:{}  password {} is error", agentVo.getAgentKey(), agentVo.getPasswd());
