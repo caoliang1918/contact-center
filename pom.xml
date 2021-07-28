@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.zhongweixian</groupId>
-    <artifactId>cc-parant</artifactId>
+    <artifactId>callcenter</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
 
@@ -36,6 +36,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
+        <springboot.version>2.5.2</springboot.version>
         <fastdfs.version>1.27.2</fastdfs.version>
         <guava.version>28.1-jre</guava.version>
         <websocket-api.version>2.0.3</websocket-api.version>
@@ -45,7 +46,6 @@
         <fastjson.version>1.2.76</fastjson.version>
         <pagehelper.version>1.2.3</pagehelper.version>
         <easypoi.version>4.3.0</easypoi.version>
-        <hibernate-validator.version>7.0.1.Final</hibernate-validator.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-codec>1.15</commons-codec>
 
@@ -55,6 +55,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.zhongweixian</groupId>
+                <artifactId>cc-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
@@ -104,11 +116,6 @@
                 <groupId>com.github.ulisesbocchio</groupId>
                 <artifactId>jasypt-spring-boot</artifactId>
                 <version>${jasypt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.validator</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>${hibernate-validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>

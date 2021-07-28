@@ -1,7 +1,5 @@
 package org.cti.cc.vo;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,15 +23,13 @@ public class AgentVo {
     /**
      * 坐席账户
      */
-    @NotNull
-    @Size(min = 4,max = 16,message = "坐席工号必须在4,16个字符")
+    @NotNull(message = "坐席不能为空")
+    @Size(min = 4, max = 16, message = "坐席工号必须在4,16个字符")
     private String agentKey;
 
     /**
      * 坐席名称
      */
-    @NotBlank
-    @Email(message = "邮箱格式不正确")
     private String agentName;
 
     /**
@@ -49,7 +45,8 @@ public class AgentVo {
     /**
      * 座席密码
      */
-    @Size(min = 6,max = 16,message = "坐席密码必须在6,16字符")
+    @NotNull(message = "坐席密码不能为空")
+    @Size(min = 32, max = 64, message = "密码长度不对")
     private String passwd;
 
     /**

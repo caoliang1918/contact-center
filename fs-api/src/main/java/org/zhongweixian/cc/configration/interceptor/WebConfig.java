@@ -31,11 +31,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HttpRequestInteceptor(agentService , applicationContext))
+        registry.addInterceptor(new HttpRequestInteceptor(agentService, applicationContext))
                 .addPathPatterns("/v1/cti/call/**")
                 .addPathPatterns("/v1/cti/agent/**")
                 .addPathPatterns("/v1/cti/admin/**")
-                .excludePathPatterns("/**/*.js", "/**/*.css", "/**/*.png");
+                .excludePathPatterns("/v1/cti/agent/login", "/**/*.js", "/**/*.css", "/**/*.png");
     }
 
 
