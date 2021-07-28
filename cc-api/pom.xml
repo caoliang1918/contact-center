@@ -2,16 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.zhongweixian.cc</groupId>
+    <groupId>org.zhongweixian</groupId>
     <artifactId>cc-api</artifactId>
     <version>1.0.0</version>
     <name>cc-api</name>
 
     <parent>
-        <groupId>org.zhongweixian</groupId>
-        <artifactId>cc-parant</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
@@ -40,10 +40,12 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis-spring.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -64,6 +66,7 @@
         <dependency>
             <groupId>org.zhongweixian</groupId>
             <artifactId>websocket-api</artifactId>
+            <version>${websocket-api.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba</groupId>
@@ -74,19 +77,22 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.zhongweixian</groupId>
             <artifactId>cc-core</artifactId>
-            <version>${project.version}</version>
+            <version>${cc-core.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot</artifactId>
+            <version>${jasypt.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-base</artifactId>
+            <version>${easypoi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -100,7 +106,6 @@
             </exclusions>
         </dependency>
     </dependencies>
-
 
     <build>
         <plugins>
@@ -162,4 +167,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

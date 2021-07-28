@@ -6,21 +6,36 @@
 
     <groupId>org.zhongweixian</groupId>
     <artifactId>fs-api</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>org.zhongweixian</groupId>
-        <artifactId>cc-parant</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.2</version>
     </parent>
+
+    <description>Demo project for freeswitch-client</description>
+    <url>https://github.com/caoliang1918/fs-api</url>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-    </properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
 
+        <fastdfs.version>1.27.2</fastdfs.version>
+        <cc-core.version>1.0.0</cc-core.version>
+        <guava.version>28.1-jre</guava.version>
+        <websocket-api.version>2.0.3</websocket-api.version>
+        <jasypt.version>3.0.3</jasypt.version>
+        <mybatis-spring.version>2.1.4</mybatis-spring.version>
+
+        <docker.repostory>192.168.180.37:5000</docker.repostory>
+        <docker.registry.name>caoliang</docker.registry.name>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -30,6 +45,7 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis-spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -54,6 +70,7 @@
         <dependency>
             <groupId>org.zhongweixian</groupId>
             <artifactId>websocket-api</artifactId>
+            <version>${websocket-api.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba</groupId>
@@ -64,31 +81,32 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.tobato</groupId>
             <artifactId>fastdfs-client</artifactId>
+            <version>${fastdfs.version}</version>
         </dependency>
         <dependency>
             <groupId>org.zhongweixian</groupId>
             <artifactId>cc-core</artifactId>
-            <version>${project.version}</version>
+            <version>${cc-core.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc10</artifactId>
-        </dependency>
+        <!--<dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>12.1.0.1-atlassian-hosted</version>
+        </dependency>-->
         <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${jasypt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -102,6 +120,14 @@
             </exclusions>
         </dependency>
     </dependencies>
+
+    <developers>
+        <developer>
+            <name>zhongweixian</name>
+            <email>caoliang1918@gmail.com</email>
+            <organization>zhongweixian</organization>
+        </developer>
+    </developers>
 
 
     <build>
