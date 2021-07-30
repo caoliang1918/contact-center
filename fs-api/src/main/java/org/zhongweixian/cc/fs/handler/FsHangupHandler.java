@@ -285,7 +285,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         afterEntity.setEndTime(callInfo.getEndTime());
         afterEntity.setMedia(callInfo.getMedia());
 
-        int result = this.sendAgentMessage(agentInfo.getAgentKey(), new WsResponseEntity<WsCallAfterEntity>(AgentState.AFTER.name(), agentInfo.getAgentKey(), afterEntity));
+        int result = this.sendAgentMessage(agentInfo, new WsResponseEntity<WsCallAfterEntity>(AgentState.AFTER.name(), agentInfo.getAgentKey(), afterEntity));
         if (result == 0) {
             return;
         }

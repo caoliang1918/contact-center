@@ -88,7 +88,7 @@ public class AgentStateListen {
                 //旧坐席退出
                 logger.info("agent:{} login on server:{}", agentInfo.getAgentKey(), agentInfo.getHost());
                 String logoutResponse = JSON.toJSONString(new WsResponseEntity<>(1005, "坐席在别处登录", AgentState.LOGOUT.name(), agentInfo.getAgentKey()));
-                webSocketHandler.sendMessgae(agentInfo.getAgentKey(), logoutResponse);
+                webSocketHandler.sendMessgae(agentInfo.getAgentKey(), agentInfo.getRemoteAddress(), logoutResponse);
                 webSocketHandler.close(agentInfo.getAgentKey());
                 agentInfo.setHost(json.getString("host"));
                 return;

@@ -28,6 +28,13 @@ public class AgentVo {
     private String agentKey;
 
     /**
+     * rest 接口回调地址
+     */
+    @NotNull
+    @Size(min = 15, max = 150, message = "回调地址超过150字符限制")
+    private String callBackUrl;
+
+    /**
      * 坐席名称
      */
     private String agentName;
@@ -38,9 +45,17 @@ public class AgentVo {
     private String agentCode;
 
     /**
-     * 座席类型：0:普通座席；1：班长
+     * 1：坐席sip号
+     * 2：webrtc
+     * 3：坐席手机号
      */
-    private Integer agentType;
+    @NotNull(message = "登录方式不能为空")
+    private Integer loginType;
+
+    /**
+     *
+     */
+    private Integer workType;
 
     /**
      * 座席密码
@@ -53,11 +68,6 @@ public class AgentVo {
      * 绑定的电话号码
      */
     private String sipPhone;
-
-    /**
-     * 是否录音 0 no 1 yes
-     */
-    private Integer record;
 
     /**
      * 话后自动空闲间隔时长
@@ -90,6 +100,13 @@ public class AgentVo {
      */
     private String ext3;
 
+    public String getCallBackUrl() {
+        return callBackUrl;
+    }
+
+    public void setCallBackUrl(String callBackUrl) {
+        this.callBackUrl = callBackUrl;
+    }
 
     public Long getId() {
         return id;
@@ -139,12 +156,20 @@ public class AgentVo {
         this.agentCode = agentCode;
     }
 
-    public Integer getAgentType() {
-        return agentType;
+    public Integer getLoginType() {
+        return loginType;
     }
 
-    public void setAgentType(Integer agentType) {
-        this.agentType = agentType;
+    public void setLoginType(Integer loginType) {
+        this.loginType = loginType;
+    }
+
+    public Integer getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(Integer workType) {
+        this.workType = workType;
     }
 
     public String getPasswd() {
@@ -162,15 +187,6 @@ public class AgentVo {
     public void setSipPhone(String sipPhone) {
         this.sipPhone = sipPhone;
     }
-
-    public Integer getRecord() {
-        return record;
-    }
-
-    public void setRecord(Integer record) {
-        this.record = record;
-    }
-
 
     public Integer getAfterInterval() {
         return afterInterval;
@@ -225,14 +241,14 @@ public class AgentVo {
         return "AgentVo{" +
                 "id=" + id +
                 ", companyId=" + companyId +
-                ", agentId='" + agentId + '\'' +
+                ", agentId=" + agentId +
                 ", agentKey='" + agentKey + '\'' +
                 ", agentName='" + agentName + '\'' +
                 ", agentCode='" + agentCode + '\'' +
-                ", agentType=" + agentType +
+                ", loginType=" + loginType +
+                ", workType=" + workType +
                 ", passwd='" + passwd + '\'' +
                 ", sipPhone='" + sipPhone + '\'' +
-                ", record=" + record +
                 ", afterInterval=" + afterInterval +
                 ", diaplay='" + diaplay + '\'' +
                 ", ringTime=" + ringTime +

@@ -12,11 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.cc.EventType;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.configration.HandlerContext;
+import org.zhongweixian.cc.util.Constants;
 import org.zhongweixian.cc.websocket.event.WsLoginEvnet;
 import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.base.ChannelEntity;
@@ -36,8 +39,26 @@ import java.util.concurrent.*;
 public class WebSocketHandler implements ConnectionListener {
     private Logger logger = LoggerFactory.getLogger(WebSocketHandler.class);
 
-    @Value("${socket.timeout:2}")
+    /**
+     * 从open socket 到发送登录信息的超时时间
+     */
+    @Value("${ws.login.timeout:2}")
     private Long timeout;
+
+    private RestTemplate restTemplate;
+
+    /**
+     * 构造函数中初始化 restTemplate
+     *
+     * @param connectTimeout
+     * @param readTimeout
+     */
+    public WebSocketHandler(@Value("${cti.callback.connectTimeout:100}") Integer connectTimeout, @Value("${cti.callback.readTimeout:300}") Integer readTimeout) {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+        restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+    }
 
 
     @Autowired
@@ -239,16 +260,26 @@ public class WebSocketHandler implements ConnectionListener {
      * 发送坐席消息
      *
      * @param agentKey
+     * @param callBackUrl
      * @param payload
+     * @return
      */
-    public int sendMessgae(String agentKey, String payload) {
+    public int sendMessgae(String agentKey, String callBackUrl, String payload) {
         Channel channel = agentChannel.get(agentKey);
-        if (channel == null || !channel.isActive()) {
-            logger.warn("agent:{} channel is close", agentKey);
-            return 0;
+        if (channel != null && channel.isActive()) {
+            logger.info("send agent:{} ws message:{}", agentKey, payload);
+            channel.writeAndFlush(new TextWebSocketFrame(payload));
+            return 1;
         }
-        logger.info("send agent:{} message:{}", agentKey, payload);
-        channel.writeAndFlush(new TextWebSocketFrame(payload));
+        if (!StringUtils.isBlank(callBackUrl) && callBackUrl.startsWith(Constants.HTTP)) {
+            logger.info("send agent:{} http message:{}", agentKey, payload);
+            try {
+                String response = restTemplate.postForEntity(callBackUrl, payload, String.class).getBody();
+                logger.info("send agent:{} http message success, response:{}", agentKey, response);
+            } catch (Exception e) {
+                logger.error("send agent:{} http message", agentKey);
+            }
+        }
         return 1;
     }
 }

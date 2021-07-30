@@ -16,7 +16,7 @@ public abstract class SubBaseHandler<T extends SubBaseEvent> implements Handler<
     @Autowired
     protected WebSocketHandler webSocketHandler;
 
-    protected void sendAgentMessage(String agentKey, String payload) {
-        webSocketHandler.sendMessgae(agentKey, payload);
+    protected void sendAgentMessage(String agentKey,String callBackUrl, String payload) {
+        webSocketHandler.sendMessgae(agentKey, callBackUrl,payload);
     }
 }

@@ -63,14 +63,14 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
     protected SnowflakeIdWorker snowflakeIdWorker;
 
     /**
-     * 发送消息到ws客户端
+     * 给坐席客户端发送消息
      *
-     * @param agentKey
+     * @param agentInfo
      * @param responseEntity
      * @return
      */
-    protected int sendAgentMessage(String agentKey, WsResponseEntity responseEntity) {
-        return webSocketHandler.sendMessgae(agentKey, JSON.toJSON(responseEntity).toString());
+    protected int sendAgentMessage(AgentInfo agentInfo, WsResponseEntity responseEntity) {
+        return webSocketHandler.sendMessgae(agentInfo.getAgentKey(), agentInfo.getRemoteAddress(), JSON.toJSONString(responseEntity));
     }
 
 

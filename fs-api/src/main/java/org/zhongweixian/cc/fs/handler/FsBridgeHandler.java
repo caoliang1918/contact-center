@@ -90,7 +90,7 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
                 ringEntity.setCaller(hiddenNumber(callInfo.getCaller()));
             }
         }
-        sendAgentMessage(agentInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), agentInfo.getAgentKey(), ringEntity));
+        sendAgentMessage(agentInfo,new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), agentInfo.getAgentKey(), ringEntity));
 
         /**
          * 坐席状态变更

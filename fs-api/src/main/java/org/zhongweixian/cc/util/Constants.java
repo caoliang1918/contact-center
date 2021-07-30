@@ -13,6 +13,8 @@ public class Constants {
     public static final String CO = ":";
 
 
+    public static final  String HTTP = "http";
+
 
 
 

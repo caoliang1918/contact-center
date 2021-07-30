@@ -2,11 +2,13 @@ package org.zhongweixian.web.call;
 
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
+import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CommonResponse;
 import org.cti.cc.po.GroupInfo;
 import org.cti.cc.vo.AgentVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.cc.service.AgentService;
@@ -20,6 +22,8 @@ import org.zhongweixian.cc.websocket.handler.WsNotReadyHandler;
 import org.zhongweixian.cc.websocket.handler.WsReadyHandler;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 import org.zhongweixian.web.base.BaseController;
+
+import java.time.Instant;
 
 /**
  * Created by caoliang on 2020/12/17
@@ -42,6 +46,9 @@ public class AgentController extends BaseController {
     @Autowired
     private WsLogoutHandler logoutHandler;
 
+    @Value("${server.address}:${server.port}")
+    private String host;
+
 
     /**
      * 1.1 坐席登录
@@ -56,6 +63,17 @@ public class AgentController extends BaseController {
             logger.error("agent:{}  password {} is error", agentVo.getAgentKey(), agentVo.getPasswd());
             return new CommonResponse<>(ErrorCode.ACCOUNT_ERROR);
         }
+        agentInfo.setBeforeState(AgentState.LOGOUT);
+        agentInfo.setBeforeTime(agentInfo.getLogoutTime());
+        agentInfo.setStateTime(agentInfo.getLoginTime());
+        agentInfo.setLoginTime(Instant.now().toEpochMilli());
+        agentInfo.setAgentState(AgentState.LOGIN);
+        agentInfo.setHost(host);
+        agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
+        agentInfo.setLoginType(agentVo.getLoginType());
+        agentInfo.setWorkType(agentVo.getWorkType());
+        agentInfo.setRemoteAddress(agentVo.getCallBackUrl());
+        cacheService.addAgentInfo(agentInfo);
         return new CommonResponse<AgentInfo>(agentInfo);
     }
 

@@ -65,8 +65,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                     agentInfo.setAgentState(AgentState.HOLD);
                     break;
             }
-
-            sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(ringEntity.getAgentState().name(), callInfo.getAgentKey(), ringEntity));
+            sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(ringEntity.getAgentState().name(), callInfo.getAgentKey(), ringEntity));
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
@@ -91,19 +90,19 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                         if (agentInfo.getHiddenCustomer() == 1) {
                             ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
                         }
-                        sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.TRANSFER_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
+                        sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TRANSFER_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
                     } else {
                         //外呼坐席振铃
                         ringEntity.setAgentState(AgentState.OUT_CALLER_RING);
                         if (agentInfo.getHiddenCustomer() == 1) {
                             ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
                         }
-                        sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLER_RING.name(), callInfo.getAgentKey(), ringEntity));
+                        sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLER_RING.name(), callInfo.getAgentKey(), ringEntity));
                     }
                 } else if (callType == CallType.INNER_CALL) {
                     //内呼坐席振铃
                     ringEntity.setAgentState(AgentState.IN_CALL_RING);
-                    sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
+                    sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
                 }
             } else {
                 //外呼被叫振铃
@@ -111,7 +110,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 if (agentInfo.getHiddenCustomer() == 1) {
                     ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
                 }
-                sendAgentMessage(callInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLED_RING.name(), callInfo.getAgentKey(), ringEntity));
+                sendAgentMessage(cacheService.getAgentInfo(callInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLED_RING.name(), callInfo.getAgentKey(), ringEntity));
             }
         } else if (direction == Direction.INBOUND) {
             if (agentInfo == null) {
@@ -122,8 +121,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             if (agentInfo.getHiddenCustomer() == 1) {
                 ringEntity.setCaller(hiddenNumber(ringEntity.getCaller()));
             }
-            sendAgentMessage(deviceInfo.getAgentKey(), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), deviceInfo.getAgentKey(), ringEntity));
-
+            sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), deviceInfo.getAgentKey(), ringEntity));
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
