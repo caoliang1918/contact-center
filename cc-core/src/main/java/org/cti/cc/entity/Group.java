@@ -35,7 +35,7 @@ public class Group implements Serializable {
     private String name;
 
     /**
-     * 控制开关：0：技能组控制(1:技能组,2:坐席)
+     * 控制开关 1:技能组,2:坐席
      */
     private Integer controlFlag;
 
@@ -50,24 +50,29 @@ public class Group implements Serializable {
     private Long callerDisplayId;
 
     /**
-     * 技能组优先级
-     */
-    private Integer levelValue;
-
-    /**
      * 被叫显号号码池
      */
     private Long calledDisplayId;
 
     /**
-     * 播放工号(0:不播放,1:中文,2:英文)
+     * 
      */
-    private Integer ttsPlay;
+    private Integer recordType;
 
     /**
-     * 播放内容
+     * 技能组优先级
      */
-    private String ttsContent;
+    private Integer levelValue;
+
+    /**
+     * 
+     */
+    private Integer ttsEngine;
+
+    /**
+     * 转坐席时播放内容
+     */
+    private String playContent;
 
     /**
      * 转服务评价(0:否,1:是)
@@ -205,14 +210,6 @@ public class Group implements Serializable {
         this.callerDisplayId = callerDisplayId;
     }
 
-    public Integer getLevelValue() {
-        return levelValue;
-    }
-
-    public void setLevelValue(Integer levelValue) {
-        this.levelValue = levelValue;
-    }
-
     public Long getCalledDisplayId() {
         return calledDisplayId;
     }
@@ -221,20 +218,36 @@ public class Group implements Serializable {
         this.calledDisplayId = calledDisplayId;
     }
 
-    public Integer getTtsPlay() {
-        return ttsPlay;
+    public Integer getRecordType() {
+        return recordType;
     }
 
-    public void setTtsPlay(Integer ttsPlay) {
-        this.ttsPlay = ttsPlay;
+    public void setRecordType(Integer recordType) {
+        this.recordType = recordType;
     }
 
-    public String getTtsContent() {
-        return ttsContent;
+    public Integer getLevelValue() {
+        return levelValue;
     }
 
-    public void setTtsContent(String ttsContent) {
-        this.ttsContent = ttsContent == null ? null : ttsContent.trim();
+    public void setLevelValue(Integer levelValue) {
+        this.levelValue = levelValue;
+    }
+
+    public Integer getTtsEngine() {
+        return ttsEngine;
+    }
+
+    public void setTtsEngine(Integer ttsEngine) {
+        this.ttsEngine = ttsEngine;
+    }
+
+    public String getPlayContent() {
+        return playContent;
+    }
+
+    public void setPlayContent(String playContent) {
+        this.playContent = playContent == null ? null : playContent.trim();
     }
 
     public Long getEvaluate() {
@@ -363,10 +376,11 @@ public class Group implements Serializable {
         sb.append(", controlFlag=").append(controlFlag);
         sb.append(", afterInterval=").append(afterInterval);
         sb.append(", callerDisplayId=").append(callerDisplayId);
-        sb.append(", levelValue=").append(levelValue);
         sb.append(", calledDisplayId=").append(calledDisplayId);
-        sb.append(", ttsPlay=").append(ttsPlay);
-        sb.append(", ttsContent=").append(ttsContent);
+        sb.append(", recordType=").append(recordType);
+        sb.append(", levelValue=").append(levelValue);
+        sb.append(", ttsEngine=").append(ttsEngine);
+        sb.append(", playContent=").append(playContent);
         sb.append(", evaluate=").append(evaluate);
         sb.append(", queuePlay=").append(queuePlay);
         sb.append(", transferPlay=").append(transferPlay);
@@ -406,10 +420,11 @@ public class Group implements Serializable {
             && (this.getControlFlag() == null ? other.getControlFlag() == null : this.getControlFlag().equals(other.getControlFlag()))
             && (this.getAfterInterval() == null ? other.getAfterInterval() == null : this.getAfterInterval().equals(other.getAfterInterval()))
             && (this.getCallerDisplayId() == null ? other.getCallerDisplayId() == null : this.getCallerDisplayId().equals(other.getCallerDisplayId()))
-            && (this.getLevelValue() == null ? other.getLevelValue() == null : this.getLevelValue().equals(other.getLevelValue()))
             && (this.getCalledDisplayId() == null ? other.getCalledDisplayId() == null : this.getCalledDisplayId().equals(other.getCalledDisplayId()))
-            && (this.getTtsPlay() == null ? other.getTtsPlay() == null : this.getTtsPlay().equals(other.getTtsPlay()))
-            && (this.getTtsContent() == null ? other.getTtsContent() == null : this.getTtsContent().equals(other.getTtsContent()))
+            && (this.getRecordType() == null ? other.getRecordType() == null : this.getRecordType().equals(other.getRecordType()))
+            && (this.getLevelValue() == null ? other.getLevelValue() == null : this.getLevelValue().equals(other.getLevelValue()))
+            && (this.getTtsEngine() == null ? other.getTtsEngine() == null : this.getTtsEngine().equals(other.getTtsEngine()))
+            && (this.getPlayContent() == null ? other.getPlayContent() == null : this.getPlayContent().equals(other.getPlayContent()))
             && (this.getEvaluate() == null ? other.getEvaluate() == null : this.getEvaluate().equals(other.getEvaluate()))
             && (this.getQueuePlay() == null ? other.getQueuePlay() == null : this.getQueuePlay().equals(other.getQueuePlay()))
             && (this.getTransferPlay() == null ? other.getTransferPlay() == null : this.getTransferPlay().equals(other.getTransferPlay()))
@@ -438,10 +453,11 @@ public class Group implements Serializable {
         result = prime * result + ((getControlFlag() == null) ? 0 : getControlFlag().hashCode());
         result = prime * result + ((getAfterInterval() == null) ? 0 : getAfterInterval().hashCode());
         result = prime * result + ((getCallerDisplayId() == null) ? 0 : getCallerDisplayId().hashCode());
-        result = prime * result + ((getLevelValue() == null) ? 0 : getLevelValue().hashCode());
         result = prime * result + ((getCalledDisplayId() == null) ? 0 : getCalledDisplayId().hashCode());
-        result = prime * result + ((getTtsPlay() == null) ? 0 : getTtsPlay().hashCode());
-        result = prime * result + ((getTtsContent() == null) ? 0 : getTtsContent().hashCode());
+        result = prime * result + ((getRecordType() == null) ? 0 : getRecordType().hashCode());
+        result = prime * result + ((getLevelValue() == null) ? 0 : getLevelValue().hashCode());
+        result = prime * result + ((getTtsEngine() == null) ? 0 : getTtsEngine().hashCode());
+        result = prime * result + ((getPlayContent() == null) ? 0 : getPlayContent().hashCode());
         result = prime * result + ((getEvaluate() == null) ? 0 : getEvaluate().hashCode());
         result = prime * result + ((getQueuePlay() == null) ? 0 : getQueuePlay().hashCode());
         result = prime * result + ((getTransferPlay() == null) ? 0 : getTransferPlay().hashCode());

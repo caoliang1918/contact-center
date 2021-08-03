@@ -39,7 +39,7 @@
   <resultMap id="AgentInfoResultMap" extends="BaseResultMap" type="org.cti.cc.po.AgentInfo">
       <collection property="groupIds" select="org.cti.cc.mapper.AgentGroupMapper.selectByAgent" column="id"/>
       <collection property="sips" select="org.cti.cc.mapper.AgentSipMapper.selectByAgent" column="id"/>
-      <collection property="skills" select="org.cti.cc.mapper.SkillMapper.selectByAgent" column="id"/>
+      <collection property="skillAgents" select="org.cti.cc.mapper.SkillAgentMapper.selectByAgent" column="id"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type,

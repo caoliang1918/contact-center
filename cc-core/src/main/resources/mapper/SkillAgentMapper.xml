@@ -8,36 +8,50 @@
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="skill_id" jdbcType="BIGINT" property="skillId" />
     <result column="agent_id" jdbcType="BIGINT" property="agentId" />
-    <result column="rank" jdbcType="INTEGER" property="rank" />
+    <result column="rank_value" jdbcType="INTEGER" property="rankValue" />
     <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
+
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, skill_id, agent_id, rank_value, status
+  </sql>
+
   <insert id="insert" parameterType="org.cti.cc.entity.SkillAgent">
-    insert into cc_skill_agent (id, cts, uts, company_id, skill_id, agent_id, rank, status)
+    insert into cc_skill_agent (id, cts, uts, company_id, skill_id, agent_id, rank_value, status)
     values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
-      #{skillId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{rank,jdbcType=INTEGER}, 
+      #{skillId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{rankValue,jdbcType=INTEGER},
       #{status,jdbcType=INTEGER})
   </insert>
 
 
-
   <insert id="batchInsert" parameterType="List"  useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
-    insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank, status) values
+    insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank_value, status) values
     <foreach collection ="list" item="item" separator =",">
       (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT},#{item.skillId,jdbcType=BIGINT},
-       (select id from cc_agent where id = #{item.agentId} and company_id = #{item.companyId} as agentId, #{item.rank,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
+       (select id from cc_agent where id = #{item.agentId} and company_id = #{item.companyId} as agentId, #{item.rankValue,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
     </foreach>
   </insert>
 
   <insert id="batchInsert" parameterType="List"   databaseId="oracle">
     BEGIN
-    insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank, status) values
+    insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank_value, status) values
     <foreach collection ="list" item="item" separator =",">
       (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT},#{item.skillId,jdbcType=BIGINT},
-      (select id from cc_agent where id = #{item.agentId} and company_id = #{item.companyId} as agentId, #{item.rank,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
+      (select id from cc_agent where id = #{item.agentId} and company_id = #{item.companyId} as agentId, #{item.rankValue,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
     </foreach>
     COMMIT;
     END;
   </insert>
+
+  <!-- 查询坐席的技能 -->
+  <select id="selectByAgent" parameterType="Long" resultMap="BaseResultMap">
+    select
+        b.id, b.cts, b.uts, b.company_id, b.skill_id, b.agent_id, b.rank_value, b.status
+    from
+        cc_skill a , cc_skill_agent b
+    where
+        a.company_id = b.company_id and a.id = b.skill_id and b.agent_id = #{id} and a.status = 1
+  </select>
 
 
 </mapper>

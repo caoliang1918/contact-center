@@ -2,6 +2,7 @@ package org.cti.cc.po;
 
 import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.Skill;
+import org.cti.cc.entity.SkillAgent;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class AgentInfo extends Agent {
     /**
      * 坐席技能
      */
-    private List<Skill> skills;
+    private List<SkillAgent> skillAgents;
 
     /**
      * 通话id
@@ -50,10 +51,6 @@ public class AgentInfo extends Agent {
      */
     private Long loginTime = 0L;
 
-    /**
-     *
-     */
-    private AgentState agentState;
 
     /**
      * 1：坐席sip号
@@ -63,40 +60,67 @@ public class AgentInfo extends Agent {
     private Integer loginType;
 
     /**
-     *
+     * 1:普通
+     * 2:预测
      */
     private Integer workType;
 
+    /**
+     * 当前状态
+     */
+    private AgentState agentState;
 
     /**
-     *
+     * 当天状态时间
      */
     private Long stateTime = 0L;
 
     /**
-     *
+     * 上一次状态
      */
     private AgentState beforeState;
 
     /**
-     *
+     * 上一次状态时间
      */
     private Long beforeTime = 0L;
 
     /**
-     *
+     * 下线时间
      */
     private Long logoutTime = 0L;
 
     /**
+     * 坐席最近的一次服务时间,电话则是振铃时间
+     */
+    private Long serviceTime = 0L;
+
+    /**
      * 最大空闲时长
      */
-    private Long maxFreeTime = 0L;
+    private Long maxReadyTime = 0L;
 
     /**
      * 累计空闲
      */
-    private Long totalFreeTime = 0L;
+    private Long totalReadyTime = 0L;
+
+
+    /**
+     * 空闲次数
+     */
+    private Long readyTimes = 0L;
+
+    /**
+     * 忙碌次数
+     */
+    private Long notReadyTimes = 0L;
+
+    /**
+     * 累计话后时间长
+     */
+    private Long totalAfterTime = 0L;
+
 
     /**
      * 最大通话时长
@@ -112,12 +136,12 @@ public class AgentInfo extends Agent {
     /**
      * 振铃次数
      */
-    private Long totalRingTime = 0L;
+    private Long totalRingTimes = 0L;
 
     /**
      * 当日累计接听次数
      */
-    private Long totalAnswerTime = 0L;
+    private Long totalAnswerTimes = 0L;
 
     /**
      * 隐藏客户号码(0:不隐藏;1:隐藏)
@@ -166,12 +190,12 @@ public class AgentInfo extends Agent {
         this.sips = sips;
     }
 
-    public List<Skill> getSkills() {
-        return skills;
+    public List<SkillAgent> getSkillAgents() {
+        return skillAgents;
     }
 
-    public void setSkills(List<Skill> skills) {
-        this.skills = skills;
+    public void setSkillAgents(List<SkillAgent> skillAgents) {
+        this.skillAgents = skillAgents;
     }
 
     public Long getCallId() {
@@ -254,20 +278,20 @@ public class AgentInfo extends Agent {
         this.logoutTime = logoutTime;
     }
 
-    public Long getMaxFreeTime() {
-        return maxFreeTime;
+    public Long getMaxReadyTime() {
+        return maxReadyTime == null ? 0L : maxReadyTime;
     }
 
-    public void setMaxFreeTime(Long maxFreeTime) {
-        this.maxFreeTime = maxFreeTime;
+    public void setMaxReadyTime(Long maxReadyTime) {
+        this.maxReadyTime = maxReadyTime;
     }
 
-    public Long getTotalFreeTime() {
-        return totalFreeTime;
+    public Long getTotalReadyTime() {
+        return totalReadyTime == null ? 0L : totalReadyTime;
     }
 
-    public void setTotalFreeTime(Long totalFreeTime) {
-        this.totalFreeTime = totalFreeTime;
+    public void setTotalReadyTime(Long totalReadyTime) {
+        this.totalReadyTime = totalReadyTime;
     }
 
     public Long getMaxTalkTime() {
@@ -286,24 +310,24 @@ public class AgentInfo extends Agent {
         this.totalTalkTime = totalTalkTime;
     }
 
-    public Long getTotalRingTime() {
-        return totalRingTime;
+    public Long getTotalRingTimes() {
+        return totalRingTimes;
     }
 
-    public void setTotalRingTime(Long totalRingTime) {
-        this.totalRingTime = totalRingTime;
+    public void setTotalRingTimes(Long totalRingTimes) {
+        this.totalRingTimes = totalRingTimes;
     }
 
-    public Long getTotalAnswerTime() {
-        return totalAnswerTime;
+    public Long getTotalAnswerTimes() {
+        return totalAnswerTimes;
     }
 
-    public void setTotalAnswerTime(Long totalAnswerTime) {
-        this.totalAnswerTime = totalAnswerTime;
+    public void setTotalAnswerTimes(Long totalAnswerTimes) {
+        this.totalAnswerTimes = totalAnswerTimes;
     }
 
     public Integer getHiddenCustomer() {
-        return hiddenCustomer;
+        return hiddenCustomer == null ? 0 : hiddenCustomer;
     }
 
     public void setHiddenCustomer(Integer hiddenCustomer) {
@@ -324,6 +348,38 @@ public class AgentInfo extends Agent {
 
     public void setStateNotifyUrl(String stateNotifyUrl) {
         this.stateNotifyUrl = stateNotifyUrl;
+    }
+
+    public Long getReadyTimes() {
+        return readyTimes;
+    }
+
+    public void setReadyTimes(Long readyTimes) {
+        this.readyTimes = readyTimes;
+    }
+
+    public Long getNotReadyTimes() {
+        return notReadyTimes;
+    }
+
+    public void setNotReadyTimes(Long notReadyTimes) {
+        this.notReadyTimes = notReadyTimes;
+    }
+
+    public Long getTotalAfterTime() {
+        return totalAfterTime;
+    }
+
+    public void setTotalAfterTime(Long totalAfterTime) {
+        this.totalAfterTime = totalAfterTime;
+    }
+
+    public Long getServiceTime() {
+        return serviceTime;
+    }
+
+    public void setServiceTime(Long serviceTime) {
+        this.serviceTime = serviceTime;
     }
 
     /**
@@ -347,7 +403,7 @@ public class AgentInfo extends Agent {
                 "host='" + host + '\'' +
                 ", groupIds=" + groupIds +
                 ", sips=" + sips +
-                ", skills=" + skills +
+                ", skillAgents=" + skillAgents +
                 ", callId=" + callId +
                 ", deviceId='" + deviceId + '\'' +
                 ", loginTime=" + loginTime +
@@ -358,12 +414,12 @@ public class AgentInfo extends Agent {
                 ", beforeState=" + beforeState +
                 ", beforeTime=" + beforeTime +
                 ", logoutTime=" + logoutTime +
-                ", maxFreeTime=" + maxFreeTime +
-                ", totalFreeTime=" + totalFreeTime +
+                ", maxReadyTime=" + maxReadyTime +
+                ", totalReadyTime=" + totalReadyTime +
                 ", maxTalkTime=" + maxTalkTime +
                 ", totalTalkTime=" + totalTalkTime +
-                ", totalRingTime=" + totalRingTime +
-                ", totalAnswerTime=" + totalAnswerTime +
+                ", totalRingTimes=" + totalRingTimes +
+                ", totalAnswerTimes=" + totalAnswerTimes +
                 '}';
     }
 }

@@ -14,4 +14,13 @@ public interface SkillAgentMapper extends BaseMapper<SkillAgent> {
      * @return
      */
     int batchInsert(List<SkillAgent> list);
+
+
+    /**
+     * 查询坐席技能
+     *
+     * @param id
+     * @return
+     */
+    List<SkillAgent> selectByAgent(Long id);
 }

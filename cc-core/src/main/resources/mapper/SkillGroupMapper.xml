@@ -14,6 +14,12 @@
     <result column="rate" jdbcType="INTEGER" property="rate" />
     <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
+
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, skill_id, group_id, rank_about, rank_value_start, rank_value,  rate, status
+  </sql>
+
+
   <insert id="insert" parameterType="org.cti.cc.entity.SkillGroup">
     insert into cc_skill_group (id, uts, cts, company_id, 
       skill_id, group_id, rank_about, 
@@ -45,4 +51,12 @@
     COMMIT;
     END;
   </insert>
+
+  <!--查询技能组的技能 -->
+  <select id="selectByGroup" parameterType="Long" resultMap="BaseResultMap">
+    select
+        b.id, b.cts, b.uts, b.company_id, b.skill_id, b.group_id, b.rank_about, b.rank_value_start, b.rank_value, b.rate, b.status
+    from
+        cc_skill a , cc_skill_group b where a.company_id = b.company_id and a.id = b.skill_id and b.group_id = #{id} and a.status = 1
+  </select>
 </mapper>

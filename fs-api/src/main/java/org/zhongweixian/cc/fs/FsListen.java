@@ -349,8 +349,25 @@ public class FsListen {
      * @param display
      * @param called
      * @param deviceId
+     * @param sipHeaders
      */
     public void makeCall(RouteGetway routeGetway, String display, String called, String deviceId, String... sipHeaders) {
+        makeCall(fsIpv4s.get(0), routeGetway, display, called, deviceId, sipHeaders);
+    }
+
+    /**
+     * 发起呼叫
+     * <p>
+     * bgapi originate {return_ring_ready=true,sip_contact_user=01017818388,ring_asr=true,absolute_codec_string=^^:G729:PCMU:PCMA,origination_caller_id_number=01017718388,origination_caller_id_name=01017718388,origination_uuid=192.168.1.1-25-5f8fe34b-1bb-76,sip_auto_answer=true}sofia/external/8731279@192.168.177.183:8880 &park()
+     *
+     * @param media
+     * @param routeGetway
+     * @param display
+     * @param called
+     * @param deviceId
+     * @param sipHeaders
+     */
+    public void makeCall(String media, RouteGetway routeGetway, String display, String called, String deviceId, String... sipHeaders) {
         called = called + Constants.AT + routeGetway.getMediaHost() + Constants.CO + routeGetway.getMediaPort();
         if (StringUtils.isNotBlank(routeGetway.getCallerPrefix())) {
             display = routeGetway.getCallerPrefix() + display;
@@ -397,30 +414,12 @@ public class FsListen {
             builder.append(SPLIT).append(sipBuffer);
         }
         builder.append("}").append("sofia/external/").append(called).append(" &park");
-        CompletableFuture future = fsClient.get(fsIpv4s.get(0)).sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
+        CompletableFuture future = fsClient.get(media).sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
         try {
             logger.info("call response: {}", future.get());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-    }
-
-
-    /**
-     * makecall sofia/external/871556590425001@192.168.177.183:8880
-     * sofia/external/13300010002@192.168.180.37:5080
-     */
-    public void makeCall(String media, String display, String called, String deviceId) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("{return_ring_ready=true").append(SPLIT)
-                .append("sip_contact_user=").append(display).append(SPLIT)
-                .append("ring_asr=true").append(SPLIT)
-                .append("absolute_codec_string=").append(codecs).append(SPLIT)
-                .append("origination_caller_id_number=").append(display).append(SPLIT)
-                .append("origination_caller_id_name=").append(display).append(SPLIT)
-                .append("origination_uuid=").append(deviceId)
-                .append("}").append("sofia/external/").append(called).append(" &park");
-        fsClient.get(media).sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
     }
 
     /**

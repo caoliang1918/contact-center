@@ -164,10 +164,16 @@ public class CacheService {
          */
         routeCallList = routeCallMapper.selectListByMap(new HashMap());
 
+        /**
+         * 初始化企业数据
+         */
         companyMap.forEach((k, v) -> {
             List<GroupInfo> groupInfoList = groupService.getGroupByConpany(k);
             if (!groupInfoList.isEmpty()) {
-                groupMap.putAll(groupInfoList.stream().collect(Collectors.toMap(GroupInfo::getId, Function.identity())));
+                groupInfoList.forEach(groupInfo -> {
+                    groupService.initGroupStrategy(groupInfo);
+                    groupMap.put(groupInfo.getId(), groupInfo);
+                });
             }
             //初始化企业字冠路由信息
             Map<String, RouteGroupPo> routeGroupMap = new LinkedHashMap<>();

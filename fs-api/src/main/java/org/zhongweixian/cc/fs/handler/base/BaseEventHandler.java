@@ -7,6 +7,7 @@ import org.cti.cc.po.CallInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.*;
 import org.zhongweixian.cc.command.base.BaseHandler;
@@ -25,6 +26,9 @@ import org.zhongweixian.esl.transport.SendMsg;
  */
 public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandler implements Handler<T> {
     protected Logger logger = LoggerFactory.getLogger(BaseEventHandler.class);
+
+    @Value("${record.path:/app/clpms/record/}")
+    protected String recordPath;
 
     @Autowired
     protected CacheService cacheService;
@@ -81,20 +85,6 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
      */
     protected void sendAgentStateMessage(AgentInfo agentInfo) {
         agentService.sendAgentStateMessage(agentInfo);
-    }
-
-
-    /**
-     * bgapi originate {return_ring_ready=true,sip_contact_user=01017718388,ring_asr=true,absolute_codec_string=^^:G729:PCMU:PCMA,origination_caller_id_number=01017718388,origination_caller_id_name=01017718388,origination_uuid=sswitch-25-5f8fe34b-1bb-76,sip_auto_answer=true}sofia/external/8731279@192.168.177.183:8880 &park()
-     * Job-UUID: sswitch-25-5f8fe34b-1bb-76
-     *
-     * @param media
-     * @param caller
-     * @param external
-     * @param device
-     */
-    public void makeCall(String media, String caller, String external, String device) {
-        fsListen.makeCall(media, caller, external, device);
     }
 
 

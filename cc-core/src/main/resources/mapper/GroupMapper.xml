@@ -10,10 +10,11 @@
     <result column="control_flag" jdbcType="INTEGER" property="controlFlag" />
     <result column="after_interval" jdbcType="INTEGER" property="afterInterval" />
     <result column="caller_display_id" jdbcType="BIGINT" property="callerDisplayId" />
-    <result column="level_value" jdbcType="INTEGER" property="levelValue" />
     <result column="called_display_id" jdbcType="BIGINT" property="calledDisplayId" />
-    <result column="tts_play" jdbcType="INTEGER" property="ttsPlay" />
-    <result column="tts_content" jdbcType="VARCHAR" property="ttsContent" />
+    <result column="record_type" jdbcType="INTEGER" property="recordType" />
+    <result column="level_value" jdbcType="INTEGER" property="levelValue" />
+    <result column="tts_engine" jdbcType="INTEGER" property="ttsEngine" />
+    <result column="play_content" jdbcType="VARCHAR" property="playContent" />
     <result column="evaluate" jdbcType="BIGINT" property="evaluate" />
     <result column="queue_play" jdbcType="BIGINT" property="queuePlay" />
     <result column="transfer_play" jdbcType="BIGINT" property="transferPlay" />
@@ -34,9 +35,9 @@
     <!-- 记忆坐席配置 -->
     <association property="groupMemoryConfig" select="org.cti.cc.mapper.GroupMemoryConfigMapper.selectByGroupId" column="id" />
     <!-- 坐席空闲策略 -->
-    <association property="lineupStrategy" select="org.cti.cc.mapper.GroupLineupStrategyMapper.selectByGroupId" column="id"></association>
+    <association property="groupAgentStrategyPo" select="org.cti.cc.mapper.GroupAgentStrategyMapper.selectByGroupId" column="id"></association>
     <!-- 技能组技能 -->
-    <collection property="skills" select="org.cti.cc.mapper.SkillMapper.selectByGroup" column="id" ></collection>
+    <collection property="skills" select="org.cti.cc.mapper.SkillGroupMapper.selectByGroup" column="id" ></collection>
     <!-- 主叫显号 -->
     <collection property="callerDisplays" select="org.cti.cc.mapper.CompanyPhoneGroupMapper.selectDisplayByGroupId" column="caller_display_id" ></collection>
     <!-- 被叫显号 -->
@@ -47,9 +48,9 @@
 
   <sql id="Base_Column_List">
     id, cts, uts, company_id, name, control_flag, after_interval, caller_display_id,
-    level_value, called_display_id, tts_play, tts_content, evaluate, queue_play, transfer_play,
-    group_type, notify_position, notify_rate, notify_content, call_memory,
-    ext1, ext2, ext3, ext4, ext5, status
+    called_display_id, record_type, level_value, tts_engine, play_content, evaluate,
+    queue_play, transfer_play, group_type, notify_position, notify_rate, notify_content,
+    call_memory, ext1, ext2, ext3, ext4, ext5, status
   </sql>
 
 
@@ -63,27 +64,8 @@
     delete from cc_group
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.cti.cc.entity.Group">
-    insert into cc_group (id, cts, uts, company_id,
-      name, control_flag, after_interval,
-      caller_display_id, level_value, called_display_id,
-      tts_play, tts_content, evaluate,
-      queue_play, transfer_play, group_type,
-      notify_position, notify_rate, notify_content,
-      call_memory, ext1,
-      ext2, ext3, ext4, ext5,
-      status)
-    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
-      #{name,jdbcType=VARCHAR}, #{controlFlag,jdbcType=INTEGER}, #{afterInterval,jdbcType=INTEGER},
-      #{callerDisplayId,jdbcType=BIGINT}, #{levelValue,jdbcType=INTEGER}, #{calledDisplayId,jdbcType=BIGINT},
-      #{ttsPlay,jdbcType=INTEGER}, #{ttsContent,jdbcType=VARCHAR}, #{evaluate,jdbcType=BIGINT},
-      #{queuePlay,jdbcType=BIGINT}, #{transferPlay,jdbcType=BIGINT}, #{groupType,jdbcType=INTEGER},
-      #{notifyPosition,jdbcType=INTEGER}, #{notifyRate,jdbcType=INTEGER}, #{notifyContent,jdbcType=VARCHAR},
-      #{callMemory,jdbcType=INTEGER}, #{ext1,jdbcType=VARCHAR},
-      #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR},
-      #{status,jdbcType=INTEGER})
-  </insert>
-  <insert id="insertSelective" parameterType="org.cti.cc.entity.Group" useGeneratedKeys="true" keyProperty="id">
+
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.Group">
     insert into cc_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -110,17 +92,20 @@
       <if test="callerDisplayId != null">
         caller_display_id,
       </if>
-      <if test="levelValue != null">
-        level_value,
-      </if>
       <if test="calledDisplayId != null">
         called_display_id,
       </if>
-      <if test="ttsPlay != null">
-        tts_play,
+      <if test="recordType != null">
+        record_type,
       </if>
-      <if test="ttsContent != null">
-        tts_content,
+      <if test="levelValue != null">
+        level_value,
+      </if>
+      <if test="ttsEngine != null">
+        tts_engine,
+      </if>
+      <if test="playContent != null">
+        play_content,
       </if>
       <if test="evaluate != null">
         evaluate,
@@ -190,17 +175,20 @@
       <if test="callerDisplayId != null">
         #{callerDisplayId,jdbcType=BIGINT},
       </if>
-      <if test="levelValue != null">
-        #{levelValue,jdbcType=INTEGER},
-      </if>
       <if test="calledDisplayId != null">
         #{calledDisplayId,jdbcType=BIGINT},
       </if>
-      <if test="ttsPlay != null">
-        #{ttsPlay,jdbcType=INTEGER},
+      <if test="recordType != null">
+        #{recordType,jdbcType=INTEGER},
       </if>
-      <if test="ttsContent != null">
-        #{ttsContent,jdbcType=VARCHAR},
+      <if test="levelValue != null">
+        #{levelValue,jdbcType=INTEGER},
+      </if>
+      <if test="ttsEngine != null">
+        #{ttsEngine,jdbcType=INTEGER},
+      </if>
+      <if test="playContent != null">
+        #{playContent,jdbcType=VARCHAR},
       </if>
       <if test="evaluate != null">
         #{evaluate,jdbcType=BIGINT},
@@ -270,17 +258,20 @@
       <if test="callerDisplayId != null">
         caller_display_id = #{callerDisplayId,jdbcType=BIGINT},
       </if>
-      <if test="levelValue != null">
-        level_value = #{levelValue,jdbcType=INTEGER},
-      </if>
       <if test="calledDisplayId != null">
         called_display_id = #{calledDisplayId,jdbcType=BIGINT},
       </if>
-      <if test="ttsPlay != null">
-        tts_play = #{ttsPlay,jdbcType=INTEGER},
+      <if test="recordType != null">
+        record_type = #{recordType,jdbcType=INTEGER},
       </if>
-      <if test="ttsContent != null">
-        tts_content = #{ttsContent,jdbcType=VARCHAR},
+      <if test="levelValue != null">
+        level_value = #{levelValue,jdbcType=INTEGER},
+      </if>
+      <if test="ttsEngine != null">
+        tts_engine = #{ttsEngine,jdbcType=INTEGER},
+      </if>
+      <if test="playContent != null">
+        play_content = #{playContent,jdbcType=VARCHAR},
       </if>
       <if test="evaluate != null">
         evaluate = #{evaluate,jdbcType=BIGINT},
@@ -327,36 +318,6 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.Group">
-    update cc_group
-    set cts = #{cts,jdbcType=BIGINT},
-      uts = #{uts,jdbcType=BIGINT},
-      company_id = #{companyId,jdbcType=BIGINT},
-      name = #{name,jdbcType=VARCHAR},
-      control_flag = #{controlFlag,jdbcType=INTEGER},
-      after_interval = #{afterInterval,jdbcType=INTEGER},
-      caller_display_id = #{callerDisplayId,jdbcType=BIGINT},
-      level_value = #{levelValue,jdbcType=INTEGER},
-      called_display_id = #{calledDisplayId,jdbcType=BIGINT},
-      tts_play = #{ttsPlay,jdbcType=INTEGER},
-      tts_content = #{ttsContent,jdbcType=VARCHAR},
-      evaluate = #{evaluate,jdbcType=BIGINT},
-      queue_play = #{queuePlay,jdbcType=BIGINT},
-      transfer_play = #{transferPlay,jdbcType=BIGINT},
-      group_type = #{groupType,jdbcType=INTEGER},
-      notify_position = #{notifyPosition,jdbcType=INTEGER},
-      notify_rate = #{notifyRate,jdbcType=INTEGER},
-      notify_content = #{notifyContent,jdbcType=VARCHAR},
-      call_memory = #{callMemory,jdbcType=INTEGER},
-      ext1 = #{ext1,jdbcType=VARCHAR},
-      ext2 = #{ext2,jdbcType=VARCHAR},
-      ext3 = #{ext3,jdbcType=VARCHAR},
-      ext4 = #{ext4,jdbcType=VARCHAR},
-      ext5 = #{ext5,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-
 
   <select id="selectGroupInfoList"  parameterType="java.util.Map" resultMap="GroupInfoResultMap" >
     select

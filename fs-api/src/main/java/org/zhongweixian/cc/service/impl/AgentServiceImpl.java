@@ -110,12 +110,12 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setStateTime(agentInfo.getStateTime());
             response.setBeforeState(agentInfo.getBeforeState());
             response.setBeforeTime(agentInfo.getBeforeTime());
-            response.setMaxFreeTime(agentInfo.getMaxFreeTime());
-            response.setTotalFreeTime(agentInfo.getTotalFreeTime());
+            response.setMaxReadyTime(agentInfo.getMaxReadyTime());
+            response.setTotalReadyTime(agentInfo.getTotalReadyTime());
             response.setMaxTalkTime(agentInfo.getMaxTalkTime());
             response.setTotalTalkTime(agentInfo.getTotalTalkTime());
-            response.setTotalRingTime(agentInfo.getTotalRingTime());
-            response.setTotalAnswerTime(agentInfo.getTotalAnswerTime());
+            response.setTotalRingTimes(agentInfo.getTotalRingTimes());
+            response.setTotalAnswerTimes(agentInfo.getTotalAnswerTimes());
 
             logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
             rabbitTemplate.convertAndSend(RabbitConfig.AGENT_STATE_EXCHANGE, RabbitConfig.DEFAULT_KEY, JSON.toJSONString(response));

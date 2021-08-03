@@ -5,6 +5,7 @@ import org.cti.cc.entity.CallDetail;
 import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
+import org.cti.cc.strategy.AgentStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -121,12 +122,14 @@ public class GroupHandler extends BaseHandler {
          */
         switch (groupOverFlow.getHandleType()) {
             case 1:
-                logger.info("group:{} handleType is lineUp, queueTimeout:{}, busyTimeoutType:{}, overflowType:{}, overflowValue:{}, callId:{}", groupInfo.getName(), groupOverFlow.getQueueTimeout(), groupOverFlow.getBusyTimeoutType(), groupOverFlow.getOverflowType(), groupOverFlow.getOverflowValue(), callInfo.getCallId());
+                logger.info("group:{} handleType is lineUp, queueTimeout:{}, busyType:{}, busyTimeoutType:{}, overflowType:{}, overflowValue:{}, callId:{}", groupInfo.getName(), groupOverFlow.getQueueTimeout(), groupOverFlow.getBusyType(), groupOverFlow.getBusyTimeoutType(), groupOverFlow.getOverflowType(), groupOverFlow.getOverflowValue(), callInfo.getCallId());
                 PriorityQueue<CallQueue> callQueues = callInfoMap.get(groupId);
                 if (callQueues == null) {
                     callQueues = new PriorityQueue<CallQueue>();
                 }
-                callQueues.add(new CallQueue(callInfo.getQueueStartTime(), callInfo.getCallId(), deviceId, callInfo.getQueueStartTime() / 1000, groupId, groupOverFlow));
+                Long queueLevel = groupOverFlow.getLineupStrategy().calculateLevel(callInfo);
+                callInfo.setQueueLevel(queueLevel);
+                callQueues.add(new CallQueue(callInfo.getQueueLevel(), callInfo.getCallId(), deviceId, callInfo.getQueueStartTime() / 1000, groupId, groupOverFlow));
                 callInfoMap.put(callInfo.getGroupId(), callQueues);
 
                 /**
@@ -201,7 +204,12 @@ public class GroupHandler extends BaseHandler {
                 agentQueues = new PriorityQueue<AgentQueue>();
             }
             logger.info("agent:{} ready for group:{}", agentInfo.getAgentKey(), groupId);
-            agentQueues.offer(new AgentQueue(agentInfo.getStateTime(), agentInfo.getAgentKey()));
+            //根据空闲策略
+            GroupInfo groupInfo = cacheService.getGroupInfo(groupId);
+            //坐席空闲策略接口
+            AgentStrategy agentStrategy = groupInfo.getGroupAgentStrategyPo().getAgentStrategy();
+            Long priority = agentStrategy.calculateLevel(agentInfo);
+            agentQueues.offer(new AgentQueue(priority, agentInfo.getAgentKey()));
             agentInfoMap.put(groupId, agentQueues);
 
         });
@@ -370,7 +378,7 @@ public class GroupHandler extends BaseHandler {
 
         @Override
         public int compareTo(AgentQueue o) {
-            return this.priority.compareTo(o.priority);
+            return o.priority.compareTo(this.priority);
         }
 
         @Override
@@ -453,7 +461,7 @@ public class GroupHandler extends BaseHandler {
 
         @Override
         public int compareTo(CallQueue o) {
-            return this.priority.compareTo(o.priority);
+            return o.priority.compareTo(this.priority);
         }
 
         @Override

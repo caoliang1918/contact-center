@@ -1,6 +1,5 @@
 package org.zhongweixian.cc.websocket.response;
 
-import org.cti.cc.entity.Skill;
 import org.cti.cc.po.AgentState;
 
 import java.util.List;
@@ -56,57 +55,81 @@ public class AgentStateResppnse {
     private Long callId;
 
     /**
-     *
+     * 登录时间
      */
     private Long loginTime = 0L;
 
-    /**
-     *
-     */
-    private AgentState agentState;
 
     /**
-     * 1： 坐席sip号
+     * 1：坐席sip号
      * 2：webrtc
      * 3：坐席手机号
      */
     private Integer loginType;
 
     /**
-     *
+     * 1:普通
+     * 2:预测
      */
     private Integer workType;
 
+    /**
+     * 当前状态
+     */
+    private AgentState agentState;
 
     /**
-     *
+     * 当天状态时间
      */
     private Long stateTime = 0L;
 
     /**
-     *
+     * 上一次状态
      */
     private AgentState beforeState;
 
     /**
-     *
+     * 上一次状态时间
      */
     private Long beforeTime = 0L;
 
     /**
-     *
+     * 下线时间
      */
     private Long logoutTime = 0L;
+
+
+    /**
+     * 坐席最近的一次服务时间,电话则是振铃时间
+     */
+    private Long serviceTime = 0L;
 
     /**
      * 最大空闲时长
      */
-    private Long maxFreeTime = 0L;
+    private Long maxReadyTime = 0L;
 
     /**
      * 累计空闲
      */
-    private Long totalFreeTime = 0L;
+    private Long totalReadyTime = 0L;
+
+
+    /**
+     * 空闲次数
+     */
+    private Long readyTimes = 0L;
+
+    /**
+     * 忙碌次数
+     */
+    private Long notReadyTimes = 0L;
+
+    /**
+     * 累计话后时间长
+     */
+    private Long totalAfterTime = 0L;
+
 
     /**
      * 最大通话时长
@@ -122,12 +145,13 @@ public class AgentStateResppnse {
     /**
      * 振铃次数
      */
-    private Long totalRingTime = 0L;
+    private Long totalRingTimes = 0L;
 
     /**
      * 当日累计接听次数
      */
-    private Long totalAnswerTime = 0L;
+    private Long totalAnswerTimes = 0L;
+
 
     public Long getId() {
         return id;
@@ -209,14 +233,6 @@ public class AgentStateResppnse {
         this.loginTime = loginTime;
     }
 
-    public AgentState getAgentState() {
-        return agentState;
-    }
-
-    public void setAgentState(AgentState agentState) {
-        this.agentState = agentState;
-    }
-
     public Integer getLoginType() {
         return loginType;
     }
@@ -231,6 +247,14 @@ public class AgentStateResppnse {
 
     public void setWorkType(Integer workType) {
         this.workType = workType;
+    }
+
+    public AgentState getAgentState() {
+        return agentState;
+    }
+
+    public void setAgentState(AgentState agentState) {
+        this.agentState = agentState;
     }
 
     public Long getStateTime() {
@@ -265,20 +289,44 @@ public class AgentStateResppnse {
         this.logoutTime = logoutTime;
     }
 
-    public Long getMaxFreeTime() {
-        return maxFreeTime;
+    public Long getMaxReadyTime() {
+        return maxReadyTime;
     }
 
-    public void setMaxFreeTime(Long maxFreeTime) {
-        this.maxFreeTime = maxFreeTime;
+    public void setMaxReadyTime(Long maxReadyTime) {
+        this.maxReadyTime = maxReadyTime;
     }
 
-    public Long getTotalFreeTime() {
-        return totalFreeTime;
+    public Long getTotalReadyTime() {
+        return totalReadyTime;
     }
 
-    public void setTotalFreeTime(Long totalFreeTime) {
-        this.totalFreeTime = totalFreeTime;
+    public void setTotalReadyTime(Long totalReadyTime) {
+        this.totalReadyTime = totalReadyTime;
+    }
+
+    public Long getReadyTimes() {
+        return readyTimes;
+    }
+
+    public void setReadyTimes(Long readyTimes) {
+        this.readyTimes = readyTimes;
+    }
+
+    public Long getNotReadyTimes() {
+        return notReadyTimes;
+    }
+
+    public void setNotReadyTimes(Long notReadyTimes) {
+        this.notReadyTimes = notReadyTimes;
+    }
+
+    public Long getTotalAfterTime() {
+        return totalAfterTime;
+    }
+
+    public void setTotalAfterTime(Long totalAfterTime) {
+        this.totalAfterTime = totalAfterTime;
     }
 
     public Long getMaxTalkTime() {
@@ -297,48 +345,29 @@ public class AgentStateResppnse {
         this.totalTalkTime = totalTalkTime;
     }
 
-    public Long getTotalRingTime() {
-        return totalRingTime;
+    public Long getTotalRingTimes() {
+        return totalRingTimes;
     }
 
-    public void setTotalRingTime(Long totalRingTime) {
-        this.totalRingTime = totalRingTime;
+    public void setTotalRingTimes(Long totalRingTimes) {
+        this.totalRingTimes = totalRingTimes;
     }
 
-    public Long getTotalAnswerTime() {
-        return totalAnswerTime;
+    public Long getTotalAnswerTimes() {
+        return totalAnswerTimes;
     }
 
-    public void setTotalAnswerTime(Long totalAnswerTime) {
-        this.totalAnswerTime = totalAnswerTime;
+    public void setTotalAnswerTimes(Long totalAnswerTimes) {
+        this.totalAnswerTimes = totalAnswerTimes;
     }
 
-    @Override
-    public String toString() {
-        return "AgentStateResppnse{" +
-                "id=" + id +
-                ", agentKey='" + agentKey + '\'' +
-                ", companyId=" + companyId +
-                ", sipPhone='" + sipPhone + '\'' +
-                ", groupId=" + groupId +
-                ", host='" + host + '\'' +
-                ", groupIds=" + groupIds +
-                ", sips=" + sips +
-                ", callId=" + callId +
-                ", loginTime=" + loginTime +
-                ", agentState=" + agentState +
-                ", loginType=" + loginType +
-                ", workType=" + workType +
-                ", stateTime=" + stateTime +
-                ", beforeState=" + beforeState +
-                ", beforeTime=" + beforeTime +
-                ", logoutTime=" + logoutTime +
-                ", maxFreeTime=" + maxFreeTime +
-                ", totalFreeTime=" + totalFreeTime +
-                ", maxTalkTime=" + maxTalkTime +
-                ", totalTalkTime=" + totalTalkTime +
-                ", totalRingTime=" + totalRingTime +
-                ", totalAnswerTime=" + totalAnswerTime +
-                '}';
+    public Long getServiceTime() {
+        return serviceTime;
     }
+
+    public void setServiceTime(Long serviceTime) {
+        this.serviceTime = serviceTime;
+    }
+
+
 }

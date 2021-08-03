@@ -178,15 +178,25 @@ public class CallInfo implements Serializable {
      */
     private String cdrNotifyUrl;
 
+    /**
+     * 排队等级，默认是进队列时间
+     */
+    private Long queueLevel;
+
 
     private List<String> deviceList = new ArrayList<>();
 
     private Map<String, DeviceInfo> deviceInfoMap = new HashMap<>();
 
     /**
-     * 呼叫随路数据
+     * 呼叫随路数据(作为落单数据)
      */
     private Map<String, Object> followData = new HashMap<>();
+
+    /**
+     * 模块流程间数据
+     */
+    private Map<String, Object> processData = new HashMap<>();
 
     /**
      * 电话流程
@@ -489,6 +499,22 @@ public class CallInfo implements Serializable {
         this.cdrNotifyUrl = cdrNotifyUrl;
     }
 
+    public Map<String, Object> getProcessData() {
+        return processData;
+    }
+
+    public void setProcessData(Map<String, Object> processData) {
+        this.processData = processData;
+    }
+
+    public Long getQueueLevel() {
+        return queueLevel == null ? queueStartTime : queueLevel;
+    }
+
+    public void setQueueLevel(Long queueLevel) {
+        this.queueLevel = queueLevel;
+    }
+
     public static final class CallInfoBuilder {
         private String coreUuid;
         private Long callId;
@@ -542,7 +568,8 @@ public class CallInfo implements Serializable {
             this.groupId = groupId;
             return this;
         }
-        public CallInfoBuilder withHiddenCustomer(int hiddenCustomer){
+
+        public CallInfoBuilder withHiddenCustomer(int hiddenCustomer) {
             this.hiddenCustomer = hiddenCustomer;
             return this;
         }

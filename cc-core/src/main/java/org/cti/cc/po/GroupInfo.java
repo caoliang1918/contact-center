@@ -6,7 +6,6 @@ import org.cti.cc.entity.Skill;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Created by caoliang on 2020/11/6
@@ -24,9 +23,9 @@ public class GroupInfo extends Group {
     private List<Skill> skills;
 
     /**
-     * 坐席的策略
+     * 技能组中坐席分配策略
      */
-    private GroupLineupStrategyPo lineupStrategy;
+    private GroupAgentStrategyPo groupAgentStrategyPo;
 
     /**
      * 技能组溢出策略
@@ -56,20 +55,20 @@ public class GroupInfo extends Group {
         this.onlineAgents = onlineAgents;
     }
 
+    public GroupAgentStrategyPo getGroupAgentStrategyPo() {
+        return groupAgentStrategyPo;
+    }
+
+    public void setGroupAgentStrategyPo(GroupAgentStrategyPo groupAgentStrategyPo) {
+        this.groupAgentStrategyPo = groupAgentStrategyPo;
+    }
+
     public List<Skill> getSkills() {
         return skills;
     }
 
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
-    }
-
-    public GroupLineupStrategyPo getLineupStrategy() {
-        return lineupStrategy;
-    }
-
-    public void setLineupStrategy(GroupLineupStrategyPo lineupStrategy) {
-        this.lineupStrategy = lineupStrategy;
     }
 
     public List<GroupOverflowPo> getGroupOverflows() {

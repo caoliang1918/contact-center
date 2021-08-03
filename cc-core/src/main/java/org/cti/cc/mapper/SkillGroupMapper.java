@@ -14,4 +14,13 @@ public interface SkillGroupMapper extends BaseMapper<SkillGroup> {
      * @return
      */
     int batchInsert(List<SkillGroup> list);
+
+
+    /**
+     * 查询技能组技能
+     *
+     * @param id
+     * @return
+     */
+    List<SkillGroup> selectByGroup(Long id);
 }

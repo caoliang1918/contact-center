@@ -147,6 +147,6 @@
         b.id , handle_type, busy_type, queue_timeout, busy_timeout_type,  overflow_type,
         overflow_value, lineup_expression , group_id, overflow_id, level_value
      from
-        cc_group_overflow a , cc_overflow_config b  where a.overflow_id = b.id  and  a.group_id = #{groupId} and a.status = 1
+        cc_group_overflow a , cc_overflow_config b  where a.overflow_id = b.id  and  a.group_id = #{groupId} and a.status = 1 order by a.level_value desc
   </select>
 </mapper>

@@ -14,16 +14,6 @@
     id, cts, uts, name,company_id, remark, status
   </sql>
 
-  <!--查询技能组的技能 -->
-  <select id="selectByGroup" parameterType="Long" resultMap="BaseResultMap">
-     select a.id, a.cts, a.uts, a.name, a.remark, a.status from cc_skill a , cc_skill_group b where a.company_id = b.company_id and a.id = b.skill_id and b.group_id = #{id} and a.status = 1
-  </select>
-
-  <!-- 查询坐席的技能 -->
-  <select id="selectByAgent" parameterType="Long" resultMap="BaseResultMap">
-    select a.id, a.cts, a.uts, a.name, a.remark, a.status from cc_skill a , cc_skill_agent b where a.company_id = b.company_id and a.id = b.skill_id and b.agent_id = #{id} and a.status = 1
-  </select>
-
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 

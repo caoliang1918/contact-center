@@ -1,5 +1,7 @@
 package org.cti.cc.po;
 
+import org.cti.cc.strategy.LineupStrategy;
+
 /**
  * Created by caoliang on 2020/11/25
  */
@@ -19,6 +21,11 @@ public class GroupOverflowPo extends GroupOverFlow {
      * 优先级
      */
     private Integer levelValue;
+
+    /**
+     * 电话排队策略接口
+     */
+    private LineupStrategy lineupStrategy;
 
 
     public Long getGroupId() {
@@ -45,4 +52,11 @@ public class GroupOverflowPo extends GroupOverFlow {
         this.levelValue = levelValue;
     }
 
+    public LineupStrategy getLineupStrategy() {
+        return lineupStrategy;
+    }
+
+    public void setLineupStrategy(LineupStrategy lineupStrategy) {
+        this.lineupStrategy = lineupStrategy;
+    }
 }

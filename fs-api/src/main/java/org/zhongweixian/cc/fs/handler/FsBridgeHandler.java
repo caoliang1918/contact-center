@@ -27,9 +27,6 @@ import java.util.Date;
 public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
     private Logger logger = LoggerFactory.getLogger(FsBridgeHandler.class);
 
-    @Value("${record.path:/app/clpms/record/}")
-    private String recordPath;
-
     @Override
     public void handleEvent(FsBridgeEvent event) {
         CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
@@ -65,10 +62,16 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
 
         }
 
-        String record = recordPath +
-                DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
-        super.record(event.getHostname(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
-        callInfo.setRecord(record);
+        GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
+        if (groupInfo != null && groupInfo.getRecordType() == 2) {
+            //接通录音
+            String record = recordPath +
+                    DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
+            super.record(event.getHostname(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
+            callInfo.setRecord(record);
+        }
+
+
         if (StringUtils.isBlank(callInfo.getAgentKey())) {
             return;
         }
@@ -83,6 +86,9 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
         ringEntity.setCaller(callInfo.getCaller());
         ringEntity.setCalled(callInfo.getCalled());
         AgentInfo agentInfo = cacheService.getAgentInfo(deviceInfo1.getAgentKey());
+        if (agentInfo == null) {
+            cacheService.getAgentInfo(deviceInfo2.getAgentKey());
+        }
         if (agentInfo.getHiddenCustomer() == 1) {
             if (callInfo.getDirection() == Direction.OUTBOUND) {
                 ringEntity.setCalled(hiddenNumber(callInfo.getCalled()));
@@ -90,7 +96,7 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
                 ringEntity.setCaller(hiddenNumber(callInfo.getCaller()));
             }
         }
-        sendAgentMessage(agentInfo,new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), agentInfo.getAgentKey(), ringEntity));
+        sendAgentMessage(agentInfo, new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), agentInfo.getAgentKey(), ringEntity));
 
         /**
          * 坐席状态变更

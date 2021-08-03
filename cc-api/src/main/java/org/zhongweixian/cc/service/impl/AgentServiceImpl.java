@@ -172,7 +172,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             skillAgent.setAgentId(id);
             skillAgent.setSkillId(skillId);
             skillAgent.setCompanyId(companyId);
-            skillAgent.setRank(rank);
+            skillAgent.setRankValue(rank);
             skillAgent.setStatus(1);
             skillAgents.add(skillAgent);
         }

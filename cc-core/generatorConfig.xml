@@ -88,7 +88,7 @@
                         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                         selectByExampleQueryId="false"></table>
 
-                 <table tableName="cc_group_lineup_strategy" domainObjectName="GroupLineupStrategy" enableCountByExample="false"
+                 <table tableName="cc_group_agent_strategy" domainObjectName="GroupAgentStrategy" enableCountByExample="false"
                         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                         selectByExampleQueryId="false"></table>
 

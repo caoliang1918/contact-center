@@ -3,12 +3,12 @@ package org.cti.cc.entity;
 import java.io.Serializable;
 
 /**
- * 坐席策略
+ * 技能组中坐席分配策略
  *
  * @author caoliang
  * @date   2020/06/06
  */
-public class GroupLineupStrategy implements Serializable {
+public class GroupAgentStrategy implements Serializable {
     /**
      * PK
      */
@@ -42,7 +42,7 @@ public class GroupLineupStrategy implements Serializable {
     /**
      * (1最长空闲时间、2最长平均空闲、3最少应答次数、4最少通话时长、5最长话后时长、6轮选、7随机)
      */
-    private Integer defaultValue;
+    private Integer strategyValue;
 
     /**
      * 自定义表达式
@@ -104,12 +104,12 @@ public class GroupLineupStrategy implements Serializable {
         this.strategyType = strategyType;
     }
 
-    public Integer getDefaultValue() {
-        return defaultValue;
+    public Integer getStrategyValue() {
+        return strategyValue;
     }
 
-    public void setDefaultValue(Integer defaultValue) {
-        this.defaultValue = defaultValue;
+    public void setStrategyValue(Integer strategyValue) {
+        this.strategyValue = strategyValue;
     }
 
     public String getCustomExpression() {
@@ -140,7 +140,7 @@ public class GroupLineupStrategy implements Serializable {
         sb.append(", companyId=").append(companyId);
         sb.append(", groupId=").append(groupId);
         sb.append(", strategyType=").append(strategyType);
-        sb.append(", defaultValue=").append(defaultValue);
+        sb.append(", strategyValue=").append(strategyValue);
         sb.append(", customExpression=").append(customExpression);
         sb.append(", status=").append(status);
         sb.append(", serialVersionUID=").append(serialVersionUID);
@@ -159,14 +159,14 @@ public class GroupLineupStrategy implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        GroupLineupStrategy other = (GroupLineupStrategy) that;
+        GroupAgentStrategy other = (GroupAgentStrategy) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
             && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
             && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
             && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
             && (this.getStrategyType() == null ? other.getStrategyType() == null : this.getStrategyType().equals(other.getStrategyType()))
-            && (this.getDefaultValue() == null ? other.getDefaultValue() == null : this.getDefaultValue().equals(other.getDefaultValue()))
+            && (this.getStrategyValue() == null ? other.getStrategyValue() == null : this.getStrategyValue().equals(other.getStrategyValue()))
             && (this.getCustomExpression() == null ? other.getCustomExpression() == null : this.getCustomExpression().equals(other.getCustomExpression()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
@@ -181,7 +181,7 @@ public class GroupLineupStrategy implements Serializable {
         result = prime * result + ((getCompanyId() == null) ? 0 : getCompanyId().hashCode());
         result = prime * result + ((getGroupId() == null) ? 0 : getGroupId().hashCode());
         result = prime * result + ((getStrategyType() == null) ? 0 : getStrategyType().hashCode());
-        result = prime * result + ((getDefaultValue() == null) ? 0 : getDefaultValue().hashCode());
+        result = prime * result + ((getStrategyValue() == null) ? 0 : getStrategyValue().hashCode());
         result = prime * result + ((getCustomExpression() == null) ? 0 : getCustomExpression().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         return result;

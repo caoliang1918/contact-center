@@ -42,7 +42,7 @@ public class SkillAgent implements Serializable {
     /**
      * 范围
      */
-    private Integer rank;
+    private Integer rankValue;
 
     /**
      * 状态
@@ -99,12 +99,12 @@ public class SkillAgent implements Serializable {
         this.agentId = agentId;
     }
 
-    public Integer getRank() {
-        return rank;
+    public Integer getRankValue() {
+        return rankValue;
     }
 
-    public void setRank(Integer rank) {
-        this.rank = rank;
+    public void setRankValue(Integer rankValue) {
+        this.rankValue = rankValue;
     }
 
     public Integer getStatus() {
@@ -127,7 +127,7 @@ public class SkillAgent implements Serializable {
         sb.append(", companyId=").append(companyId);
         sb.append(", skillId=").append(skillId);
         sb.append(", agentId=").append(agentId);
-        sb.append(", rank=").append(rank);
+        sb.append(", rankValue=").append(rankValue);
         sb.append(", status=").append(status);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
@@ -152,7 +152,7 @@ public class SkillAgent implements Serializable {
             && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
             && (this.getSkillId() == null ? other.getSkillId() == null : this.getSkillId().equals(other.getSkillId()))
             && (this.getAgentId() == null ? other.getAgentId() == null : this.getAgentId().equals(other.getAgentId()))
-            && (this.getRank() == null ? other.getRank() == null : this.getRank().equals(other.getRank()))
+            && (this.getRankValue() == null ? other.getRankValue() == null : this.getRankValue().equals(other.getRankValue()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
@@ -166,7 +166,7 @@ public class SkillAgent implements Serializable {
         result = prime * result + ((getCompanyId() == null) ? 0 : getCompanyId().hashCode());
         result = prime * result + ((getSkillId() == null) ? 0 : getSkillId().hashCode());
         result = prime * result + ((getAgentId() == null) ? 0 : getAgentId().hashCode());
-        result = prime * result + ((getRank() == null) ? 0 : getRank().hashCode());
+        result = prime * result + ((getRankValue() == null) ? 0 : getRankValue().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         return result;
     }
