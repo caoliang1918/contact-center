@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
@@ -15,8 +16,11 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.mq.RabbitConfig;
 import org.zhongweixian.cc.service.CallCdrService;
+
+import java.util.List;
 
 /**
  * Create by caoliang on 2020/10/28
@@ -51,15 +55,21 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Override
     public int saveCallDevice(CallDevice callDevice) {
         if (callCdrMq == 1) {
-            rabbitTemplate.convertAndSend(RabbitConfig.CALL_DEVICE_EXCHANGE, RabbitConfig.CALL_DEVICE_ROUTING, JSON.toJSONString(callDevice));
+            rabbitTemplate.convertAndSend(Constants.CALL_DEVICE_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDevice));
             return 0;
         }
         return callDeviceMapper.insertSelective(callDevice);
     }
 
     @Override
-    public int saveCallDetail(CallDetail callDetail) {
-        return callDetailMapper.insertSelective(callDetail);
+    public int saveCallDetail(List<CallDetail> callDetails) {
+        if (CollectionUtils.isEmpty(callDetails)) {
+            return 0;
+        }
+        callDetails.forEach(callDetail -> {
+            rabbitTemplate.convertAndSend(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
+        });
+        return 1;
     }
 
     @Override
@@ -69,7 +79,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         }
         logger.info("callId:{} , answerTime:{}", callLog.getCallId(), callLog.getAnswerTime());
         if (callCdrMq == 1) {
-            rabbitTemplate.convertAndSend(RabbitConfig.CALL_LOG_EXCHANGE, RabbitConfig.CALL_LOG_ROUTING, JSON.toJSONString(callLog));
+            rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
             return 0;
         }
 

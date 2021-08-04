@@ -3,6 +3,7 @@ package org.zhongweixian.cc.fs.handler;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.PushFailLog;
@@ -73,6 +74,9 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         deviceInfo.setEndTime(event.getTimestamp() / 1000);
         if (deviceInfo.getAnswerTime() != null) {
             deviceInfo.setTalkTime(deviceInfo.getEndTime() - deviceInfo.getAnswerTime());
+        }
+        if (deviceInfo.getAgentKey() == null) {
+            deviceInfo.setAgentKey(callInfo.getAgentKey());
         }
         callInfo.getDeviceList().remove(event.getDeviceId());
         CallDevice callDevice = new CallDevice();
@@ -173,7 +177,9 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                 callLog.setCalled(hiddenNumber(callInfo.getCalled()));
             }
         }
+        callCdrService.saveCallDetail(callInfo.getCallDetails());
         callCdrService.saveOrUpdateCallLog(callLog);
+
         cacheService.removeCallInfo(callInfo.getCallId());
         if (StringUtils.isNoneBlank(callInfo.getCdrNotifyUrl())) {
             //话单推送

@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.acd.assign;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.constant.Constants;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.strategy.AgentStrategy;
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.zhongweixian.cc.util.Constants;
 
 /**
  * Created by caoliang on 2021/8/3

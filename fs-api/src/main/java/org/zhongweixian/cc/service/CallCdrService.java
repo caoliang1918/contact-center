@@ -6,6 +6,8 @@ import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.PushFailLog;
 import org.cti.cc.po.CallLogPo;
 
+import java.util.List;
+
 /**
  * Create by caoliang on 2020/10/28
  */
@@ -20,10 +22,10 @@ public interface CallCdrService extends BaseService<CallLog>{
 
     /**
      *
-     * @param callDetail
+     * @param callDetails
      * @return
      */
-    int saveCallDetail(CallDetail callDetail);
+    int saveCallDetail(List<CallDetail> callDetails);
 
 
 

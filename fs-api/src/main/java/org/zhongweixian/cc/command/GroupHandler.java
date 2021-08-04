@@ -85,6 +85,7 @@ public class GroupHandler extends BaseHandler {
         //电话经过技能组
         joinGroup = new CallDetail();
         joinGroup.setCallId(callInfo.getCallId());
+        joinGroup.setCts(now);
         joinGroup.setStartTime(now);
         joinGroup.setDetailIndex(callInfo.getCallDetails().size() + 1);
         joinGroup.setTransferType(3);
@@ -151,12 +152,9 @@ public class GroupHandler extends BaseHandler {
                 callInfo.setHangupCause(CauseEnums.OVERFLOW_TIMEOUT.name());
                 hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
                 break;
-
             default:
                 break;
         }
-
-
     }
 
     /**
@@ -167,6 +165,12 @@ public class GroupHandler extends BaseHandler {
      * @param thisDeviceId
      */
     private void callAgent(AgentInfo agentInfo, CallInfo callInfo, String thisDeviceId) {
+        if (!CollectionUtils.isEmpty(callInfo.getCallDetails())) {
+            CallDetail callDetail = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
+            if (callDetail != null) {
+                callDetail.setEndTime(Instant.now().toEpochMilli());
+            }
+        }
         transferAgentHandler.hanlder(callInfo, agentInfo, thisDeviceId);
     }
 

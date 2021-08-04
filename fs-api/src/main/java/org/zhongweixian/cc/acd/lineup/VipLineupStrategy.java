@@ -1,10 +1,10 @@
 package org.zhongweixian.cc.acd.lineup;
 
+import org.cti.cc.constant.Constants;
 import org.cti.cc.po.CallInfo;
 import org.cti.cc.strategy.LineupStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.zhongweixian.cc.util.Constants;
 
 /**
  * Created by caoliang on 2021/8/2

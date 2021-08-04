@@ -1,5 +1,6 @@
 package org.zhongweixian.cc.configration.mq;
 
+import org.cti.cc.constant.Constants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -13,52 +14,87 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
 
-    public final static String AGENT_STATE_EXCHANGE = "agent.state.exchange";
-    public final static String DEFAULT_KEY = "";
 
-    public final static String CALL_DEVICE_EXCHANGE = "call.device.exchange";
-    public final static String CALL_DEVICE_QUEUE = "call.device";
-    public final static String CALL_DEVICE_ROUTING = "call.device.key";
-
-
-    public final static String CALL_LOG_EXCHANGE = "call.log.exchange";
-    public final static String CALL_LOG_QUEUE = "call.log";
-    public final static String CALL_LOG_ROUTING = "call.log.key";
-
-
-
+    /**
+     * 坐席状态交换机
+     *
+     * @return
+     */
     @Bean
     public TopicExchange agentStateExchange() {
-        return new TopicExchange(AGENT_STATE_EXCHANGE);
+        return new TopicExchange(Constants.AGENT_STATE_EXCHANGE);
     }
+
+    /**
+     * 配置信息交换机
+     *
+     * @return
+     */
+    @Bean
+    public TopicExchange configExchange() {
+        return new TopicExchange(Constants.CONFIG_EXCHANGE);
+    }
+
 
     @Bean
     public TopicExchange callDeviceExchange() {
-        return new TopicExchange(CALL_DEVICE_EXCHANGE);
+        return new TopicExchange(Constants.CALL_DEVICE_EXCHANGE);
     }
 
     @Bean
     public TopicExchange callLogExchange() {
-        return new TopicExchange(CALL_LOG_EXCHANGE);
+        return new TopicExchange(Constants.CALL_LOG_EXCHANGE);
+    }
+
+    @Bean
+    public TopicExchange callDetailExchange() {
+        return new TopicExchange(Constants.CALL_DETAIL_EXCHANGE);
+    }
+
+    @Bean
+    public TopicExchange agentStateLogExchange() {
+        return new TopicExchange(Constants.AGENT_STATE_LOG_EXCHANGE);
     }
 
     @Bean
     public Queue callDeviceQueue() {
-        return new Queue(CALL_DEVICE_QUEUE);
+        return new Queue(Constants.CALL_DEVICE_QUEUE);
     }
 
     @Bean
     public Queue callLogQueue() {
-        return new Queue(CALL_LOG_QUEUE);
+        return new Queue(Constants.CALL_LOG_QUEUE);
+    }
+
+    @Bean
+    public Queue callDetailQueue() {
+        return new Queue(Constants.CALL_DETAIL_QUEUE);
+    }
+
+    @Bean
+    Queue agentStateLogQueue() {
+        return new Queue(Constants.AGENT_STATE_LOG_QUEUE,true);
     }
 
     @Bean
     public Binding bindCallDevice() {
-        return BindingBuilder.bind(callDeviceQueue()).to(callDeviceExchange()).with(CALL_DEVICE_ROUTING);
+        return BindingBuilder.bind(callDeviceQueue()).to(callDeviceExchange()).with(Constants.CALL_CDR_ROUTING);
     }
 
     @Bean
     public Binding bindCallLog() {
-        return BindingBuilder.bind(callLogQueue()).to(callLogExchange()).with(CALL_LOG_ROUTING);
+        return BindingBuilder.bind(callLogQueue()).to(callLogExchange()).with(Constants.CALL_CDR_ROUTING);
     }
+
+    @Bean
+    public Binding bindCallDetail() {
+        return BindingBuilder.bind(callDetailQueue()).to(callDetailExchange()).with(Constants.CALL_CDR_ROUTING);
+    }
+
+    @Bean
+    public Binding bindAgentStateLog() {
+        return BindingBuilder.bind(agentStateLogQueue()).to(agentStateLogExchange()).with(Constants.DEFAULT_KEY);
+    }
+
+
 }

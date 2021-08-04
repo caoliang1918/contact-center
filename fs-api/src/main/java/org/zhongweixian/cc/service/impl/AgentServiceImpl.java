@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.AgentStateLog;
 import org.cti.cc.mapper.AgentGroupMapper;
@@ -28,9 +29,6 @@ import java.util.List;
  */
 @Component
 public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentService {
-
-    @Value("${cc.pressure:0}")
-    private Integer pressure;
 
     @Autowired
     private AgentMapper agentMapper;
@@ -116,9 +114,13 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setTotalTalkTime(agentInfo.getTotalTalkTime());
             response.setTotalRingTimes(agentInfo.getTotalRingTimes());
             response.setTotalAnswerTimes(agentInfo.getTotalAnswerTimes());
+            response.setReadyTimes(agentInfo.getReadyTimes());
+            response.setNotReadyTimes(agentInfo.getNotReadyTimes());
+            response.setTotalAfterTime(agentInfo.getTotalAfterTime());
+
 
             logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
-            rabbitTemplate.convertAndSend(RabbitConfig.AGENT_STATE_EXCHANGE, RabbitConfig.DEFAULT_KEY, JSON.toJSONString(response));
+            rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.DEFAULT_KEY, JSON.toJSONString(response));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -135,7 +137,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
      * @param agentInfo
      * @return
      */
-    private Integer saveAgentLog(AgentInfo agentInfo) {
+    private void saveAgentLog(AgentInfo agentInfo) {
         AgentStateLog agentStateLog = new AgentStateLog();
         agentStateLog.setAgentId(agentInfo.getId());
         agentStateLog.setCallId(agentInfo.getCallId());
@@ -154,9 +156,6 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agentStateLog.setRemoteAddress(agentInfo.getRemoteAddress());
         //持续时长
         agentStateLog.setDuration(agentInfo.getBeforeTime() == 0 ? 0 : (int) (agentInfo.getStateTime() - agentInfo.getBeforeTime()));
-        if (pressure == 1) {
-            return 1;
-        }
-        return agentStateLogMapper.insertSelective(agentStateLog);
+        rabbitTemplate.convertAndSend(Constants.AGENT_STATE_LOG_EXCHANGE, Constants.DEFAULT_KEY, JSON.toJSONString(agentStateLog));
     }
 }
