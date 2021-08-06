@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.zhongweixian.cc.configration.mq.RabbitConfig;
 import org.zhongweixian.cc.service.CallCdrService;
 
 import java.util.List;
@@ -77,7 +76,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         if (callLog == null) {
             return 0;
         }
-        logger.info("callId:{} , answerTime:{}", callLog.getCallId(), callLog.getAnswerTime());
+        logger.info("callId:{}, answerTime:{}", callLog.getCallId(), callLog.getAnswerTime());
         if (callCdrMq == 1) {
             rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
             return 0;

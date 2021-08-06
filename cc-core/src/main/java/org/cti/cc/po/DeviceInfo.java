@@ -116,6 +116,11 @@ public class DeviceInfo {
     private String sipStatus;
 
     /**
+     * 录音地址
+     */
+    private String record;
+
+    /**
      * 记录当前设备下一步action
      */
     private NextCommand nextCommand;
@@ -316,6 +321,14 @@ public class DeviceInfo {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getRecord() {
+        return record;
+    }
+
+    public void setRecord(String record) {
+        this.record = record;
     }
 
     public static final class DeviceInfoBuilder {

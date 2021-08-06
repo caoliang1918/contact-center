@@ -15,7 +15,7 @@ import org.zhongweixian.server.tcp.NettyServer;
 public class TcpServer {
     private Logger logger = LoggerFactory.getLogger(TcpServer.class);
 
-    @Value("${tcp.server.port:2525}")
+    @Value("${tcp.server.port:7250}")
     private Integer port;
 
     @Autowired

@@ -14,7 +14,7 @@ import org.zhongweixian.server.websocket.WebSocketServer;
 public class WebSocketManager {
     private Logger logger = LoggerFactory.getLogger(WebSocketManager.class);
 
-    @Value("${ws.server.port:6868}")
+    @Value("${ws.server.port:7260}")
     private Integer port;
 
     @Value("${ws.server.path:ws}")

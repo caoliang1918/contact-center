@@ -14,11 +14,9 @@ import org.cti.cc.po.AgentState;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
-import org.zhongweixian.cc.configration.mq.RabbitConfig;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.websocket.response.AgentStateResppnse;
 

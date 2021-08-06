@@ -3,7 +3,6 @@ package org.zhongweixian.cc.service.impl;
 import org.cti.cc.entity.Group;
 import org.cti.cc.mapper.GroupMapper;
 import org.cti.cc.mapper.base.BaseMapper;
-import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.GroupInfo;
 import org.cti.cc.strategy.AgentStrategy;
 import org.springframework.beans.factory.annotation.Autowired;

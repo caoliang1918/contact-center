@@ -13,7 +13,7 @@ public class Constants {
     public static final String CO = ":";
 
 
-    public static final  String HTTP = "http";
+    public static final  String HTTP = "http://";
 
     public static final String VIP_LEVEL = "vipLevel";
     public static final String START_TIME = "startTime";

@@ -21,13 +21,19 @@ public class FsConstant {
 
     public final static String START = "start";
 
-    public final  static String BRIDGE = "uuid_bridge";
+    public final static String BRIDGE = "uuid_bridge";
 
-    public final  static String RECORD = "uuid_record";
+    public final static String RECORD = "uuid_record";
 
-    public final  static String ORIGINATE = "originate";
+    public final static String SETVAR = "uuid_setvar";
 
-    public final  static String TRANSFER = "uuid_transfer";
+    public final static String RECORD_STEREO = " RECORD_STEREO true";
+
+    public final static String RECORD_SAMPLE_RATE = "record_sample_rate=";
+
+    public final static String ORIGINATE = "originate";
+
+    public final static String TRANSFER = "uuid_transfer";
 
     public final static String NORMAL_CLEARING = "NORMAL_CLEARING";
 

@@ -90,7 +90,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             String record = recordPath +
                     DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
             super.record(callInfo.getMedia(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
-            callInfo.setRecord(record);
+            deviceInfo.setRecord(record);
         }
         String deviceId = getDeviceId();
         logger.info("呼另外一侧电话: callId:{}  display:{}  called:{}  deviceId:{} ", callInfo.getCallId(), callInfo.getCalledDisplay(), callInfo.getCalled(), deviceId);

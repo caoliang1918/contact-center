@@ -6,12 +6,9 @@ import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.cc.entity.MakeCallVo;
-import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 import org.zhongweixian.web.base.BaseController;
 
 /**

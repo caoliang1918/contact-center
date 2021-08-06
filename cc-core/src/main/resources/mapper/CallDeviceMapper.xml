@@ -23,6 +23,7 @@
     <result column="end_time" jdbcType="BIGINT" property="endTime" />
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
     <result column="sip_protocol" jdbcType="VARCHAR" property="sipProtocol" />
+    <result column="record" jdbcType="VARCHAR" property="record" />
     <result column="channel_name" jdbcType="VARCHAR" property="channelName" />
     <result column="hangup_cause" jdbcType="VARCHAR" property="hangupCause" />
     <result column="ring_cause" jdbcType="VARCHAR" property="ringCause" />
@@ -34,7 +35,7 @@
   <sql id="Base_Column_List">
     id, cts, uts, call_id, device_id, agent_key, device_type, cdr_type, caller, called, 
     display, called_location, caller_location, call_time, ring_start_time, ring_end_time, 
-    answer_time, bridge_time, end_time, talk_time, sip_protocol, channel_name, hangup_cause, 
+    answer_time, bridge_time, end_time, talk_time, sip_protocol, record, channel_name, hangup_cause,
     ring_cause, sip_status, ext1, ext2, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -54,7 +55,7 @@
       display, called_location, caller_location, 
       call_time, ring_start_time, ring_end_time, 
       answer_time, bridge_time, end_time, 
-      talk_time, sip_protocol, channel_name, 
+      talk_time, sip_protocol, record, channel_name,
       hangup_cause, ring_cause, sip_status, 
       ext1, ext2, status)
     values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, 
@@ -63,8 +64,8 @@
       #{display,jdbcType=VARCHAR}, #{calledLocation,jdbcType=VARCHAR}, #{callerLocation,jdbcType=VARCHAR}, 
       #{callTime,jdbcType=BIGINT}, #{ringStartTime,jdbcType=BIGINT}, #{ringEndTime,jdbcType=BIGINT}, 
       #{answerTime,jdbcType=BIGINT}, #{bridgeTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, 
-      #{talkTime,jdbcType=BIGINT}, #{sipProtocol,jdbcType=VARCHAR}, #{channelName,jdbcType=VARCHAR}, 
-      #{hangupCause,jdbcType=VARCHAR}, #{ringCause,jdbcType=VARCHAR}, #{sipStatus,jdbcType=VARCHAR}, 
+      #{talkTime,jdbcType=BIGINT}, #{sipProtocol,jdbcType=VARCHAR}, #{sipProtocol,jdbcType=VARCHAR}, #{channelName,jdbcType=VARCHAR},
+      #{hangupCause,jdbcType=VARCHAR}, #{ringCause,jdbcType=VARCHAR}, #{record,jdbcType=VARCHAR},
       #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="org.cti.cc.entity.CallDevice">
@@ -132,6 +133,9 @@
       </if>
       <if test="sipProtocol != null">
         sip_protocol,
+      </if>
+      <if test="record != null">
+        record,
       </if>
       <if test="channelName != null">
         channel_name,
@@ -219,6 +223,9 @@
       <if test="sipProtocol != null">
         #{sipProtocol,jdbcType=VARCHAR},
       </if>
+      <if test="record != null">
+        #{record,jdbcType=VARCHAR},
+      </if>
       <if test="channelName != null">
         #{channelName,jdbcType=VARCHAR},
       </if>
@@ -305,6 +312,9 @@
       <if test="sipProtocol != null">
         sip_protocol = #{sipProtocol,jdbcType=VARCHAR},
       </if>
+      <if test="record != null">
+        record = #{record,jdbcType=VARCHAR},
+      </if>
       <if test="channelName != null">
         channel_name = #{channelName,jdbcType=VARCHAR},
       </if>
@@ -329,44 +339,13 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CallDevice">
-    update cc_call_device
-    set cts = #{cts,jdbcType=BIGINT},
-      uts = #{uts,jdbcType=BIGINT},
-      call_id = #{callId,jdbcType=BIGINT},
-      device_id = #{deviceId,jdbcType=VARCHAR},
-      agent_key = #{agentKey,jdbcType=VARCHAR},
-      device_type = #{deviceType,jdbcType=INTEGER},
-      cdr_type = #{cdrType,jdbcType=INTEGER},
-      caller = #{caller,jdbcType=VARCHAR},
-      called = #{called,jdbcType=VARCHAR},
-      display = #{display,jdbcType=VARCHAR},
-      called_location = #{calledLocation,jdbcType=VARCHAR},
-      caller_location = #{callerLocation,jdbcType=VARCHAR},
-      call_time = #{callTime,jdbcType=BIGINT},
-      ring_start_time = #{ringStartTime,jdbcType=BIGINT},
-      ring_end_time = #{ringEndTime,jdbcType=BIGINT},
-      answer_time = #{answerTime,jdbcType=BIGINT},
-      bridge_time = #{bridgeTime,jdbcType=BIGINT},
-      end_time = #{endTime,jdbcType=BIGINT},
-      talk_time = #{talkTime,jdbcType=BIGINT},
-      sip_protocol = #{sipProtocol,jdbcType=VARCHAR},
-      channel_name = #{channelName,jdbcType=VARCHAR},
-      hangup_cause = #{hangupCause,jdbcType=VARCHAR},
-      ring_cause = #{ringCause,jdbcType=VARCHAR},
-      sip_status = #{sipStatus,jdbcType=VARCHAR},
-      ext1 = #{ext1,jdbcType=VARCHAR},
-      ext2 = #{ext2,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 
   <select id="selectByCallId" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
+        <include refid="Base_Column_List" />
     from
-    cc_call_device
+        cc_call_device
     where
-    call_id = #{id,jdbcType=BIGINT} order by call_time asc
+        call_id = #{id,jdbcType=BIGINT} order by call_time asc
   </select>
 </mapper>

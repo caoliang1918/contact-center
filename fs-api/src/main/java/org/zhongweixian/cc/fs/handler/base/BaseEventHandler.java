@@ -6,18 +6,10 @@ import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CallInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.zhongweixian.cc.cache.CacheService;
-import org.zhongweixian.cc.command.*;
 import org.zhongweixian.cc.command.base.BaseHandler;
 import org.zhongweixian.cc.configration.Handler;
-import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
-import org.zhongweixian.cc.service.AgentService;
-import org.zhongweixian.cc.service.CallCdrService;
-import org.zhongweixian.cc.util.SnowflakeIdWorker;
-import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 import org.zhongweixian.esl.transport.SendMsg;
 
@@ -27,44 +19,8 @@ import org.zhongweixian.esl.transport.SendMsg;
 public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandler implements Handler<T> {
     protected Logger logger = LoggerFactory.getLogger(BaseEventHandler.class);
 
-    @Value("${record.path:/app/clpms/record/}")
-    protected String recordPath;
-
-    @Autowired
-    protected CacheService cacheService;
-
-    @Autowired
-    protected FsListen fsListen;
-
-    @Autowired
-    protected CallCdrService callCdrService;
-
-    @Autowired
-    protected WebSocketHandler webSocketHandler;
-
-    @Autowired
-    protected AgentService agentService;
-
-    @Autowired
-    protected GroupHandler groupHandler;
-
-    @Autowired
-    protected VdnHandler vdnHandler;
-
-    @Autowired
-    protected TransferIvrHandler transferIvrHandler;
-
-    @Autowired
-    protected TransferAgentHandler transferAgentHandler;
-
-    @Autowired
-    protected TransferCallHandler transferCallHandler;
-
-    @Autowired
-    protected OverFlowHandler overFlowHandler;
-
-    @Autowired
-    protected SnowflakeIdWorker snowflakeIdWorker;
+    @Value("${SAMPLE_RATE:8000}")
+    private String sampleRate;
 
     /**
      * 给坐席客户端发送消息
@@ -111,8 +67,16 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
      * @param file
      */
     protected void record(String media, Long callId, String deviceId, String file) {
-        fsListen.sendArgs(media, deviceId, FsConstant.SET, "record_sample_rate=8000");
-        logger.info("开始录音 callId:{}, deviceId:{}, file:{}", callId, deviceId, file);
+        //设置8kHz采样率
+        SendMsg msg = new SendMsg(deviceId);
+        msg.addCallCommand(FsConstant.EXECUTE);
+        msg.addExecuteAppName(FsConstant.SET);
+        msg.addExecuteAppArg(FsConstant.RECORD_SAMPLE_RATE + sampleRate);
+        msg.addAsync();
+        fsListen.sendSyncMessage(media, msg);
+        //双声道录音,默认是单声道录音
+        fsListen.sendBgapiMessage(media, FsConstant.SETVAR, deviceId + FsConstant.RECORD_STEREO);
+        logger.info("开始录音 callId:{}, deviceId:{}, record:{}", callId, deviceId, file);
         StringBuilder sb = new StringBuilder();
         sb.append(deviceId).append(FsConstant.SPACE).append(FsConstant.START).append(FsConstant.SPACE).append(file);
         fsListen.sendBgapiMessage(media, FsConstant.RECORD, sb.toString());

@@ -3,29 +3,22 @@ package org.zhongweixian.web;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.cti.cc.po.CallInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.po.CommonResponse;
-import org.cti.cc.po.DeviceInfo;
 import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.async.DeferredResult;
-import org.zhongweixian.cc.cache.CacheService;
-import org.zhongweixian.cc.fs.FsListen;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.zhongweixian.cc.fs.FastDFSClient;
 import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.util.SnowflakeIdWorker;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 public class IndexController {
     private Logger logger = LoggerFactory.getLogger(IndexController.class);
 
+    @Autowired
+    protected FastDFSClient fastDFSClient;
 
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
@@ -106,6 +101,22 @@ public class IndexController {
         public void run(Timeout timeout) throws Exception {
             logger.info("任务执行, callId = {}, time= {}", taskId, LocalDateTime.now());
         }
+    }
+
+    @PostMapping(value = "/uploadFile")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        String result;
+        try {
+            String path = fastDFSClient.uploadFile(file);
+            if (!StringUtils.isEmpty(path)) {
+                result = path;
+            } else {
+                result = path + "上传失败";
+            }
+        } catch (Exception e) {
+            result = "服务异常";
+        }
+        return ResponseEntity.ok(result);
     }
 }
 

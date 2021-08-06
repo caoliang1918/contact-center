@@ -1,13 +1,9 @@
 package org.zhongweixian.cc.service.impl;
 
 import org.cti.cc.mapper.base.BaseMapper;
-import org.cti.cc.page.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zhongweixian.cc.service.BaseService;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Create by caoliang on 2020/10/28

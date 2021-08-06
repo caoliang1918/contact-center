@@ -16,11 +16,9 @@ import org.zhongweixian.cc.util.BcryptUtil;
 import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.WsNotReadyEvent;
 import org.zhongweixian.cc.websocket.event.WsReadyEvent;
-import org.zhongweixian.cc.websocket.handler.WsLoginHandler;
 import org.zhongweixian.cc.websocket.handler.WsLogoutHandler;
 import org.zhongweixian.cc.websocket.handler.WsNotReadyHandler;
 import org.zhongweixian.cc.websocket.handler.WsReadyHandler;
-import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 import org.zhongweixian.web.base.BaseController;
 
 import java.time.Instant;

@@ -20,6 +20,7 @@
         <module>cc-core</module>
         <module>cc-api</module>
         <module>fs-api</module>
+        <module>cc-ivr</module>
     </modules>
 
     <developers>
@@ -47,7 +48,8 @@
         <pagehelper.version>1.2.3</pagehelper.version>
         <easypoi.version>4.3.0</easypoi.version>
         <commons-io.version>2.11.0</commons-io.version>
-        <commons-codec>1.15</commons-codec>
+        <commons-codec.version>1.15</commons-codec.version>
+        <commons-scxml2.version>2.0-M1</commons-scxml2.version>
 
         <docker.repostory>192.168.180.37:5000</docker.repostory>
         <docker.registry.name>caoliang</docker.registry.name>
@@ -136,6 +138,11 @@
                 <groupId>cn.afterturn</groupId>
                 <artifactId>easypoi-base</artifactId>
                 <version>${easypoi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-scxml2</artifactId>
+                <version>${commons-scxml2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

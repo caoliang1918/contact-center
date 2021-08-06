@@ -3,7 +3,7 @@ package org.zhongweixian.cc.fs.handler;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.entity.CallDetail;
+import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.PushFailLog;
@@ -26,6 +26,7 @@ import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 import org.zhongweixian.cc.websocket.response.WsCallAfterEntity;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
 
     private RestTemplate restTemplate;
 
+
     public FsHangupHandler(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout, @Value("${cdr.notify.readTimeout:1000}") Integer readTimeout) {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
@@ -57,7 +59,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         }
         Integer count = callInfo.getDeviceList().size();
         String cause = event.getHangupCause();
-        logger.info("callId:{}, deviceId:{}, called:{} hangup sipStatus:{} hangupCause:{}", callInfo.getCallId(), event.getDeviceId(), event.getChannelName(), event.getSipStatus(), event.getHangupCause());
+        logger.info("callId:{}, deviceId:{}, called:{} hangup sipStatus:{} hangupCause:{}", callInfo.getCallId(), event.getDeviceId(), event.getCalled(), event.getSipStatus(), event.getHangupCause());
 
         /**
          * 挂机原因
@@ -67,6 +69,24 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             logger.warn("device:{} is null", event.getDeviceId());
             return;
         }
+        /**
+         * 上传录音
+         */
+        if (StringUtils.isNotBlank(deviceInfo.getRecord())) {
+            try {
+                ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getHostname() + deviceInfo.getRecord(), byte[].class);
+                String fileName = fastDFSClient.uploadFile(responseEntity.getBody(), deviceInfo.getRecord());
+                logger.info("callId:{}, record fileName : {}", deviceInfo.getCallId(), fileName);
+                deviceInfo.setRecord(fileName);
+                if (StringUtils.isBlank(callInfo.getRecord())) {
+                    callInfo.setRecord(fileName);
+                }
+            } catch (IOException e) {
+                logger.info(e.getMessage(), e);
+                callInfo.setRecord(deviceInfo.getRecord());
+            }
+        }
+
         deviceInfo.setHangupCause(event.getHangupCause());
         deviceInfo.setSipProtocol(event.getSipProtocol());
         deviceInfo.setSipStatus(event.getSipStatus());

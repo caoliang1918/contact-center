@@ -4,7 +4,6 @@ import org.zhongweixian.cc.fs.event.*;
 import org.zhongweixian.cc.tcp.event.SubMakeCallEvent;
 import org.zhongweixian.cc.tcp.event.SubStopCallEvent;
 import org.zhongweixian.cc.websocket.event.*;
-import org.zhongweixian.cc.websocket.handler.WsUpdateFollowDataHandler;
 
 import java.util.HashMap;
 import java.util.Map;

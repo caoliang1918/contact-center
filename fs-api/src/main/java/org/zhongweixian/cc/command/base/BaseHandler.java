@@ -8,9 +8,15 @@ import org.cti.cc.po.NextCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.*;
+import org.zhongweixian.cc.fs.FastDFSClient;
 import org.zhongweixian.cc.fs.FsListen;
+import org.zhongweixian.cc.service.AgentService;
+import org.zhongweixian.cc.service.CallCdrService;
+import org.zhongweixian.cc.util.SnowflakeIdWorker;
+import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.esl.transport.SendMsg;
 
 /**
@@ -18,6 +24,9 @@ import org.zhongweixian.esl.transport.SendMsg;
  */
 public class BaseHandler {
     protected Logger logger = LoggerFactory.getLogger(BaseHandler.class);
+
+    @Value("${record.path:/app/clpms/record/}")
+    protected String recordPath;
 
     @Autowired
     protected FsListen fsListen;
@@ -39,6 +48,24 @@ public class BaseHandler {
 
     @Autowired
     protected VdnHandler vdnHandler;
+
+    @Autowired
+    protected CallCdrService callCdrService;
+
+    @Autowired
+    protected WebSocketHandler webSocketHandler;
+
+    @Autowired
+    protected AgentService agentService;
+
+    @Autowired
+    protected OverFlowHandler overFlowHandler;
+
+    @Autowired
+    protected SnowflakeIdWorker snowflakeIdWorker;
+
+    @Autowired
+    protected FastDFSClient fastDFSClient;
 
 
     /**

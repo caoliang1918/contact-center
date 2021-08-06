@@ -406,44 +406,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CallLog">
-    update cc_call_log
-    set cts = #{cts,jdbcType=BIGINT},
-      uts = #{uts,jdbcType=BIGINT},
-      company_id = #{companyId,jdbcType=BIGINT},
-      call_id = #{callId,jdbcType=BIGINT},
-      caller_display = #{callerDisplay,jdbcType=VARCHAR},
-      caller = #{caller,jdbcType=VARCHAR},
-      called_display = #{calledDisplay,jdbcType=VARCHAR},
-      called = #{called,jdbcType=VARCHAR},
-      agent_key = #{agentKey,jdbcType=VARCHAR},
-      group_id = #{groupId,jdbcType=BIGINT},
-      login_type = #{loginType,jdbcType=INTEGER},
-      task_id = #{taskId,jdbcType=BIGINT},
-      ivr_id = #{ivrId,jdbcType=BIGINT},
-      bot_id = #{botId,jdbcType=BIGINT},
-      call_time = #{callTime,jdbcType=BIGINT},
-      answer_time = #{answerTime,jdbcType=BIGINT},
-      end_time = #{endTime,jdbcType=BIGINT},
-      call_type = #{callType,jdbcType=VARCHAR},
-      direction = #{direction,jdbcType=VARCHAR},
-      answer_flag = #{answerFlag,jdbcType=INTEGER},
-      wait_time = #{waitTime,jdbcType=BIGINT},
-      answer_count = #{answerCount,jdbcType=INTEGER},
-      hangup_dir = #{hangupDir,jdbcType=INTEGER},
-      hangup_cause = #{hangupCause,jdbcType=VARCHAR},
-      media = #{media,jdbcType=VARCHAR},
-      record = #{record,jdbcType=VARCHAR},
-      talk_time = #{talkTime,jdbcType=BIGINT},
-      follow_data = #{followData,jdbcType=VARCHAR},
-      uuid1 = #{uuid1,jdbcType=VARCHAR},
-      uuid2 = #{uuid2,jdbcType=VARCHAR},
-      ext1 = #{ext1,jdbcType=VARCHAR},
-      ext2 = #{ext2,jdbcType=VARCHAR},
-      ext3 = #{ext3,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+
 
   <resultMap id="BaseResultMapPo" type="org.cti.cc.po.CallLogPo" >
     <id column="id" jdbcType="BIGINT" property="id" />

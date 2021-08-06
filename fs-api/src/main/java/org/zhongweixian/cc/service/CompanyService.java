@@ -1,10 +1,7 @@
 package org.zhongweixian.cc.service;
 
 import org.cti.cc.entity.Company;
-import org.cti.cc.entity.RouteGroup;
-import org.cti.cc.entity.VdnCode;
 import org.cti.cc.po.CompanyInfo;
-import org.cti.cc.po.VdnCodePo;
 
 import java.util.Map;
 

@@ -1,18 +1,13 @@
 package org.zhongweixian.cc.websocket.handler;
 
-import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
-import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CallInfo;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.websocket.event.WsAudioReadMuteEvent;
 import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
-import org.zhongweixian.cc.websocket.response.WsCallEntity;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
-
-import java.time.Instant;
 
 /**
  * Created by caoliang on 2021/7/16

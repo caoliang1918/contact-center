@@ -468,6 +468,13 @@ public class FsListen {
     }
 
     /**
+     * 不使用线程池发送
+     */
+    public void sendSyncMessage(String media, SendMsg sendMsg){
+        fsClient.get(media).sendMessage(sendMsg);
+    }
+
+    /**
      * @param media
      * @param cmd
      * @param args
