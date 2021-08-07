@@ -10,6 +10,8 @@ import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 
 /**
  * Created by caoliang on 2020/8/23
+ * <p>
+ * 放音结束
  */
 @Component
 @HandlerType("PLAYBACK_STOP")

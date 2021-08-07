@@ -30,6 +30,9 @@
     <result column="media" jdbcType="VARCHAR" property="media" />
     <result column="record" jdbcType="VARCHAR" property="record" />
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
+    <result column="frist_queue_time" jdbcType="BIGINT" property="fristQueueTime" />
+    <result column="queue_start_time" jdbcType="BIGINT" property="queueStartTime" />
+    <result column="queue_end_time" jdbcType="BIGINT" property="queueEndTime" />
     <result column="follow_data" jdbcType="VARCHAR" property="followData" />
     <result column="uuid1" jdbcType="VARCHAR" property="uuid1" />
     <result column="uuid2" jdbcType="VARCHAR" property="uuid2" />
@@ -42,8 +45,8 @@
     id, cts, uts, company_id, call_id, caller_display, caller, called_display, called, 
     agent_key, group_id, login_type, task_id, ivr_id, bot_id, call_time, answer_time, 
     end_time, call_type, direction, answer_flag, wait_time, answer_count, hangup_dir, 
-    hangup_cause, media, record, talk_time, follow_data, uuid1, uuid2, ext1, ext2, ext3, 
-    status
+    hangup_cause, media, record, talk_time, frist_queue_time, queue_start_time, queue_end_time,
+    follow_data, uuid1, uuid2, ext1, ext2, ext3, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -55,32 +58,7 @@
     delete from cc_call_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.cti.cc.entity.CallLog">
-    insert into cc_call_log (id, cts, uts, company_id, 
-      call_id, caller_display, caller, 
-      called_display, called, agent_key, 
-      group_id, login_type, task_id, 
-      ivr_id, bot_id, call_time, 
-      answer_time, end_time, call_type, 
-      direction, answer_flag, wait_time, 
-      answer_count, hangup_dir, hangup_cause, 
-      media, record, talk_time, 
-      follow_data, uuid1, uuid2, 
-      ext1, ext2, ext3, status
-      )
-    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
-      #{callId,jdbcType=BIGINT}, #{callerDisplay,jdbcType=VARCHAR}, #{caller,jdbcType=VARCHAR}, 
-      #{calledDisplay,jdbcType=VARCHAR}, #{called,jdbcType=VARCHAR}, #{agentKey,jdbcType=VARCHAR}, 
-      #{groupId,jdbcType=BIGINT}, #{loginType,jdbcType=INTEGER}, #{taskId,jdbcType=BIGINT}, 
-      #{ivrId,jdbcType=BIGINT}, #{botId,jdbcType=BIGINT}, #{callTime,jdbcType=BIGINT}, 
-      #{answerTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{callType,jdbcType=VARCHAR}, 
-      #{direction,jdbcType=VARCHAR}, #{answerFlag,jdbcType=INTEGER}, #{waitTime,jdbcType=BIGINT}, 
-      #{answerCount,jdbcType=INTEGER}, #{hangupDir,jdbcType=INTEGER}, #{hangupCause,jdbcType=VARCHAR}, 
-      #{media,jdbcType=VARCHAR}, #{record,jdbcType=VARCHAR}, #{talkTime,jdbcType=BIGINT}, 
-      #{followData,jdbcType=VARCHAR}, #{uuid1,jdbcType=VARCHAR}, #{uuid2,jdbcType=VARCHAR}, 
-      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="org.cti.cc.entity.CallLog">
     insert into cc_call_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -167,6 +145,15 @@
       </if>
       <if test="talkTime != null">
         talk_time,
+      </if>
+      <if test="fristQueueTime != null">
+        frist_queue_time,
+      </if>
+      <if test="queueStartTime != null">
+        queue_start_time,
+      </if>
+      <if test="queueEndTime != null">
+        queue_end_time,
       </if>
       <if test="followData != null">
         follow_data,
@@ -275,6 +262,15 @@
       <if test="talkTime != null">
         #{talkTime,jdbcType=BIGINT},
       </if>
+      <if test="fristQueueTime != null">
+        #{fristQueueTime,jdbcType=BIGINT},
+      </if>
+      <if test="queueStartTime != null">
+        #{queueStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="queueEndTime != null">
+        #{queueEndTime,jdbcType=BIGINT},
+      </if>
       <if test="followData != null">
         #{followData,jdbcType=VARCHAR},
       </if>
@@ -382,6 +378,15 @@
       <if test="talkTime != null">
         talk_time = #{talkTime,jdbcType=BIGINT},
       </if>
+      <if test="fristQueueTime != null">
+        frist_queue_time = #{fristQueueTime,jdbcType=BIGINT},
+      </if>
+      <if test="queueStartTime != null">
+        queue_start_time = #{queueStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="queueEndTime != null">
+        queue_end_time = #{queueEndTime,jdbcType=BIGINT},
+      </if>
       <if test="followData != null">
         follow_data = #{followData,jdbcType=VARCHAR},
       </if>
@@ -437,6 +442,9 @@
     <result column="media" jdbcType="VARCHAR" property="media" />
     <result column="record" jdbcType="VARCHAR" property="record" />
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
+    <result column="frist_queue_time" jdbcType="BIGINT" property="fristQueueTime" />
+    <result column="queue_start_time" jdbcType="BIGINT" property="queueStartTime" />
+    <result column="queue_end_time" jdbcType="BIGINT" property="queueEndTime" />
     <result column="follow_data" jdbcType="VARCHAR" property="followData" />
     <result column="uuid1" jdbcType="VARCHAR" property="uuid1" />
     <result column="uuid2" jdbcType="VARCHAR" property="uuid2" />

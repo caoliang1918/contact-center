@@ -62,6 +62,9 @@ public enum CauseEnums {
      */
     ORIGINATOR_CANCEL(1010),
 
+    /**
+     * 超时
+     */
     TIMEOUT(1011),
 
     /**
@@ -72,7 +75,12 @@ public enum CauseEnums {
     /**
      * 排队挂机
      */
-    QUEUE_TIMEOUT(1012),
+    QUEUE_TIMEOUT(1013),
+
+    /**
+     * 呼入vdn错误
+     */
+    VDN_ERROR(1014),
 
     /**
      * 参数错误

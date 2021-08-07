@@ -2,6 +2,7 @@ package org.zhongweixian.cc.exception;
 
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.CommonResponse;
+import org.mybatis.spring.MyBatisSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -57,9 +58,21 @@ public class BusinessExceptionHandler {
      */
     @ExceptionHandler(value = NullPointerException.class)
     @ResponseBody
-    public CommonResponse exceptionHandler(HttpServletRequest req, NullPointerException e) {
+    public CommonResponse nullPointHandler(HttpServletRequest req, NullPointerException e) {
         logger.error("空指针异常 :{} ", e.getMessage(), e);
         return new CommonResponse(ErrorCode.NULL_POINT_EXCEPTION);
+    }
+
+    /**
+     * 数据库异常
+     *
+     * @return
+     */
+    @ExceptionHandler(value = MyBatisSystemException.class)
+    @ResponseBody
+    public CommonResponse mybatisException(MyBatisSystemException e) {
+        logger.error("数据库异常:{}", e.getMessage());
+        return new CommonResponse(ErrorCode.DB_EXCEPTION);
     }
 
 

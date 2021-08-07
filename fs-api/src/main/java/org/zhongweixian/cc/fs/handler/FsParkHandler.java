@@ -2,8 +2,10 @@ package org.zhongweixian.cc.fs.handler;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.CallDetail;
+import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.enums.CallType;
+import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
@@ -144,8 +146,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         if (vdnPhone == null) {
             logger.error("inbount callId:{} called:{} is not match for vdn", callId, event.getCalled());
             Long uuid = snowflakeIdWorker.nextId();
-            hangupCall(event.getHostname(), uuid, event.getDeviceId());
-            /*CallLog callLog = new CallLog();
+            CallLog callLog = new CallLog();
             callLog.setCallId(callId);
             callLog.setCts(event.getTimestamp() / 1000);
             callLog.setUts(callLog.getCts());
@@ -153,13 +154,14 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             callLog.setCaller(event.getCaller());
             callLog.setCalled(event.getCalled());
             callLog.setCallType(CallType.INBOUND_CALL.name());
-
-            CompanyInfo companyInfo = cacheService.getCompany(callLog.getCompanyId());
-            if (companyInfo.getHiddenCustomer() == 2) {
-                //隐藏客户侧号码
-                callLog.setCaller(hiddenNumber(callLog.getCaller()));
-            }
-            callCdrService.saveOrUpdateCallLog(callLog);*/
+            callLog.setMedia(event.getHostname());
+            callLog.setAnswerCount(1);
+            callLog.setAnswerFlag(3);
+            callLog.setDirection(Direction.INBOUND.name());
+            callLog.setHangupDir(3);
+            callLog.setHangupCause(CauseEnums.VDN_ERROR.name());
+            callCdrService.saveOrUpdateCallLog(callLog);
+            hangupCall(event.getHostname(), uuid, event.getDeviceId());
             return;
         }
 
@@ -171,7 +173,6 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCaller(event.getCaller())
                 .withCalled(event.getCalled())
                 .withCompanyId(vdnPhone.getCompanyId())
-                .withAnswerCount(1)
                 .withMedia(event.getHostname())
                 .build();
 
@@ -192,19 +193,8 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
         callInfo.getDeviceList().add(deviceId);
 
-
-        /**
-         * 记录电话流程
-         */
-        CallDetail callDetail = new CallDetail();
-        callDetail.setCallId(callId);
-        callDetail.setDetailIndex(1);
-        callDetail.setTransferType(1);
-        callDetail.setTransferId(vdnPhone.getVdnId());
-        callDetail.setStartTime(Instant.now().toEpochMilli());
-        callInfo.getCallDetails().add(callDetail);
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callId);
-        this.answer(event.getHostname(), deviceId);
+        super.answer(event.getHostname(), deviceId);
     }
 }

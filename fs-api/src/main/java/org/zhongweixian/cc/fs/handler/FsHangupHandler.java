@@ -174,7 +174,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         CallLog callLog = new CallLog();
         BeanUtils.copyProperties(callInfo, callLog);
         callLog.setCts(callInfo.getCallTime());
-        callLog.setUts(callLog.getEndTime());
+        callLog.setUts(callInfo.getEndTime());
         callLog.setEndTime(callInfo.getEndTime());
         callLog.setCallType(callInfo.getCallType().name());
         callLog.setDirection(callInfo.getDirection().name());

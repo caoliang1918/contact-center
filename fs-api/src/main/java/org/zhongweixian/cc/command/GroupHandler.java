@@ -299,6 +299,7 @@ public class GroupHandler extends BaseHandler {
                 //排队超时挂机
                 callInfo.setHangupDir(3);
                 callInfo.setHangupCause(CauseEnums.QUEUE_TIMEOUT.name());
+                callInfo.setQueueEndTime(Instant.now().toEpochMilli());
                 deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_HANGUP, groupOverflowPo.getOverflowValue().toString()));
                 break;
 

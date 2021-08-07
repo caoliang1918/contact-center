@@ -76,10 +76,10 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
         fsListen.sendSyncMessage(media, msg);
         //双声道录音,默认是单声道录音
         fsListen.sendBgapiMessage(media, FsConstant.SETVAR, deviceId + FsConstant.RECORD_STEREO);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(deviceId).append(FsConstant.SPACE).append(FsConstant.START).append(FsConstant.SPACE).append(file);
+        fsListen.sendBgapiMessage(media, FsConstant.RECORD, stringBuilder.toString());
         logger.info("开始录音 callId:{}, deviceId:{}, record:{}", callId, deviceId, file);
-        StringBuilder sb = new StringBuilder();
-        sb.append(deviceId).append(FsConstant.SPACE).append(FsConstant.START).append(FsConstant.SPACE).append(file);
-        fsListen.sendBgapiMessage(media, FsConstant.RECORD, sb.toString());
     }
 
     protected void transferCall(String media, String from, String to) {
