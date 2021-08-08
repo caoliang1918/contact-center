@@ -96,8 +96,8 @@
             <artifactId>jasypt-spring-boot</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-scxml2</artifactId>
+            <groupId>commons-scxml</groupId>
+            <artifactId>commons-scxml</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,6 +1,7 @@
 package org.zhongweixian.cc;
 
 import org.zhongweixian.cc.fs.event.*;
+import org.zhongweixian.cc.tcp.event.SubLoginEvent;
 import org.zhongweixian.cc.tcp.event.SubMakeCallEvent;
 import org.zhongweixian.cc.tcp.event.SubStopCallEvent;
 import org.zhongweixian.cc.websocket.event.*;
@@ -105,7 +106,7 @@ public enum EventType {
     /**
      * 更新随路数据
      */
-    WS_UPDATE_FOLLOWDATA(2007 , WsUpdateFollowDataEvent.class),
+    WS_UPDATE_FOLLOWDATA(2007, WsUpdateFollowDataEvent.class),
 
     /**
      * 接起
@@ -220,7 +221,9 @@ public enum EventType {
     WS_LOGOUT(2050, WsLogoutEvent.class),
 
 
-    /***************************************************/
+    /*******************tcp subscribe *********************/
+
+    SUB_LOGIN(3000, SubLoginEvent.class),
 
     SUB_MAKE_CALL(3001, SubMakeCallEvent.class),
 

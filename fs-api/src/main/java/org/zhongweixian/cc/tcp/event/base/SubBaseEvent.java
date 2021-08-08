@@ -19,6 +19,8 @@ public class SubBaseEvent {
 
     private JSONObject userData;
 
+    private JSONObject followData;
+
     public String getDomain() {
         return domain;
     }
@@ -57,5 +59,13 @@ public class SubBaseEvent {
 
     public void setUserData(JSONObject userData) {
         this.userData = userData;
+    }
+
+    public JSONObject getFollowData() {
+        return followData;
+    }
+
+    public void setFollowData(JSONObject followData) {
+        this.followData = followData;
     }
 }

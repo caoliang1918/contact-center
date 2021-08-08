@@ -1,11 +1,13 @@
 package org.zhongweixian.cc.tcp;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.configration.HandlerContext;
+import org.zhongweixian.cc.tcp.event.SubLoginEvent;
 import org.zhongweixian.cc.tcp.event.base.SubBaseEvent;
 import org.zhongweixian.cc.util.Json;
 import org.zhongweixian.cc.websocket.event.base.ChannelEntity;
 import org.zhongweixian.cc.EventType;
+import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 import org.zhongweixian.listener.ConnectionListener;
 
 import java.time.Instant;
@@ -39,7 +43,7 @@ public class TcpServerHandler implements ConnectionListener {
     @Value("${socket.timeout:2}")
     private Long timeout;
 
-    private Map<ChannelId , ChannelEntity> channleIds = new HashMap<>();
+    private Map<ChannelId, ChannelEntity> channelIds = new ConcurrentHashMap<>();
 
     /**
      * 为避免恶意链接，建立链接不发送login，需要定时检测
@@ -53,7 +57,7 @@ public class TcpServerHandler implements ConnectionListener {
     @Override
     public void onClose(Channel channel, int closeCode, String reason) {
         logger.warn("tcp channle on close  {}", channel);
-        channleIds.remove(channel.id());
+        channelIds.remove(channel.id());
     }
 
     @Override
@@ -69,16 +73,32 @@ public class TcpServerHandler implements ConnectionListener {
     @Override
     public void onMessage(Channel channel, String text) throws Exception {
         JSONObject jsonObject = JSONObject.parseObject(text);
-        if (jsonObject == null || !jsonObject.containsKey("cmd")) {
+        String cmd = jsonObject.getString("cmd").toUpperCase();
+        if (jsonObject == null || StringUtils.isBlank(cmd) || "PING".equals(cmd)) {
             return;
         }
-        Handler handler = handlerContext.getInstance("SUB_" + jsonObject.getString("cmd").toUpperCase());
+        cmd = "SUB_" + cmd;
+        Handler handler = handlerContext.getInstance(cmd);
         if (handler == null) {
             logger.warn("channel:{} get handler error , text:{}", channel.id(), text);
             return;
         }
-        SubBaseEvent event = formatEvent(jsonObject, channel, jsonObject.getString("cmd").toUpperCase());
+        SubBaseEvent event = formatEvent(jsonObject, channel, cmd);
         if (event == null) {
+            logger.warn("channel:{} get event error , text:{}", channel.id(), text);
+
+            return;
+        }
+        if (event instanceof SubLoginEvent) {
+            ChannelEntity channelEntity = channelIds.get(channel.id());
+            if (channelEntity == null) {
+                channel.close();
+                return;
+            }
+            channelEntity.setCts(Instant.now().getEpochSecond());
+            channelEntity.setAuthorization(true);
+            channelEntity.setClient(event.getDomain());
+            channelIds.put(channel.id(), channelEntity);
             return;
         }
         executor.execute(() -> {
@@ -99,17 +119,22 @@ public class TcpServerHandler implements ConnectionListener {
     @Override
     public void connect(Channel channel) throws Exception {
         logger.info("channel:{} is connected", channel);
+        ChannelEntity entity = new ChannelEntity();
+        entity.setChannel(channel);
+        entity.setCts(Instant.now().getEpochSecond());
+        channelIds.put(channel.id(), entity);
     }
 
     private SubBaseEvent formatEvent(JSONObject jsonObject, Channel channel, String cmd) {
         try {
-
-            JsonNode json = Json.toJson(jsonObject);
-            Class clzss = EventType.getClassByCmd("SUB_" + cmd);
+            Class clzss = EventType.getClassByCmd(cmd);
             if (clzss == null) {
                 return null;
             }
-            SubBaseEvent event = (SubBaseEvent) Json.fromJson(json, clzss);
+            SubBaseEvent event = (SubBaseEvent) JSON.toJavaObject(jsonObject, clzss);
+            if (clzss == null) {
+                return null;
+            }
             event.setChannel(channel);
             return event;
         } catch (Exception e) {
@@ -135,10 +160,10 @@ public class TcpServerHandler implements ConnectionListener {
      */
     public void check() {
         scheduledExecutorService.scheduleAtFixedRate(() -> {
-            if (CollectionUtils.isEmpty(channleIds)) {
+            if (CollectionUtils.isEmpty(channelIds)) {
                 return;
             }
-            Iterator<Map.Entry<ChannelId, ChannelEntity>> iterator = channleIds.entrySet().iterator();
+            Iterator<Map.Entry<ChannelId, ChannelEntity>> iterator = channelIds.entrySet().iterator();
             Long now = Instant.now().getEpochSecond();
             try {
                 while (iterator.hasNext()) {
