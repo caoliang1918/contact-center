@@ -700,7 +700,7 @@ public class CompanyController extends BaseController {
      * @param query
      * @throws IOException
      */
-    @GetMapping("agentExport")
+    @GetMapping("agent/export")
     public void agentExport(HttpServletResponse response,
                             @ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
                             PageInfo pageInfo, String query) throws IOException {

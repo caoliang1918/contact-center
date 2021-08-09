@@ -24,6 +24,7 @@
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
     <result column="sip_protocol" jdbcType="VARCHAR" property="sipProtocol" />
     <result column="record" jdbcType="VARCHAR" property="record" />
+    <result column="record_time" jdbcType="BIGINT" property="recordTime" />
     <result column="channel_name" jdbcType="VARCHAR" property="channelName" />
     <result column="hangup_cause" jdbcType="VARCHAR" property="hangupCause" />
     <result column="ring_cause" jdbcType="VARCHAR" property="ringCause" />
@@ -35,8 +36,8 @@
   <sql id="Base_Column_List">
     id, cts, uts, call_id, device_id, agent_key, device_type, cdr_type, caller, called, 
     display, called_location, caller_location, call_time, ring_start_time, ring_end_time, 
-    answer_time, bridge_time, end_time, talk_time, sip_protocol, record, channel_name, hangup_cause,
-    ring_cause, sip_status, ext1, ext2, status
+    answer_time, bridge_time, end_time, talk_time, sip_protocol, record, record_time,
+    channel_name, hangup_cause, ring_cause, sip_status, ext1, ext2, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -48,26 +49,7 @@
     delete from cc_call_device
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.cti.cc.entity.CallDevice">
-    insert into cc_call_device (id, cts, uts, call_id, 
-      device_id, agent_key, device_type, 
-      cdr_type, caller, called, 
-      display, called_location, caller_location, 
-      call_time, ring_start_time, ring_end_time, 
-      answer_time, bridge_time, end_time, 
-      talk_time, sip_protocol, record, channel_name,
-      hangup_cause, ring_cause, sip_status, 
-      ext1, ext2, status)
-    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, 
-      #{deviceId,jdbcType=VARCHAR}, #{agentKey,jdbcType=VARCHAR}, #{deviceType,jdbcType=INTEGER}, 
-      #{cdrType,jdbcType=INTEGER}, #{caller,jdbcType=VARCHAR}, #{called,jdbcType=VARCHAR}, 
-      #{display,jdbcType=VARCHAR}, #{calledLocation,jdbcType=VARCHAR}, #{callerLocation,jdbcType=VARCHAR}, 
-      #{callTime,jdbcType=BIGINT}, #{ringStartTime,jdbcType=BIGINT}, #{ringEndTime,jdbcType=BIGINT}, 
-      #{answerTime,jdbcType=BIGINT}, #{bridgeTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, 
-      #{talkTime,jdbcType=BIGINT}, #{sipProtocol,jdbcType=VARCHAR}, #{sipProtocol,jdbcType=VARCHAR}, #{channelName,jdbcType=VARCHAR},
-      #{hangupCause,jdbcType=VARCHAR}, #{ringCause,jdbcType=VARCHAR}, #{record,jdbcType=VARCHAR},
-      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
-  </insert>
+
   <insert id="insertSelective" parameterType="org.cti.cc.entity.CallDevice">
     insert into cc_call_device
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -136,6 +118,9 @@
       </if>
       <if test="record != null">
         record,
+      </if>
+      <if test="recordTime != null">
+        record_time,
       </if>
       <if test="channelName != null">
         channel_name,
@@ -226,6 +211,9 @@
       <if test="record != null">
         #{record,jdbcType=VARCHAR},
       </if>
+      <if test="recordTime != null">
+        #{recordTime,jdbcType=BIGINT},
+      </if>
       <if test="channelName != null">
         #{channelName,jdbcType=VARCHAR},
       </if>
@@ -249,6 +237,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallDevice">
     update cc_call_device
     <set>
@@ -314,6 +303,9 @@
       </if>
       <if test="record != null">
         record = #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null">
+        record_time = #{recordTime,jdbcType=BIGINT},
       </if>
       <if test="channelName != null">
         channel_name = #{channelName,jdbcType=VARCHAR},

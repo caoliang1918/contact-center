@@ -81,7 +81,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                 if (StringUtils.isBlank(callInfo.getRecord())) {
                     callInfo.setRecord(fileName);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.info(e.getMessage(), e);
                 callInfo.setRecord(deviceInfo.getRecord());
             }

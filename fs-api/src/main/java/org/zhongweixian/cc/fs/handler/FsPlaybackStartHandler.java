@@ -3,7 +3,7 @@ package org.zhongweixian.cc.fs.handler;
 import org.cti.cc.po.CallInfo;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.configration.HandlerType;
-import org.zhongweixian.cc.fs.event.FsPlaybackStart;
+import org.zhongweixian.cc.fs.event.FsPlaybackStartEvent;
 import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 
 /**
@@ -11,9 +11,9 @@ import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
  */
 @Component
 @HandlerType("PLAYBACK_START")
-public class FsPlaybackStartHandler extends BaseEventHandler<FsPlaybackStart> {
+public class FsPlaybackStartHandler extends BaseEventHandler<FsPlaybackStartEvent> {
     @Override
-    public void handleEvent(FsPlaybackStart event) {
+    public void handleEvent(FsPlaybackStartEvent event) {
         CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
         if (callInfo == null) {
             return;

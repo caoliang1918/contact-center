@@ -46,7 +46,7 @@ public class IndexController {
      * @param callId
      * @return
      */
-    @GetMapping("getCall")
+    @GetMapping("getcall")
     public CommonResponse<CallLogPo> getCall(@RequestParam Long callId) {
         return new CommonResponse<>(callCdrService.getCall(null, callId));
     }
@@ -103,7 +103,7 @@ public class IndexController {
         }
     }
 
-    @PostMapping(value = "/uploadFile")
+    @PostMapping(value = "/uploadfile")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         String result;
         try {

@@ -42,12 +42,12 @@ public enum EventType {
     /**
      * 开始放音
      */
-    PLAYBACK_START(1008, FsPlaybackStart.class),
+    PLAYBACK_START(1008, FsPlaybackStartEvent.class),
 
     /**
      * 放音结束
      */
-    PLAYBACK_STOP(1009, FsPlaybackStop.class),
+    PLAYBACK_STOP(1009, FsPlaybackStopEvent.class),
 
 
     /**
@@ -69,6 +69,8 @@ public enum EventType {
      * 媒体识别回铃音
      */
     RING_ASR(1013, FsRingAsrEvent.class),
+
+    RECORD_START(1014 , FsRecordStartEvent.class),
 
 
     /***************************************************/

@@ -15,10 +15,9 @@ public class TcpClientHandler implements ConnectionListener {
     private Logger logger = LoggerFactory.getLogger(TcpClientHandler.class);
 
 
-
     @Override
     public void onClose(Channel channel, int i, String s) {
-
+        logger.warn("connect close {}", channel);
     }
 
     @Override
@@ -33,7 +32,7 @@ public class TcpClientHandler implements ConnectionListener {
 
     @Override
     public void onMessage(Channel channel, String payload) throws Exception {
-
+        logger.info("receive from:{}, payload:{}", channel.remoteAddress(), payload);
     }
 
     @Override
@@ -43,6 +42,6 @@ public class TcpClientHandler implements ConnectionListener {
 
     @Override
     public void connect(Channel channel) throws Exception {
-
+        logger.info("connect to fs-api {} success.", channel);
     }
 }

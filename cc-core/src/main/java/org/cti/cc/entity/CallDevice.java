@@ -1,5 +1,7 @@
 package org.cti.cc.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 
 /**
@@ -77,36 +79,43 @@ public class CallDevice implements Serializable {
     /**
      * 呼叫开始时间
      */
+    @JSONField(defaultValue = "0")
     private Long callTime;
 
     /**
      * 振铃开始时间
      */
+    @JSONField(defaultValue = "0")
     private Long ringStartTime;
 
     /**
      * 振铃结束时间
      */
+    @JSONField(defaultValue = "0")
     private Long ringEndTime;
 
     /**
      * 接通时间
      */
+    @JSONField(defaultValue = "0")
     private Long answerTime;
 
     /**
      * 桥接时间
      */
+    @JSONField(defaultValue = "0")
     private Long bridgeTime;
 
     /**
      * 结束时间
      */
+    @JSONField(defaultValue = "0")
     private Long endTime;
 
     /**
      * 通话时长
      */
+    @JSONField(defaultValue = "0")
     private Long talkTime;
 
     /**
@@ -118,6 +127,12 @@ public class CallDevice implements Serializable {
      * 录音地址
      */
     private String record;
+
+    /**
+     * 录音开始时间
+     */
+    @JSONField(defaultValue = "0")
+    private Long recordTime;
 
     /**
      * 呼叫地址
@@ -330,6 +345,14 @@ public class CallDevice implements Serializable {
 
     public void setRecord(String record) {
         this.record = record;
+    }
+
+    public Long getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(Long recordTime) {
+        this.recordTime = recordTime;
     }
 
     public String getChannelName() {

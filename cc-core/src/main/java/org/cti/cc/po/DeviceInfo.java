@@ -121,6 +121,11 @@ public class DeviceInfo {
     private String record;
 
     /**
+     * 录音开始时间
+     */
+    private Long recordTime;
+
+    /**
      * 记录当前设备下一步action
      */
     private NextCommand nextCommand;
@@ -329,6 +334,14 @@ public class DeviceInfo {
 
     public void setRecord(String record) {
         this.record = record;
+    }
+
+    public Long getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(Long recordTime) {
+        this.recordTime = recordTime;
     }
 
     public static final class DeviceInfoBuilder {

@@ -1,10 +1,12 @@
 package org.zhongweixian.cc.websocket.handler;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.entity.CallDevice;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CallInfo;
+import org.cti.cc.po.DeviceInfo;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.websocket.event.WsHangupCallEvent;
@@ -34,6 +36,10 @@ public class WsHangupCallHandler extends WsBaseHandler<WsHangupCallEvent> {
             return;
         }
         logger.info("坐席发起挂机 agent:{} callId:{}", event.getAgentKey(), callInfo.getCallId());
+        DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(agentInfo.getDeviceId());
+        if (deviceInfo.getNextCommand() != null) {
+            deviceInfo.setNextCommand(null);
+        }
         hangupCall(callInfo.getMedia(), callInfo.getCallId(), agentInfo.getDeviceId());
     }
 }

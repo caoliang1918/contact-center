@@ -6,11 +6,11 @@ import java.io.Serializable;
  * 话单表
  *
  * @author caoliang
- * @date   2020/06/06
+ * @date 2020/06/06
  */
 public class CallLog implements Serializable {
     /**
-     * 
+     *
      */
     private Long id;
 
@@ -143,6 +143,11 @@ public class CallLog implements Serializable {
      * 录音地址
      */
     private String record;
+
+    /**
+     * 录音开始时间
+     */
+    private Long recordTime;
 
     /**
      * 通话时长(秒)
@@ -417,6 +422,14 @@ public class CallLog implements Serializable {
         this.record = record == null ? null : record.trim();
     }
 
+    public Long getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(Long recordTime) {
+        this.recordTime = recordTime;
+    }
+
     public Long getTalkTime() {
         return talkTime;
     }
@@ -564,40 +577,40 @@ public class CallLog implements Serializable {
         }
         CallLog other = (CallLog) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
-            && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
-            && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
-            && (this.getCallId() == null ? other.getCallId() == null : this.getCallId().equals(other.getCallId()))
-            && (this.getCallerDisplay() == null ? other.getCallerDisplay() == null : this.getCallerDisplay().equals(other.getCallerDisplay()))
-            && (this.getCaller() == null ? other.getCaller() == null : this.getCaller().equals(other.getCaller()))
-            && (this.getCalledDisplay() == null ? other.getCalledDisplay() == null : this.getCalledDisplay().equals(other.getCalledDisplay()))
-            && (this.getCalled() == null ? other.getCalled() == null : this.getCalled().equals(other.getCalled()))
-            && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
-            && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
-            && (this.getLoginType() == null ? other.getLoginType() == null : this.getLoginType().equals(other.getLoginType()))
-            && (this.getTaskId() == null ? other.getTaskId() == null : this.getTaskId().equals(other.getTaskId()))
-            && (this.getIvrId() == null ? other.getIvrId() == null : this.getIvrId().equals(other.getIvrId()))
-            && (this.getBotId() == null ? other.getBotId() == null : this.getBotId().equals(other.getBotId()))
-            && (this.getCallTime() == null ? other.getCallTime() == null : this.getCallTime().equals(other.getCallTime()))
-            && (this.getAnswerTime() == null ? other.getAnswerTime() == null : this.getAnswerTime().equals(other.getAnswerTime()))
-            && (this.getEndTime() == null ? other.getEndTime() == null : this.getEndTime().equals(other.getEndTime()))
-            && (this.getCallType() == null ? other.getCallType() == null : this.getCallType().equals(other.getCallType()))
-            && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
-            && (this.getAnswerFlag() == null ? other.getAnswerFlag() == null : this.getAnswerFlag().equals(other.getAnswerFlag()))
-            && (this.getWaitTime() == null ? other.getWaitTime() == null : this.getWaitTime().equals(other.getWaitTime()))
-            && (this.getAnswerCount() == null ? other.getAnswerCount() == null : this.getAnswerCount().equals(other.getAnswerCount()))
-            && (this.getHangupDir() == null ? other.getHangupDir() == null : this.getHangupDir().equals(other.getHangupDir()))
-            && (this.getHangupCause() == null ? other.getHangupCause() == null : this.getHangupCause().equals(other.getHangupCause()))
-            && (this.getMedia() == null ? other.getMedia() == null : this.getMedia().equals(other.getMedia()))
-            && (this.getRecord() == null ? other.getRecord() == null : this.getRecord().equals(other.getRecord()))
-            && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
-            && (this.getFollowData() == null ? other.getFollowData() == null : this.getFollowData().equals(other.getFollowData()))
-            && (this.getUuid1() == null ? other.getUuid1() == null : this.getUuid1().equals(other.getUuid1()))
-            && (this.getUuid2() == null ? other.getUuid2() == null : this.getUuid2().equals(other.getUuid2()))
-            && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
-            && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
-            && (this.getExt3() == null ? other.getExt3() == null : this.getExt3().equals(other.getExt3()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+                && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
+                && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
+                && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
+                && (this.getCallId() == null ? other.getCallId() == null : this.getCallId().equals(other.getCallId()))
+                && (this.getCallerDisplay() == null ? other.getCallerDisplay() == null : this.getCallerDisplay().equals(other.getCallerDisplay()))
+                && (this.getCaller() == null ? other.getCaller() == null : this.getCaller().equals(other.getCaller()))
+                && (this.getCalledDisplay() == null ? other.getCalledDisplay() == null : this.getCalledDisplay().equals(other.getCalledDisplay()))
+                && (this.getCalled() == null ? other.getCalled() == null : this.getCalled().equals(other.getCalled()))
+                && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
+                && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
+                && (this.getLoginType() == null ? other.getLoginType() == null : this.getLoginType().equals(other.getLoginType()))
+                && (this.getTaskId() == null ? other.getTaskId() == null : this.getTaskId().equals(other.getTaskId()))
+                && (this.getIvrId() == null ? other.getIvrId() == null : this.getIvrId().equals(other.getIvrId()))
+                && (this.getBotId() == null ? other.getBotId() == null : this.getBotId().equals(other.getBotId()))
+                && (this.getCallTime() == null ? other.getCallTime() == null : this.getCallTime().equals(other.getCallTime()))
+                && (this.getAnswerTime() == null ? other.getAnswerTime() == null : this.getAnswerTime().equals(other.getAnswerTime()))
+                && (this.getEndTime() == null ? other.getEndTime() == null : this.getEndTime().equals(other.getEndTime()))
+                && (this.getCallType() == null ? other.getCallType() == null : this.getCallType().equals(other.getCallType()))
+                && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
+                && (this.getAnswerFlag() == null ? other.getAnswerFlag() == null : this.getAnswerFlag().equals(other.getAnswerFlag()))
+                && (this.getWaitTime() == null ? other.getWaitTime() == null : this.getWaitTime().equals(other.getWaitTime()))
+                && (this.getAnswerCount() == null ? other.getAnswerCount() == null : this.getAnswerCount().equals(other.getAnswerCount()))
+                && (this.getHangupDir() == null ? other.getHangupDir() == null : this.getHangupDir().equals(other.getHangupDir()))
+                && (this.getHangupCause() == null ? other.getHangupCause() == null : this.getHangupCause().equals(other.getHangupCause()))
+                && (this.getMedia() == null ? other.getMedia() == null : this.getMedia().equals(other.getMedia()))
+                && (this.getRecord() == null ? other.getRecord() == null : this.getRecord().equals(other.getRecord()))
+                && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
+                && (this.getFollowData() == null ? other.getFollowData() == null : this.getFollowData().equals(other.getFollowData()))
+                && (this.getUuid1() == null ? other.getUuid1() == null : this.getUuid1().equals(other.getUuid1()))
+                && (this.getUuid2() == null ? other.getUuid2() == null : this.getUuid2().equals(other.getUuid2()))
+                && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
+                && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
+                && (this.getExt3() == null ? other.getExt3() == null : this.getExt3().equals(other.getExt3()))
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
     @Override

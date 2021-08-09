@@ -159,6 +159,12 @@ public class CallLogPo {
     private String record;
 
     /**
+     * 录音开始时间
+     */
+    @JSONField(defaultValue = "0")
+    private Long recordTime;
+
+    /**
      * 通话时长(秒)
      */
     @JSONField(defaultValue = "0")
@@ -431,6 +437,14 @@ public class CallLogPo {
 
     public void setRecord(String record) {
         this.record = record;
+    }
+
+    public Long getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(Long recordTime) {
+        this.recordTime = recordTime;
     }
 
     public Long getTalkTime() {

@@ -5,7 +5,7 @@ import org.cti.cc.po.DeviceInfo;
 import org.cti.cc.po.NextCommand;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.configration.HandlerType;
-import org.zhongweixian.cc.fs.event.FsPlaybackStop;
+import org.zhongweixian.cc.fs.event.FsPlaybackStopEvent;
 import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 
 /**
@@ -15,10 +15,10 @@ import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
  */
 @Component
 @HandlerType("PLAYBACK_STOP")
-public class FsPlaybackStopHandler extends BaseEventHandler<FsPlaybackStop> {
+public class FsPlaybackStopHandler extends BaseEventHandler<FsPlaybackStopEvent> {
 
     @Override
-    public void handleEvent(FsPlaybackStop event) {
+    public void handleEvent(FsPlaybackStopEvent event) {
         CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
         if (callInfo == null) {
             return;

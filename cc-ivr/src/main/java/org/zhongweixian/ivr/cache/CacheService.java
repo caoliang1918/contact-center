@@ -66,7 +66,7 @@ public class CacheService {
     /**
      *
      */
-    private Map<String , SCXML>  scxmlMap = new HashMap<>();
+    private Map<String, SCXML> scxmlMap = new HashMap<>();
 
     /**
      * 外呼字冠路由

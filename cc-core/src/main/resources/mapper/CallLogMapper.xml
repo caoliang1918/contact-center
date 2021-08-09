@@ -29,6 +29,7 @@
     <result column="hangup_cause" jdbcType="VARCHAR" property="hangupCause" />
     <result column="media" jdbcType="VARCHAR" property="media" />
     <result column="record" jdbcType="VARCHAR" property="record" />
+    <result column="record_time" jdbcType="BIGINT" property="recordTime" />
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
     <result column="frist_queue_time" jdbcType="BIGINT" property="fristQueueTime" />
     <result column="queue_start_time" jdbcType="BIGINT" property="queueStartTime" />
@@ -45,11 +46,11 @@
     id, cts, uts, company_id, call_id, caller_display, caller, called_display, called, 
     agent_key, group_id, login_type, task_id, ivr_id, bot_id, call_time, answer_time, 
     end_time, call_type, direction, answer_flag, wait_time, answer_count, hangup_dir, 
-    hangup_cause, media, record, talk_time, frist_queue_time, queue_start_time, queue_end_time,
-    follow_data, uuid1, uuid2, ext1, ext2, ext3, status
+    hangup_cause, media, record, record_time, talk_time, frist_queue_time, queue_start_time,
+    queue_end_time, follow_data, uuid1, uuid2, ext1, ext2, ext3, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from cc_call_log
     where id = #{id,jdbcType=BIGINT}
@@ -142,6 +143,9 @@
       </if>
       <if test="record != null">
         record,
+      </if>
+      <if test="recordTime != null">
+        record_time,
       </if>
       <if test="talkTime != null">
         talk_time,
@@ -259,6 +263,9 @@
       <if test="record != null">
         #{record,jdbcType=VARCHAR},
       </if>
+      <if test="recordTime != null">
+        #{recordTime,jdbcType=BIGINT},
+      </if>
       <if test="talkTime != null">
         #{talkTime,jdbcType=BIGINT},
       </if>
@@ -374,6 +381,9 @@
       </if>
       <if test="record != null">
         record = #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null">
+        record_time = #{recordTime,jdbcType=BIGINT},
       </if>
       <if test="talkTime != null">
         talk_time = #{talkTime,jdbcType=BIGINT},
@@ -508,6 +518,9 @@
       </if>
       <if test="record != null">
         record = #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null">
+        record_time = #{recordTime,jdbcType=BIGINT},
       </if>
       <if test="talkTime != null">
         talk_time = #{talkTime,jdbcType=BIGINT},
