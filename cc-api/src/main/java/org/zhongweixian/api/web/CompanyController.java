@@ -465,7 +465,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.11 子冠列表
+     * 5.11 字冠列表
      *
      * @param adminAccountInfo
      * @param pageInfo

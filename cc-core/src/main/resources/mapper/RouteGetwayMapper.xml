@@ -10,13 +10,14 @@
     <result column="media_port" jdbcType="INTEGER" property="mediaPort" />
     <result column="caller_prefix" jdbcType="VARCHAR" property="callerPrefix" />
     <result column="called_prefix" jdbcType="VARCHAR" property="calledPrefix" />
+    <result column="profile" jdbcType="VARCHAR" property="profile" />
     <result column="sip_header1" jdbcType="VARCHAR" property="sipHeader1" />
     <result column="sip_header2" jdbcType="VARCHAR" property="sipHeader2" />
     <result column="sip_header3" jdbcType="VARCHAR" property="sipHeader3" />
     <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, cts, uts, name, media_host, media_port, caller_prefix, called_prefix, sip_header1, 
+    id, cts, uts, name, media_host, media_port, caller_prefix, called_prefix, profile, sip_header1,
     sip_header2, sip_header3, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -36,7 +37,7 @@
       sip_header3, status)
     values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
       #{mediaHost,jdbcType=VARCHAR}, #{mediaPort,jdbcType=INTEGER}, #{callerPrefix,jdbcType=VARCHAR}, 
-      #{calledPrefix,jdbcType=VARCHAR}, #{sipHeader1,jdbcType=VARCHAR}, #{sipHeader2,jdbcType=VARCHAR}, 
+      #{calledPrefix,jdbcType=VARCHAR},#{profile,jdbcType=VARCHAR},   #{sipHeader1,jdbcType=VARCHAR}, #{sipHeader2,jdbcType=VARCHAR},
       #{sipHeader3,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="org.cti.cc.entity.RouteGetway">
@@ -65,6 +66,9 @@
       </if>
       <if test="calledPrefix != null">
         called_prefix,
+      </if>
+      <if test="profile != null">
+        profile,
       </if>
       <if test="sipHeader1 != null">
         sip_header1,
@@ -104,6 +108,9 @@
       <if test="calledPrefix != null">
         #{calledPrefix,jdbcType=VARCHAR},
       </if>
+      <if test="profile != null">
+        #{profile,jdbcType=VARCHAR},
+      </if>
       <if test="sipHeader1 != null">
         #{sipHeader1,jdbcType=VARCHAR},
       </if>
@@ -139,6 +146,9 @@
       <if test="calledPrefix != null">
         called_prefix = #{calledPrefix,jdbcType=VARCHAR},
       </if>
+      <if test="profile != null">
+        #{profile,jdbcType=VARCHAR},
+      </if>
       <if test="sipHeader1 != null">
         sip_header1 = #{sipHeader1,jdbcType=VARCHAR},
       </if>
@@ -160,6 +170,7 @@
       media_port = #{mediaPort,jdbcType=INTEGER},
       caller_prefix = #{callerPrefix,jdbcType=VARCHAR},
       called_prefix = #{calledPrefix,jdbcType=VARCHAR},
+      profile =  #{profile,jdbcType=VARCHAR},
       sip_header1 = #{sipHeader1,jdbcType=VARCHAR},
       sip_header2 = #{sipHeader2,jdbcType=VARCHAR},
       sip_header3 = #{sipHeader3,jdbcType=VARCHAR},

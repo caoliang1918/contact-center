@@ -413,7 +413,7 @@ public class FsListen {
         if (StringUtils.isNoneBlank(sipBuffer)) {
             builder.append(SPLIT).append(sipBuffer);
         }
-        builder.append("}").append("sofia/external/").append(called).append(" &park");
+        builder.append("}").append("sofia/" + routeGetway.getProfile() + "/").append(called).append(" &park");
         CompletableFuture future = fsClient.get(media).sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
         try {
             logger.info("call response: {}", future.get());
@@ -470,7 +470,7 @@ public class FsListen {
     /**
      * 不使用线程池发送
      */
-    public void sendSyncMessage(String media, SendMsg sendMsg){
+    public void sendSyncMessage(String media, SendMsg sendMsg) {
         fsClient.get(media).sendMessage(sendMsg);
     }
 

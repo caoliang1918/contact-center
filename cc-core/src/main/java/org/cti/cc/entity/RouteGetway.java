@@ -50,6 +50,11 @@ public class RouteGetway implements Serializable {
     private String calledPrefix;
 
     /**
+     * 媒体拨号计划文件
+     */
+    private String profile;
+
+    /**
      * sip头1
      */
     private String sipHeader1;
@@ -133,6 +138,14 @@ public class RouteGetway implements Serializable {
 
     public void setCalledPrefix(String calledPrefix) {
         this.calledPrefix = calledPrefix == null ? null : calledPrefix.trim();
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public String getSipHeader1() {

@@ -40,6 +40,13 @@ public class RouteGetwayVo {
     private String calledPrefix;
 
     /**
+     * 媒体拨号计划文件
+     */
+    @NotNull
+    @Size(min = 4, max = 32, message = "profile规则不能为空")
+    private String profile;
+
+    /**
      * sip协议头
      */
     @Size(max = 36, message = "sip协议头不能超过36位")
@@ -103,6 +110,14 @@ public class RouteGetwayVo {
 
     public void setCalledPrefix(String calledPrefix) {
         this.calledPrefix = calledPrefix;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public String getSipHeader1() {
