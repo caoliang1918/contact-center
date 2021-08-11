@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.zhongweixian.cc.fs.FastDFSClient;
+import org.zhongweixian.cc.cache.fastdfs.FastDFSClient;
 import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.util.SnowflakeIdWorker;
 

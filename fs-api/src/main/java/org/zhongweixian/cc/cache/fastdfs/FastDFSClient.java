@@ -1,4 +1,4 @@
-package org.zhongweixian.cc.fs;
+package org.zhongweixian.cc.cache.fastdfs;
 
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;

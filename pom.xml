@@ -49,7 +49,6 @@
         <easypoi.version>4.3.0</easypoi.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-codec.version>1.15</commons-codec.version>
-        <commons-scxml.version>0.9</commons-scxml.version>
 
         <docker.repostory>192.168.180.37:5000</docker.repostory>
         <docker.registry.name>caoliang</docker.registry.name>
@@ -138,11 +137,6 @@
                 <groupId>cn.afterturn</groupId>
                 <artifactId>easypoi-base</artifactId>
                 <version>${easypoi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-scxml</groupId>
-                <artifactId>commons-scxml</artifactId>
-                <version>${commons-scxml.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

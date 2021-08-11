@@ -1,0 +1,1771 @@
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : tencent
+ Source Server Type    : MySQL
+ Source Server Version : 50730
+ Source Host           : 115.159.101.178:3306
+ Source Schema         : cti
+
+ Target Server Type    : MySQL
+ Target Server Version : 50730
+ File Encoding         : 65001
+
+ Date: 10/08/2021 09:08:54
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for cc_admin_account
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_admin_account`;
+CREATE TABLE `cc_admin_account` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `username` varchar(50) NOT NULL DEFAULT '' COMMENT '用户名',
+  `passwd` varchar(50) NOT NULL DEFAULT '' COMMENT '密码',
+  `user_type` int(11) NOT NULL DEFAULT '1' COMMENT '类型',
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='企业管理员表';
+
+-- ----------------------------
+-- Records of cc_admin_account
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_admin_account` VALUES (1, 1, 1, 1, 'admin', 'q11111111', 1, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_admin_account_role
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_admin_account_role`;
+CREATE TABLE `cc_admin_account_role` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `account_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '账号ID',
+  `role_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '角色ID',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='账号角色表';
+
+-- ----------------------------
+-- Records of cc_admin_account_role
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_admin_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_admin_permission`;
+CREATE TABLE `cc_admin_permission` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业id',
+  `permission_name` varchar(255) NOT NULL DEFAULT '' COMMENT '权限名称',
+  `permission_url` varchar(255) NOT NULL DEFAULT '' COMMENT '权限URL',
+  `parent_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '父权限id',
+  `permission_order` int(11) NOT NULL DEFAULT '1' COMMENT '排序',
+  `icon` varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
+  `is_front` int(11) NOT NULL DEFAULT '1' COMMENT '是否前端权限',
+  `is_interface` int(11) NOT NULL DEFAULT '1' COMMENT '是否后端权限',
+  `status` int(11) NOT NULL DEFAULT '1',
+  `permission_level` int(11) NOT NULL DEFAULT '1' COMMENT '菜单级别',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限表';
+
+-- ----------------------------
+-- Records of cc_admin_permission
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_admin_permission_role
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_admin_permission_role`;
+CREATE TABLE `cc_admin_permission_role` (
+  `id` bigint(20) NOT NULL COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `role_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '角色ID',
+  `permission_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '权限ID',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限角色表';
+
+-- ----------------------------
+-- Records of cc_admin_permission_role
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_admin_role
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_admin_role`;
+CREATE TABLE `cc_admin_role` (
+  `id` bigint(20) NOT NULL COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '所属企业',
+  `role_name` varchar(255) NOT NULL DEFAULT '' COMMENT '角色名称',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
+
+-- ----------------------------
+-- Records of cc_admin_role
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_agent
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_agent`;
+CREATE TABLE `cc_agent` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `agent_id` varchar(255) NOT NULL DEFAULT '' COMMENT '坐席工号',
+  `agent_key` varchar(255) NOT NULL DEFAULT '' COMMENT '坐席账户',
+  `agent_name` varchar(255) NOT NULL DEFAULT '' COMMENT '坐席名称',
+  `agent_code` varchar(20) NOT NULL DEFAULT '' COMMENT '坐席分机号',
+  `agent_type` int(11) NOT NULL DEFAULT '2' COMMENT '座席类型：2:普通座席；1：班长',
+  `passwd` varchar(255) NOT NULL DEFAULT '' COMMENT '座席密码',
+  `sip_phone` varchar(255) NOT NULL DEFAULT '' COMMENT '绑定的电话号码',
+  `record` int(11) NOT NULL DEFAULT '0' COMMENT '是否录音 0 no 1 yes',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '座席主要技能组  不能为空 必填项',
+  `after_interval` int(11) NOT NULL DEFAULT '5' COMMENT '话后自动空闲间隔时长',
+  `diaplay` varchar(255) NOT NULL DEFAULT '' COMMENT '主叫显号',
+  `ring_time` int(11) NOT NULL DEFAULT '10' COMMENT '振铃时长',
+  `ext1` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展1',
+  `ext2` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展2',
+  `ext3` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展3',
+  `status` int(4) NOT NULL DEFAULT '1' COMMENT '状态：1 开通，0关闭',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `idx_ccagent_agent_key` (`agent_key`) USING BTREE,
+  KEY `idx_ccagent_company_id` (`company_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='座席工号表';
+
+-- ----------------------------
+-- Records of cc_agent
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_agent` VALUES (1, 1604503580, 1604503580, 1, '1001', '1001@test', '测试坐席', '1001', 2, '$2a$04$VbPGgx5gXs0ayfIHWNx3oOhYKbmMzMLPJHmBZtwIfIfT4HCGSTmpS', '188899998889', 0, 1, 5, '', 10, '', '', '', 1);
+INSERT INTO `cc_agent` VALUES (2, 1604560158, 1604560158, 1, '1002', '1002@test', '测试2号', '1002', 2, '$2a$04$VbPGgx5gXs0ayfIHWNx3oOhYKbmMzMLPJHmBZtwIfIfT4HCGSTmpS', '188999988887', 0, 1, 5, '', 10, '', '', '', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_agent_group
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_agent_group`;
+CREATE TABLE `cc_agent_group` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `agent_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '坐席id',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能组id',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uniq_idx_agentgroup_agent_group` (`group_id`,`agent_id`) USING BTREE,
+  KEY `idx_agentgroup_company_id` (`company_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='坐席技能组表';
+
+-- ----------------------------
+-- Records of cc_agent_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_agent_group` VALUES (1, 1604560158, 1604560158, 1, 1, 1, 1);
+INSERT INTO `cc_agent_group` VALUES (2, 1604560158, 1604560158, 1, 2, 1, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_agent_sip
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_agent_sip`;
+CREATE TABLE `cc_agent_sip` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cts` bigint(20) NOT NULL DEFAULT '0',
+  `uts` bigint(20) NOT NULL DEFAULT '0',
+  `company_id` bigint(20) DEFAULT '0',
+  `sip` varchar(32) NOT NULL DEFAULT '',
+  `agent_id` bigint(20) NOT NULL DEFAULT '0',
+  `sip_pwd` varchar(255) DEFAULT '',
+  `status` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `idx_agentsip_agent_id` (`agent_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='sip表';
+
+-- ----------------------------
+-- Records of cc_agent_sip
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_agent_sip` VALUES (1, 1622024375, 1622033134, 1, '871556590425001', 1, '12345678', 1);
+INSERT INTO `cc_agent_sip` VALUES (2, 1622072271, 0, 1, '871556519788001', 2, '12345678', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_agent_state_log
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_agent_state_log`;
+CREATE TABLE `cc_agent_state_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业id',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主技能组id',
+  `agent_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '坐席id',
+  `agent_key` varchar(255) NOT NULL DEFAULT '' COMMENT '坐席编号',
+  `call_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '通话唯一标识',
+  `login_type` int(11) NOT NULL DEFAULT '1' COMMENT '登录类型',
+  `work_type` int(11) NOT NULL DEFAULT '1' COMMENT '工作类型',
+  `host` varchar(255) NOT NULL DEFAULT '' COMMENT '服务站点',
+  `remote_address` varchar(255) NOT NULL DEFAULT '' COMMENT '远端地址',
+  `before_state` varchar(50) NOT NULL DEFAULT '' COMMENT '变更之前状态',
+  `before_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '更变之前时间',
+  `state` varchar(50) NOT NULL DEFAULT '' COMMENT '变更之后状态',
+  `state_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '当前时间',
+  `duration` int(11) NOT NULL DEFAULT '0' COMMENT '持续时间',
+  `busy_desc` varchar(255) NOT NULL DEFAULT '' COMMENT '忙碌类型',
+  `status` int(1) NOT NULL DEFAULT '1' COMMENT '状态',
+  `ext1` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展字段1',
+  `ext2` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展字段2',
+  `ext3` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展字段3',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_agentstate_agentkey` (`agent_key`),
+  KEY `idx_agentstate_cts` (`state_time`) USING BTREE,
+  KEY `idx_agentstate_group_id` (`group_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='坐席状态历史表';
+
+-- ----------------------------
+-- Records of cc_agent_state_log
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_call_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_call_detail`;
+CREATE TABLE `cc_call_detail` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `start_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '开始时间',
+  `end_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '结束时间',
+  `call_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '通话ID',
+  `detail_index` int(11) NOT NULL DEFAULT '1' COMMENT '顺序',
+  `transfer_type` int(11) NOT NULL DEFAULT '0' COMMENT '1:进vdn,2:进ivr,3:技能组,4:按键收号,5:外线\n',
+  `transfer_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '转接ID',
+  `reason` varchar(50) NOT NULL DEFAULT '' COMMENT '出队列原因:排队挂机或者转坐席',
+  `ext1` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展字段1',
+  `ext2` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展字段2',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_calldetail_call_id` (`call_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COMMENT='通话流程表';
+
+-- ----------------------------
+-- Records of cc_call_detail
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_call_detail` VALUES (1, 0, 1628063990520, 0, 210788902045220864, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (2, 0, 1628063990620, 0, 210788902045220864, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (3, 0, 1628063990621, 0, 210788902045220864, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (4, 0, 1628064097330, 0, 210789350001082368, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (5, 0, 1628064097437, 0, 210789350001082368, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (6, 0, 1628064097438, 0, 210789350001082368, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (7, 0, 1628069948291, 0, 210813890743762944, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (8, 0, 1628069948352, 0, 210813890743762944, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (9, 1628069948353, 1628069948353, 0, 210813890743762944, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (10, 0, 1628071945430, 0, 210822267360247808, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (11, 0, 1628071945488, 0, 210822267360247808, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (12, 1628071945488, 1628071945488, 0, 210822267360247808, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (13, 0, 1628092269587, 0, 210907513065832448, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (14, 0, 1628092269622, 0, 210907513065832448, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (15, 1628092269622, 1628092269622, 0, 210907513065832448, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (16, 0, 1628167521777, 0, 211223143627358208, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (17, 0, 1628167521810, 0, 211223143627358208, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (18, 1628167521810, 1628167521810, 1628167521810, 211223143627358208, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (19, 0, 1628167551538, 0, 211223268454039552, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (20, 0, 1628167551589, 0, 211223268454039552, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (21, 1628167551589, 1628167551589, 0, 211223268454039552, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (22, 0, 1628167625114, 0, 211223577049956352, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (23, 0, 1628167625138, 0, 211223577049956352, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (24, 1628167625138, 1628167625138, 1628167625138, 211223577049956352, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (25, 0, 1628168185783, 0, 211225928657797120, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (26, 0, 1628168185830, 0, 211225928657797120, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (27, 1628168185831, 1628168185831, 1628168199319, 211225928657797120, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (28, 0, 1628245905005, 0, 211551906709897216, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (29, 0, 1628245905036, 0, 211551906709897216, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (30, 1628245905036, 1628245905036, 1628245905036, 211551906709897216, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (31, 0, 1628309083550, 0, 211816896725516288, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (32, 0, 1628309083586, 0, 211816896725516288, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (33, 1628309083586, 1628309083586, 0, 211816896725516288, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (34, 0, 1628318487958, 0, 211856341663219712, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (35, 0, 1628318488019, 0, 211856341663219712, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (36, 1628318488020, 1628318488020, 0, 211856341663219712, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (37, 0, 1628320326111, 0, 211864051444088832, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (38, 0, 1628320326248, 0, 211864051444088832, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (39, 1628320326249, 1628320326249, 0, 211864051444088832, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (40, 0, 1628320929806, 0, 211866583507664896, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (41, 0, 1628320929873, 0, 211866583507664896, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (42, 1628320929873, 1628320929873, 0, 211866583507664896, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (43, 0, 1628322080433, 0, 211871409582899200, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (44, 0, 1628322080549, 0, 211871409582899200, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (45, 1628322080550, 1628322080550, 0, 211871409582899200, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (46, 0, 1628322420612, 0, 211872836401233920, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (47, 0, 1628322420736, 0, 211872836401233920, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (48, 1628322420737, 1628322420737, 0, 211872836401233920, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (49, 0, 1628322488088, 0, 211873119441256448, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (50, 0, 1628322488187, 0, 211873119441256448, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (51, 1628322488187, 1628322488187, 0, 211873119441256448, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (52, 0, 1628322520065, 0, 211873253566709760, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (53, 0, 1628322520144, 0, 211873253566709760, 2, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (54, 1628322520144, 1628322520144, 0, 211873253566709760, 3, 3, 1, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (55, 0, 1628323512338, 0, 211877415255801856, 1, 1, 4, '', '', '', 1);
+INSERT INTO `cc_call_detail` VALUES (56, 1628323512338, 1628323512338, 0, 211877415255801856, 2, 3, 1, '', '', '', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_call_device
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_call_device`;
+CREATE TABLE `cc_call_device` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `call_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '通话ID',
+  `device_id` varchar(50) NOT NULL DEFAULT '' COMMENT '设备id',
+  `agent_key` varchar(50) NOT NULL DEFAULT '' COMMENT '坐席',
+  `device_type` int(11) NOT NULL DEFAULT '1' COMMENT '1:坐席,2:客户,3:外线',
+  `cdr_type` int(11) NOT NULL DEFAULT '1' COMMENT '1:呼入,2:外呼,3:内呼,4:转接,5:咨询,6:监听,7:强插',
+  `caller` varchar(50) NOT NULL DEFAULT '' COMMENT '主叫',
+  `called` varchar(50) NOT NULL DEFAULT '' COMMENT '被叫',
+  `display` varchar(50) NOT NULL DEFAULT '' COMMENT '显号',
+  `called_location` varchar(255) NOT NULL DEFAULT '' COMMENT '被叫归属地',
+  `caller_location` varchar(50) NOT NULL DEFAULT '' COMMENT '被叫归属地',
+  `call_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '呼叫开始时间',
+  `ring_start_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '振铃开始时间',
+  `ring_end_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '振铃结束时间',
+  `answer_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '接通时间',
+  `bridge_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '桥接时间',
+  `end_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '结束时间',
+  `talk_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '通话时长',
+  `sip_protocol` varchar(50) NOT NULL DEFAULT '' COMMENT '信令协议(tcp/udp)',
+  `record` varchar(255) NOT NULL DEFAULT '' COMMENT '录音地址',
+  `record_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '录音开始时间',
+  `channel_name` varchar(50) NOT NULL DEFAULT '' COMMENT '呼叫地址',
+  `hangup_cause` varchar(50) NOT NULL COMMENT '挂机原因',
+  `ring_cause` varchar(50) NOT NULL DEFAULT '' COMMENT '回铃音识别',
+  `sip_status` varchar(50) NOT NULL DEFAULT '' COMMENT 'sip状态',
+  `ext1` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展字段1',
+  `ext2` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展字段2',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_calldetail__call_id` (`call_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb4 COMMENT='话单明细表';
+
+-- ----------------------------
+-- Records of cc_call_device
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_call_device` VALUES (1, 1627662334850, 1627662397325, 209104236078694400, '8426573253798413', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1627662334850, 1627662356425, 1627662361445, 1627662361445, 1627662364065, 1627662397325, 35880, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (2, 1627662342300, 1627662399205, 209104236078694400, '5483615731370355', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1627662342300, 1627662361685, 1627662363725, 1627662363725, 1627662364065, 1627662399205, 35480, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (3, 1627993576936, 1627993620965, 210493565480992768, '7940458572093423', '1002@test', 1, 1, '1002', '871556519788001', '18612983191', '', '', 1627993576936, 1627993603145, 1627993611245, 1627993611245, 1627993611345, 1627993620965, 9720, '', '', 0, 'sofia/external/871556519788001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (4, 1627993576796, 1627993621185, 210493565480992768, '36a22ba7-a93b-43d5-9702-740738636f1e', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627993576796, 0, 1627993600525, 1627993600525, 1627993611345, 1627993621185, 20660, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (5, 1627993625790, 1627993682589, 210493770993500160, '6aba578c-19e9-4497-aaa6-27ccf76ae84b', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627993625790, 0, 1627993649505, 1627993649505, 1627993655445, 1627993682589, 33084, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (6, 1627993625882, 1627993682745, 210493770993500160, '1449654305122410', '1002@test', 1, 1, '1002', '871556519788001', '18612983191', '', '', 1627993625882, 1627993651405, 1627993655345, 1627993655345, 1627993655445, 1627993682745, 27400, '', '', 0, 'sofia/external/871556519788001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (7, 1627994135662, 1627994190785, 210495909539086336, '958cc123-3bc3-435d-b973-73b5bc676781', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627994135662, 0, 1627994159365, 1627994159365, 1627994165165, 1627994190785, 31420, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (8, 1627994135764, 1627994190965, 210495909539086336, '1983392123262088', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1627994135764, 1627994160445, 1627994165065, 1627994165065, 1627994165165, 1627994190965, 25900, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (9, 1627994463241, 1627994679605, 210497283047817216, '2025499111837537', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1627994463241, 1627994487325, 1627994491545, 1627994491545, 1627994491625, 1627994679605, 188060, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (10, 1627994463135, 1627994679825, 210497283047817216, 'aadec6fe-70e1-44a9-a161-142fd111314e', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627994463135, 0, 1627994486845, 1627994486845, 1627994491625, 1627994679825, 192980, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (11, 1627994813123, 1627995136885, 210498751016468480, 'cc866f0d-2b33-4e84-af29-038560734ff8', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627994813123, 0, 1627994836845, 1627994836845, 1627994844985, 1627995136885, 300040, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (12, 1627994816883, 1627995137145, 210498751016468480, '3668672366082991', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1627994816883, 1627994840925, 1627994844885, 1627994844885, 1627994844985, 1627995137145, 292260, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (13, 1627995219784, 1627995368745, 210500456688910336, '1613724580010904', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1627995219784, 1627995244005, 1627995251425, 1627995251425, 1627995253805, 1627995368745, 117320, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (14, 1627995228708, 1627995369045, 210500456688910336, '4456350976672025', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1627995228708, 1627995251565, 1627995253605, 1627995253605, 1627995253805, 1627995369045, 115440, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (15, 1627995356099, 1627995405865, 210501027873423360, '5564290161630943', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1627995356099, 1627995381625, 1627995386185, 1627995386185, 1627995386265, 1627995405865, 19680, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (16, 1627995355965, 1627995406045, 210501027873423360, '013ce278-8cb5-46f9-a19e-1b6b65e06897', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627995355965, 0, 1627995379685, 1627995379685, 1627995386265, 1627995406045, 26360, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (17, 1627995452538, 1627995494265, 210501432476958720, '1018788979622682', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1627995452538, 1627995476805, 1627995484205, 1627995484205, 1627995484305, 1627995494265, 10060, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (18, 1627995452431, 1627995494485, 210501432476958720, 'b18e3b10-411c-4851-a943-e1b8bb7efa01', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627995452431, 0, 1627995476145, 1627995476145, 1627995484305, 1627995494485, 18340, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (19, 1627995482225, 1627995525945, 210501557446246400, '8c475c6f-6a16-47be-9c26-ad2a6293326a', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627995482225, 0, 1627995505925, 1627995505925, 0, 1627995525945, 20020, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (20, 1627995482313, 1627995526085, 210501557446246400, '8882163318227084', '1002@test', 1, 1, '1002', '871556519788001', '18612983191', '', '', 1627995482313, 1627995506425, 0, 0, 0, 1627995526085, 0, '', '', 0, 'sofia/external/871556519788001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (21, 1627995539227, 1627995593665, 210501796244750336, '8781538151494795', '1002@test', 1, 1, '1002', '871556519788001', '18612983191', '', '', 1627995539227, 1627995563205, 0, 0, 0, 1627995593665, 0, '', '', 0, 'sofia/external/871556519788001@172.17.0.2:6685', 'RECOVERY_ON_TIMER_EXPIRE', '', '408', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (22, 1627995539159, 1627995618385, 210501796244750336, '0f4a770d-65c0-4907-bbf9-125e7da95e19', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627995539159, 0, 1627995562865, 1627995562865, 0, 1627995618385, 55520, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (23, 1627995600094, 1627995646965, 210502051824664576, '3102515140512459', '1002@test', 1, 2, '1002', '871556519788001', '1002', '', '', 1627995600094, 1627995625225, 1627995632605, 1627995632605, 1627995634885, 1627995646965, 14360, '', '', 0, 'sofia/external/871556519788001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (24, 1627995609594, 1627995647205, 210502051824664576, '4139239056029410', '1002@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1627995609594, 1627995632725, 1627995634726, 1627995634726, 1627995634885, 1627995647205, 12479, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (25, 1627995653605, 1627995706645, 210502276266065920, '2429173174569363', '1002@test', 1, 2, '1002', '871556519788001', '1002', '', '', 1627995653605, 1627995677605, 1627995685005, 1627995685005, 1627995687405, 1627995706645, 21640, '', '', 0, 'sofia/external/871556519788001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (26, 1627995662160, 1627995706885, 210502276266065920, '3859403297110954', '1002@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1627995662160, 1627995685145, 1627995687165, 1627995687165, 1627995687405, 1627995706885, 19720, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (27, 1627995694390, 1627995814405, 210502446751940608, '8079255180097764', '1002@test', 1, 1, '1002', '871556519788001', '18612983191', '', '', 1627995694390, 1627995718425, 1627995723745, 1627995723745, 1627995723845, 1627995814405, 90660, '', '', 0, 'sofia/external/871556519788001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (28, 1627995694253, 1627995814565, 210502446751940608, '91206e8c-89df-46d6-992b-1e2e14cb63a0', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627995694253, 0, 1627995717965, 1627995717965, 1627995723845, 1627995814565, 96600, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (29, 1627996677261, 1627996822725, 210506569782132736, '8cc0bd4e-cc76-4281-b40f-da7a699d89d5', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627996677261, 0, 1627996700965, 1627996700965, 1627996710645, 1627996822725, 121760, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (30, 1627996677372, 1627996822985, 210506569782132736, '0838959669799603', '1002@test', 1, 1, '1002', '871556519788001', '18612983191', '', '', 1627996677372, 1627996703685, 1627996710545, 1627996710545, 1627996710645, 1627996822985, 112440, '', '', 0, 'sofia/external/871556519788001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (31, 1627996906125, 1627997058105, 210507529711517696, '4bf5e355-1999-48b4-9550-fca31d3731f4', '', 2, 1, '186****3191', '01011515902', '', '', '', 1627996906125, 0, 1627996929845, 1627996929845, 1627996943485, 1627997058105, 128260, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (32, 1627996914764, 1627997058265, 210507529711517696, '0729775172939815', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1627996914764, 1627996939205, 1627996943405, 1627996943405, 1627996943485, 1627997058265, 114860, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (33, 1628062838894, 1628063134725, 210784071784071168, '1ea8f286-9f63-4ead-afb9-c56eadcecb8b', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628062838894, 0, 1628062863047, 1628062863047, 1628062881005, 1628063134725, 271678, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (34, 1628062849873, 1628063134945, 210784071784071168, '5734143348815460', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628062849873, 1628062876185, 1628062880905, 1628062880905, 1628062881005, 1628063134945, 254040, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (35, 1628063281392, 1628063324365, 210785927763591168, '2372176480524048', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628063281392, 1628063306105, 1628063310185, 1628063310185, 1628063312505, 1628063324365, 14180, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (36, 1628063286796, 1628063324646, 210785927763591168, '1793870904771889', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628063286796, 1628063310325, 1628063312345, 1628063312345, 1628063312505, 1628063324646, 12301, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (37, 1628063329050, 1628063499725, 210786127655731200, '626e4fe8-cdbf-4b94-85cd-a7f7b94321e1', '1001@test', 2, 1, '186****3191', '01011515902', '', '', '', 1628063329050, 0, 1628063353205, 1628063353205, 1628063406945, 1628063499725, 146520, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (38, 1628063378285, 1628063499925, 210786127655731200, '2805906849077626', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628063378285, 1628063403225, 1628063406865, 1628063406865, 1628063406945, 1628063499925, 93060, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (39, 1628063990518, 1628064050665, 210788902045220864, '1a7a1f75-7c94-4c99-9e30-5f0c9ba2d207', '1001@test', 2, 1, '186****3191', '01011515902', '', '', '', 1628063990518, 0, 1628064014665, 1628064014665, 1628064043625, 1628064050665, 36000, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (40, 1628064014857, 1628064050965, 210788902045220864, '6159193241669661', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628064014857, 1628064039525, 1628064043545, 1628064043545, 1628064043625, 1628064050965, 7420, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (41, 1628064097329, 1628064147545, 210789350001082368, '70c55b8c-ce9a-4b17-b89b-bbcb0edd84af', '1001@test', 2, 1, '186****3191', '01011515902', '', '', '', 1628064097329, 0, 1628064121485, 1628064121485, 1628064134105, 1628064147545, 26060, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (42, 1628064105255, 1628064147765, 210789350001082368, '2634886910231686', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628064105255, 1628064130085, 1628064134005, 1628064134005, 1628064134105, 1628064147765, 13760, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (43, 1628069948288, 1628070280245, 210813890743762944, 'cae92257-b93e-469d-a47e-6ada52c3a068', '1001@test', 2, 1, '186****3191', '01011515902', '', '', '', 1628069948288, 0, 1628069972865, 1628069972865, 1628069985305, 1628070280245, 307380, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (44, 1628069955586, 1628070280525, 210813890743762944, '6488952812463117', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628069955586, 1628069981505, 1628069985225, 1628069985225, 1628069985305, 1628070280525, 295300, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (45, 1628071945428, 1628072006085, 210822267360247808, 'b79c31ae-7567-4659-9b18-5d741cf820c3', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628071945428, 0, 1628071945465, 1628071945465, 0, 1628072006085, 60620, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (46, 1628092269587, 1628092281465, 210907513065832448, 'd728dd56-351f-4996-b8c7-7fd02a98e1e1', '', 2, 1, '185****3471', '01011515902', '', '', '', 1628092269587, 0, 1628092269585, 1628092269585, 0, 1628092281465, 11880, 'udp', '', 0, 'sofia/external/18510863471@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (47, 1628150222993, 1628150240365, 211150587268431872, '4586120688151891', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628150222993, 1628150225805, 1628150230105, 1628150230105, 1628150232325, 1628150240365, 10260, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (48, 1628150230269, 1628150240465, 211150587268431872, '4766179374456673', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628150230269, 1628150230245, 1628150232265, 1628150232265, 1628150232325, 1628150240465, 8200, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (49, 1628167521811, 1628167533745, 211223143627358208, '3363751192942191', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628167521811, 1628167522865, 1628167525545, 1628167525545, 1628167525605, 1628167533745, 8200, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (50, 1628167521777, 1628167533787, 211223143627358208, 'af6f3f53-40b9-4273-9873-003f7c5e62b3', '1001@test', 2, 1, '186****3191', '01011515902', '', '', '', 1628167521777, 0, 1628167521785, 1628167521785, 1628167525605, 1628167533787, 12002, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (51, 1628167551538, 1628167618925, 211223268454039552, 'f0cfad04-203e-4c72-a2ab-e94578b64b74', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628167551538, 0, 1628167551545, 1628167551545, 0, 1628167618925, 67380, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (52, 1628167625113, 1628167703345, 211223577049956352, 'dac604b9-4d64-46ca-a9d5-a7ff179856d8', '1001@test', 2, 1, '186****3191', '01011515902', '', '', '', 1628167625113, 0, 1628167625105, 1628167625105, 1628167628785, 1628167703345, 78240, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (53, 1628167625138, 1628167703366, 211223577049956352, '9018750414008544', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628167625138, 1628167625385, 1628167628745, 1628167628745, 1628167628785, 1628167703366, 74621, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (54, 1628167928708, 1628167948565, 211224850419679232, '5216558464996850', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628167928708, 1628167929005, 1628167931805, 1628167931805, 1628167934085, 1628167948565, 16760, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (55, 1628167932367, 1628167948725, 211224850419679232, '0107493686280627', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628167932367, 1628167931945, 1628167933985, 1628167933985, 1628167934085, 1628167948725, 14740, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (56, 1628168199321, 1628168230905, 211225928657797120, '9787039208500967', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628168199321, 1628168199605, 1628168202065, 1628168202065, 1628168202145, 1628168230905, 28840, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (57, 1628168185782, 1628168230985, 211225928657797120, '70357800-6c38-43bf-918a-a0a115734967', '1001@test', 2, 1, '186****3191', '01011515902', '', '', '', 1628168185782, 0, 1628168185785, 1628168185785, 1628168202145, 1628168230985, 45200, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (58, 1628168338973, 1628168404225, 211226571195809792, '9783469088520602', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628168338973, 1628168339325, 1628168341965, 1628168341965, 1628168344206, 1628168404225, 62260, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (59, 1628168342115, 1628168404266, 211226571195809792, '8248022707237872', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628168342115, 1628168342085, 1628168344185, 1628168344185, 1628168344206, 1628168404266, 60081, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (60, 1628178015589, 1628178042545, 211267157865005056, '0100885907803738', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628178015589, 1628178015925, 1628178018405, 1628178018405, 1628178020525, 1628178042545, 24140, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (61, 1628178018483, 1628178042605, 211267157865005056, '8637079338032169', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628178018483, 1628178018445, 1628178020465, 1628178020465, 1628178020525, 1628178042605, 22140, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (62, 1628178077832, 1628178279065, 211267401734422528, '8836815609509704', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628178077832, 1628178077505, 1628178079505, 1628178079505, 1628178079665, 1628178279065, 199560, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (63, 1628178073732, 1628178279305, 211267401734422528, '9116716320870247', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628178073732, 1628178074005, 1628178077325, 1628178077325, 1628178079665, 1628178279305, 201980, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (64, 1628180502139, 1628180515225, 211277587211616256, '3532596427232913', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628180502139, 1628180502605, 1628180505105, 1628180505105, 1628180507705, 1628180515225, 10120, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (65, 1628180505670, 1628180518785, 211277587211616256, '6078039984334274', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628180505670, 1628180505345, 1628180507366, 1628180507366, 1628180507705, 1628180518785, 11419, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (66, 1628214160566, 1628214360485, 211418729819406336, '3130292652989934', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628214160566, 1628214158385, 1628214160425, 1628214160425, 1628214163005, 1628214360485, 200060, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (67, 1628214678727, 1628214881265, 211420919858462720, '4646607190533284', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628214678727, 1628214679225, 1628214681246, 1628214681246, 1628214681465, 1628214881265, 200019, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (68, 1628215198018, 1628215400085, 211423099449507840, '5048918548262245', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628215198018, 1628215198525, 1628215200545, 1628215200545, 1628215200725, 1628215400085, 199540, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (69, 1628236908022, 1628237109045, 211514158368161792, '6746131001305210', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628236908022, 1628236908005, 1628236910005, 1628236910005, 1628236910165, 1628237109045, 199040, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (70, 1628237243168, 1628237255365, 211515576336515072, '1620901078112092', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628237243168, 1628237243485, 1628237246405, 1628237246405, 1628237248665, 1628237255365, 8960, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (71, 1628237246588, 1628237255765, 211515576336515072, '9801646378817094', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628237246588, 1628237246565, 1628237248585, 1628237248585, 1628237248665, 1628237255765, 7180, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (72, 1628240521171, 1628240723186, 211529306654900224, '9416851387477267', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628240521171, 1628240521145, 1628240523165, 1628240523165, 1628240523245, 1628240723186, 200021, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (73, 1628240516731, 1628240723345, 211529306654900224, '2573846168508747', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628240516731, 1628240517005, 1628240520965, 1628240520965, 1628240523245, 1628240723345, 202380, '', 'group1/M00/00/00/rBEAAmEM-1OAJY8FADE5bNJT48I113.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (74, 1628242221389, 1628242315365, 211536456508768256, '5214907999160702', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628242221389, 1628242221705, 1628242225025, 1628242225025, 1628242227285, 1628242315365, 90340, '', 'group1/M00/00/00/rBEAAmENAYuAYnvsABXnrLzIg8Y248.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (75, 1628242225206, 1628242315666, 211536456508768256, '6191749460025471', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628242225206, 1628242225165, 1628242227205, 1628242227205, 1628242227285, 1628242315666, 88461, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (76, 1628243060728, 1628243262225, 211539961118195712, '5208592616730370', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628243060728, 1628243060705, 1628243062725, 1628243062725, 1628243062766, 1628243262225, 199500, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (77, 1628243056953, 1628243262305, 211539961118195712, '9153663478741546', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628243056953, 1628243057205, 1628243060625, 1628243060625, 1628243062766, 1628243262305, 201680, '', 'group1/M00/00/00/rBEAAmENBT6AeAkrAGIsrP0vzLQ799.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (78, 1628243324812, 1628243526345, 211541068787744768, '3661708830758711', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628243324812, 1628243324765, 1628243326805, 1628243326805, 1628243326865, 1628243526345, 199540, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (79, 1628243321042, 1628243526405, 211541068787744768, '7933831872066763', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628243321042, 1628243321305, 1628243324725, 1628243324725, 1628243326865, 1628243526405, 201680, '', 'group1/M00/00/00/rBEAAmENBkaAJkg7AGI2rDt8UFI897.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (80, 1628243729856, 1628243789925, 211542783477940224, '7656280272559166', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628243729856, 1628243730225, 1628243733605, 1628243733605, 1628243735925, 1628243789925, 56320, '', 'group1/M00/00/00/rBEAAmENB06AAWHVABsorMcjtg8272.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (81, 1628243733822, 1628243790305, 211542783477940224, '4444878938551857', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628243733822, 1628243733785, 1628243735805, 1628243735805, 1628243735925, 1628243790305, 54500, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (82, 1628244526951, 1628244630405, 211546126736687104, '8623952899532341', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628244526951, 1628244527205, 1628244529445, 1628244529445, 1628244531645, 1628244630405, 100960, '', 'group1/M00/00/00/rBEAAmENCpaAP49QADELLDUW068020.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (83, 1628244529506, 1628244630646, 211546126736687104, '0897583123967661', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628244529506, 1628244529485, 1628244531508, 1628244531508, 1628244531645, 1628244630646, 99138, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (84, 1628245905005, 1628245951385, 211551906709897216, '7446e75f-338e-498d-910a-ec061a22d7a4', '1001@test', 2, 1, '186****3191', '01011515902', '', '', '', 1628245905005, 0, 1628245905005, 1628245905005, 1628245908805, 1628245951385, 46380, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (85, 1628245905036, 1628245951405, 211551906709897216, '8559717919479324', '1001@test', 1, 1, '1001', '871556590425001', '18612983191', '', '', 1628245905036, 1628245905325, 1628245908725, 1628245908725, 1628245908805, 1628245951405, 42680, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (86, 1628309083549, 1628309144145, 211816896725516288, '0cddffd6-8ffe-4021-bcfa-4d96361c556c', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628309083549, 0, 1628309083565, 1628309083565, 0, 1628309144145, 60580, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (87, 1628318487955, 1628318549106, 211856341663219712, '692c4f2c-e105-4f14-939e-a08cee0f2f97', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628318487955, 0, 1628318487985, 1628318487985, 0, 1628318549106, 61121, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (88, 1628320326109, 1628320387105, 211864051444088832, 'b24af8df-4d6f-4d71-9de7-fd3d8a0c6004', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628320326109, 0, 1628320326125, 1628320326125, 0, 1628320387105, 60980, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (89, 1628320929802, 1628320992525, 211866583507664896, 'c2d76e1d-ab06-4a76-8bce-9ed52cfbce8f', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628320929802, 0, 1628320932145, 1628320932145, 0, 1628320992525, 60380, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (90, 1628322080429, 1628322166305, 211871409582899200, '85b36a03-3ae3-464b-bdcd-92785e428ea5', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628322080429, 0, 1628322082765, 1628322082765, 0, 1628322166305, 83540, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (91, 1628322420612, 1628322483445, 211872836401233920, 'e9763b1d-3998-4c0b-8298-21129e15247a', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628322420612, 0, 1628322422965, 1628322422965, 0, 1628322483445, 60480, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (92, 1628322488088, 1628322518805, 211873119441256448, 'e8800465-0374-4463-a2a0-6ae30811ba8e', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628322488088, 0, 1628322490425, 1628322490425, 0, 1628322518805, 28380, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (93, 1628322520065, 1628322585545, 211873253566709760, '2340e57d-aa79-4ccb-a05c-8f24c417d2b0', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628322520065, 0, 1628322522385, 1628322522385, 0, 1628322585545, 63160, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (94, 1628323512290, 1628323573045, 211877415255801856, '1be59431-1d22-4f8b-b959-12fed622ec11', '', 2, 1, '186****3191', '01011515902', '', '', '', 1628323512290, 0, 1628323512305, 1628323512305, 0, 1628323573045, 60740, 'udp', '', 0, 'sofia/external/18612983191@192.168.180.37', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (95, 1628409637746, 1628409637746, 212238651604598784, '2842837859243156', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628409637746, 0, 0, 0, 0, 1628409637746, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'UNALLOCATED_NUMBER', '', '404', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (96, 1628410105879, 1628410307445, 212240584553791488, '6028964109589973', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628410105879, 1628410105865, 1628410107866, 1628410107866, 1628410107947, 1628410307445, 199579, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (97, 1628410098597, 1628410307466, 212240584553791488, '9747239684898693', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628410098597, 1628410099765, 1628410105685, 1628410105685, 1628410107947, 1628410307466, 201781, '', 'group1/M00/00/00/rBEAAmEPkcOABt83AGJNLNfRujk265.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (98, 1628416914640, 1628417116165, 212269149886349312, '2593741406278882', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628416914640, 1628416914586, 1628416916650, 1628416916650, 1628416916725, 1628417116165, 199515, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (99, 1628416909103, 1628417116285, 212269149886349312, '0791138296033650', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628416909103, 1628416910565, 1628416914425, 1628416914425, 1628416916725, 1628417116285, 201860, '', 'group1/M00/00/00/rBEAAmEPrFyAG57wAGJILLd67ys383.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (100, 1628417174699, 1628417376225, 212270242842279936, '3542311946115192', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628417174699, 1628417174685, 1628417176705, 1628417176705, 1628417176785, 1628417376225, 199520, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (101, 1628417169684, 1628417376285, 212270242842279936, '0118520363352527', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628417169684, 1628417170585, 1628417174625, 1628417174625, 1628417176785, 1628417376285, 201660, '', 'group1/M00/00/00/rBEAAmEPrWCAb6yRAGJArA-oWdY999.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (102, 1628417597863, 1628417629505, 212272038755172352, '3574487215521425', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628417597863, 1628417599125, 0, 0, 0, 1628417629505, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'RECOVERY_ON_TIMER_EXPIRE', '', '408', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (103, 1628420747531, 1628420949045, 212285231955181568, '5057168822965047', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628420747531, 1628420747507, 1628420749506, 1628420749506, 1628420749586, 1628420949045, 199539, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (104, 1628420743367, 1628420949086, 212285231955181568, '1434209397304160', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628420743367, 1628420744845, 1628420747445, 1628420747445, 1628420749586, 1628420949086, 201641, '', 'group1/M00/00/00/rBEAAmEPu1WAWldFAGIALGjjQLo185.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (105, 1628421083962, 1628421138425, 212286660514152448, '0643646091368020', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628421083962, 1628421085765, 1628421088185, 1628421088185, 1628421090325, 1628421138425, 50240, '', 'group1/M00/00/00/rBEAAmEPvBKAeDxxABgkLPxjWt8358.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (106, 1628421088253, 1628421138605, 212286660514152448, '9650804940585947', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628421088253, 1628421088229, 1628421090265, 1628421090265, 1628421090325, 1628421138605, 48340, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (107, 1628421187434, 1628421200805, 212287094507175936, '1004559198465220', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628421187434, 1628421188945, 1628421191545, 1628421191545, 1628421193845, 1628421200805, 9260, '', 'group1/M00/00/00/rBEAAmEPvFCAcedPAAQuLMy5PSg319.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (108, 1628421191738, 1628421201105, 212287094507175936, '6706568880030178', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628421191738, 1628421191705, 1628421193745, 1628421193745, 1628421193845, 1628421201105, 7360, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (109, 1628421223293, 1628421272447, 212287244910723072, '2314567948015900', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628421223293, 1628421224345, 1628421230405, 1628421230405, 1628421232545, 1628421272447, 42042, '', 'group1/M00/00/00/rBEAAmEPvJiAceBjABRXrGfoosM359.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (110, 1628421230483, 1628421272566, 212287244910723072, '8066826150666511', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628421230483, 1628421272447, 1628421232485, 1628421232485, 1628421232545, 1628421272566, 40081, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (111, 1628425852598, 1628426054145, 212306637002637312, '9630722460503901', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628425852598, 1628425852585, 1628425854586, 1628425854586, 1628425854665, 1628426054145, 199559, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (112, 1628425846728, 1628426054185, 212306637002637312, '9508126321506141', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628425846728, 1628425848285, 1628425852525, 1628425852525, 1628425854665, 1628426054185, 201660, '', 'group1/M00/00/00/rBEAAmEPz0aAaj1UAGJILDdLeqk680.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (113, 1628472283128, 1628472283125, 212501405380902912, '6713377617573501', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628472283128, 0, 0, 0, 0, 1628472283125, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'UNALLOCATED_NUMBER', '', '404', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (114, 1628472573318, 1628472775371, 212502603118936064, '0980177183617868', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628472573318, 1628472573285, 1628472575305, 1628472575305, 1628472575385, 1628472775371, 200066, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (115, 1628472568691, 1628472775505, 212502603118936064, '8806687345862180', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628472568691, 1628472569125, 1628472573105, 1628472573105, 1628472575385, 1628472775505, 202400, '', 'group1/M00/00/00/rBEAAmEQhceAFiv7AGLtLGZ-JwY374.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (116, 1628521084655, 1628521084665, 212706093820805120, '1710322370863287', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628521084655, 0, 0, 0, 0, 1628521084665, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'UNALLOCATED_NUMBER', '', '404', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (117, 1628521092732, 1628521092746, 212706127698198528, '1677221618929175', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628521092732, 0, 0, 0, 0, 1628521092746, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'UNALLOCATED_NUMBER', '', '404', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (118, 1628521115713, 1628521317225, 212706204961472512, '8351265868441368', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628521115713, 0, 1628521117705, 1628521117705, 1628521117765, 1628521317225, 199520, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (119, 1628521111153, 1628521317245, 212706204961472512, '8031647069255360', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628521111153, 1628521111485, 1628521115485, 1628521115485, 1628521117765, 1628521317245, 201760, '', 'group1/M00/00/00/rBEAAmERQ2WAR8ezAGJUrCaaPKo445.wav', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (120, 1628521864138, 1628521902625, 212709363209469952, '4085603154877623', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628521864138, 1628521864425, 1628521884565, 1628521884565, 1628521886805, 1628521902625, 18060, '', 'group1/M00/00/00/rBEAAmERRa6AcxdjAAh8rGurThQ616.wav', 1628521884705, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (121, 1628521884761, 1628521903005, 212709363209469952, '4322469686343743', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628521884761, 1628521902625, 1628521886765, 1628521886765, 1628521886805, 1628521903005, 16240, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (122, 1628522143420, 1628522345465, 212710422019571712, '0961117707880038', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628522143420, 1628522143405, 1628522145429, 1628522145429, 1628522145468, 1628522345465, 200036, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (123, 1628522116578, 1628522345525, 212710422019571712, '2254181443606720', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628522116578, 1628522116925, 1628522143225, 1628522143225, 1628522145468, 1628522345525, 202300, '', 'group1/M00/00/00/rBEAAmERR2mAFMHWAGKJLFL4f9Y645.wav', 1628522143365, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (124, 1628522539515, 1628522541485, 212712195945922560, '7418348127581364', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628522539515, 1628522539825, 0, 0, 0, 1628522541485, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (125, 1628523154814, 1628523200445, 212714776696979456, '1072362486829534', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628523154814, 1628523155125, 1628523159085, 1628523159085, 1628523161325, 1628523200445, 41360, '', 'group1/M00/00/00/rBEAAmERSsCABQSYABParNSUUS4671.wav', 1628523159226, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (126, 1628523159266, 1628523200765, 212714776696979456, '2668496556530418', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628523159266, 1628523159226, 1628523161265, 1628523161265, 1628523161325, 1628523200765, 39500, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (127, 1628523246574, 1628523247985, 212715161566314496, '2318181239590435', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628523246574, 1628523246925, 0, 0, 0, 1628523247985, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (128, 1628523652183, 1628523654605, 212716862813765632, '2218370879166798', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628523652183, 1628523652705, 0, 0, 0, 1628523654605, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (129, 1628523804635, 1628523807486, 212717502243799040, '3322717098745331', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628523804635, 1628523804925, 0, 0, 0, 1628523807486, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (130, 1628523812671, 1628523815385, 212717535949225984, '6767242793757729', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628523812671, 1628523813025, 0, 0, 0, 1628523815385, 0, '', '', 0, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (131, 1628523669992, 1628523871365, 212716917360689152, '1109075404589238', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628523669992, 1628523669625, 1628523671665, 1628523671665, 0, 1628523871365, 199700, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (132, 1628523898728, 1628523908485, 212717896898445312, '0841926606470466', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628523898728, 1628523899025, 1628523902967, 1628523902967, 1628523905345, 1628523908485, 5518, '', '/app/clpms/record/20210809/212717896898445312_871556590425001_14400010002.wav', 1628523903125, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (133, 1628523903435, 1628523909605, 212717896898445312, '6604947721509260', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628523903435, 1628523903145, 1628523905149, 1628523905149, 1628523905345, 1628523909605, 4456, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (134, 1628524021770, 1628524033685, 212718412973998080, '9003271480051887', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628524021770, 1628524022025, 1628524024625, 1628524024625, 1628524026945, 1628524033685, 9060, '', 'group1/M00/00/00/rBEAAmERTgGAb5sdAAQSrBj5K2Y365.wav', 1628524024805, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '200', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (135, 1628524024846, 1628524033967, 212718412973998080, '9402980061385726', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628524024846, 1628524024825, 1628524026865, 1628524026865, 1628524026945, 1628524033967, 7102, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (136, 1628524343204, 1628524356605, 212719761165910016, '1985728415195435', '1001@test', 1, 2, '1001', '871556590425001', '1001', '', '', 1628524343204, 1628524343525, 1628524347105, 1628524347105, 1628524349385, 1628524356605, 9500, '', 'group1/M00/00/00/rBEAAmERT0SAYnB5AARWLOPej-0702.wav', 1628524347226, 'sofia/external/871556590425001@172.17.0.2:6685', 'NORMAL_CLEARING', '', '', '', '', 1);
+INSERT INTO `cc_call_device` VALUES (137, 1628524347281, 1628524356885, 212719761165910016, '7763880975156508', '1001@test', 2, 2, '01088889999', '144****0002', '14400010002', '', '', 1628524347281, 1628524347226, 1628524349285, 1628524349285, 1628524349385, 1628524356885, 7600, '', '', 0, 'sofia/external/14400010002@172.17.0.2:32460', 'NORMAL_CLEARING', '', '', '', '', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_call_dtmf
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_call_dtmf`;
+CREATE TABLE `cc_call_dtmf` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `dtmf_key` varchar(255) NOT NULL DEFAULT '' COMMENT '按键号码',
+  `process_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '业务流程id',
+  `call_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '通话标识id',
+  `dtmf_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '按键时间',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='呼叫按键表';
+
+-- ----------------------------
+-- Records of cc_call_dtmf
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_call_log
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_call_log`;
+CREATE TABLE `cc_call_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '落单时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业id',
+  `call_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '话单id',
+  `caller_display` varchar(255) NOT NULL DEFAULT '' COMMENT '主叫显号',
+  `caller` varchar(50) NOT NULL DEFAULT '' COMMENT '主叫',
+  `called_display` varchar(255) NOT NULL DEFAULT '' COMMENT '被叫显号',
+  `called` varchar(50) NOT NULL DEFAULT '' COMMENT '被叫',
+  `agent_key` varchar(20) NOT NULL DEFAULT '' COMMENT '坐席',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能组',
+  `login_type` int(11) NOT NULL DEFAULT '1' COMMENT '1:sip号,2:webrtc,3:手机',
+  `task_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '任务ID',
+  `ivr_id` bigint(20) NOT NULL DEFAULT '0' COMMENT 'ivr',
+  `bot_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '机器人id',
+  `call_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '呼叫开始时间',
+  `answer_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '接听时间',
+  `end_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '结束时间',
+  `call_type` varchar(32) NOT NULL DEFAULT '' COMMENT '呼叫类型',
+  `direction` varchar(32) NOT NULL DEFAULT '' COMMENT '呼叫方向',
+  `answer_flag` int(11) NOT NULL DEFAULT '0' COMMENT '通话标识(0:接通,1:坐席未接用户未接,2:坐席接通用户未接通,3:用户接通坐席未接通)',
+  `wait_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '累计等待时长',
+  `answer_count` int(11) NOT NULL DEFAULT '0' COMMENT '应答设备数',
+  `hangup_dir` int(11) NOT NULL DEFAULT '1' COMMENT '挂机方向(1:主叫挂机,2:被叫挂机,3:系统挂机)',
+  `hangup_cause` varchar(255) NOT NULL DEFAULT '' COMMENT '挂机原因',
+  `media` varchar(255) NOT NULL DEFAULT '' COMMENT '媒体服务器',
+  `record` varchar(255) NOT NULL DEFAULT '' COMMENT '录音地址',
+  `record_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '录音时间',
+  `talk_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '通话时长(秒)',
+  `frist_queue_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '第一次进队列时间',
+  `queue_start_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '进队列时间',
+  `queue_end_time` bigint(20) DEFAULT NULL COMMENT '出队列时间',
+  `follow_data` varchar(4096) NOT NULL DEFAULT '' COMMENT '通话随路数据(2048)',
+  `uuid1` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展1',
+  `uuid2` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展2',
+  `ext1` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展3',
+  `ext2` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展4',
+  `ext3` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展5',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `idx_calllog_call_id` (`call_id`) USING BTREE,
+  KEY `idx_calllog_create_time` (`call_time`) USING BTREE,
+  KEY `idx_call_log_agent` (`agent_key`),
+  KEY `idx_call_log_group` (`group_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8mb4 COMMENT='话单表';
+
+-- ----------------------------
+-- Records of cc_call_log
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_call_log` VALUES (1, 1627662334850, 1627662399205, 1, 209104236078694400, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1627662334850, 1627662364065, 1627662399205, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210731/209104236078694400_871556590425001_14400010002.wav', 0, 35140, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (2, 1627993576796, 1627993621185, 1, 210493565480992768, '', '186****3191', '', '01011515902', '1002@test', 1, 1, 0, 0, 0, 1627993576796, 1627993611345, 1627993621185, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 2, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 9840, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (3, 1627993625790, 1627993682745, 1, 210493770993500160, '', '186****3191', '', '01011515902', '1002@test', 1, 1, 0, 0, 0, 1627993625790, 1627993655445, 1627993682745, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 27300, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (4, 1627993663566, 0, 1, 210493929433333760, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1627993663566, 1627993693145, 0, '', 'INBOUND', 0, 0, 3, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (5, 1627993969338, 0, 1, 210495211925667840, '', '186****3191', '', '01011515902', '1002@test', 1, 1, 0, 0, 0, 1627993969338, 1627994001005, 0, '', 'INBOUND', 0, 0, 3, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (6, 1627994135662, 1627994190965, 1, 210495909539086336, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1627994135662, 1627994165165, 1627994190965, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 25800, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (7, 1627994170727, 0, 1, 210496056624939008, '', '186****3191', '', '01011515902', '1002@test', 1, 1, 0, 0, 0, 1627994170727, 1627994200245, 0, '', 'INBOUND', 0, 0, 3, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (8, 1627994463135, 1627994679825, 1, 210497283047817216, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1627994463135, 1627994491625, 1627994679825, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 2, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 188200, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (9, 1627994813123, 1627995137145, 1, 210498751016468480, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1627994813123, 1627994844985, 1627995137145, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 292160, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (10, 1627995219784, 1627995369045, 1, 210500456688910336, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1627995219784, 1627995253805, 1627995369045, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210803/210500456688910336_871556590425001_14400010002.wav', 0, 115240, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (11, 1627995355965, 1627995406045, 1, 210501027873423360, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1627995355965, 1627995386265, 1627995406045, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 2, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 19780, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (12, 1627995452431, 1627995494485, 1, 210501432476958720, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1627995452431, 1627995484305, 1627995494485, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 2, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 10180, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (13, 1627995539159, 1627995618385, 1, 210501796244750336, '', '186****3191', '', '01011515902', '1002@test', 1, 1, 0, 0, 0, 1627995539159, 0, 1627995618385, 'INBOUND_CALL', 'INBOUND', 3, 0, 2, 2, 'RECOVERY_ON_TIMER_EXPIRE', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (14, 1627995600094, 1627995647205, 1, 210502051824664576, '1002', '871556519788001', '01088889999', '144****0002', '1002@test', 1, 1, 0, 0, 0, 1627995600094, 1627995634885, 1627995647205, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210803/210502051824664576_871556519788001_14400010002.wav', 0, 12320, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (15, 1627995653605, 1627995706885, 1, 210502276266065920, '1002', '871556519788001', '01088889999', '144****0002', '1002@test', 1, 1, 0, 0, 0, 1627995653605, 1627995687405, 1627995706885, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210803/210502276266065920_871556519788001_14400010002.wav', 0, 19480, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (16, 1627995694253, 1627995814565, 1, 210502446751940608, '', '186****3191', '', '01011515902', '1002@test', 1, 1, 0, 0, 0, 1627995694253, 1627995723845, 1627995814565, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 2, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 90720, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (17, 1627996677261, 1627996822985, 1, 210506569782132736, '', '186****3191', '', '01011515902', '1002@test', 1, 1, 0, 0, 0, 1627996677261, 1627996710645, 1627996822985, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 112340, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (18, 1627996906125, 1627997058265, 1, 210507529711517696, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1627996906125, 1627996943485, 1627997058265, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 114780, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (19, 1628062838894, 1628063134945, 1, 210784071784071168, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628062838894, 1628062881005, 1628063134945, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 253940, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (20, 1628063281392, 1628063324646, 1, 210785927763591168, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628063281392, 1628063312505, 1628063324646, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210804/210785927763591168_871556590425001_14400010002.wav', 0, 12141, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (21, 1628063329050, 1628063499925, 1, 210786127655731200, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628063329050, 1628063406945, 1628063499925, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 92980, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (22, 1628063990518, 1628064050965, 1, 210788902045220864, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628063990518, 1628064043625, 1628064050965, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 7340, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (23, 1628064097329, 1628064147765, 1, 210789350001082368, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628064097329, 1628064134105, 1628064147765, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 13660, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (24, 1628069948288, 1628070280525, 1, 210813890743762944, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628069948288, 1628069985305, 1628070280525, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 295220, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (25, 1628071945428, 1628072006085, 1, 210822267360247808, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628071945428, 0, 1628072006085, 'INBOUND_CALL', 'INBOUND', 0, 0, 2, 3, 'QUEUE_TIMEOUT', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (26, 1628092269587, 1628092281465, 1, 210907513065832448, '', '185****3471', '', '01011515902', '', 1, 1, 0, 0, 0, 1628092269587, 0, 1628092281465, 'INBOUND_CALL', 'INBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (27, 1628150222993, 1628150240465, 1, 211150587268431872, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628150222993, 1628150232325, 1628150240465, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210805/211150587268431872_871556590425001_14400010002.wav', 0, 8140, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (28, 1628167521777, 1628167533787, 1, 211223143627358208, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628167521777, 1628167525605, 1628167533787, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 2, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 8182, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (29, 1628167551538, 1628167618925, 1, 211223268454039552, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628167551538, 0, 1628167618925, 'INBOUND_CALL', 'INBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (30, 1628167625113, 1628167703366, 1, 211223577049956352, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628167625113, 1628167628785, 1628167703366, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 74581, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (31, 1628167928708, 1628167948725, 1, 211224850419679232, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628167928708, 1628167934085, 1628167948725, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210805/211224850419679232_871556590425001_14400010002.wav', 0, 14640, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (32, 1628167955271, 0, 1, 211224961832976384, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628167955271, 1628167968365, 0, '', 'INBOUND', 0, 0, 3, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (33, 1628168185782, 1628168230985, 1, 211225928657797120, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628168185782, 1628168202145, 1628168230985, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 2, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 28840, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (34, 1628168338973, 1628168404266, 1, 211226571195809792, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628168338973, 1628168344206, 1628168404266, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210805/211226571195809792_871556590425001_14400010002.wav', 0, 60060, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (35, 1628178015589, 1628178042605, 1, 211267157865005056, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628178015589, 1628178020525, 1628178042605, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210805/211267157865005056_871556590425001_14400010002.wav', 0, 22080, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (36, 1628178073732, 1628178279305, 1, 211267401734422528, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628178073732, 1628178079665, 1628178279305, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210805/211267401734422528_871556590425001_14400010002.wav', 0, 199640, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (37, 1628180502139, 1628180518785, 1, 211277587211616256, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628180502139, 1628180507705, 1628180518785, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 11080, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (38, 1628180673112, 0, 1, 211278304324354048, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628180673112, 1628180680525, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (39, 1628180894990, 0, 1, 211279234948136960, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628180894990, 1628180900445, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (40, 1628181016492, 0, 1, 211279744564461568, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628181016492, 1628181023845, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (41, 1628181094688, 0, 1, 211280072542257152, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628181094688, 1628181101647, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (42, 1628214044892, 0, 1, 211418275714695168, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628214044892, 1628214052545, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (43, 1628214153159, 0, 1, 211418729819406336, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628214153159, 1628214163005, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (44, 1628214675305, 0, 1, 211420919858462720, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628214675305, 1628214681465, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (45, 1628215194960, 0, 1, 211423099449507840, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628215194960, 1628215200725, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (46, 1628236905098, 0, 1, 211514158368161792, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628236905098, 1628236910165, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (47, 1628237243168, 1628237255765, 1, 211515576336515072, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628237243168, 1628237248665, 1628237255765, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 7100, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (48, 1628239789703, 0, 1, 211526257278451712, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628239789703, 1628239796246, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (49, 1628240516731, 1628240723345, 1, 211529306654900224, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628240516731, 1628240523245, 1628240723345, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEM-1OAJY8FADE5bNJT48I113.wav', 0, 200100, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (50, 1628242221389, 1628242315666, 1, 211536456508768256, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628242221389, 1628242227285, 1628242315666, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmENAYuAYnvsABXnrLzIg8Y248.wav', 0, 88381, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (51, 1628243056953, 1628243262305, 1, 211539961118195712, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628243056953, 1628243062766, 1628243262305, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmENBT6AeAkrAGIsrP0vzLQ799.wav', 0, 199539, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (52, 1628243321042, 1628243526405, 1, 211541068787744768, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628243321042, 1628243326865, 1628243526405, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmENBkaAJkg7AGI2rDt8UFI897.wav', 0, 199540, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (53, 1628243729856, 1628243790305, 1, 211542783477940224, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628243729856, 1628243735925, 1628243790305, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmENB06AAWHVABsorMcjtg8272.wav', 0, 54380, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (54, 1628244526951, 1628244630646, 1, 211546126736687104, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628244526951, 1628244531645, 1628244630646, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmENCpaAP49QADELLDUW068020.wav', 0, 99001, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (55, 1628245905005, 1628245951405, 1, 211551906709897216, '', '186****3191', '', '01011515902', '1001@test', 1, 1, 0, 0, 0, 1628245905005, 1628245908805, 1628245951405, 'INBOUND_CALL', 'INBOUND', 0, 0, 3, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 42600, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (56, 1628308493925, 1628308493925, 0, 211814424384634880, '', '18612983191', '', '01011515905', '', 0, 1, 0, 0, 0, 0, 0, 1628308493925, 'INBOUND_CALL', 'INBOUND', 3, 0, 1, 3, 'VDN_ERROR', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (57, 1628309083549, 1628309144145, 1, 211816896725516288, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628309083549, 0, 1628309144145, 'INBOUND_CALL', 'INBOUND', 0, 0, 2, 3, 'QUEUE_TIMEOUT', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (58, 1628318487955, 1628318549106, 1, 211856341663219712, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628318487955, 0, 1628318549106, 'INBOUND_CALL', 'INBOUND', 0, 0, 1, 3, 'QUEUE_TIMEOUT', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (59, 1628320326109, 1628320387105, 1, 211864051444088832, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628320326109, 0, 1628320387105, 'INBOUND_CALL', 'INBOUND', 0, 0, 1, 3, 'QUEUE_TIMEOUT', '172.17.0.2', '', 0, 0, 1628320326249, 1628320326249, 1628320387074, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (60, 1628320929802, 1628320992525, 1, 211866583507664896, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628320929802, 0, 1628320992525, 'INBOUND_CALL', 'INBOUND', 0, 0, 1, 3, 'QUEUE_TIMEOUT', '172.17.0.2', '', 0, 0, 1628320929873, 1628320929873, 1628320990175, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (61, 1628322080429, 1628322166305, 1, 211871409582899200, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628322080429, 0, 1628322166305, 'INBOUND_CALL', 'INBOUND', 0, 0, 1, 3, 'QUEUE_TIMEOUT', '172.17.0.2', '', 0, 0, 1628322080550, 1628322080550, 1628322163963, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (62, 1628322420612, 1628322483445, 1, 211872836401233920, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628322420612, 0, 1628322483445, 'INBOUND_CALL', 'INBOUND', 0, 0, 1, 3, 'QUEUE_TIMEOUT', '172.17.0.2', '', 0, 0, 1628322420737, 1628322420737, 1628322481114, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (63, 1628322488088, 1628322518805, 1, 211873119441256448, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628322488088, 0, 1628322518805, 'INBOUND_CALL', 'INBOUND', 0, 0, 1, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 0, 1628322488187, 1628322488187, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (64, 1628322520065, 1628322585545, 1, 211873253566709760, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628322520065, 0, 1628322585545, 'INBOUND_CALL', 'INBOUND', 0, 0, 1, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 0, 1628322520144, 1628322520144, NULL, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (65, 1628323512290, 1628323573045, 1, 211877415255801856, '', '186****3191', '', '01011515902', '', 1, 1, 0, 0, 0, 1628323512290, 0, 1628323573045, 'INBOUND_CALL', 'INBOUND', 0, 0, 1, 3, 'QUEUE_TIMEOUT', '172.17.0.2', '', 0, 0, 1628323512338, 1628323512338, 1628323573011, '{}', '', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (66, 1628409637746, 1628409637746, 1, 212238651604598784, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628409637746, 0, 1628409637746, 'OUTBOUNT_CALL', 'OUTBOUND', 1, 0, 0, 1, 'UNALLOCATED_NUMBER', '', '', 0, 0, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (67, 1628410098597, 1628410307466, 1, 212240584553791488, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628410098597, 1628410107947, 1628410307466, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEPkcOABt83AGJNLNfRujk265.wav', 0, 199519, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (68, 1628416909103, 1628417116285, 1, 212269149886349312, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628416909103, 1628416916725, 1628417116285, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEPrFyAG57wAGJILLd67ys383.wav', 0, 199560, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (69, 1628417169684, 1628417376285, 1, 212270242842279936, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628417169684, 1628417176785, 1628417376285, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEPrWCAb6yRAGJArA-oWdY999.wav', 0, 199500, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (70, 1628417597863, 1628417629505, 1, 212272038755172352, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628417597863, 0, 1628417629505, 'OUTBOUNT_CALL', 'OUTBOUND', 1, 0, 0, 1, 'RECOVERY_ON_TIMER_EXPIRE', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (71, 1628420743367, 1628420949086, 1, 212285231955181568, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628420743367, 1628420749586, 1628420949086, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEPu1WAWldFAGIALGjjQLo185.wav', 0, 199500, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (72, 1628421083962, 1628421138605, 1, 212286660514152448, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628421083962, 1628421090325, 1628421138605, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEPvBKAeDxxABgkLPxjWt8358.wav', 0, 48280, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (73, 1628421187434, 1628421201105, 1, 212287094507175936, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628421187434, 1628421193845, 1628421201105, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEPvFCAcedPAAQuLMy5PSg319.wav', 0, 7260, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (74, 1628421223293, 1628421272566, 1, 212287244910723072, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628421223293, 1628421232545, 1628421272566, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEPvJiAceBjABRXrGfoosM359.wav', 0, 40021, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (75, 1628425846728, 1628426054185, 1, 212306637002637312, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628425846728, 1628425854665, 1628426054185, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEPz0aAaj1UAGJILDdLeqk680.wav', 0, 199520, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (76, 1628472283128, 1628472283125, 1, 212501405380902912, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628472283128, 0, 1628472283125, 'OUTBOUNT_CALL', 'OUTBOUND', 1, 0, 0, 1, 'UNALLOCATED_NUMBER', '', '', 0, 0, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (77, 1628472568691, 1628472775505, 1, 212502603118936064, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628472568691, 1628472575385, 1628472775505, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmEQhceAFiv7AGLtLGZ-JwY374.wav', 0, 200120, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (78, 1628521084655, 1628521084665, 1, 212706093820805120, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628521084655, 0, 1628521084665, 'OUTBOUNT_CALL', 'OUTBOUND', 1, 0, 0, 1, 'UNALLOCATED_NUMBER', '', '', 0, 0, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (79, 1628521092732, 1628521092746, 1, 212706127698198528, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628521092732, 0, 1628521092746, 'OUTBOUNT_CALL', 'OUTBOUND', 1, 0, 0, 1, 'UNALLOCATED_NUMBER', '', '', 0, 0, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (80, 1628521111153, 1628521317245, 1, 212706204961472512, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628521111153, 1628521117765, 1628521317245, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmERQ2WAR8ezAGJUrCaaPKo445.wav', 0, 199480, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (81, 1628521683517, 0, 1, 212708605630087168, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628521683517, 1628521688805, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 0, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (82, 1628521776365, 0, 1, 212708995062824960, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628521776365, 1628521788625, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 1628521780825, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (83, 1628521864138, 1628521903005, 1, 212709363209469952, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628521864138, 1628521886805, 1628521903005, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmERRa6AcxdjAAh8rGurThQ616.wav', 1628521884705, 16200, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (84, 1628522116578, 1628522345525, 1, 212710422019571712, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628522116578, 1628522145468, 1628522345525, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 2, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmERR2mAFMHWAGKJLFL4f9Y645.wav', 1628522143365, 200057, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (85, 1628523154814, 1628523200765, 1, 212714776696979456, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628523154814, 1628523161325, 1628523200765, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmERSsCABQSYABParNSUUS4671.wav', 1628523159226, 39440, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (86, 1628523548007, 0, 1, 212716425867952128, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628523548007, 1628523554645, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 1628523552425, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (87, 1628523652183, 1628523654605, 1, 212716862813765632, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628523652183, 0, 1628523654605, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 0, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (88, 1628523804635, 1628523807486, 1, 212717502243799040, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628523804635, 0, 1628523807486, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 0, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (89, 1628523812671, 1628523815385, 1, 212717535949225984, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628523812671, 0, 1628523815385, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 0, 1, 'NORMAL_CLEARING', '172.17.0.2', '', 0, 0, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (90, 1628523819487, 0, 1, 212717564537602048, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628523819487, 1628523825045, 0, '', 'OUTBOUND', 0, 0, 2, 1, '', '172.17.0.2', '', 1628523822825, 0, 0, 0, NULL, '', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (91, 1628523898728, 1628523909605, 1, 212717896898445312, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628523898728, 1628523905345, 1628523909605, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', '/app/clpms/record/20210809/212717896898445312_871556590425001_14400010002.wav', 1628523903125, 4260, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (92, 1628524021770, 1628524033967, 1, 212718412973998080, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628524021770, 1628524026945, 1628524033967, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmERTgGAb5sdAAQSrBj5K2Y365.wav', 1628524024805, 7022, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+INSERT INTO `cc_call_log` VALUES (93, 1628524343204, 1628524356885, 1, 212719761165910016, '1001', '871556590425001', '01088889999', '144****0002', '1001@test', 1, 1, 0, 0, 0, 1628524343204, 1628524349385, 1628524356885, 'OUTBOUNT_CALL', 'OUTBOUND', 0, 0, 2, 1, 'NORMAL_CLEARING', '172.17.0.2', 'group1/M00/00/00/rBEAAmERT0SAYnB5AARWLOPej-0702.wav', 1628524347226, 7500, 0, 0, NULL, '{\"autoAnswer\":\"true\"}', '123456', '', '', '', '', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_company
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_company`;
+CREATE TABLE `cc_company` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
+  `id_path` varchar(255) NOT NULL DEFAULT '' COMMENT '父企业ID',
+  `pid` bigint(20) NOT NULL DEFAULT '0' COMMENT '父企业',
+  `company_code` varchar(255) NOT NULL DEFAULT '' COMMENT '简称',
+  `contact` varchar(255) NOT NULL DEFAULT '' COMMENT '联系人',
+  `phone` varchar(255) NOT NULL DEFAULT '' COMMENT '电话',
+  `balance` bigint(20) NOT NULL DEFAULT '0' COMMENT '金额',
+  `bill_type` int(11) NOT NULL DEFAULT '0' COMMENT '1:呼出计费,2:呼入计费,3:双向计费,0:全免费',
+  `pay_type` int(11) NOT NULL DEFAULT '0' COMMENT '0:预付费;1:后付费',
+  `hidden_customer` int(11) NOT NULL DEFAULT '0' COMMENT '隐藏客户号码(0:不隐藏;1:隐藏)',
+  `secret_key` varchar(32) NOT NULL DEFAULT '' COMMENT '验证秘钥',
+  `ivr_limit` int(11) NOT NULL DEFAULT '50' COMMENT 'IVR通道数',
+  `agent_limit` int(11) NOT NULL DEFAULT '50' COMMENT '开通坐席',
+  `group_limit` int(11) NOT NULL DEFAULT '10' COMMENT '开通技能组',
+  `group_agent_limit` int(11) NOT NULL DEFAULT '1000' COMMENT '单技能组中坐席上限',
+  `agent_state` int(11) NOT NULL DEFAULT '0' COMMENT '坐席状态统计',
+  `inbound_stat` int(11) NOT NULL DEFAULT '0' COMMENT '呼入报表统计',
+  `outbound_stat` int(11) NOT NULL DEFAULT '0' COMMENT '外呼报表统计',
+  `group_wait_stat` int(11) NOT NULL DEFAULT '0' COMMENT '技能组排队统计',
+  `blacklist` bigint(20) NOT NULL DEFAULT '0' COMMENT '黑名单',
+  `notify_url` varchar(255) NOT NULL DEFAULT '' COMMENT '话单回调通知',
+  `ext1` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展1',
+  `ext2` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展2',
+  `ext3` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展3',
+  `ext4` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展4',
+  `ext5` varchar(255) NOT NULL DEFAULT '' COMMENT '扩展5',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态(1:启用,0:未启用)',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `company_unqidx_name` (`name`),
+  UNIQUE KEY `company_unqidx_code` (`company_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COMMENT='企业信息表';
+
+-- ----------------------------
+-- Records of cc_company
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_company` VALUES (1, 1604503580, 1604503580, 'test企业', '', 0, 'test', 'test', '18612983191', 1, 0, 1, 1, '', 50, 5000, 20, 1000, 0, 0, 0, 0, 0, 'http://192.168.177.183:8709/push/forcePush/pushTest', '', '', '', '', '', 1);
+INSERT INTO `cc_company` VALUES (2, 0, 1619796030, '20210430-delLwqXnW', '', 1, 'test2', '曹亮', '', 0, 0, 0, 1, 'djJHDuy34r87du34', 50, 50, 10, 1000, 0, 0, 0, 0, 0, '', '', '', '', '', '', 0);
+INSERT INTO `cc_company` VALUES (15, 0, 1619797353, 'aaaa-delcSJeGY', '', 0, 'acscwe-delIqjPqn', '', '', 0, 0, 0, 1, '', 50, 50, 10, 1000, 0, 0, 0, 0, 0, '', '', '', '', '', '', 0);
+INSERT INTO `cc_company` VALUES (16, 0, 0, 'aaaa', '', 0, 'acscwe', '', '', 0, 0, 0, 1, '', 50, 50, 10, 1000, 0, 0, 0, 0, 0, '', '', '', '', '', '', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_company_display
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_company_display`;
+CREATE TABLE `cc_company_display` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业id',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '号码池',
+  `type` int(11) NOT NULL DEFAULT '0' COMMENT '1:主叫显号,2:被叫显号',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`),
+  KEY `uni_idx_company_display` (`company_id`,`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COMMENT='号码池表';
+
+-- ----------------------------
+-- Records of cc_company_display
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_company_display` VALUES (1, 1604503580, 1604503580, 1, '呼入号码池', 1, 1);
+INSERT INTO `cc_company_display` VALUES (2, 1604503580, 1624463394, 1, '主叫外显-deleEwjrg', 2, 0);
+INSERT INTO `cc_company_display` VALUES (3, 1604503580, 1624464161, 1, '被叫外显-delUKKKkq', 3, 0);
+INSERT INTO `cc_company_display` VALUES (4, 1624443516, 0, 0, '主机号码池', 2, 1);
+INSERT INTO `cc_company_display` VALUES (5, 1624443589, 0, 0, '主机号码池1', 2, 1);
+INSERT INTO `cc_company_display` VALUES (6, 1624443849, 0, 0, '主机号码池12', 2, 1);
+INSERT INTO `cc_company_display` VALUES (7, 1624445273, 0, 0, '主机号码池12222', 2, 1);
+INSERT INTO `cc_company_display` VALUES (8, 1624445321, 0, 0, '主机号码池1212', 2, 1);
+INSERT INTO `cc_company_display` VALUES (9, 1624445604, 0, 0, '主机号码池1213', 2, 1);
+INSERT INTO `cc_company_display` VALUES (10, 1624445968, 0, 0, '主机号码池1214', 2, 1);
+INSERT INTO `cc_company_display` VALUES (11, 1624451930, 0, 0, '主机号码池124', 2, 1);
+INSERT INTO `cc_company_display` VALUES (12, 1624452041, 0, 0, '主机号码池224', 2, 1);
+INSERT INTO `cc_company_display` VALUES (13, 1624452196, 0, 0, '主机号码池324', 2, 1);
+INSERT INTO `cc_company_display` VALUES (14, 1624452379, 0, 0, '主机号码池321', 2, 1);
+INSERT INTO `cc_company_display` VALUES (17, 1624452723, 0, 0, '主机号码池3211', 2, 1);
+INSERT INTO `cc_company_display` VALUES (18, 1624452836, 0, 0, '主机号码池3333', 2, 1);
+INSERT INTO `cc_company_display` VALUES (19, 1624453002, 0, 0, '主机号码池33331', 2, 1);
+INSERT INTO `cc_company_display` VALUES (20, 1624453280, 0, 0, '主机号码池333331', 2, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_company_phone
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_company_phone`;
+CREATE TABLE `cc_company_phone` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业id',
+  `phone` varchar(255) NOT NULL DEFAULT '' COMMENT '号码',
+  `type` int(11) NOT NULL DEFAULT '0' COMMENT '1:呼入号码,2:主叫显号,3:被叫显号',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '1:未启用,2:启用',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uni_idx_companyphone_phone` (`company_id`,`phone`,`type`),
+  KEY `idx_companyhpone_company_id` (`company_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='企业号码';
+
+-- ----------------------------
+-- Records of cc_company_phone
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_company_phone` VALUES (1, 1604503580, 1622123026, 1, '18800010002', 1, 0);
+INSERT INTO `cc_company_phone` VALUES (2, 1604503580, 1604503580, 1, '01012345678', 2, 1);
+INSERT INTO `cc_company_phone` VALUES (3, 1604503580, 1604503580, 1, '01088889999', 3, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_company_phone_group
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_company_phone_group`;
+CREATE TABLE `cc_company_phone_group` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `display_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '号码池id',
+  `phone_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '号码id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COMMENT='技能组号码池';
+
+-- ----------------------------
+-- Records of cc_company_phone_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_company_phone_group` VALUES (1, 1624452836, 0, 0, 0, 1);
+INSERT INTO `cc_company_phone_group` VALUES (2, 1624452836, 0, 0, 0, 3);
+INSERT INTO `cc_company_phone_group` VALUES (3, 1624452836, 0, 0, 0, 4);
+INSERT INTO `cc_company_phone_group` VALUES (4, 1624452836, 0, 0, 0, 5);
+INSERT INTO `cc_company_phone_group` VALUES (5, 1624453002, 0, 0, 0, 1);
+INSERT INTO `cc_company_phone_group` VALUES (6, 1624453037, 0, 0, 0, 3);
+INSERT INTO `cc_company_phone_group` VALUES (7, 1624453037, 0, 0, 0, 4);
+INSERT INTO `cc_company_phone_group` VALUES (8, 1624453037, 0, 0, 0, 5);
+INSERT INTO `cc_company_phone_group` VALUES (9, 1624453280, 0, 0, 20, 1);
+INSERT INTO `cc_company_phone_group` VALUES (10, 1624453304, 0, 0, 20, 3);
+INSERT INTO `cc_company_phone_group` VALUES (11, 1624453304, 0, 0, 20, 4);
+INSERT INTO `cc_company_phone_group` VALUES (12, 1624453304, 0, 0, 20, 5);
+INSERT INTO `cc_company_phone_group` VALUES (25, 1624463566, 0, 0, 2, 1);
+INSERT INTO `cc_company_phone_group` VALUES (26, 1624463566, 0, 0, 2, 3);
+INSERT INTO `cc_company_phone_group` VALUES (27, 1624463566, 0, 0, 2, 4);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_group
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_group`;
+CREATE TABLE `cc_group` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '新增时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '技能组名称',
+  `control_flag` int(11) NOT NULL DEFAULT '0' COMMENT '控制开关 1:技能组,2:坐席',
+  `after_interval` int(11) NOT NULL DEFAULT '5' COMMENT '话后自动空闲时长',
+  `caller_display_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主叫显号号码池',
+  `called_display_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '被叫显号号码池',
+  `record_type` int(11) NOT NULL DEFAULT '1',
+  `level_value` int(11) NOT NULL DEFAULT '1' COMMENT '技能组优先级',
+  `tts_engine` int(11) NOT NULL DEFAULT '0',
+  `play_content` varchar(100) NOT NULL DEFAULT '' COMMENT '转坐席时播放内容',
+  `evaluate` bigint(20) NOT NULL DEFAULT '0' COMMENT '转服务评价(0:否,1:是)',
+  `queue_play` bigint(20) NOT NULL DEFAULT '0' COMMENT '排队音',
+  `transfer_play` bigint(20) NOT NULL DEFAULT '0' COMMENT '转接提示音',
+  `group_type` int(11) NOT NULL DEFAULT '0' COMMENT '技能组类型',
+  `notify_position` int(11) NOT NULL DEFAULT '0' COMMENT '0:不播放排队位置,1:播放排队位置',
+  `notify_rate` int(11) NOT NULL DEFAULT '10' COMMENT '频次',
+  `notify_content` varchar(255) NOT NULL DEFAULT '' COMMENT '您前面还有$位用户在等待',
+  `call_memory` int(11) NOT NULL DEFAULT '1' COMMENT '主叫记忆(1:开启,0:不开启)',
+  `ext1` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展1',
+  `ext2` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展2',
+  `ext3` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展3',
+  `ext4` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展4',
+  `ext5` varchar(50) NOT NULL DEFAULT '' COMMENT '扩展5',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `idx_company_name` (`company_id`,`name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='技能组表';
+
+-- ----------------------------
+-- Records of cc_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_group` VALUES (1, 1604503580, 1604503580, 1, '测试技能组', 1, 5, 0, 0, 1, 1, 0, '0', 0, 0, 0, 0, 1, 10, '0', 1, '', '', '', '', '', 1);
+INSERT INTO `cc_group` VALUES (2, 1621556151, 0, 1, '测试技能组1', 1, 5, 0, 0, 1, 1, 0, '0', 0, 0, 0, 1, 1, 10, '0', 1, '', '', '', '', '', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_group_agent_strategy
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_group_agent_strategy`;
+CREATE TABLE `cc_group_agent_strategy` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT ' 创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能组id',
+  `strategy_type` int(11) NOT NULL DEFAULT '1' COMMENT '1:内置策略,2:自定义',
+  `strategy_value` int(11) NOT NULL DEFAULT '1' COMMENT '(1最长空闲时间、2最长平均空闲、3最少应答次数、4最少通话时长、5最长话后时长、6轮选、7随机)',
+  `custom_expression` varchar(255) NOT NULL DEFAULT '' COMMENT '自定义表达式',
+  `status` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='技能组中坐席分配策略';
+
+-- ----------------------------
+-- Records of cc_group_agent_strategy
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_group_agent_strategy` VALUES (1, 1, 1, 1, 1, 1, 1, '', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_group_memory
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_group_memory`;
+CREATE TABLE `cc_group_memory` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `agent_key` varchar(32) NOT NULL DEFAULT '' COMMENT '坐席',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能组ID',
+  `phone` varchar(255) NOT NULL DEFAULT '' COMMENT '客户电话',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unq_idx_group_id` (`group_id`,`phone`,`agent_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='坐席与客户记忆表';
+
+-- ----------------------------
+-- Records of cc_group_memory
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_group_memory_config
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_group_memory_config`;
+CREATE TABLE `cc_group_memory_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能组ID',
+  `success_strategy` int(11) NOT NULL DEFAULT '0' COMMENT '匹配成功策略',
+  `success_strategy_value` bigint(20) NOT NULL DEFAULT '0' COMMENT '匹配成功策略值',
+  `fail_strategy` int(11) NOT NULL DEFAULT '0' COMMENT '匹配失败策略',
+  `fail_strategy_value` bigint(20) NOT NULL DEFAULT '0' COMMENT '匹配失败策略值',
+  `memory_day` int(11) NOT NULL DEFAULT '30' COMMENT '记忆天数',
+  `inbound_cover` int(11) NOT NULL DEFAULT '0' COMMENT '呼入覆盖',
+  `outbound_cover` int(11) NOT NULL DEFAULT '0' COMMENT '外呼覆盖',
+  `status` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uni_idx_group` (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能组坐席记忆配置表';
+
+-- ----------------------------
+-- Records of cc_group_memory_config
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_group_overflow
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_group_overflow`;
+CREATE TABLE `cc_group_overflow` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能组ID',
+  `overflow_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '溢出策略ID',
+  `level_value` int(11) NOT NULL DEFAULT '1' COMMENT '优先级',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uni_idx_group_overflow` (`group_id`,`overflow_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='技能组排队策略表';
+
+-- ----------------------------
+-- Records of cc_group_overflow
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_group_overflow` VALUES (1, 1, 1, 1, 1, 1, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_group_strategy_exp
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_group_strategy_exp`;
+CREATE TABLE `cc_group_strategy_exp` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能组id',
+  `strategy_key` varchar(20) NOT NULL DEFAULT '' COMMENT '自定义值',
+  `strategy_present` int(11) NOT NULL DEFAULT '1' COMMENT '百分百',
+  `strategy_type` int(11) NOT NULL DEFAULT '1' COMMENT '类型',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='坐席自定义策略表';
+
+-- ----------------------------
+-- Records of cc_group_strategy_exp
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_group_strategy_exp` VALUES (1, 1, 1, 1, 1, '1', 1, 1, 1);
+INSERT INTO `cc_group_strategy_exp` VALUES (2, 2, 2, 1, 1, '2', 2, 2, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_overflow_config
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_overflow_config`;
+CREATE TABLE `cc_overflow_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) DEFAULT '0' COMMENT '企业id',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
+  `handle_type` int(11) NOT NULL DEFAULT '1' COMMENT '1:排队,2:溢出,3:挂机',
+  `busy_type` int(11) DEFAULT '1' COMMENT '排队方式(1:先进先出,2:vip,3:自定义)',
+  `queue_timeout` int(11) DEFAULT '60' COMMENT '排队超时时间',
+  `busy_timeout_type` int(11) DEFAULT '1' COMMENT '排队超时(1:溢出,2:挂机)',
+  `overflow_type` int(11) DEFAULT '1' COMMENT '溢出(1:group,2:ivr,3:vdn)',
+  `overflow_value` int(11) DEFAULT '0' COMMENT '溢出值',
+  `lineup_expression` varchar(255) DEFAULT '' COMMENT '自定义排队表达式',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uni_idx_name` (`company_id`,`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='溢出策略表';
+
+-- ----------------------------
+-- Records of cc_overflow_config
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_overflow_config` VALUES (1, 1, 1, 1, '排队60秒', 1, 1, 60, 2, 1, 0, '');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_overflow_exp
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_overflow_exp`;
+CREATE TABLE `cc_overflow_exp` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `overflow_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '溢出策略ID',
+  `exp_key` varchar(30) NOT NULL DEFAULT '' COMMENT '自定义值',
+  `rate` int(11) NOT NULL DEFAULT '1' COMMENT '权重',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='自定义溢出策略优先级';
+
+-- ----------------------------
+-- Records of cc_overflow_exp
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_overflow_front
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_overflow_front`;
+CREATE TABLE `cc_overflow_front` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `overflow_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '策略ID',
+  `front_key` varchar(20) NOT NULL DEFAULT '' COMMENT 'key',
+  `compare_condition` int(11) NOT NULL DEFAULT '0' COMMENT '5种条件',
+  `rank_value_start` int(11) NOT NULL DEFAULT '0',
+  `rank_value` int(11) NOT NULL DEFAULT '0' COMMENT '符号条件值',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='溢出策略前置条件';
+
+-- ----------------------------
+-- Records of cc_overflow_front
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_playback
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_playback`;
+CREATE TABLE `cc_playback` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL COMMENT '企业ID',
+  `playback` varchar(255) NOT NULL DEFAULT '' COMMENT '放音文件',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '1:待审核,2:审核通过',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='语音文件表';
+
+-- ----------------------------
+-- Records of cc_playback
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_playback` VALUES (1, 1, 1, 1, '/app/clpms/sounds/222.wav', 2);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_push_fail_log
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_push_fail_log`;
+CREATE TABLE `cc_push_fail_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业id',
+  `call_id` bigint(20) NOT NULL DEFAULT '0' COMMENT 'callid',
+  `send_times` int(11) NOT NULL DEFAULT '1' COMMENT '发送次数',
+  `send_url` varchar(255) NOT NULL DEFAULT '' COMMENT '发送次数',
+  `content` varchar(4000) NOT NULL DEFAULT '' COMMENT '推送内容',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态(1:推送，0:不推送)',
+  PRIMARY KEY (`id`),
+  KEY `idx_push_send_times` (`send_times`)
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COMMENT='话单推送记录表';
+
+-- ----------------------------
+-- Records of cc_push_fail_log
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_push_fail_log` VALUES (1, 1627662380, 0, 1, 209104236078694400, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1627662364065,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1627662363725,\"bridgeTime\":1627662364065,\"callId\":209104236078694400,\"callTime\":1627662342300,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"5483615731370355\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1627662399205,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627662363725,\"ringStartTime\":1627662361685,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":35480},{\"agentKey\":\"1001@test\",\"answerTime\":1627662361445,\"bridgeTime\":1627662364065,\"callId\":209104236078694400,\"callTime\":1627662334850,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"8426573253798413\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1627662397325,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627662361445,\"ringStartTime\":1627662356425,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":35880}],\"callId\":209104236078694400,\"callTime\":1627662334850,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1627662334850,\"direction\":\"OUTBOUND\",\"endTime\":1627662399205,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210731/209104236078694400_871556590425001_14400010002.wav\",\"talkTime\":35140,\"taskId\":\"0\",\"uts\":1627662399205,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (2, 1627993597, 0, 1, 210493565480992768, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1002@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627993611345,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1002@test\",\"answerTime\":1627993611245,\"bridgeTime\":1627993611345,\"callId\":210493565480992768,\"callTime\":1627993576936,\"called\":\"871556519788001\",\"calledLocation\":\"\",\"caller\":\"1002\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556519788001@172.17.0.2:6685\",\"deviceId\":\"7940458572093423\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627993620965,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627993611245,\"ringStartTime\":1627993603145,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":9720},{\"agentKey\":\"\",\"answerTime\":1627993600525,\"bridgeTime\":1627993611345,\"callId\":210493565480992768,\"callTime\":1627993576796,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"36a22ba7-a93b-43d5-9702-740738636f1e\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627993621185,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627993600525,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":20660}],\"callId\":210493565480992768,\"callTime\":1627993576796,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627993576796,\"direction\":\"INBOUND\",\"endTime\":1627993621185,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":9840,\"taskId\":\"0\",\"uts\":1627993621185,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (3, 1627993659, 0, 1, 210493770993500160, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1002@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627993655445,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1002@test\",\"answerTime\":1627993655345,\"bridgeTime\":1627993655445,\"callId\":210493770993500160,\"callTime\":1627993625882,\"called\":\"871556519788001\",\"calledLocation\":\"\",\"caller\":\"1002\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556519788001@172.17.0.2:6685\",\"deviceId\":\"1449654305122410\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627993682745,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627993655345,\"ringStartTime\":1627993651405,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":27400},{\"agentKey\":\"\",\"answerTime\":1627993649505,\"bridgeTime\":1627993655445,\"callId\":210493770993500160,\"callTime\":1627993625790,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"6aba578c-19e9-4497-aaa6-27ccf76ae84b\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627993682589,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627993649505,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":33084}],\"callId\":210493770993500160,\"callTime\":1627993625790,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627993625790,\"direction\":\"INBOUND\",\"endTime\":1627993682745,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":27300,\"taskId\":\"0\",\"uts\":1627993682745,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (4, 1627994167, 0, 1, 210495909539086336, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627994165165,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1627994165065,\"bridgeTime\":1627994165165,\"callId\":210495909539086336,\"callTime\":1627994135764,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1983392123262088\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627994190965,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627994165065,\"ringStartTime\":1627994160445,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":25900},{\"agentKey\":\"\",\"answerTime\":1627994159365,\"bridgeTime\":1627994165165,\"callId\":210495909539086336,\"callTime\":1627994135662,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"958cc123-3bc3-435d-b973-73b5bc676781\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627994190785,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627994159365,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":31420}],\"callId\":210495909539086336,\"callTime\":1627994135662,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627994135662,\"direction\":\"INBOUND\",\"endTime\":1627994190965,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":25800,\"taskId\":\"0\",\"uts\":1627994190965,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (5, 1627994656, 0, 1, 210497283047817216, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627994491625,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1627994491545,\"bridgeTime\":1627994491625,\"callId\":210497283047817216,\"callTime\":1627994463241,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2025499111837537\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627994679605,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627994491545,\"ringStartTime\":1627994487325,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":188060},{\"agentKey\":\"\",\"answerTime\":1627994486845,\"bridgeTime\":1627994491625,\"callId\":210497283047817216,\"callTime\":1627994463135,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"aadec6fe-70e1-44a9-a161-142fd111314e\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627994679825,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627994486845,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":192980}],\"callId\":210497283047817216,\"callTime\":1627994463135,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627994463135,\"direction\":\"INBOUND\",\"endTime\":1627994679825,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":188200,\"taskId\":\"0\",\"uts\":1627994679825,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (6, 1627995113, 0, 1, 210498751016468480, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627994844985,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1627994836845,\"bridgeTime\":1627994844985,\"callId\":210498751016468480,\"callTime\":1627994813123,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"cc866f0d-2b33-4e84-af29-038560734ff8\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627995136885,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627994836845,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":300040},{\"agentKey\":\"1001@test\",\"answerTime\":1627994844885,\"bridgeTime\":1627994844985,\"callId\":210498751016468480,\"callTime\":1627994816883,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"3668672366082991\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627995137145,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627994844885,\"ringStartTime\":1627994840925,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":292260}],\"callId\":210498751016468480,\"callTime\":1627994813123,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627994813123,\"direction\":\"INBOUND\",\"endTime\":1627995137145,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":292160,\"taskId\":\"0\",\"uts\":1627995137145,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (7, 1627995345, 0, 1, 210500456688910336, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1627995253805,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1627995251425,\"bridgeTime\":1627995253805,\"callId\":210500456688910336,\"callTime\":1627995219784,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1613724580010904\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1627995368745,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995251425,\"ringStartTime\":1627995244005,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":117320},{\"agentKey\":\"1001@test\",\"answerTime\":1627995253605,\"bridgeTime\":1627995253805,\"callId\":210500456688910336,\"callTime\":1627995228708,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"4456350976672025\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1627995369045,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995253605,\"ringStartTime\":1627995251565,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":115440}],\"callId\":210500456688910336,\"callTime\":1627995219784,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1627995219784,\"direction\":\"OUTBOUND\",\"endTime\":1627995369045,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210803/210500456688910336_871556590425001_14400010002.wav\",\"talkTime\":115240,\"taskId\":\"0\",\"uts\":1627995369045,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (8, 1627995382, 0, 1, 210501027873423360, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627995386265,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1627995379685,\"bridgeTime\":1627995386265,\"callId\":210501027873423360,\"callTime\":1627995355965,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"013ce278-8cb5-46f9-a19e-1b6b65e06897\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627995406045,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995379685,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":26360},{\"agentKey\":\"1001@test\",\"answerTime\":1627995386185,\"bridgeTime\":1627995386265,\"callId\":210501027873423360,\"callTime\":1627995356099,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"5564290161630943\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627995405865,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995386185,\"ringStartTime\":1627995381625,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":19680}],\"callId\":210501027873423360,\"callTime\":1627995355965,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627995355965,\"direction\":\"INBOUND\",\"endTime\":1627995406045,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":19780,\"taskId\":\"0\",\"uts\":1627995406045,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (9, 1627995471, 0, 1, 210501432476958720, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627995484305,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1627995476145,\"bridgeTime\":1627995484305,\"callId\":210501432476958720,\"callTime\":1627995452431,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"b18e3b10-411c-4851-a943-e1b8bb7efa01\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627995494485,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995476145,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":18340},{\"agentKey\":\"1001@test\",\"answerTime\":1627995484205,\"bridgeTime\":1627995484305,\"callId\":210501432476958720,\"callTime\":1627995452538,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1018788979622682\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627995494265,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995484205,\"ringStartTime\":1627995476805,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":10060}],\"callId\":210501432476958720,\"callTime\":1627995452431,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627995452431,\"direction\":\"INBOUND\",\"endTime\":1627995494485,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":10180,\"taskId\":\"0\",\"uts\":1627995494485,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (10, 1627995595, 0, 1, 210501796244750336, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1002@test\",\"answerCount\":2,\"answerFlag\":3,\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1002@test\",\"callId\":210501796244750336,\"callTime\":1627995539227,\"called\":\"871556519788001\",\"calledLocation\":\"\",\"caller\":\"1002\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556519788001@172.17.0.2:6685\",\"deviceId\":\"8781538151494795\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627995593665,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"RECOVERY_ON_TIMER_EXPIRE\",\"ringCause\":\"\",\"ringStartTime\":1627995563205,\"sipProtocol\":\"\",\"sipStatus\":\"408\"},{\"agentKey\":\"\",\"answerTime\":1627995562865,\"callId\":210501796244750336,\"callTime\":1627995539159,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"0f4a770d-65c0-4907-bbf9-125e7da95e19\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627995618385,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995562865,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":55520}],\"callId\":210501796244750336,\"callTime\":1627995539159,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627995539159,\"direction\":\"INBOUND\",\"endTime\":1627995618385,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"RECOVERY_ON_TIMER_EXPIRE\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1627995618385,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (11, 1627995623, 0, 1, 210502051824664576, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1002@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1627995634885,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1002@test\",\"answerTime\":1627995634726,\"bridgeTime\":1627995634885,\"callId\":210502051824664576,\"callTime\":1627995609594,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"4139239056029410\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1627995647205,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995634726,\"ringStartTime\":1627995632725,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":12479},{\"agentKey\":\"1002@test\",\"answerTime\":1627995632605,\"bridgeTime\":1627995634885,\"callId\":210502051824664576,\"callTime\":1627995600094,\"called\":\"871556519788001\",\"calledLocation\":\"\",\"caller\":\"1002\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556519788001@172.17.0.2:6685\",\"deviceId\":\"3102515140512459\",\"deviceType\":1,\"display\":\"1002\",\"endTime\":1627995646965,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995632605,\"ringStartTime\":1627995625225,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":14360}],\"callId\":210502051824664576,\"callTime\":1627995600094,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556519788001\",\"callerDisplay\":\"1002\",\"companyId\":1,\"cts\":1627995600094,\"direction\":\"OUTBOUND\",\"endTime\":1627995647205,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210803/210502051824664576_871556519788001_14400010002.wav\",\"talkTime\":12320,\"taskId\":\"0\",\"uts\":1627995647205,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (12, 1627995683, 0, 1, 210502276266065920, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1002@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1627995687405,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1002@test\",\"answerTime\":1627995685005,\"bridgeTime\":1627995687405,\"callId\":210502276266065920,\"callTime\":1627995653605,\"called\":\"871556519788001\",\"calledLocation\":\"\",\"caller\":\"1002\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556519788001@172.17.0.2:6685\",\"deviceId\":\"2429173174569363\",\"deviceType\":1,\"display\":\"1002\",\"endTime\":1627995706645,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995685005,\"ringStartTime\":1627995677605,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":21640},{\"agentKey\":\"1002@test\",\"answerTime\":1627995687165,\"bridgeTime\":1627995687405,\"callId\":210502276266065920,\"callTime\":1627995662160,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"3859403297110954\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1627995706885,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995687165,\"ringStartTime\":1627995685145,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":19720}],\"callId\":210502276266065920,\"callTime\":1627995653605,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556519788001\",\"callerDisplay\":\"1002\",\"companyId\":1,\"cts\":1627995653605,\"direction\":\"OUTBOUND\",\"endTime\":1627995706885,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210803/210502276266065920_871556519788001_14400010002.wav\",\"talkTime\":19480,\"taskId\":\"0\",\"uts\":1627995706885,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (13, 1627995791, 0, 1, 210502446751940608, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1002@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627995723845,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1002@test\",\"answerTime\":1627995723745,\"bridgeTime\":1627995723845,\"callId\":210502446751940608,\"callTime\":1627995694390,\"called\":\"871556519788001\",\"calledLocation\":\"\",\"caller\":\"1002\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556519788001@172.17.0.2:6685\",\"deviceId\":\"8079255180097764\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627995814405,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995723745,\"ringStartTime\":1627995718425,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":90660},{\"agentKey\":\"\",\"answerTime\":1627995717965,\"bridgeTime\":1627995723845,\"callId\":210502446751940608,\"callTime\":1627995694253,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"91206e8c-89df-46d6-992b-1e2e14cb63a0\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627995814565,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627995717965,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":96600}],\"callId\":210502446751940608,\"callTime\":1627995694253,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627995694253,\"direction\":\"INBOUND\",\"endTime\":1627995814565,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":90720,\"taskId\":\"0\",\"uts\":1627995814565,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (14, 1627996799, 0, 1, 210506569782132736, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1002@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627996710645,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1002@test\",\"answerTime\":1627996710545,\"bridgeTime\":1627996710645,\"callId\":210506569782132736,\"callTime\":1627996677372,\"called\":\"871556519788001\",\"calledLocation\":\"\",\"caller\":\"1002\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556519788001@172.17.0.2:6685\",\"deviceId\":\"0838959669799603\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627996822985,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627996710545,\"ringStartTime\":1627996703685,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":112440},{\"agentKey\":\"\",\"answerTime\":1627996700965,\"bridgeTime\":1627996710645,\"callId\":210506569782132736,\"callTime\":1627996677261,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"8cc0bd4e-cc76-4281-b40f-da7a699d89d5\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627996822725,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627996700965,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":121760}],\"callId\":210506569782132736,\"callTime\":1627996677261,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627996677261,\"direction\":\"INBOUND\",\"endTime\":1627996822985,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":112340,\"taskId\":\"0\",\"uts\":1627996822985,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (15, 1627997034, 0, 1, 210507529711517696, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1627996943485,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1627996929845,\"bridgeTime\":1627996943485,\"callId\":210507529711517696,\"callTime\":1627996906125,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"4bf5e355-1999-48b4-9550-fca31d3731f4\",\"deviceType\":2,\"display\":\"\",\"endTime\":1627997058105,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627996929845,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":128260},{\"agentKey\":\"1001@test\",\"answerTime\":1627996943405,\"bridgeTime\":1627996943485,\"callId\":210507529711517696,\"callTime\":1627996914764,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"0729775172939815\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1627997058265,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1627996943405,\"ringStartTime\":1627996939205,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":114860}],\"callId\":210507529711517696,\"callTime\":1627996906125,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1627996906125,\"direction\":\"INBOUND\",\"endTime\":1627997058265,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":114780,\"taskId\":\"0\",\"uts\":1627997058265,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (16, 1628063111, 0, 1, 210784071784071168, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628062881005,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628062863047,\"bridgeTime\":1628062881005,\"callId\":210784071784071168,\"callTime\":1628062838894,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"1ea8f286-9f63-4ead-afb9-c56eadcecb8b\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628063134725,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628062863047,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":271678},{\"agentKey\":\"1001@test\",\"answerTime\":1628062880905,\"bridgeTime\":1628062881005,\"callId\":210784071784071168,\"callTime\":1628062849873,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"5734143348815460\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628063134945,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628062880905,\"ringStartTime\":1628062876185,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":254040}],\"callId\":210784071784071168,\"callTime\":1628062838894,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628062838894,\"direction\":\"INBOUND\",\"endTime\":1628063134945,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":253940,\"taskId\":\"0\",\"uts\":1628063134945,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (17, 1628063300, 0, 1, 210785927763591168, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628063312505,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628063312345,\"bridgeTime\":1628063312505,\"callId\":210785927763591168,\"callTime\":1628063286796,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"1793870904771889\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628063324646,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628063312345,\"ringStartTime\":1628063310325,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":12301},{\"agentKey\":\"1001@test\",\"answerTime\":1628063310185,\"bridgeTime\":1628063312505,\"callId\":210785927763591168,\"callTime\":1628063281392,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2372176480524048\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628063324365,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628063310185,\"ringStartTime\":1628063306105,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":14180}],\"callId\":210785927763591168,\"callTime\":1628063281392,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628063281392,\"direction\":\"OUTBOUND\",\"endTime\":1628063324646,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210804/210785927763591168_871556590425001_14400010002.wav\",\"talkTime\":12141,\"taskId\":\"0\",\"uts\":1628063324646,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (18, 1628063476, 0, 1, 210786127655731200, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628063406945,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628063406865,\"bridgeTime\":1628063406945,\"callId\":210786127655731200,\"callTime\":1628063378285,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2805906849077626\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628063499925,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628063406865,\"ringStartTime\":1628063403225,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":93060},{\"agentKey\":\"1001@test\",\"answerTime\":1628063353205,\"bridgeTime\":1628063406945,\"callId\":210786127655731200,\"callTime\":1628063329050,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"626e4fe8-cdbf-4b94-85cd-a7f7b94321e1\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628063499725,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628063353205,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":146520}],\"callId\":210786127655731200,\"callTime\":1628063329050,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628063329050,\"direction\":\"INBOUND\",\"endTime\":1628063499925,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":92980,\"taskId\":\"0\",\"uts\":1628063499925,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (19, 1628064027, 0, 1, 210788902045220864, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628064043625,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628064043545,\"bridgeTime\":1628064043625,\"callId\":210788902045220864,\"callTime\":1628064014857,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"6159193241669661\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628064050965,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628064043545,\"ringStartTime\":1628064039525,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":7420},{\"agentKey\":\"1001@test\",\"answerTime\":1628064014665,\"bridgeTime\":1628064043625,\"callId\":210788902045220864,\"callTime\":1628063990518,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"1a7a1f75-7c94-4c99-9e30-5f0c9ba2d207\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628064050665,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628064014665,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":36000}],\"callId\":210788902045220864,\"callTime\":1628063990518,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628063990518,\"direction\":\"INBOUND\",\"endTime\":1628064050965,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":7340,\"taskId\":\"0\",\"uts\":1628064050965,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (20, 1628064146, 0, 1, 210789350001082368, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628064134105,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628064121485,\"bridgeTime\":1628064134105,\"callId\":210789350001082368,\"callTime\":1628064097329,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"70c55b8c-ce9a-4b17-b89b-bbcb0edd84af\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628064147545,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628064121485,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":26060},{\"agentKey\":\"1001@test\",\"answerTime\":1628064134005,\"bridgeTime\":1628064134105,\"callId\":210789350001082368,\"callTime\":1628064105255,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2634886910231686\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628064147765,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628064134005,\"ringStartTime\":1628064130085,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":13760}],\"callId\":210789350001082368,\"callTime\":1628064097329,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628064097329,\"direction\":\"INBOUND\",\"endTime\":1628064147765,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":13660,\"taskId\":\"0\",\"uts\":1628064147765,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (21, 1628070256, 0, 1, 210813890743762944, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628069985305,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628069972865,\"bridgeTime\":1628069985305,\"callId\":210813890743762944,\"callTime\":1628069948288,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"cae92257-b93e-469d-a47e-6ada52c3a068\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628070280245,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628069972865,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":307380},{\"agentKey\":\"1001@test\",\"answerTime\":1628069985225,\"bridgeTime\":1628069985305,\"callId\":210813890743762944,\"callTime\":1628069955586,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"6488952812463117\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628070280525,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628069985225,\"ringStartTime\":1628069981505,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":295300}],\"callId\":210813890743762944,\"callTime\":1628069948288,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628069948288,\"direction\":\"INBOUND\",\"endTime\":1628070280525,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":295220,\"taskId\":\"0\",\"uts\":1628070280525,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (22, 1628072006, 0, 1, 210822267360247808, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628071945465,\"callId\":210822267360247808,\"callTime\":1628071945428,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"b79c31ae-7567-4659-9b18-5d741cf820c3\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628072006085,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628071945465,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":60620}],\"callId\":210822267360247808,\"callTime\":1628071945428,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628071945428,\"direction\":\"INBOUND\",\"endTime\":1628072006085,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"QUEUE_TIMEOUT\",\"hangupDir\":3,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628072006085,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (23, 1628092281, 0, 1, 210907513065832448, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628092269585,\"callId\":210907513065832448,\"callTime\":1628092269587,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18510863471\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18510863471@192.168.180.37\",\"deviceId\":\"d728dd56-351f-4996-b8c7-7fd02a98e1e1\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628092281465,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628092269585,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":11880}],\"callId\":210907513065832448,\"callTime\":1628092269587,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18510863471\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628092269587,\"direction\":\"INBOUND\",\"endTime\":1628092281465,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628092281465,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (24, 1628150240, 0, 1, 211150587268431872, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628150232325,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628150232265,\"bridgeTime\":1628150232325,\"callId\":211150587268431872,\"callTime\":1628150230269,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"4766179374456673\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628150240465,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628150232265,\"ringStartTime\":1628150230245,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":8200},{\"agentKey\":\"1001@test\",\"answerTime\":1628150230105,\"bridgeTime\":1628150232325,\"callId\":211150587268431872,\"callTime\":1628150222993,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"4586120688151891\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628150240365,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628150230105,\"ringStartTime\":1628150225805,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":10260}],\"callId\":211150587268431872,\"callTime\":1628150222993,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628150222993,\"direction\":\"OUTBOUND\",\"endTime\":1628150240465,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210805/211150587268431872_871556590425001_14400010002.wav\",\"talkTime\":8140,\"taskId\":\"0\",\"uts\":1628150240465,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (25, 1628167533, 0, 1, 211223143627358208, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628167525605,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628167525545,\"bridgeTime\":1628167525605,\"callId\":211223143627358208,\"callTime\":1628167521811,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"3363751192942191\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628167533745,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628167525545,\"ringStartTime\":1628167522865,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":8200},{\"agentKey\":\"1001@test\",\"answerTime\":1628167521785,\"bridgeTime\":1628167525605,\"callId\":211223143627358208,\"callTime\":1628167521777,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"af6f3f53-40b9-4273-9873-003f7c5e62b3\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628167533787,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628167521785,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":12002}],\"callId\":211223143627358208,\"callTime\":1628167521777,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628167521777,\"direction\":\"INBOUND\",\"endTime\":1628167533787,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":8182,\"taskId\":\"0\",\"uts\":1628167533787,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (26, 1628167619, 0, 1, 211223268454039552, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628167551545,\"callId\":211223268454039552,\"callTime\":1628167551538,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"f0cfad04-203e-4c72-a2ab-e94578b64b74\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628167618925,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628167551545,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":67380}],\"callId\":211223268454039552,\"callTime\":1628167551538,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628167551538,\"direction\":\"INBOUND\",\"endTime\":1628167618925,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628167618925,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (27, 1628167703, 0, 1, 211223577049956352, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628167628785,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628167625105,\"bridgeTime\":1628167628785,\"callId\":211223577049956352,\"callTime\":1628167625113,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"dac604b9-4d64-46ca-a9d5-a7ff179856d8\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628167703345,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628167625105,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":78240},{\"agentKey\":\"1001@test\",\"answerTime\":1628167628745,\"bridgeTime\":1628167628785,\"callId\":211223577049956352,\"callTime\":1628167625138,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"9018750414008544\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628167703366,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628167628745,\"ringStartTime\":1628167625385,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":74621}],\"callId\":211223577049956352,\"callTime\":1628167625113,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628167625113,\"direction\":\"INBOUND\",\"endTime\":1628167703366,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":74581,\"taskId\":\"0\",\"uts\":1628167703366,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (28, 1628167954, 0, 1, 211224850419679232, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628167934085,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628167933985,\"bridgeTime\":1628167934085,\"callId\":211224850419679232,\"callTime\":1628167932367,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"0107493686280627\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628167948725,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628167933985,\"ringStartTime\":1628167931945,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":14740},{\"agentKey\":\"1001@test\",\"answerTime\":1628167931805,\"bridgeTime\":1628167934085,\"callId\":211224850419679232,\"callTime\":1628167928708,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"5216558464996850\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628167948565,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628167931805,\"ringStartTime\":1628167929005,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":16760}],\"callId\":211224850419679232,\"callTime\":1628167928708,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628167928708,\"direction\":\"OUTBOUND\",\"endTime\":1628167948725,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210805/211224850419679232_871556590425001_14400010002.wav\",\"talkTime\":14640,\"taskId\":\"0\",\"uts\":1628167948725,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (29, 1628168231, 0, 1, 211225928657797120, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628168202145,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628168202065,\"bridgeTime\":1628168202145,\"callId\":211225928657797120,\"callTime\":1628168199321,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"9787039208500967\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628168230905,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628168202065,\"ringStartTime\":1628168199605,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":28840},{\"agentKey\":\"1001@test\",\"answerTime\":1628168185785,\"bridgeTime\":1628168202145,\"callId\":211225928657797120,\"callTime\":1628168185782,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"70357800-6c38-43bf-918a-a0a115734967\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628168230985,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628168185785,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":45200}],\"callId\":211225928657797120,\"callTime\":1628168185782,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628168185782,\"direction\":\"INBOUND\",\"endTime\":1628168230985,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":28840,\"taskId\":\"0\",\"uts\":1628168230985,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (30, 1628168404, 0, 1, 211226571195809792, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628168344206,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628168344185,\"bridgeTime\":1628168344206,\"callId\":211226571195809792,\"callTime\":1628168342115,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"8248022707237872\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628168404266,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628168344185,\"ringStartTime\":1628168342085,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":60081},{\"agentKey\":\"1001@test\",\"answerTime\":1628168341965,\"bridgeTime\":1628168344206,\"callId\":211226571195809792,\"callTime\":1628168338973,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"9783469088520602\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628168404225,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628168341965,\"ringStartTime\":1628168339325,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":62260}],\"callId\":211226571195809792,\"callTime\":1628168338973,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628168338973,\"direction\":\"OUTBOUND\",\"endTime\":1628168404266,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210805/211226571195809792_871556590425001_14400010002.wav\",\"talkTime\":60060,\"taskId\":\"0\",\"uts\":1628168404266,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (31, 1628178042, 0, 1, 211267157865005056, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628178020525,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628178018405,\"bridgeTime\":1628178020525,\"callId\":211267157865005056,\"callTime\":1628178015589,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"0100885907803738\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628178042545,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628178018405,\"ringStartTime\":1628178015925,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":24140},{\"agentKey\":\"1001@test\",\"answerTime\":1628178020465,\"bridgeTime\":1628178020525,\"callId\":211267157865005056,\"callTime\":1628178018483,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"8637079338032169\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628178042605,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628178020465,\"ringStartTime\":1628178018445,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":22140}],\"callId\":211267157865005056,\"callTime\":1628178015589,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628178015589,\"direction\":\"OUTBOUND\",\"endTime\":1628178042605,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210805/211267157865005056_871556590425001_14400010002.wav\",\"talkTime\":22080,\"taskId\":\"0\",\"uts\":1628178042605,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (32, 1628178280, 0, 1, 211267401734422528, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628178079665,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628178077325,\"bridgeTime\":1628178079665,\"callId\":211267401734422528,\"callTime\":1628178073732,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"9116716320870247\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628178279305,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628178077325,\"ringStartTime\":1628178074005,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201980},{\"agentKey\":\"1001@test\",\"answerTime\":1628178079505,\"bridgeTime\":1628178079665,\"callId\":211267401734422528,\"callTime\":1628178077832,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"8836815609509704\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628178279065,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628178079505,\"ringStartTime\":1628178077505,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199560}],\"callId\":211267401734422528,\"callTime\":1628178073732,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628178073732,\"direction\":\"OUTBOUND\",\"endTime\":1628178279305,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210805/211267401734422528_871556590425001_14400010002.wav\",\"talkTime\":199640,\"taskId\":\"0\",\"uts\":1628178279305,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (33, 1628180520, 0, 1, 211277587211616256, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628180507705,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628180505105,\"bridgeTime\":1628180507705,\"callId\":211277587211616256,\"callTime\":1628180502139,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"3532596427232913\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628180515225,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628180505105,\"ringStartTime\":1628180502605,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":10120},{\"agentKey\":\"1001@test\",\"answerTime\":1628180507366,\"bridgeTime\":1628180507705,\"callId\":211277587211616256,\"callTime\":1628180505670,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"6078039984334274\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628180518785,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628180507366,\"ringStartTime\":1628180505345,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":11419}],\"callId\":211277587211616256,\"callTime\":1628180502139,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628180502139,\"direction\":\"OUTBOUND\",\"endTime\":1628180518785,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":11080,\"taskId\":\"0\",\"uts\":1628180518785,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (34, 1628237256, 0, 1, 211515576336515072, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628237248665,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628237248585,\"bridgeTime\":1628237248665,\"callId\":211515576336515072,\"callTime\":1628237246588,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"9801646378817094\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628237255765,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628237248585,\"ringStartTime\":1628237246565,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":7180},{\"agentKey\":\"1001@test\",\"answerTime\":1628237246405,\"bridgeTime\":1628237248665,\"callId\":211515576336515072,\"callTime\":1628237243168,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1620901078112092\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628237255365,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"ringCause\":\"\",\"ringEndTime\":1628237246405,\"ringStartTime\":1628237243485,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":8960}],\"callId\":211515576336515072,\"callTime\":1628237243168,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628237243168,\"direction\":\"OUTBOUND\",\"endTime\":1628237255765,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":7100,\"taskId\":\"0\",\"uts\":1628237255765,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (35, 1628240723, 0, 1, 211529306654900224, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628240523245,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628240523165,\"bridgeTime\":1628240523245,\"callId\":211529306654900224,\"callTime\":1628240521171,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"9416851387477267\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628240723186,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628240523165,\"ringStartTime\":1628240521145,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":200021},{\"agentKey\":\"1001@test\",\"answerTime\":1628240520965,\"bridgeTime\":1628240523245,\"callId\":211529306654900224,\"callTime\":1628240516731,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2573846168508747\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628240723345,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEM-1OAJY8FADE5bNJT48I113.wav\",\"ringCause\":\"\",\"ringEndTime\":1628240520965,\"ringStartTime\":1628240517005,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":202380}],\"callId\":211529306654900224,\"callTime\":1628240516731,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628240516731,\"direction\":\"OUTBOUND\",\"endTime\":1628240723345,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEM-1OAJY8FADE5bNJT48I113.wav\",\"talkTime\":200100,\"taskId\":\"0\",\"uts\":1628240723345,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (36, 1628242315, 0, 1, 211536456508768256, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628242227285,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628242225025,\"bridgeTime\":1628242227285,\"callId\":211536456508768256,\"callTime\":1628242221389,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"5214907999160702\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628242315365,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmENAYuAYnvsABXnrLzIg8Y248.wav\",\"ringCause\":\"\",\"ringEndTime\":1628242225025,\"ringStartTime\":1628242221705,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":90340},{\"agentKey\":\"1001@test\",\"answerTime\":1628242227205,\"bridgeTime\":1628242227285,\"callId\":211536456508768256,\"callTime\":1628242225206,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"6191749460025471\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628242315666,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628242227205,\"ringStartTime\":1628242225165,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":88461}],\"callId\":211536456508768256,\"callTime\":1628242221389,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628242221389,\"direction\":\"OUTBOUND\",\"endTime\":1628242315666,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmENAYuAYnvsABXnrLzIg8Y248.wav\",\"talkTime\":88381,\"taskId\":\"0\",\"uts\":1628242315666,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (37, 1628243262, 0, 1, 211539961118195712, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628243062766,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628243060625,\"bridgeTime\":1628243062766,\"callId\":211539961118195712,\"callTime\":1628243056953,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"9153663478741546\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628243262305,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmENBT6AeAkrAGIsrP0vzLQ799.wav\",\"ringCause\":\"\",\"ringEndTime\":1628243060625,\"ringStartTime\":1628243057205,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201680},{\"agentKey\":\"1001@test\",\"answerTime\":1628243062725,\"bridgeTime\":1628243062766,\"callId\":211539961118195712,\"callTime\":1628243060728,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"5208592616730370\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628243262225,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628243062725,\"ringStartTime\":1628243060705,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199500}],\"callId\":211539961118195712,\"callTime\":1628243056953,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628243056953,\"direction\":\"OUTBOUND\",\"endTime\":1628243262305,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmENBT6AeAkrAGIsrP0vzLQ799.wav\",\"talkTime\":199539,\"taskId\":\"0\",\"uts\":1628243262305,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (38, 1628243526, 0, 1, 211541068787744768, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628243326865,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628243326805,\"bridgeTime\":1628243326865,\"callId\":211541068787744768,\"callTime\":1628243324812,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"3661708830758711\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628243526345,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628243326805,\"ringStartTime\":1628243324765,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199540},{\"agentKey\":\"1001@test\",\"answerTime\":1628243324725,\"bridgeTime\":1628243326865,\"callId\":211541068787744768,\"callTime\":1628243321042,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"7933831872066763\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628243526405,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmENBkaAJkg7AGI2rDt8UFI897.wav\",\"ringCause\":\"\",\"ringEndTime\":1628243324725,\"ringStartTime\":1628243321305,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201680}],\"callId\":211541068787744768,\"callTime\":1628243321042,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628243321042,\"direction\":\"OUTBOUND\",\"endTime\":1628243526405,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmENBkaAJkg7AGI2rDt8UFI897.wav\",\"talkTime\":199540,\"taskId\":\"0\",\"uts\":1628243526405,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (39, 1628243790, 0, 1, 211542783477940224, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628243735925,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628243733605,\"bridgeTime\":1628243735925,\"callId\":211542783477940224,\"callTime\":1628243729856,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"7656280272559166\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628243789925,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmENB06AAWHVABsorMcjtg8272.wav\",\"ringCause\":\"\",\"ringEndTime\":1628243733605,\"ringStartTime\":1628243730225,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":56320},{\"agentKey\":\"1001@test\",\"answerTime\":1628243735805,\"bridgeTime\":1628243735925,\"callId\":211542783477940224,\"callTime\":1628243733822,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"4444878938551857\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628243790305,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628243735805,\"ringStartTime\":1628243733785,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":54500}],\"callId\":211542783477940224,\"callTime\":1628243729856,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628243729856,\"direction\":\"OUTBOUND\",\"endTime\":1628243790305,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmENB06AAWHVABsorMcjtg8272.wav\",\"talkTime\":54380,\"taskId\":\"0\",\"uts\":1628243790305,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (40, 1628244630, 0, 1, 211546126736687104, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628244531645,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628244531508,\"bridgeTime\":1628244531645,\"callId\":211546126736687104,\"callTime\":1628244529506,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"0897583123967661\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628244630646,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628244531508,\"ringStartTime\":1628244529485,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":99138},{\"agentKey\":\"1001@test\",\"answerTime\":1628244529445,\"bridgeTime\":1628244531645,\"callId\":211546126736687104,\"callTime\":1628244526951,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"8623952899532341\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628244630405,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmENCpaAP49QADELLDUW068020.wav\",\"ringCause\":\"\",\"ringEndTime\":1628244529445,\"ringStartTime\":1628244527205,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":100960}],\"callId\":211546126736687104,\"callTime\":1628244526951,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628244526951,\"direction\":\"OUTBOUND\",\"endTime\":1628244630646,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmENCpaAP49QADELLDUW068020.wav\",\"talkTime\":99001,\"taskId\":\"0\",\"uts\":1628244630646,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (41, 1628245951, 0, 1, 211551906709897216, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":3,\"answerFlag\":\"0\",\"answerTime\":1628245908805,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628245905005,\"bridgeTime\":1628245908805,\"callId\":211551906709897216,\"callTime\":1628245905005,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"7446e75f-338e-498d-910a-ec061a22d7a4\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628245951385,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628245905005,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":46380},{\"agentKey\":\"1001@test\",\"answerTime\":1628245908725,\"bridgeTime\":1628245908805,\"callId\":211551906709897216,\"callTime\":1628245905036,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"8559717919479324\",\"deviceType\":1,\"display\":\"18612983191\",\"endTime\":1628245951405,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628245908725,\"ringStartTime\":1628245905325,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":42680}],\"callId\":211551906709897216,\"callTime\":1628245905005,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628245905005,\"direction\":\"INBOUND\",\"endTime\":1628245951405,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":42600,\"taskId\":\"0\",\"uts\":1628245951405,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (42, 1628309144, 0, 1, 211816896725516288, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628309083565,\"callId\":211816896725516288,\"callTime\":1628309083549,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"0cddffd6-8ffe-4021-bcfa-4d96361c556c\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628309144145,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628309083565,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":60580}],\"callId\":211816896725516288,\"callTime\":1628309083549,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628309083549,\"direction\":\"INBOUND\",\"endTime\":1628309144145,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"QUEUE_TIMEOUT\",\"hangupDir\":3,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628309144145,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (43, 1628318549, 0, 1, 211856341663219712, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":1,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628318487985,\"callId\":211856341663219712,\"callTime\":1628318487955,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"692c4f2c-e105-4f14-939e-a08cee0f2f97\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628318549106,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628318487985,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":61121}],\"callId\":211856341663219712,\"callTime\":1628318487955,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628318487955,\"direction\":\"INBOUND\",\"endTime\":1628318549106,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"QUEUE_TIMEOUT\",\"hangupDir\":3,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628318549106,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (44, 1628320387, 0, 1, 211864051444088832, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":1,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628320326125,\"callId\":211864051444088832,\"callTime\":1628320326109,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"b24af8df-4d6f-4d71-9de7-fd3d8a0c6004\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628320387105,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628320326125,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":60980}],\"callId\":211864051444088832,\"callTime\":1628320326109,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628320326109,\"direction\":\"INBOUND\",\"endTime\":1628320387105,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":1628320326249,\"groupId\":1,\"hangupCause\":\"QUEUE_TIMEOUT\",\"hangupDir\":3,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":1628320387074,\"queueStartTime\":1628320326249,\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628320387105,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (45, 1628320990, 0, 1, 211866583507664896, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":1,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628320932145,\"callId\":211866583507664896,\"callTime\":1628320929802,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"c2d76e1d-ab06-4a76-8bce-9ed52cfbce8f\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628320992525,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628320932145,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":60380}],\"callId\":211866583507664896,\"callTime\":1628320929802,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628320929802,\"direction\":\"INBOUND\",\"endTime\":1628320992525,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":1628320929873,\"groupId\":1,\"hangupCause\":\"QUEUE_TIMEOUT\",\"hangupDir\":3,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":1628320990175,\"queueStartTime\":1628320929873,\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628320992525,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (46, 1628322164, 0, 1, 211871409582899200, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":1,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628322082765,\"callId\":211871409582899200,\"callTime\":1628322080429,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"85b36a03-3ae3-464b-bdcd-92785e428ea5\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628322166305,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628322082765,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":83540}],\"callId\":211871409582899200,\"callTime\":1628322080429,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628322080429,\"direction\":\"INBOUND\",\"endTime\":1628322166305,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":1628322080550,\"groupId\":1,\"hangupCause\":\"QUEUE_TIMEOUT\",\"hangupDir\":3,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":1628322163963,\"queueStartTime\":1628322080550,\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628322166305,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (47, 1628322481, 0, 1, 211872836401233920, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":1,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628322422965,\"callId\":211872836401233920,\"callTime\":1628322420612,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"e9763b1d-3998-4c0b-8298-21129e15247a\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628322483445,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628322422965,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":60480}],\"callId\":211872836401233920,\"callTime\":1628322420612,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628322420612,\"direction\":\"INBOUND\",\"endTime\":1628322483445,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":1628322420737,\"groupId\":1,\"hangupCause\":\"QUEUE_TIMEOUT\",\"hangupDir\":3,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":1628322481114,\"queueStartTime\":1628322420737,\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628322483445,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (48, 1628322516, 0, 1, 211873119441256448, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":1,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628322490425,\"callId\":211873119441256448,\"callTime\":1628322488088,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"e8800465-0374-4463-a2a0-6ae30811ba8e\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628322518805,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628322490425,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":28380}],\"callId\":211873119441256448,\"callTime\":1628322488088,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628322488088,\"direction\":\"INBOUND\",\"endTime\":1628322518805,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":1628322488187,\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":1628322488187,\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628322518805,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (49, 1628322583, 0, 1, 211873253566709760, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":1,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628322522385,\"callId\":211873253566709760,\"callTime\":1628322520065,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"2340e57d-aa79-4ccb-a05c-8f24c417d2b0\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628322585545,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628322522385,\"sipProtocol\":\"udp\",\"sipStatus\":\"200\",\"talkTime\":63160}],\"callId\":211873253566709760,\"callTime\":1628322520065,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628322520065,\"direction\":\"INBOUND\",\"endTime\":1628322585545,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":1628322520144,\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":1628322520144,\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628322585545,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (50, 1628323573, 0, 1, 211877415255801856, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"\",\"answerCount\":1,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"\",\"answerTime\":1628323512305,\"callId\":211877415255801856,\"callTime\":1628323512290,\"called\":\"01011515902\",\"calledLocation\":\"\",\"caller\":\"18612983191\",\"callerLocation\":\"\",\"cdrType\":1,\"channelName\":\"sofia/external/18612983191@192.168.180.37\",\"deviceId\":\"1be59431-1d22-4f8b-b959-12fed622ec11\",\"deviceType\":2,\"display\":\"\",\"endTime\":1628323573045,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628323512305,\"sipProtocol\":\"udp\",\"sipStatus\":\"\",\"talkTime\":60740}],\"callId\":211877415255801856,\"callTime\":1628323512290,\"callType\":\"INBOUND_CALL\",\"called\":\"01011515902\",\"calledDisplay\":\"\",\"caller\":\"18612983191\",\"callerDisplay\":\"\",\"companyId\":1,\"cts\":1628323512290,\"direction\":\"INBOUND\",\"endTime\":1628323573045,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{}\",\"fristQueueTime\":1628323512338,\"groupId\":1,\"hangupCause\":\"QUEUE_TIMEOUT\",\"hangupDir\":3,\"ivrId\":\"0\",\"loginType\":\"1\",\"media\":\"172.17.0.2\",\"queueEndTime\":1628323573011,\"queueStartTime\":1628323512338,\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628323573045,\"uuid1\":\"\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (51, 1628409638, 0, 1, 212238651604598784, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":0,\"answerFlag\":1,\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"callId\":212238651604598784,\"callTime\":1628409637746,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2842837859243156\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628409637746,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"UNALLOCATED_NUMBER\",\"record\":\"\",\"ringCause\":\"\",\"sipProtocol\":\"\",\"sipStatus\":\"404\"}],\"callId\":212238651604598784,\"callTime\":1628409637746,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628409637746,\"direction\":\"OUTBOUND\",\"endTime\":1628409637746,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"UNALLOCATED_NUMBER\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628409637746,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (52, 1628410307, 0, 1, 212240584553791488, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628410107947,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628410105685,\"bridgeTime\":1628410107947,\"callId\":212240584553791488,\"callTime\":1628410098597,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"9747239684898693\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628410307466,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEPkcOABt83AGJNLNfRujk265.wav\",\"ringCause\":\"\",\"ringEndTime\":1628410105685,\"ringStartTime\":1628410099765,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201781},{\"agentKey\":\"1001@test\",\"answerTime\":1628410107866,\"bridgeTime\":1628410107947,\"callId\":212240584553791488,\"callTime\":1628410105879,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"6028964109589973\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628410307445,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628410107866,\"ringStartTime\":1628410105865,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199579}],\"callId\":212240584553791488,\"callTime\":1628410098597,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628410098597,\"direction\":\"OUTBOUND\",\"endTime\":1628410307466,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEPkcOABt83AGJNLNfRujk265.wav\",\"talkTime\":199519,\"taskId\":\"0\",\"uts\":1628410307466,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (53, 1628417116, 0, 1, 212269149886349312, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628416916725,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628416916650,\"bridgeTime\":1628416916725,\"callId\":212269149886349312,\"callTime\":1628416914640,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"2593741406278882\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628417116165,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628416916650,\"ringStartTime\":1628416914586,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199515},{\"agentKey\":\"1001@test\",\"answerTime\":1628416914425,\"bridgeTime\":1628416916725,\"callId\":212269149886349312,\"callTime\":1628416909103,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"0791138296033650\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628417116285,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEPrFyAG57wAGJILLd67ys383.wav\",\"ringCause\":\"\",\"ringEndTime\":1628416914425,\"ringStartTime\":1628416910565,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201860}],\"callId\":212269149886349312,\"callTime\":1628416909103,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628416909103,\"direction\":\"OUTBOUND\",\"endTime\":1628417116285,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEPrFyAG57wAGJILLd67ys383.wav\",\"talkTime\":199560,\"taskId\":\"0\",\"uts\":1628417116285,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (54, 1628417376, 0, 1, 212270242842279936, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628417176785,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628417176705,\"bridgeTime\":1628417176785,\"callId\":212270242842279936,\"callTime\":1628417174699,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"3542311946115192\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628417376225,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628417176705,\"ringStartTime\":1628417174685,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199520},{\"agentKey\":\"1001@test\",\"answerTime\":1628417174625,\"bridgeTime\":1628417176785,\"callId\":212270242842279936,\"callTime\":1628417169684,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"0118520363352527\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628417376285,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEPrWCAb6yRAGJArA-oWdY999.wav\",\"ringCause\":\"\",\"ringEndTime\":1628417174625,\"ringStartTime\":1628417170585,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201660}],\"callId\":212270242842279936,\"callTime\":1628417169684,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628417169684,\"direction\":\"OUTBOUND\",\"endTime\":1628417376285,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEPrWCAb6yRAGJArA-oWdY999.wav\",\"talkTime\":199500,\"taskId\":\"0\",\"uts\":1628417376285,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (55, 1628417629, 0, 1, 212272038755172352, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":0,\"answerFlag\":1,\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"callId\":212272038755172352,\"callTime\":1628417597863,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"3574487215521425\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628417629505,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"RECOVERY_ON_TIMER_EXPIRE\",\"record\":\"\",\"ringCause\":\"\",\"ringStartTime\":1628417599125,\"sipProtocol\":\"\",\"sipStatus\":\"408\"}],\"callId\":212272038755172352,\"callTime\":1628417597863,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628417597863,\"direction\":\"OUTBOUND\",\"endTime\":1628417629505,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"RECOVERY_ON_TIMER_EXPIRE\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628417629505,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (56, 1628420949, 0, 1, 212285231955181568, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628420749586,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628420747445,\"bridgeTime\":1628420749586,\"callId\":212285231955181568,\"callTime\":1628420743367,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1434209397304160\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628420949086,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEPu1WAWldFAGIALGjjQLo185.wav\",\"ringCause\":\"\",\"ringEndTime\":1628420747445,\"ringStartTime\":1628420744845,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201641},{\"agentKey\":\"1001@test\",\"answerTime\":1628420749506,\"bridgeTime\":1628420749586,\"callId\":212285231955181568,\"callTime\":1628420747531,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"5057168822965047\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628420949045,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628420749506,\"ringStartTime\":1628420747507,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199539}],\"callId\":212285231955181568,\"callTime\":1628420743367,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628420743367,\"direction\":\"OUTBOUND\",\"endTime\":1628420949086,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEPu1WAWldFAGIALGjjQLo185.wav\",\"talkTime\":199500,\"taskId\":\"0\",\"uts\":1628420949086,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (57, 1628421138, 0, 1, 212286660514152448, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628421090325,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628421090265,\"bridgeTime\":1628421090325,\"callId\":212286660514152448,\"callTime\":1628421088253,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"9650804940585947\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628421138605,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628421090265,\"ringStartTime\":1628421088229,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":48340},{\"agentKey\":\"1001@test\",\"answerTime\":1628421088185,\"bridgeTime\":1628421090325,\"callId\":212286660514152448,\"callTime\":1628421083962,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"0643646091368020\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628421138425,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEPvBKAeDxxABgkLPxjWt8358.wav\",\"ringCause\":\"\",\"ringEndTime\":1628421088185,\"ringStartTime\":1628421085765,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":50240}],\"callId\":212286660514152448,\"callTime\":1628421083962,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628421083962,\"direction\":\"OUTBOUND\",\"endTime\":1628421138605,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEPvBKAeDxxABgkLPxjWt8358.wav\",\"talkTime\":48280,\"taskId\":\"0\",\"uts\":1628421138605,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (58, 1628421201, 0, 1, 212287094507175936, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628421193845,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628421191545,\"bridgeTime\":1628421193845,\"callId\":212287094507175936,\"callTime\":1628421187434,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1004559198465220\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628421200805,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEPvFCAcedPAAQuLMy5PSg319.wav\",\"ringCause\":\"\",\"ringEndTime\":1628421191545,\"ringStartTime\":1628421188945,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":9260},{\"agentKey\":\"1001@test\",\"answerTime\":1628421193745,\"bridgeTime\":1628421193845,\"callId\":212287094507175936,\"callTime\":1628421191738,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"6706568880030178\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628421201105,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628421193745,\"ringStartTime\":1628421191705,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":7360}],\"callId\":212287094507175936,\"callTime\":1628421187434,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628421187434,\"direction\":\"OUTBOUND\",\"endTime\":1628421201105,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEPvFCAcedPAAQuLMy5PSg319.wav\",\"talkTime\":7260,\"taskId\":\"0\",\"uts\":1628421201105,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (59, 1628421272, 0, 1, 212287244910723072, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628421232545,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628421232485,\"bridgeTime\":1628421232545,\"callId\":212287244910723072,\"callTime\":1628421230483,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"8066826150666511\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628421272566,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628421232485,\"ringStartTime\":1628421272447,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":40081},{\"agentKey\":\"1001@test\",\"answerTime\":1628421230405,\"bridgeTime\":1628421232545,\"callId\":212287244910723072,\"callTime\":1628421223293,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2314567948015900\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628421272447,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEPvJiAceBjABRXrGfoosM359.wav\",\"ringCause\":\"\",\"ringEndTime\":1628421230405,\"ringStartTime\":1628421224345,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":42042}],\"callId\":212287244910723072,\"callTime\":1628421223293,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628421223293,\"direction\":\"OUTBOUND\",\"endTime\":1628421272566,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEPvJiAceBjABRXrGfoosM359.wav\",\"talkTime\":40021,\"taskId\":\"0\",\"uts\":1628421272566,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (60, 1628426054, 0, 1, 212306637002637312, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628425854665,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628425852525,\"bridgeTime\":1628425854665,\"callId\":212306637002637312,\"callTime\":1628425846728,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"9508126321506141\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628426054185,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEPz0aAaj1UAGJILDdLeqk680.wav\",\"ringCause\":\"\",\"ringEndTime\":1628425852525,\"ringStartTime\":1628425848285,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201660},{\"agentKey\":\"1001@test\",\"answerTime\":1628425854586,\"bridgeTime\":1628425854665,\"callId\":212306637002637312,\"callTime\":1628425852598,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"9630722460503901\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628426054145,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628425854586,\"ringStartTime\":1628425852585,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199559}],\"callId\":212306637002637312,\"callTime\":1628425846728,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628425846728,\"direction\":\"OUTBOUND\",\"endTime\":1628426054185,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEPz0aAaj1UAGJILDdLeqk680.wav\",\"talkTime\":199520,\"taskId\":\"0\",\"uts\":1628426054185,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (61, 1628472283, 0, 1, 212501405380902912, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":0,\"answerFlag\":1,\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"callId\":212501405380902912,\"callTime\":1628472283128,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"6713377617573501\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628472283125,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"UNALLOCATED_NUMBER\",\"record\":\"\",\"ringCause\":\"\",\"sipProtocol\":\"\",\"sipStatus\":\"404\"}],\"callId\":212501405380902912,\"callTime\":1628472283128,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628472283128,\"direction\":\"OUTBOUND\",\"endTime\":1628472283125,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"UNALLOCATED_NUMBER\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628472283125,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (62, 1628472776, 0, 1, 212502603118936064, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628472575385,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628472575305,\"bridgeTime\":1628472575385,\"callId\":212502603118936064,\"callTime\":1628472573318,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"0980177183617868\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628472775371,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628472575305,\"ringStartTime\":1628472573285,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":200066},{\"agentKey\":\"1001@test\",\"answerTime\":1628472573105,\"bridgeTime\":1628472575385,\"callId\":212502603118936064,\"callTime\":1628472568691,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"8806687345862180\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628472775505,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmEQhceAFiv7AGLtLGZ-JwY374.wav\",\"ringCause\":\"\",\"ringEndTime\":1628472573105,\"ringStartTime\":1628472569125,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":202400}],\"callId\":212502603118936064,\"callTime\":1628472568691,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628472568691,\"direction\":\"OUTBOUND\",\"endTime\":1628472775505,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmEQhceAFiv7AGLtLGZ-JwY374.wav\",\"talkTime\":200120,\"taskId\":\"0\",\"uts\":1628472775505,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (63, 1628521085, 0, 1, 212706093820805120, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":0,\"answerFlag\":1,\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"callId\":212706093820805120,\"callTime\":1628521084655,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1710322370863287\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628521084665,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"UNALLOCATED_NUMBER\",\"record\":\"\",\"ringCause\":\"\",\"sipProtocol\":\"\",\"sipStatus\":\"404\"}],\"callId\":212706093820805120,\"callTime\":1628521084655,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628521084655,\"direction\":\"OUTBOUND\",\"endTime\":1628521084665,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"UNALLOCATED_NUMBER\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628521084665,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (64, 1628521092, 0, 1, 212706127698198528, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":0,\"answerFlag\":1,\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"callId\":212706127698198528,\"callTime\":1628521092732,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1677221618929175\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628521092746,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"UNALLOCATED_NUMBER\",\"record\":\"\",\"ringCause\":\"\",\"sipProtocol\":\"\",\"sipStatus\":\"404\"}],\"callId\":212706127698198528,\"callTime\":1628521092732,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628521092732,\"direction\":\"OUTBOUND\",\"endTime\":1628521092746,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"UNALLOCATED_NUMBER\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628521092746,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (65, 1628521317, 0, 1, 212706204961472512, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628521117765,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628521117705,\"bridgeTime\":1628521117765,\"callId\":212706204961472512,\"callTime\":1628521115713,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"8351265868441368\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628521317225,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628521117705,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":199520},{\"agentKey\":\"1001@test\",\"answerTime\":1628521115485,\"bridgeTime\":1628521117765,\"callId\":212706204961472512,\"callTime\":1628521111153,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"8031647069255360\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628521317245,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmERQ2WAR8ezAGJUrCaaPKo445.wav\",\"ringCause\":\"\",\"ringEndTime\":1628521115485,\"ringStartTime\":1628521111485,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":201760}],\"callId\":212706204961472512,\"callTime\":1628521111153,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628521111153,\"direction\":\"OUTBOUND\",\"endTime\":1628521317245,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmERQ2WAR8ezAGJUrCaaPKo445.wav\",\"talkTime\":199480,\"taskId\":\"0\",\"uts\":1628521317245,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (66, 1628521903, 0, 1, 212709363209469952, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628521886805,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628521886765,\"bridgeTime\":1628521886805,\"callId\":212709363209469952,\"callTime\":1628521884761,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"4322469686343743\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628521903005,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628521886765,\"ringStartTime\":1628521902625,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":16240},{\"agentKey\":\"1001@test\",\"answerTime\":1628521884565,\"bridgeTime\":1628521886805,\"callId\":212709363209469952,\"callTime\":1628521864138,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"4085603154877623\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628521902625,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmERRa6AcxdjAAh8rGurThQ616.wav\",\"recordTime\":1628521884705,\"ringCause\":\"\",\"ringEndTime\":1628521884565,\"ringStartTime\":1628521864425,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":18060}],\"callId\":212709363209469952,\"callTime\":1628521864138,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628521864138,\"direction\":\"OUTBOUND\",\"endTime\":1628521903005,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmERRa6AcxdjAAh8rGurThQ616.wav\",\"recordTime\":1628521884705,\"talkTime\":16200,\"taskId\":\"0\",\"uts\":1628521903005,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (67, 1628522346, 0, 1, 212710422019571712, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628522145468,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628522143225,\"bridgeTime\":1628522145468,\"callId\":212710422019571712,\"callTime\":1628522116578,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2254181443606720\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628522345525,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmERR2mAFMHWAGKJLFL4f9Y645.wav\",\"recordTime\":1628522143365,\"ringCause\":\"\",\"ringEndTime\":1628522143225,\"ringStartTime\":1628522116925,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":202300},{\"agentKey\":\"1001@test\",\"answerTime\":1628522145429,\"bridgeTime\":1628522145468,\"callId\":212710422019571712,\"callTime\":1628522143420,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"0961117707880038\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628522345465,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628522145429,\"ringStartTime\":1628522143405,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":200036}],\"callId\":212710422019571712,\"callTime\":1628522116578,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628522116578,\"direction\":\"OUTBOUND\",\"endTime\":1628522345525,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":2,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmERR2mAFMHWAGKJLFL4f9Y645.wav\",\"recordTime\":1628522143365,\"talkTime\":200057,\"taskId\":\"0\",\"uts\":1628522345525,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (68, 1628523201, 0, 1, 212714776696979456, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628523161325,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628523161265,\"bridgeTime\":1628523161325,\"callId\":212714776696979456,\"callTime\":1628523159266,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"2668496556530418\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628523200765,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628523161265,\"ringStartTime\":1628523159226,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":39500},{\"agentKey\":\"1001@test\",\"answerTime\":1628523159085,\"bridgeTime\":1628523161325,\"callId\":212714776696979456,\"callTime\":1628523154814,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1072362486829534\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628523200445,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmERSsCABQSYABParNSUUS4671.wav\",\"recordTime\":1628523159226,\"ringCause\":\"\",\"ringEndTime\":1628523159085,\"ringStartTime\":1628523155125,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":41360}],\"callId\":212714776696979456,\"callTime\":1628523154814,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628523154814,\"direction\":\"OUTBOUND\",\"endTime\":1628523200765,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmERSsCABQSYABParNSUUS4671.wav\",\"recordTime\":1628523159226,\"talkTime\":39440,\"taskId\":\"0\",\"uts\":1628523200765,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (69, 1628523654, 0, 1, 212716862813765632, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":0,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"callId\":212716862813765632,\"callTime\":1628523652183,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"2218370879166798\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628523654605,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringStartTime\":1628523652705,\"sipProtocol\":\"\",\"sipStatus\":\"\"}],\"callId\":212716862813765632,\"callTime\":1628523652183,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628523652183,\"direction\":\"OUTBOUND\",\"endTime\":1628523654605,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"recordTime\":\"0\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628523654605,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (70, 1628523807, 0, 1, 212717502243799040, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":0,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"callId\":212717502243799040,\"callTime\":1628523804635,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"3322717098745331\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628523807486,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringStartTime\":1628523804925,\"sipProtocol\":\"\",\"sipStatus\":\"\"}],\"callId\":212717502243799040,\"callTime\":1628523804635,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628523804635,\"direction\":\"OUTBOUND\",\"endTime\":1628523807486,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"recordTime\":\"0\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628523807486,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (71, 1628523815, 0, 1, 212717535949225984, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":0,\"answerFlag\":\"0\",\"answerTime\":\"0\",\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"callId\":212717535949225984,\"callTime\":1628523812671,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"6767242793757729\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628523815385,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringStartTime\":1628523813025,\"sipProtocol\":\"\",\"sipStatus\":\"\"}],\"callId\":212717535949225984,\"callTime\":1628523812671,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628523812671,\"direction\":\"OUTBOUND\",\"endTime\":1628523815385,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"\",\"recordTime\":\"0\",\"talkTime\":\"0\",\"taskId\":\"0\",\"uts\":1628523815385,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (72, 1628523911, 0, 1, 212717896898445312, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628523905345,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628523905149,\"bridgeTime\":1628523905345,\"callId\":212717896898445312,\"callTime\":1628523903435,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"6604947721509260\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628523909605,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628523905149,\"ringStartTime\":1628523903145,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":4456},{\"agentKey\":\"1001@test\",\"answerTime\":1628523902967,\"bridgeTime\":1628523905345,\"callId\":212717896898445312,\"callTime\":1628523898728,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"0841926606470466\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628523908485,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"/app/clpms/record/20210809/212717896898445312_871556590425001_14400010002.wav\",\"recordTime\":1628523903125,\"ringCause\":\"\",\"ringEndTime\":1628523902967,\"ringStartTime\":1628523899025,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":5518}],\"callId\":212717896898445312,\"callTime\":1628523898728,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628523898728,\"direction\":\"OUTBOUND\",\"endTime\":1628523909605,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"/app/clpms/record/20210809/212717896898445312_871556590425001_14400010002.wav\",\"recordTime\":1628523903125,\"talkTime\":4260,\"taskId\":\"0\",\"uts\":1628523909605,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (73, 1628524034, 0, 1, 212718412973998080, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628524026945,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628524024625,\"bridgeTime\":1628524026945,\"callId\":212718412973998080,\"callTime\":1628524021770,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"9003271480051887\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628524033685,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmERTgGAb5sdAAQSrBj5K2Y365.wav\",\"recordTime\":1628524024805,\"ringCause\":\"\",\"ringEndTime\":1628524024625,\"ringStartTime\":1628524022025,\"sipProtocol\":\"\",\"sipStatus\":\"200\",\"talkTime\":9060},{\"agentKey\":\"1001@test\",\"answerTime\":1628524026865,\"bridgeTime\":1628524026945,\"callId\":212718412973998080,\"callTime\":1628524024846,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"9402980061385726\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628524033967,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"ringCause\":\"\",\"ringEndTime\":1628524026865,\"ringStartTime\":1628524024825,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":7102}],\"callId\":212718412973998080,\"callTime\":1628524021770,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628524021770,\"direction\":\"OUTBOUND\",\"endTime\":1628524033967,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmERTgGAb5sdAAQSrBj5K2Y365.wav\",\"recordTime\":1628524024805,\"talkTime\":7022,\"taskId\":\"0\",\"uts\":1628524033967,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+INSERT INTO `cc_push_fail_log` VALUES (74, 1628524357, 0, 1, 212719761165910016, 1, 'http://192.168.177.183:8709/push/forcePush/pushTest', '{\"agentKey\":\"1001@test\",\"answerCount\":2,\"answerFlag\":\"0\",\"answerTime\":1628524349385,\"botId\":\"0\",\"callDeviceList\":[{\"agentKey\":\"1001@test\",\"answerTime\":1628524349285,\"bridgeTime\":1628524349385,\"callId\":212719761165910016,\"callTime\":1628524347281,\"called\":\"14400010002\",\"calledLocation\":\"\",\"caller\":\"01088889999\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/14400010002@172.17.0.2:32460\",\"deviceId\":\"7763880975156508\",\"deviceType\":2,\"display\":\"14400010002\",\"endTime\":1628524356885,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"\",\"recordTime\":\"0\",\"ringCause\":\"\",\"ringEndTime\":1628524349285,\"ringStartTime\":1628524347226,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":7600},{\"agentKey\":\"1001@test\",\"answerTime\":1628524347105,\"bridgeTime\":1628524349385,\"callId\":212719761165910016,\"callTime\":1628524343204,\"called\":\"871556590425001\",\"calledLocation\":\"\",\"caller\":\"1001\",\"callerLocation\":\"\",\"cdrType\":2,\"channelName\":\"sofia/external/871556590425001@172.17.0.2:6685\",\"deviceId\":\"1985728415195435\",\"deviceType\":1,\"display\":\"1001\",\"endTime\":1628524356605,\"ext1\":\"\",\"ext2\":\"\",\"hangupCause\":\"NORMAL_CLEARING\",\"record\":\"group1/M00/00/00/rBEAAmERT0SAYnB5AARWLOPej-0702.wav\",\"recordTime\":1628524347226,\"ringCause\":\"\",\"ringEndTime\":1628524347105,\"ringStartTime\":1628524343525,\"sipProtocol\":\"\",\"sipStatus\":\"\",\"talkTime\":9500}],\"callId\":212719761165910016,\"callTime\":1628524343204,\"callType\":\"OUTBOUNT_CALL\",\"called\":\"14400010002\",\"calledDisplay\":\"01088889999\",\"caller\":\"871556590425001\",\"callerDisplay\":\"1001\",\"companyId\":1,\"cts\":1628524343204,\"direction\":\"OUTBOUND\",\"endTime\":1628524356885,\"ext1\":\"\",\"ext2\":\"\",\"ext3\":\"\",\"followData\":\"{\\\"autoAnswer\\\":\\\"true\\\"}\",\"fristQueueTime\":\"0\",\"groupId\":1,\"hangupCause\":\"NORMAL_CLEARING\",\"hangupDir\":1,\"ivrId\":\"0\",\"loginType\":1,\"media\":\"172.17.0.2\",\"queueEndTime\":\"0\",\"queueStartTime\":\"0\",\"record\":\"group1/M00/00/00/rBEAAmERT0SAYnB5AARWLOPej-0702.wav\",\"recordTime\":1628524347226,\"talkTime\":7500,\"taskId\":\"0\",\"uts\":1628524356885,\"uuid1\":\"123456\",\"uuid2\":\"\",\"waitTime\":\"0\"}', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_route_call
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_route_call`;
+CREATE TABLE `cc_route_call` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '所属企业',
+  `route_group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '所属路由组',
+  `route_num` varchar(32) NOT NULL DEFAULT '' COMMENT '字冠号码',
+  `num_max` int(11) NOT NULL DEFAULT '0' COMMENT '最长',
+  `num_min` int(11) NOT NULL DEFAULT '0' COMMENT '最短',
+  `caller_change` int(11) NOT NULL DEFAULT '0' COMMENT '主叫替换规则',
+  `caller_change_num` varchar(32) NOT NULL DEFAULT '' COMMENT '替换号码',
+  `called_change` int(11) NOT NULL DEFAULT '0' COMMENT '被叫替换规则',
+  `called_change_num` varchar(32) NOT NULL DEFAULT '' COMMENT '替换号码',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `unq_idx_route` (`company_id`,`route_num`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COMMENT='字冠路由表';
+
+-- ----------------------------
+-- Records of cc_route_call
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_route_call` VALUES (1, 1, 1, 1, 1, '87', 9, 4, 0, '1', 1, '1', 1);
+INSERT INTO `cc_route_call` VALUES (2, 1, 1, 1, 2, '133', 9, 4, 0, '1 ', 1, '1', 1);
+INSERT INTO `cc_route_call` VALUES (4, 1, 1, 1, 1, '18899998889', 9, 4, 0, '1', 1, '1', 1);
+INSERT INTO `cc_route_call` VALUES (7, 1, 1, 1, 4, '18899998887', 9, 4, 0, '1', 0, '1', 1);
+INSERT INTO `cc_route_call` VALUES (8, 1, 1, 1, 5, '144', 11, 4, 0, '1', 0, '', 1);
+INSERT INTO `cc_route_call` VALUES (9, 1621915277, 1621923862, 1, 2, '18988889999', 32, 2, 0, '1', 0, '1', 0);
+INSERT INTO `cc_route_call` VALUES (10, 1621923239, 0, 1, 1, '1889999888999', 9, 4, 0, '1', 1, '1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_route_getway
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_route_getway`;
+CREATE TABLE `cc_route_getway` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '号码',
+  `media_host` varchar(255) NOT NULL DEFAULT '' COMMENT '媒体地址',
+  `media_port` int(11) NOT NULL DEFAULT '0' COMMENT '媒体端口',
+  `caller_prefix` varchar(255) NOT NULL DEFAULT '' COMMENT '主叫号码前缀',
+  `called_prefix` varchar(255) NOT NULL DEFAULT '' COMMENT '被叫号码前缀',
+  `profile` varchar(255) NOT NULL DEFAULT '' COMMENT 'fs的context规则',
+  `sip_header1` varchar(255) NOT NULL DEFAULT '' COMMENT 'sip头1',
+  `sip_header2` varchar(255) NOT NULL DEFAULT '' COMMENT 'sip头2',
+  `sip_header3` varchar(255) NOT NULL DEFAULT '' COMMENT 'sip头3',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uindex_getway_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COMMENT='媒体网关表';
+
+-- ----------------------------
+-- Records of cc_route_getway
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_route_getway` VALUES (1, 1604503580, 1604503580, '87', '172.17.0.2', 6685, '', '', 'external', '', '', '', 1);
+INSERT INTO `cc_route_getway` VALUES (2, 1604503580, 1604503580, '133', '192.168.180.37', 5080, '', '', 'external', '', '', '', 1);
+INSERT INTO `cc_route_getway` VALUES (3, 1604503580, 1604503580, 'auto87', '192.168.180.226', 38915, '', '', 'external', '', '', '', 1);
+INSERT INTO `cc_route_getway` VALUES (5, 1604503580, 1621856137, '1441', '172.17.0.2', 32460, '', '', 'external', 'P_CALL_ID:A4', '', '', 1);
+INSERT INTO `cc_route_getway` VALUES (14, 1621850816, 0, '183clpss', '192.168.177.183', 1111, '', '', 'external', '', '', '', 1);
+INSERT INTO `cc_route_getway` VALUES (16, 1621851435, 1621851612, '183clps1s-delRxNYpt', '192.168.177.183-deljefAWM', 1111, '', '', 'external', '', '', '', 0);
+INSERT INTO `cc_route_getway` VALUES (17, 1621856177, 0, '183clps1s', '192.168.177.183', 1111, '', '', 'external', '', '', '', 1);
+INSERT INTO `cc_route_getway` VALUES (21, 1621921932, 0, '183clps1s2', '192.168.177.183', 11111, '', '', 'external', '', '', '', 1);
+INSERT INTO `cc_route_getway` VALUES (22, 1627392056, 0, '183clpsa1s2', '192.168.177.183', 11111, '', '', 'external', '', '', '', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_route_getway_group
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_route_getway_group`;
+CREATE TABLE `cc_route_getway_group` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `getway_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '媒体网关',
+  `route_group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '网关组',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COMMENT='路由字冠关联组表';
+
+-- ----------------------------
+-- Records of cc_route_getway_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_route_getway_group` VALUES (1, 1, 1, 1, 1);
+INSERT INTO `cc_route_getway_group` VALUES (2, 1, 1, 2, 2);
+INSERT INTO `cc_route_getway_group` VALUES (3, 1, 1, 5, 3);
+INSERT INTO `cc_route_getway_group` VALUES (4, 1, 1, 7, 4);
+INSERT INTO `cc_route_getway_group` VALUES (5, 1, 1, 5, 5);
+INSERT INTO `cc_route_getway_group` VALUES (9, 1622004752, 0, 1, 7);
+INSERT INTO `cc_route_getway_group` VALUES (10, 1622004752, 0, 2, 7);
+INSERT INTO `cc_route_getway_group` VALUES (11, 1622004752, 0, 3, 7);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_route_group
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_route_group`;
+CREATE TABLE `cc_route_group` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `route_group` varchar(255) NOT NULL DEFAULT '' COMMENT '网关组',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='网关组';
+
+-- ----------------------------
+-- Records of cc_route_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_route_group` VALUES (1, 1, 1, '87路由', 1);
+INSERT INTO `cc_route_group` VALUES (2, 1, 1, '133路由', 1);
+INSERT INTO `cc_route_group` VALUES (3, 1, 1, '871556590425003', 1);
+INSERT INTO `cc_route_group` VALUES (4, 1, 1, '18899998887', 1);
+INSERT INTO `cc_route_group` VALUES (5, 1, 1, '144路由', 1);
+INSERT INTO `cc_route_group` VALUES (7, 0, 1622004752, '网关组2', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_schedule_config
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_schedule_config`;
+CREATE TABLE `cc_schedule_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '日程名称',
+  `level_value` int(11) NOT NULL DEFAULT '1' COMMENT '优先级',
+  `type` int(11) NOT NULL DEFAULT '1' COMMENT '1:指定时间,2:相对时间',
+  `start_day` varchar(20) NOT NULL DEFAULT '' COMMENT '开始日期',
+  `end_day` varchar(20) NOT NULL DEFAULT '' COMMENT '结束日期',
+  `start_time` varchar(20) NOT NULL DEFAULT '' COMMENT '开始时间',
+  `end_time` varchar(20) NOT NULL DEFAULT '' COMMENT '结束时间',
+  `mon` int(11) NOT NULL DEFAULT '1' COMMENT '周一',
+  `tue` int(11) NOT NULL DEFAULT '1' COMMENT '周二',
+  `wed` int(11) NOT NULL DEFAULT '1' COMMENT '周三',
+  `thu` int(11) NOT NULL DEFAULT '1' COMMENT '周四',
+  `fri` int(11) NOT NULL DEFAULT '1' COMMENT '周五',
+  `sat` int(11) NOT NULL DEFAULT '1' COMMENT '周六',
+  `sun` int(11) NOT NULL DEFAULT '1' COMMENT '周天',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='日程表';
+
+-- ----------------------------
+-- Records of cc_schedule_config
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_schedule_config` VALUES (1, 1, 1, 1, '全天日程', 3, 1, '2020-12-01', '2020-12-30', '', '', 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO `cc_schedule_config` VALUES (2, 2, 2, 1, '上班时间', 2, 1, '2020-12-01', '2020-12-30', '09:00:00', '18:00:00', 1, 1, 1, 1, 1, 0, 0, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_skill
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_skill`;
+CREATE TABLE `cc_skill` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业id',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能表';
+
+-- ----------------------------
+-- Records of cc_skill
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_skill_agent
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_skill_agent`;
+CREATE TABLE `cc_skill_agent` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业id',
+  `skill_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能id',
+  `agent_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '坐席id',
+  `rank_value` int(11) NOT NULL DEFAULT '0' COMMENT '范围',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `id` (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='坐席技能表';
+
+-- ----------------------------
+-- Records of cc_skill_agent
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_skill_group
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_skill_group`;
+CREATE TABLE `cc_skill_group` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `skill_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能ID',
+  `group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '技能组ID',
+  `rank_about` int(11) NOT NULL DEFAULT '1' COMMENT '等级类型(1:全部,2:等于,3:>,4:<,5:介于)',
+  `rank_value_start` int(11) NOT NULL DEFAULT '0' COMMENT '介于的开始值',
+  `rank_value` int(11) NOT NULL DEFAULT '1' COMMENT '等级值',
+  `rate` int(11) NOT NULL DEFAULT '100' COMMENT '占用率',
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_group_id` (`group_id`) USING BTREE,
+  KEY `id` (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能组技能表';
+
+-- ----------------------------
+-- Records of cc_skill_group
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_vdn_code
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_vdn_code`;
+CREATE TABLE `cc_vdn_code` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT 'vdn名称',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='呼入路由表';
+
+-- ----------------------------
+-- Records of cc_vdn_code
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_vdn_code` VALUES (3, 3, 3, 1, '01011515901', 1);
+INSERT INTO `cc_vdn_code` VALUES (4, 4, 4, 1, '01011515902', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_vdn_phone
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_vdn_phone`;
+CREATE TABLE `cc_vdn_phone` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `vdn_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '路由码',
+  `phone` varchar(20) NOT NULL DEFAULT '' COMMENT '特服号',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uni_idx_phone` (`vdn_id`,`company_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='路由号码表';
+
+-- ----------------------------
+-- Records of cc_vdn_phone
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_vdn_phone` VALUES (3, 1, 1, 1, 3, '01011515901', 1);
+INSERT INTO `cc_vdn_phone` VALUES (4, 1, 1, 1, 4, '01011515902', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_vdn_schedule
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_vdn_schedule`;
+CREATE TABLE `cc_vdn_schedule` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '子码日程',
+  `vdn_id` bigint(20) NOT NULL DEFAULT '0' COMMENT 'vdn_id',
+  `schedule_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '日程id',
+  `route_type` int(11) NOT NULL DEFAULT '1' COMMENT '路由类型(1:技能组,2:放音,3:ivr,4:坐席,5:外呼)',
+  `route_value` varchar(255) NOT NULL DEFAULT '0' COMMENT '路由类型值',
+  `play_type` int(11) NOT NULL DEFAULT '0' COMMENT '放音类型(1:按键导航,2:技能组,3:ivr,4:路由字码,5:挂机)',
+  `play_value` bigint(20) NOT NULL DEFAULT '0' COMMENT '放音类型对应值',
+  `dtmf_end` varchar(255) NOT NULL DEFAULT '*' COMMENT '结束音',
+  `retry` int(11) NOT NULL DEFAULT '1' COMMENT '重复播放次数',
+  `dtmf_max` int(11) NOT NULL DEFAULT '1' COMMENT '最大收键长度',
+  `dtmf_min` int(11) NOT NULL DEFAULT '1' COMMENT '最小收键长度',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='路由字码表';
+
+-- ----------------------------
+-- Records of cc_vdn_schedule
+-- ----------------------------
+BEGIN;
+INSERT INTO `cc_vdn_schedule` VALUES (1, 1, 1, 1, '呼入转技能组', 1, 1, 1, '1', 1, 0, '*', 1, 1, 1, 1);
+INSERT INTO `cc_vdn_schedule` VALUES (2, 2, 2, 1, '上班转技能组', 2, 1, 1, '1', 1, 0, '*', 1, 1, 1, 1);
+INSERT INTO `cc_vdn_schedule` VALUES (3, 3, 3, 1, '按键导航', 2, 2, 2, '1', 1, 1, '*', 1, 1, 1, 1);
+INSERT INTO `cc_vdn_schedule` VALUES (4, 4, 4, 1, '按键导航', 3, 1, 2, '1', 1, 1, '*', 1, 1, 1, 1);
+INSERT INTO `cc_vdn_schedule` VALUES (5, 5, 5, 1, '进技能组', 4, 1, 1, '1', 1, 1, '*', 1, 1, 1, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for cc_vdn_schedule_dtmf
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_vdn_schedule_dtmf`;
+CREATE TABLE `cc_vdn_schedule_dtmf` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `cts` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `uts` bigint(20) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `company_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '企业ID',
+  `navigate_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '按键导航ID',
+  `dtmf` varchar(20) NOT NULL DEFAULT '1' COMMENT '按键',
+  `route_type` int(11) NOT NULL DEFAULT '0' COMMENT '路由类型(1:技能组,2:IVR,3:路由字码,4:坐席分机,5:挂机)',
+  `route_value` bigint(20) NOT NULL DEFAULT '0' COMMENT '路由值',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='按键导航表';
+
+-- ----------------------------
+-- Records of cc_vdn_schedule_dtmf
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for location
+-- ----------------------------
+DROP TABLE IF EXISTS `location`;
+CREATE TABLE `location` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ruid` varchar(64) NOT NULL DEFAULT '',
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `domain` varchar(64) DEFAULT NULL,
+  `contact` varchar(255) NOT NULL DEFAULT '',
+  `received` varchar(128) DEFAULT NULL,
+  `path` varchar(512) DEFAULT NULL,
+  `expires` datetime NOT NULL DEFAULT '2030-05-28 21:32:15',
+  `q` float(10,2) NOT NULL DEFAULT '1.00',
+  `callid` varchar(255) NOT NULL DEFAULT 'Default-Call-ID',
+  `cseq` int(11) NOT NULL DEFAULT '1',
+  `last_modified` datetime NOT NULL DEFAULT '1900-01-01 00:00:01',
+  `flags` int(11) NOT NULL DEFAULT '0',
+  `cflags` int(11) NOT NULL DEFAULT '0',
+  `user_agent` varchar(255) NOT NULL DEFAULT '',
+  `socket` varchar(64) DEFAULT NULL,
+  `methods` int(11) DEFAULT NULL,
+  `instance` varchar(255) DEFAULT NULL,
+  `reg_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `ruid_idx` (`ruid`) USING BTREE,
+  KEY `account_contact_idx` (`username`,`domain`,`contact`) USING BTREE,
+  KEY `expires_idx` (`expires`) USING BTREE,
+  KEY `IDX_CA_CO_US` (`callid`,`contact`,`username`) USING BTREE,
+  KEY `IDX_CONTACT` (`contact`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=718 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of location
+-- ----------------------------
+BEGIN;
+INSERT INTO `location` VALUES (1, '1', '871552904110001', NULL, '', NULL, NULL, '2030-05-28 21:32:15', 1.00, 'Default-Call-ID', 1, '1900-01-01 00:00:01', 0, 0, '', NULL, NULL, NULL, 0);
+INSERT INTO `location` VALUES (684, 'uloc-5d706c09-ff3-3c', '8715628449220015', NULL, 'sip:8715628449220015@192.168.183.40:5060', 'sip:192.168.183.40:5060', NULL, '2019-10-25 20:07:55', -1.00, '0_3733794137@192.168.183.40', 870, '2019-10-25 19:07:55', 0, 0, 'Yealink SIP-T21P_E2 52.81.0.75', 'udp:192.168.183.145:8880', 16383, NULL, 0);
+INSERT INTO `location` VALUES (714, 'uloc-5d706c09-ff4-7c', '871556590425000', NULL, 'sip:871556590425000@192.168.181.178:58312;rinstance=8bec30a11263681e', 'sip:192.168.181.178:58312', NULL, '2019-10-25 20:02:47', -1.00, '99140ZjZiYTk1M2Q5MGRkZTlkZWQ0MDNmYWI0ZWY3MmFmYTA', 26, '2019-10-25 19:02:47', 0, 0, 'X-Lite release 5.6.1 stamp 99140', 'udp:192.168.183.145:8880', 5087, NULL, 0);
+INSERT INTO `location` VALUES (717, 'uloc-5d706c09-ff4-dc', '8715628449220001', NULL, 'sip:8715628449220001@192.168.177.84:33192;rinstance=26174ed65ca23022', 'sip:192.168.177.84:33192', NULL, '2019-10-25 20:18:36', -1.00, 'ZDRhMzg5YTE4MTA0ZGQ2MDdhNmUyODg2MjQ4MmUyMWU.', 2, '2019-10-25 19:18:36', 0, 0, 'eyeBeam release 1011d stamp 40820', 'udp:192.168.183.145:8880', 5087, NULL, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for siu_users
+-- ----------------------------
+DROP TABLE IF EXISTS `siu_users`;
+CREATE TABLE `siu_users` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `companyid` int(11) NOT NULL COMMENT '企业ID',
+  `sip_id` varchar(50) NOT NULL COMMENT 'SIP账号',
+  `sip_password` varchar(255) NOT NULL COMMENT 'SIP密码',
+  `subaccound` varchar(255) DEFAULT NULL COMMENT '子帐号',
+  `subtoken` varchar(255) DEFAULT NULL COMMENT '子帐号令牌',
+  `bind_phoneid` int(255) DEFAULT NULL COMMENT '绑定的特服号ID',
+  `ccsdirectcallflag` tinyint(4) DEFAULT '1' COMMENT 'ccs是否支持硬话机外呼（0：不允许；1：允许)',
+  `sip_domain` varchar(255) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL COMMENT '类型：1 ivr，2 ccs',
+  `stationno` int(11) DEFAULT NULL COMMENT '绑定IVR或CCS站点号',
+  `status` int(11) DEFAULT '1' COMMENT '账号是否有效：0：无效；1：有效',
+  `ctime` int(11) DEFAULT NULL,
+  `utime` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `sip_id` (`sip_id`) USING BTREE,
+  KEY `sip_companyid` (`companyid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='SIP用户注册表';
+
+-- ----------------------------
+-- Records of siu_users
+-- ----------------------------
+BEGIN;
+INSERT INTO `siu_users` VALUES (1, 131, '871556519788000', '39636c0a', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519788, 1556519788);
+INSERT INTO `siu_users` VALUES (2, 131, '871556519788001', '123456', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519788, 1556519788);
+INSERT INTO `siu_users` VALUES (3, 128, '871556519802000', 'a3047e51', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519802, 1556519802);
+INSERT INTO `siu_users` VALUES (4, 128, '871556519802001', 'b8d61274', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519802, 1556519802);
+INSERT INTO `siu_users` VALUES (5, 128, '871556519817000', '0cc81268', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (6, 128, '871556519817001', 'e52d569d', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (7, 128, '871556519817002', 'f9e73f02', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (8, 128, '871556519817003', '7b71b071', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (9, 128, '871556519817004', '5f92b4ac', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (10, 128, '871556519817005', 'c09c1d70', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (11, 128, '871556519817006', '2828c389', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (12, 128, '871556519817007', '517236c0', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (13, 128, '871556519817008', '20f65e5f', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1556519817);
+INSERT INTO `siu_users` VALUES (14, 128, '871556519817009', '25aa0ee3', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519817, 1585216196);
+INSERT INTO `siu_users` VALUES (15, 131, '871556519829000', '19c6f4e7', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (16, 131, '871556519829001', '7ce4410a', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (17, 131, '871556519829002', 'b5bae4c0', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (18, 131, '871556519829003', '5f7f0b1a', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (19, 131, '871556519829004', 'c7d629bf', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (20, 131, '871556519829005', '327c6fe9', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (21, 131, '871556519829006', '8a13b508', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (22, 131, '871556519829007', 'f55b8e2a', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (23, 131, '871556519829008', 'b280db86', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (24, 131, '871556519829009', '9a9b7444', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556519829, 1556519829);
+INSERT INTO `siu_users` VALUES (25, 129, '871556590425000', '1026b6a8', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556590425, 1556590425);
+INSERT INTO `siu_users` VALUES (26, 129, '871556590425001', 'c2677bde', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556590425, 1556590425);
+INSERT INTO `siu_users` VALUES (27, 129, '871556590425002', '6d8c0f76', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556590425, 1556590425);
+INSERT INTO `siu_users` VALUES (28, 129, '871556590425003', 'c3ab0406', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556590425, 1556590425);
+INSERT INTO `siu_users` VALUES (29, 129, '871556590425004', '7e11b1d5', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556590425, 1556590425);
+INSERT INTO `siu_users` VALUES (30, 134, '871556590973000', '7d2763e7', NULL, NULL, NULL, 1, NULL, NULL, NULL, 1, 1556590973, 1556590973);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ss_station
+-- ----------------------------
+DROP TABLE IF EXISTS `ss_station`;
+CREATE TABLE `ss_station` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `station_no` int(11) NOT NULL COMMENT '站点号',
+  `station_type` int(11) NOT NULL COMMENT '站点类型:2:MG;3:SS；4：CCS;5:IVR;6:AAA,7:DBA;8:OAMSERVICE;9:WEBSERVICE;10:PDS;11:DIALER;12:SCHEDULE;13:CTISERVER;14:FILESERVER;15:APISERVER;16:statservice;17:TTS;18:cti录音模块.19：pdsmanage模块,20:NLP;21:ccsproxy;22:pushserver;100:ACD;101:newIVR;102clpss；103：crontab',
+  `ipaddr` varchar(32) DEFAULT NULL COMMENT 'IP地址',
+  `ipport` int(11) DEFAULT NULL COMMENT 'IP端口',
+  `redundance_ip` varchar(255) DEFAULT NULL COMMENT '冗余站点IP地址',
+  `redundance_port` int(11) DEFAULT NULL COMMENT '冗余站点端口',
+  `ipaddr_bak` varchar(20) DEFAULT NULL COMMENT '备用的IP，连接OAM的ws用',
+  `ipport_bak` int(5) DEFAULT NULL COMMENT '备用的端口，连接OAM的ws用 ccs开放pdstcp端口',
+  `ivrflowpath` varchar(255) DEFAULT NULL COMMENT 'IVR站点流程路径',
+  `validurl` varchar(255) DEFAULT NULL COMMENT '站点监听的有效URL（此字段为空，将以IP地址字段和Port字段拼出该站点URL）',
+  `redundance_validurl` varchar(255) DEFAULT NULL COMMENT '站点监听的冗余有效URL（此字段为空，将以IP地址字段和Port字段拼出该站点URL）',
+  `ccswebsocketurl` varchar(255) DEFAULT NULL COMMENT 'CCS websocket URL',
+  `memo` varchar(255) DEFAULT NULL COMMENT '备注',
+  `socketport` int(11) DEFAULT '0' COMMENT 'OAM，SS监听的TCP端口',
+  `ss_media_ip` varchar(32) DEFAULT NULL COMMENT 'SS媒体服务器地址',
+  `ss_media_port` int(11) DEFAULT NULL COMMENT 'SS媒体服务器端口',
+  `ss_media_playpath` varchar(255) DEFAULT NULL COMMENT 'SS对应的媒体服务器放音路径',
+  `ss_media_recordpath` varchar(255) DEFAULT NULL COMMENT 'SS对应的媒体服务器录音路径',
+  `ss_media_fileserverport` int(11) DEFAULT NULL COMMENT 'ss对应的媒体服务器文件接收端口或IVR文件接收端口',
+  `register_ip` varchar(255) DEFAULT NULL COMMENT 'SIP注册服务器地址',
+  `register_port` int(11) DEFAULT NULL COMMENT 'SIP注册服务器端口',
+  `cti_linkid` varchar(100) DEFAULT '' COMMENT 'CTI连接ID',
+  `cti_userid` varchar(100) DEFAULT '' COMMENT 'CTI用户ID',
+  `cti_password` varchar(100) DEFAULT '' COMMENT 'CTI用户密码',
+  `media_for_lan` int(11) DEFAULT '0' COMMENT 'MG是否用于内网，0代表本MG不用于内网，1代表本MG仅用于内网。默认是0',
+  `register_ip_lan` varchar(255) DEFAULT '' COMMENT '当MG用于内网的时候，注册的IP地址。',
+  `register_port_lan` int(11) DEFAULT '0' COMMENT '当MG用于内网的时候，注册的端口',
+  `tts_path` varchar(255) DEFAULT '' COMMENT '下载tts的wav文件存放的路径',
+  `tts_gateway_ip` varchar(255) DEFAULT '' COMMENT 'tts网关url',
+  `record_auth` varchar(255) DEFAULT '' COMMENT 'cti录音模块的auth',
+  `is_leader` tinyint(4) DEFAULT '0' COMMENT '站点是主备：1:主:，2:被，0: 默认没有含义',
+  `station_group` int(11) DEFAULT '0' COMMENT '站点分组概念主要服务于双中心。pds只加载同一个组里的任务',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `memo` (`memo`) USING BTREE,
+  KEY `index_no` (`station_no`) USING BTREE,
+  KEY `prim_ip_index` (`ipaddr`) USING BTREE,
+  KEY `redundance_ip_index` (`redundance_ip`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=198 DEFAULT CHARSET=utf8 COMMENT='站点信息表';
+
+-- ----------------------------
+-- Records of ss_station
+-- ----------------------------
+BEGIN;
+INSERT INTO `ss_station` VALUES (2, 2, 101, '114.215.196.183', 8066, '', 0, '', 0, '', 'http://114.215.196.183:8066/cc-ivr/', '', '', 'ivr', 6869, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '/app/clpms/sounds/', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (7, 7, 7, '114.215.196.183', 38080, '', 0, '', 0, '', 'http://114.215.196.183:38080/', '', '', 'dba', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (8, 8, 6, '114.215.196.183', 28080, '', 0, '', 0, '', 'http://114.215.196.183:28080/aaa/service/', '', '', 'aaa', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (10, 10, 10, '114.215.196.183', 48080, '', 0, '', 0, '', 'http://114.215.196.183:48080', '', '', 'pds', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 1);
+INSERT INTO `ss_station` VALUES (11, 12, 4, '114.215.196.183', 8084, '', 0, '', 6868, '', 'http://114.215.196.183:8084/ccs', '', 'wss://ccdev.acloudcc.com:9090/ws', 'ccs', 19090, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (13, 13, 104, '114.215.196.183', 8188, '', 0, '', 0, '', '', '', '', '测试RTC网关', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (14, 14, 8, '114.215.196.183', 9999, '', 0, '', 0, '', '', '', 'wss://ccdev.acloudcc.com/oam/ws', 'oam', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (16, 16, 14, '114.215.196.183', 58080, '', 0, '', 0, '', 'http://114.215.196.183:58080/fileserver', '', '', 'fileserver', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (18, 18, 103, '114.215.196.183', 9195, '', 0, '', 0, '', 'http://114.215.196.183:9195', '', '', 'crontab', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (19, 19, 16, '114.215.196.183', 8380, '', 0, '', 0, '', 'http://114.215.196.183:8380', '', '', 'stat', 28802, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 1, 0);
+INSERT INTO `ss_station` VALUES (21, 21, 102, '114.215.196.183', 8880, '', 0, '', 0, '', '', '', '', 'clpss', 0, '', 0, '', '', 0, '114.215.196.183', 8880, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (22, 22, 100, '114.215.196.183', 8083, '', 0, '', 0, '', 'http://114.215.196.183:8083/acd', '', '', 'acd', 6001, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (23, 23, 15, '114.215.196.183', 58113, '', 0, '', 0, '', 'http://114.215.196.183:58113', '', '', 'api', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (24, 24, 22, '114.215.196.183', 8123, '', 0, '', 0, '', 'http://192.168.177.183:58123', '', '', 'push', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (25, 25, 3, '114.215.196.183', 9910, '', 0, '', 0, '', 'http://114.215.196.183:9910', '', '', 'SS', 9977, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (195, 1, 2, '114.215.196.183', 38025, '', 0, '', 0, '', '', '', '', 'MG', 0, '', 0, '/app/clpms/sounds/', '/app/clpms/record/', 58080, '114.215.196.183', 8880, '', '', '', 0, '', 0, '', '', '', 0, 0);
+INSERT INTO `ss_station` VALUES (197, 15, 9, '114.215.196.183', 18080, '', 0, '', 0, '', 'http://114.215.196.183:18080/3cs', '', '', 'cccs', 0, '', 0, '', '', 0, '', 0, '', '', '', 0, '', 0, '', '', '', 0, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ss_stationrelation
+-- ----------------------------
+DROP TABLE IF EXISTS `ss_stationrelation`;
+CREATE TABLE `ss_stationrelation` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '站点关联表',
+  `stationno` int(11) DEFAULT NULL COMMENT '站点号',
+  `peer_no` int(11) DEFAULT NULL COMMENT '关联站点号',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `index_station_peer` (`stationno`,`peer_no`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=260 DEFAULT CHARSET=utf8 COMMENT='站点关联表';
+
+-- ----------------------------
+-- Records of ss_stationrelation
+-- ----------------------------
+BEGIN;
+INSERT INTO `ss_stationrelation` VALUES (245, 1, 25);
+INSERT INTO `ss_stationrelation` VALUES (188, 7, 87);
+INSERT INTO `ss_stationrelation` VALUES (258, 8, 25);
+INSERT INTO `ss_stationrelation` VALUES (46, 10, 11);
+INSERT INTO `ss_stationrelation` VALUES (32, 10, 201);
+INSERT INTO `ss_stationrelation` VALUES (45, 11, 10);
+INSERT INTO `ss_stationrelation` VALUES (249, 11, 15);
+INSERT INTO `ss_stationrelation` VALUES (30, 11, 201);
+INSERT INTO `ss_stationrelation` VALUES (201, 11, 213);
+INSERT INTO `ss_stationrelation` VALUES (248, 15, 11);
+INSERT INTO `ss_stationrelation` VALUES (259, 15, 12);
+INSERT INTO `ss_stationrelation` VALUES (251, 15, 13);
+INSERT INTO `ss_stationrelation` VALUES (246, 15, 21);
+INSERT INTO `ss_stationrelation` VALUES (247, 21, 15);
+INSERT INTO `ss_stationrelation` VALUES (244, 25, 1);
+INSERT INTO `ss_stationrelation` VALUES (257, 25, 8);
+INSERT INTO `ss_stationrelation` VALUES (210, 61, 87);
+INSERT INTO `ss_stationrelation` VALUES (234, 61, 215);
+INSERT INTO `ss_stationrelation` VALUES (187, 87, 7);
+INSERT INTO `ss_stationrelation` VALUES (232, 87, 215);
+INSERT INTO `ss_stationrelation` VALUES (29, 201, 11);
+INSERT INTO `ss_stationrelation` VALUES (224, 213, 11);
+INSERT INTO `ss_stationrelation` VALUES (204, 213, 666);
+INSERT INTO `ss_stationrelation` VALUES (235, 215, 61);
+INSERT INTO `ss_stationrelation` VALUES (205, 666, 213);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for version
+-- ----------------------------
+DROP TABLE IF EXISTS `version`;
+CREATE TABLE `version` (
+  `table_name` varchar(32) NOT NULL,
+  `table_version` int(10) unsigned NOT NULL DEFAULT '0',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  UNIQUE KEY `table_name_idx` (`table_name`) USING BTREE,
+  KEY `idx_update_time` (`update_time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of version
+-- ----------------------------
+BEGIN;
+INSERT INTO `version` VALUES ('location', 1013, '2020-10-25 23:03:05');
+INSERT INTO `version` VALUES ('siu_users', 7, '2019-09-07 11:19:57');
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;

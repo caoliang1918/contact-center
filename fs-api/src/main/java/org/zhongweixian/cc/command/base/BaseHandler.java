@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.*;
-import org.zhongweixian.cc.fs.FastDFSClient;
+import org.zhongweixian.cc.cache.fastdfs.FastDFSClient;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;

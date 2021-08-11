@@ -199,32 +199,6 @@ public class CacheService {
          * 呼入特服号
          */
         vdnPhoneMap = vdnPhoneMapper.selectListByMap(vdnParams).stream().collect(Collectors.toMap(VdnPhone::getPhone, phone -> phone));
-
-    }
-
-    /**
-     * 获取号码路由字冠
-     *
-     * @param companyId
-     * @param called
-     * @return
-     */
-    public String getOrigin(Long companyId, String called) {
-        CompanyInfo companyInfo = companyMap.get(companyId);
-        RouteGroupPo routeGroup = null;
-        //先匹配最长的。
-        for (String route : companyInfo.getRouteGroupMap().keySet()) {
-            if (called.contains(route)) {
-                routeGroup = companyInfo.getRouteGroupMap().get(route);
-                break;
-            }
-        }
-        if (routeGroup == null || CollectionUtils.isEmpty(routeGroup.getRouteGetways())) {
-            return null;
-        }
-        //根据RouteGroup的规则判断
-        Integer index = 0;
-        return routeGroup.getRouteGetways().get(index).getMediaHost() + ":" + routeGroup.getRouteGetways().get(index).getMediaPort();
     }
 
     public RouteGetway getRouteGetway(Long companyId, String called) {

@@ -1,7 +1,5 @@
 package org.zhongweixian.ivr.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
@@ -12,7 +10,6 @@ import org.cti.cc.mapper.CallLogMapper;
 import org.cti.cc.mapper.PushFailLogMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.CallLogPo;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -39,8 +36,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Autowired
     private PushFailLogMapper pushFailLogMapper;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+
 
     @Value("${call.cdr.mq:0}")
     private Integer callCdrMq;
@@ -54,7 +50,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Override
     public int saveCallDevice(CallDevice callDevice) {
         if (callCdrMq == 1) {
-            rabbitTemplate.convertAndSend(Constants.CALL_DEVICE_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDevice));
+            //rabbitTemplate.convertAndSend(Constants.CALL_DEVICE_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDevice));
             return 0;
         }
         return callDeviceMapper.insertSelective(callDevice);
@@ -66,7 +62,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return 0;
         }
         callDetails.forEach(callDetail -> {
-            rabbitTemplate.convertAndSend(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
+           // rabbitTemplate.convertAndSend(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
         });
         return 1;
     }
@@ -78,7 +74,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         }
         logger.info("callId:{} , answerTime:{}", callLog.getCallId(), callLog.getAnswerTime());
         if (callCdrMq == 1) {
-            rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
+           // rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
             return 0;
         }
 
