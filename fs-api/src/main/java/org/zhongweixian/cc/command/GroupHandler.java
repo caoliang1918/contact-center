@@ -76,7 +76,7 @@ public class GroupHandler extends BaseHandler {
         if (deviceId == null || groupInfo == null) {
             return;
         }
-        logger.info("callId:{} on group:{}", callInfo.getCallId(), groupInfo.getName());
+        logger.info("callId:{} on groupId:{} groupName:{}", callInfo.getCallId(), groupInfo.getId(), groupInfo.getName());
         CallDetail joinGroup = null;
         Long now = Instant.now().toEpochMilli();
         if (callInfo.getFristQueueTime() == null) {
@@ -108,14 +108,15 @@ public class GroupHandler extends BaseHandler {
             callAgent(agentInfo, callInfo, deviceId);
             return;
         }
-        logger.info("callId:{} join group:{} agent busy", callInfo.getCallId(), groupInfo.getName());
+        logger.info("callId:{} join group:{} agent busy", callInfo.getCallId(), groupInfo.getId());
 
         //排队溢出策略
         GroupOverflowPo groupOverFlow = getEffectiveOverflow(groupInfo);
         if (groupOverFlow == null) {
-            logger.warn("groupName:{} of groupOverflow is null, callId:{}", groupInfo.getName(), callInfo.getCallId());
+            logger.error("callId:{}, groupName:{} 无有效的溢出策略", callInfo.getCallId(), groupInfo.getName());
             return;
         }
+        logger.info("callId:{}, group:{} overflow:{}", callInfo.getCallId(), groupInfo.getName(), groupOverFlow.getName());
 
 
         /**
@@ -123,7 +124,7 @@ public class GroupHandler extends BaseHandler {
          */
         switch (groupOverFlow.getHandleType()) {
             case 1:
-                logger.info("group:{} handleType is lineUp, queueTimeout:{}, busyType:{}, busyTimeoutType:{}, overflowType:{}, overflowValue:{}, callId:{}", groupInfo.getName(), groupOverFlow.getQueueTimeout(), groupOverFlow.getBusyType(), groupOverFlow.getBusyTimeoutType(), groupOverFlow.getOverflowType(), groupOverFlow.getOverflowValue(), callInfo.getCallId());
+                logger.info("group:{} handleType is lineUp, queueTimeout:{}秒, busyType:{}, busyTimeoutType:{}, overflowType:{}, overflowValue:{}, callId:{}", groupInfo.getName(), groupOverFlow.getQueueTimeout(), groupOverFlow.getBusyType(), groupOverFlow.getBusyTimeoutType(), groupOverFlow.getOverflowType(), groupOverFlow.getOverflowValue(), callInfo.getCallId());
                 PriorityQueue<CallQueue> callQueues = callInfoMap.get(groupId);
                 if (callQueues == null) {
                     callQueues = new PriorityQueue<CallQueue>();
@@ -142,7 +143,7 @@ public class GroupHandler extends BaseHandler {
                 break;
 
             case 2:
-                overFlowHandler.overflow(callInfo, deviceId, groupId);
+                overFlowHandler.overflow(callInfo, deviceId, groupOverFlow);
                 break;
 
             case 3:
@@ -265,7 +266,11 @@ public class GroupHandler extends BaseHandler {
             return null;
         }
         for (GroupOverflowPo groupOverflowPo : groupInfo.getGroupOverflows()) {
-            return groupOverflowPo;
+            PriorityQueue<CallQueue> callQueues = callInfoMap.get(groupInfo.getId());
+            if (groupOverflowPo.isAvailable(callQueues == null ? 0 : callQueues.size(), groupInfo.getMaxWaitTime(), groupInfo.getCallInAnswer(), groupInfo.getCallInTotal())) {
+                return groupOverflowPo;
+            }
+            return null;
         }
         return null;
     }

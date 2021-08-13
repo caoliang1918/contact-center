@@ -55,7 +55,7 @@ public class Group implements Serializable {
     private Long calledDisplayId;
 
     /**
-     * 
+     * 1:振铃录音,2:接通录音
      */
     private Integer recordType;
 
@@ -67,7 +67,7 @@ public class Group implements Serializable {
     /**
      * 
      */
-    private Integer ttsEngine;
+    private Long ttsEngine;
 
     /**
      * 转坐席时播放内容
@@ -234,11 +234,11 @@ public class Group implements Serializable {
         this.levelValue = levelValue;
     }
 
-    public Integer getTtsEngine() {
+    public Long getTtsEngine() {
         return ttsEngine;
     }
 
-    public void setTtsEngine(Integer ttsEngine) {
+    public void setTtsEngine(Long ttsEngine) {
         this.ttsEngine = ttsEngine;
     }
 

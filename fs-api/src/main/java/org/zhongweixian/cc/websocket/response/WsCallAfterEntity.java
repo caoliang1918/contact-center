@@ -75,6 +75,16 @@ public class WsCallAfterEntity {
      */
     private Long talkTime;
 
+    /**
+     * 录音开始时间
+     */
+    private Long recordTime;
+
+    /**
+     * 录音地址
+     */
+    private String record;
+
     public Long getCallId() {
         return callId;
     }
@@ -179,6 +189,22 @@ public class WsCallAfterEntity {
         this.talkTime = talkTime;
     }
 
+    public Long getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(Long recordTime) {
+        this.recordTime = recordTime;
+    }
+
+    public String getRecord() {
+        return record;
+    }
+
+    public void setRecord(String record) {
+        this.record = record;
+    }
+
     @Override
     public String toString() {
         return "WsCallAfterEntity{" +
@@ -195,6 +221,8 @@ public class WsCallAfterEntity {
                 ", media='" + media + '\'' +
                 ", hangup='" + hangup + '\'' +
                 ", talkTime=" + talkTime +
+                ", recordTime=" + recordTime +
+                ", record='" + record + '\'' +
                 '}';
     }
 }

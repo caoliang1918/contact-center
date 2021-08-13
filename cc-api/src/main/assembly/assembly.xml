@@ -17,7 +17,7 @@
             <directory>src/main/assembly/bin</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
-                <include>open-api.sh</include>
+                <include>cc-api.sh</include>
             </includes>
             <fileMode>0755</fileMode>
             <lineEnding>unix</lineEnding>

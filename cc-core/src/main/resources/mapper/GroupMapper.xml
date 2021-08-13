@@ -13,7 +13,7 @@
     <result column="called_display_id" jdbcType="BIGINT" property="calledDisplayId" />
     <result column="record_type" jdbcType="INTEGER" property="recordType" />
     <result column="level_value" jdbcType="INTEGER" property="levelValue" />
-    <result column="tts_engine" jdbcType="INTEGER" property="ttsEngine" />
+    <result column="tts_engine" jdbcType="BIGINT" property="ttsEngine" />
     <result column="play_content" jdbcType="VARCHAR" property="playContent" />
     <result column="evaluate" jdbcType="BIGINT" property="evaluate" />
     <result column="queue_play" jdbcType="BIGINT" property="queuePlay" />
@@ -185,7 +185,7 @@
         #{levelValue,jdbcType=INTEGER},
       </if>
       <if test="ttsEngine != null">
-        #{ttsEngine,jdbcType=INTEGER},
+        #{ttsEngine,jdbcType=BIGINT},
       </if>
       <if test="playContent != null">
         #{playContent,jdbcType=VARCHAR},
@@ -268,7 +268,7 @@
         level_value = #{levelValue,jdbcType=INTEGER},
       </if>
       <if test="ttsEngine != null">
-        tts_engine = #{ttsEngine,jdbcType=INTEGER},
+        tts_engine = #{ttsEngine,jdbcType=BIGINT},
       </if>
       <if test="playContent != null">
         play_content = #{playContent,jdbcType=VARCHAR},

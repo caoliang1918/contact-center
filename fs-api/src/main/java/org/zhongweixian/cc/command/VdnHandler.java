@@ -52,7 +52,7 @@ public class VdnHandler extends BaseHandler {
                     hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
                     return;
                 }
-                logger.info("callId:{} join groupId:{}, groupName:{}", callInfo.getCallId(), vdnSchedulePo.getRouteValue(), groupInfo.getName());
+                logger.debug("callId:{} join groupId:{}, groupName:{}", callInfo.getCallId(), vdnSchedulePo.getRouteValue(), groupInfo.getName());
                 callInfo.setGroupId(groupInfo.getId());
                 groupHandler.hander(deviceId, callInfo, groupInfo);
                 break;

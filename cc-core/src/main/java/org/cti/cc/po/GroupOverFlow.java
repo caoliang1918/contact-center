@@ -15,7 +15,7 @@ public class GroupOverFlow extends OverflowConfig {
     /**
      * 前置条件
      */
-    private List<OverflowFront> overflowFronts;
+    protected List<OverflowFront> overflowFronts;
 
 
     /**

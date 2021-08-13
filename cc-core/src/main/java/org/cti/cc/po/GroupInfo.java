@@ -47,6 +47,27 @@ public class GroupInfo extends Group {
      */
     private GroupMemoryConfig groupMemoryConfig;
 
+    /**
+     * 最大空闲时长
+     */
+    private Integer maxWaitTime = 0;
+
+    /**
+     * 最大空闲时长
+     */
+    private Integer maxReadyTime = 0;
+
+    /**
+     * 呼入总数
+     */
+    private Integer callInTotal = 0;
+
+    /**
+     * 呼入应答数
+     */
+    private Integer callInAnswer = 0;
+
+
     public List<String> getOnlineAgents() {
         return onlineAgents;
     }
@@ -101,5 +122,37 @@ public class GroupInfo extends Group {
 
     public void setGroupMemoryConfig(GroupMemoryConfig groupMemoryConfig) {
         this.groupMemoryConfig = groupMemoryConfig;
+    }
+
+    public Integer getMaxWaitTime() {
+        return maxWaitTime;
+    }
+
+    public void setMaxWaitTime(Integer maxWaitTime) {
+        this.maxWaitTime = maxWaitTime;
+    }
+
+    public Integer getMaxReadyTime() {
+        return maxReadyTime;
+    }
+
+    public void setMaxReadyTime(Integer maxReadyTime) {
+        this.maxReadyTime = maxReadyTime;
+    }
+
+    public Integer getCallInTotal() {
+        return callInTotal;
+    }
+
+    public void setCallInTotal(Integer callInTotal) {
+        this.callInTotal = callInTotal;
+    }
+
+    public Integer getCallInAnswer() {
+        return callInAnswer;
+    }
+
+    public void setCallInAnswer(Integer callInAnswer) {
+        this.callInAnswer = callInAnswer;
     }
 }

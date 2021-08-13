@@ -26,7 +26,6 @@ import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 import org.zhongweixian.cc.websocket.response.WsCallAfterEntity;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -296,20 +295,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             return;
         }
         WsCallAfterEntity afterEntity = new WsCallAfterEntity();
-        afterEntity.setCaller(callInfo.getCaller());
-        if (agentInfo.getHiddenCustomer() == 1) {
-            afterEntity.setCalled(hiddenNumber(callInfo.getCalled()));
-        }
-        afterEntity.setCallId(callInfo.getCallId());
-        afterEntity.setCallType(callInfo.getCallType());
-        afterEntity.setCause(cause);
-        afterEntity.setAnswerTime(callInfo.getAnswerTime());
-        afterEntity.setDirection(callInfo.getDirection());
-        afterEntity.setGroupId(callInfo.getGroupId());
-        afterEntity.setCallTime(callInfo.getCallTime());
-        afterEntity.setTalkTime(callInfo.getTalkTime());
-        afterEntity.setEndTime(callInfo.getEndTime());
-        afterEntity.setMedia(callInfo.getMedia());
+        BeanUtils.copyProperties(callInfo, afterEntity);
 
         int result = this.sendAgentMessage(agentInfo, new WsResponseEntity<WsCallAfterEntity>(AgentState.AFTER.name(), agentInfo.getAgentKey(), afterEntity));
         if (result == 0) {

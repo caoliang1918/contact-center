@@ -13,23 +13,8 @@ import org.zhongweixian.cc.command.base.BaseHandler;
 @Component
 public class OverFlowHandler extends BaseHandler {
 
-    public void overflow(CallInfo callInfo, String deviceId, Long groupId) {
-        GroupInfo groupInfo = cacheService.getGroupInfo(groupId);
-        if (groupInfo == null) {
-            callInfo.setHangupDir(3);
-            callInfo.setHangupCause(CauseEnums.PARAMTER_ERROR.name());
-            hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
-            return;
-        }
-        GroupOverFlow groupOverFlow = groupHandler.getEffectiveOverflow(groupInfo);
-        if (groupOverFlow == null || groupOverFlow.getOverflowType() == null || groupOverFlow.getOverflowValue() == null) {
-            logger.warn("没有有效的溢出策略 callId:{}, group:{}", callInfo.getCallId(), groupInfo.getName());
-            callInfo.setHangupDir(3);
-            callInfo.setHangupCause(CauseEnums.PARAMTER_ERROR.name());
-            hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
-            return;
-        }
-        logger.info("group:{} handleType is overflow, overflowType:{}, overflowValue:{}, callId:{}", groupInfo.getName(), groupOverFlow.getOverflowType(), groupOverFlow.getOverflowValue(), callInfo.getCallId());
+    public void overflow(CallInfo callInfo, String deviceId,   GroupOverflowPo groupOverFlow) {
+        logger.info("callId:{} handleType is overflow, overflowType:{}, overflowValue:{}", callInfo.getCallId(), groupOverFlow.getOverflowType(), groupOverFlow.getOverflowValue());
         callInfo.setOverflowCount(callInfo.getOverflowCount() + 1);
 
         /**

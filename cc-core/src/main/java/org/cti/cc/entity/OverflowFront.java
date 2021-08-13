@@ -35,12 +35,13 @@ public class OverflowFront implements Serializable {
     private Long overflowId;
 
     /**
-     * key
+     * frontType 1:队列长度; 2:队列等待最大时长; 3:呼损率
      */
-    private String frontKey;
+    private Integer frontType;
 
     /**
-     * 5种条件
+     * 5种条件:
+     * 0:全部; 1:小于或等于; 2:等于; 3:大于或等于; 4:大于
      */
     private Integer compareCondition;
 
@@ -101,12 +102,12 @@ public class OverflowFront implements Serializable {
         this.overflowId = overflowId;
     }
 
-    public String getFrontKey() {
-        return frontKey;
+    public Integer getFrontType() {
+        return frontType;
     }
 
-    public void setFrontKey(String frontKey) {
-        this.frontKey = frontKey == null ? null : frontKey.trim();
+    public void setFrontType(Integer frontType) {
+        this.frontType = frontType;
     }
 
     public Integer getCompareCondition() {
@@ -152,7 +153,7 @@ public class OverflowFront implements Serializable {
         sb.append(", uts=").append(uts);
         sb.append(", companyId=").append(companyId);
         sb.append(", overflowId=").append(overflowId);
-        sb.append(", frontKey=").append(frontKey);
+        sb.append(", frontType=").append(frontType);
         sb.append(", compareCondition=").append(compareCondition);
         sb.append(", rankValueStart=").append(rankValueStart);
         sb.append(", rankValue=").append(rankValue);
@@ -179,7 +180,7 @@ public class OverflowFront implements Serializable {
             && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
             && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
             && (this.getOverflowId() == null ? other.getOverflowId() == null : this.getOverflowId().equals(other.getOverflowId()))
-            && (this.getFrontKey() == null ? other.getFrontKey() == null : this.getFrontKey().equals(other.getFrontKey()))
+            && (this.getFrontType() == null ? other.getFrontType() == null : this.getFrontType().equals(other.getFrontType()))
             && (this.getCompareCondition() == null ? other.getCompareCondition() == null : this.getCompareCondition().equals(other.getCompareCondition()))
             && (this.getRankValueStart() == null ? other.getRankValueStart() == null : this.getRankValueStart().equals(other.getRankValueStart()))
             && (this.getRankValue() == null ? other.getRankValue() == null : this.getRankValue().equals(other.getRankValue()))
@@ -195,7 +196,7 @@ public class OverflowFront implements Serializable {
         result = prime * result + ((getUts() == null) ? 0 : getUts().hashCode());
         result = prime * result + ((getCompanyId() == null) ? 0 : getCompanyId().hashCode());
         result = prime * result + ((getOverflowId() == null) ? 0 : getOverflowId().hashCode());
-        result = prime * result + ((getFrontKey() == null) ? 0 : getFrontKey().hashCode());
+        result = prime * result + ((getFrontType() == null) ? 0 : getFrontType().hashCode());
         result = prime * result + ((getCompareCondition() == null) ? 0 : getCompareCondition().hashCode());
         result = prime * result + ((getRankValueStart() == null) ? 0 : getRankValueStart().hashCode());
         result = prime * result + ((getRankValue() == null) ? 0 : getRankValue().hashCode());

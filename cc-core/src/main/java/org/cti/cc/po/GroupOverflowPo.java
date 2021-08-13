@@ -1,6 +1,9 @@
 package org.cti.cc.po;
 
+import org.cti.cc.entity.OverflowFront;
 import org.cti.cc.strategy.LineupStrategy;
+
+import java.math.BigDecimal;
 
 /**
  * Created by caoliang on 2020/11/25
@@ -26,6 +29,76 @@ public class GroupOverflowPo extends GroupOverFlow {
      * 电话排队策略接口
      */
     private LineupStrategy lineupStrategy;
+
+    /**
+     * @param queueSize    队列长度
+     * @param maxWaitTime  最大等待时长
+     * @param callInAnswer 呼入应答数
+     * @param callInTotal  呼入总数
+     * @return
+     */
+    public boolean isAvailable(Integer queueSize, Integer maxWaitTime, Integer callInAnswer, Integer callInTotal) {
+        boolean result = false;
+        if (overflowFronts == null || overflowFronts.isEmpty()) {
+            return result;
+        }
+
+        for (OverflowFront front : overflowFronts) {
+            switch (front.getFrontType()) {
+                case 1:
+                    //1:队列长度;
+                    result = compareCondition(queueSize, front);
+                    break;
+
+                case 2:
+                    // 2:队列等待最大时长;
+                    result = compareCondition(maxWaitTime, front);
+                    break;
+
+                case 3:
+                    // 3:呼损率
+                    int persent = 0;
+                    if (callInAnswer > 0) {
+                        persent = (int) (new BigDecimal(1).subtract(new BigDecimal(callInAnswer).divide(new BigDecimal(callInTotal), 2, BigDecimal.ROUND_HALF_EVEN)).doubleValue() * 100);
+                    }
+                    result = compareCondition(persent, front);
+                    break;
+            }
+            if (result) {
+                return result;
+            }
+            continue;
+        }
+        return result;
+    }
+
+    /**
+     * 0:全部; 1:小于或等于; 2:等于; 3:大于或等于; 4:大于
+     *
+     * @param var
+     * @param front
+     * @return
+     */
+    private boolean compareCondition(Integer var, OverflowFront front) {
+        boolean result = false;
+        switch (front.getCompareCondition()) {
+            case 0:
+                return true;
+            case 1:
+                result = front.getRankValue().compareTo(var) >= 0;
+                break;
+            case 2:
+                result = front.getRankValue().compareTo(var) == 0;
+                break;
+            case 3:
+                result = front.getRankValue().compareTo(var) <= 0;
+                break;
+            case 4:
+                result = front.getRankValue().compareTo(var) < 0;
+                break;
+        }
+        return result;
+    }
 
 
     public Long getGroupId() {
