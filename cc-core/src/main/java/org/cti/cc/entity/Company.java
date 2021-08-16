@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 企业信息表
  *
  * @author caoliang
- * @date   2020/06/06
+ * @date 2020/06/06
  */
 public class Company implements Serializable {
     /**
@@ -73,6 +73,11 @@ public class Company implements Serializable {
      * 隐藏客户号码(0:不隐藏;1:隐藏)
      */
     private Integer hiddenCustomer;
+
+    /**
+     * 坐席密码等级
+     */
+    private Integer secretType;
 
     /**
      * 验证秘钥
@@ -265,6 +270,14 @@ public class Company implements Serializable {
         this.hiddenCustomer = hiddenCustomer;
     }
 
+    public Integer getSecretType() {
+        return secretType;
+    }
+
+    public void setSecretType(Integer secretType) {
+        this.secretType = secretType;
+    }
+
     public String getSecretKey() {
         return secretKey;
     }
@@ -455,35 +468,35 @@ public class Company implements Serializable {
         }
         Company other = (Company) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
-            && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
-            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-            && (this.getIdPath() == null ? other.getIdPath() == null : this.getIdPath().equals(other.getIdPath()))
-            && (this.getPid() == null ? other.getPid() == null : this.getPid().equals(other.getPid()))
-            && (this.getCompanyCode() == null ? other.getCompanyCode() == null : this.getCompanyCode().equals(other.getCompanyCode()))
-            && (this.getContact() == null ? other.getContact() == null : this.getContact().equals(other.getContact()))
-            && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
-            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getBillType() == null ? other.getBillType() == null : this.getBillType().equals(other.getBillType()))
-            && (this.getPayType() == null ? other.getPayType() == null : this.getPayType().equals(other.getPayType()))
-            && (this.getHiddenCustomer() == null ? other.getHiddenCustomer() == null : this.getHiddenCustomer().equals(other.getHiddenCustomer()))
-            && (this.getSecretKey() == null ? other.getSecretKey() == null : this.getSecretKey().equals(other.getSecretKey()))
-            && (this.getIvrLimit() == null ? other.getIvrLimit() == null : this.getIvrLimit().equals(other.getIvrLimit()))
-            && (this.getAgentLimit() == null ? other.getAgentLimit() == null : this.getAgentLimit().equals(other.getAgentLimit()))
-            && (this.getGroupLimit() == null ? other.getGroupLimit() == null : this.getGroupLimit().equals(other.getGroupLimit()))
-            && (this.getGroupAgentLimit() == null ? other.getGroupAgentLimit() == null : this.getGroupAgentLimit().equals(other.getGroupAgentLimit()))
-            && (this.getAgentState() == null ? other.getAgentState() == null : this.getAgentState().equals(other.getAgentState()))
-            && (this.getInboundStat() == null ? other.getInboundStat() == null : this.getInboundStat().equals(other.getInboundStat()))
-            && (this.getOutboundStat() == null ? other.getOutboundStat() == null : this.getOutboundStat().equals(other.getOutboundStat()))
-            && (this.getGroupWaitStat() == null ? other.getGroupWaitStat() == null : this.getGroupWaitStat().equals(other.getGroupWaitStat()))
-            && (this.getBlacklist() == null ? other.getBlacklist() == null : this.getBlacklist().equals(other.getBlacklist()))
-            && (this.getNotifyUrl() == null ? other.getNotifyUrl() == null : this.getNotifyUrl().equals(other.getNotifyUrl()))
-            && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
-            && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
-            && (this.getExt3() == null ? other.getExt3() == null : this.getExt3().equals(other.getExt3()))
-            && (this.getExt4() == null ? other.getExt4() == null : this.getExt4().equals(other.getExt4()))
-            && (this.getExt5() == null ? other.getExt5() == null : this.getExt5().equals(other.getExt5()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+                && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
+                && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
+                && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+                && (this.getIdPath() == null ? other.getIdPath() == null : this.getIdPath().equals(other.getIdPath()))
+                && (this.getPid() == null ? other.getPid() == null : this.getPid().equals(other.getPid()))
+                && (this.getCompanyCode() == null ? other.getCompanyCode() == null : this.getCompanyCode().equals(other.getCompanyCode()))
+                && (this.getContact() == null ? other.getContact() == null : this.getContact().equals(other.getContact()))
+                && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
+                && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
+                && (this.getBillType() == null ? other.getBillType() == null : this.getBillType().equals(other.getBillType()))
+                && (this.getPayType() == null ? other.getPayType() == null : this.getPayType().equals(other.getPayType()))
+                && (this.getHiddenCustomer() == null ? other.getHiddenCustomer() == null : this.getHiddenCustomer().equals(other.getHiddenCustomer()))
+                && (this.getSecretKey() == null ? other.getSecretKey() == null : this.getSecretKey().equals(other.getSecretKey()))
+                && (this.getIvrLimit() == null ? other.getIvrLimit() == null : this.getIvrLimit().equals(other.getIvrLimit()))
+                && (this.getAgentLimit() == null ? other.getAgentLimit() == null : this.getAgentLimit().equals(other.getAgentLimit()))
+                && (this.getGroupLimit() == null ? other.getGroupLimit() == null : this.getGroupLimit().equals(other.getGroupLimit()))
+                && (this.getGroupAgentLimit() == null ? other.getGroupAgentLimit() == null : this.getGroupAgentLimit().equals(other.getGroupAgentLimit()))
+                && (this.getAgentState() == null ? other.getAgentState() == null : this.getAgentState().equals(other.getAgentState()))
+                && (this.getInboundStat() == null ? other.getInboundStat() == null : this.getInboundStat().equals(other.getInboundStat()))
+                && (this.getOutboundStat() == null ? other.getOutboundStat() == null : this.getOutboundStat().equals(other.getOutboundStat()))
+                && (this.getGroupWaitStat() == null ? other.getGroupWaitStat() == null : this.getGroupWaitStat().equals(other.getGroupWaitStat()))
+                && (this.getBlacklist() == null ? other.getBlacklist() == null : this.getBlacklist().equals(other.getBlacklist()))
+                && (this.getNotifyUrl() == null ? other.getNotifyUrl() == null : this.getNotifyUrl().equals(other.getNotifyUrl()))
+                && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
+                && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
+                && (this.getExt3() == null ? other.getExt3() == null : this.getExt3().equals(other.getExt3()))
+                && (this.getExt4() == null ? other.getExt4() == null : this.getExt4().equals(other.getExt4()))
+                && (this.getExt5() == null ? other.getExt5() == null : this.getExt5().equals(other.getExt5()))
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
     @Override

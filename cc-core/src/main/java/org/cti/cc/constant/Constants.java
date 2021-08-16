@@ -13,11 +13,20 @@ public class Constants {
     public static final String CO = ":";
 
 
-    public static final  String HTTP = "http://";
+    public static final String HTTP = "http://";
 
+    /**
+     * vip等级进线
+     */
     public static final String VIP_LEVEL = "vipLevel";
+
     public static final String START_TIME = "startTime";
     public static final String QUEUE_TIME = "queueTime";
+
+    /**
+     * 指定坐席
+     */
+    public static final String DESIGNATE_AGENT = "desiganteAgent";
 
     /**
      * 当前空闲时间
@@ -49,27 +58,18 @@ public class Constants {
     public final static String CALL_DEVICE_QUEUE = "call.device.queue";
     public final static String CALL_LOG_EXCHANGE = "call.log.exchange";
     public final static String CALL_LOG_QUEUE = "call.log.queue";
-    public final static String CALL_DETAIL_EXCHANGE="call.detail.exchange";
-    public final static String CALL_DETAIL_QUEUE="call.detail.queue";
+    public final static String CALL_DETAIL_EXCHANGE = "call.detail.exchange";
+    public final static String CALL_DETAIL_QUEUE = "call.detail.queue";
 
 
     public final static String AGENT_STATE_LOG_EXCHANGE = "agent.state.log.exchange";
     public final static String AGENT_STATE_LOG_QUEUE = "agent.state.log.queue";
 
 
-
-
     /**
      * 配置变更相关
      */
     public final static String CONFIG_EXCHANGE = "cc.config.exchange";
-
-
-
-
-
-
-
 
 
 }

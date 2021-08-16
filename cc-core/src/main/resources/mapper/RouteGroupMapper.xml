@@ -14,7 +14,8 @@
 
   <select id="selectGetway" parameterType="Long" resultType="org.cti.cc.entity.RouteGetway">
      select
-        a.id, a.cts, a.uts, a.name, a.media_host as mediaHost , a.media_port as mediaPort
+       a.id, a.cts, a.uts, a.name, a.media_host as mediaHost , a.media_port as mediaPort, a.caller_prefix as callerPrefix,
+       a.called_prefix as calledPrefix, a.profile, a.sip_header1 as sipHeader1, a.sip_header2 sipHeader2, a.sip_header3 as sipHeader3
      from
         cc_route_getway a , cc_route_getway_group b where a.id = b.getway_id and b.route_group_id = #{id} and a.status = 1
   </select>

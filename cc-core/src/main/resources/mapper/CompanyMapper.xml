@@ -15,6 +15,7 @@
     <result column="bill_type" jdbcType="INTEGER" property="billType" />
     <result column="pay_type" jdbcType="INTEGER" property="payType" />
     <result column="hidden_customer" jdbcType="INTEGER" property="hiddenCustomer" />
+    <result column="secret_type" jdbcType="INTEGER" property="secretType" />
     <result column="secret_key" jdbcType="VARCHAR" property="secretKey" />
     <result column="ivr_limit" jdbcType="INTEGER" property="ivrLimit" />
     <result column="agent_limit" jdbcType="INTEGER" property="agentLimit" />
@@ -35,7 +36,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, cts, uts, name, id_path, pid, company_code, contact, phone, balance, bill_type, 
-    pay_type, hidden_customer, secret_key, ivr_limit, agent_limit, group_limit, group_agent_limit,
+    pay_type, hidden_customer, secret_type, secret_key, ivr_limit, agent_limit, group_limit, group_agent_limit,
     agent_state, inbound_stat, outbound_stat, group_wait_stat, blacklist, notify_url,
     ext1, ext2, ext3, ext4, ext5, status
   </sql>
@@ -53,7 +54,7 @@
     insert into cc_company (id, cts, uts, name,
       id_path, pid, company_code,
       contact, phone, balance,
-      bill_type, pay_type,hidden_customer, secret_key,
+      bill_type, pay_type,hidden_customer, secret_type, secret_key,
       ivr_limit, agent_limit, group_limit,
       group_agent_limit, agent_state, inbound_stat,
       outbound_stat, group_wait_stat, blacklist,
@@ -63,7 +64,7 @@
     values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
       #{idPath,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, #{companyCode,jdbcType=VARCHAR},
       #{contact,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{balance,jdbcType=BIGINT},
-      #{billType,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{hiddenCustomer,jdbcType=INTEGER}, #{secretKey,jdbcType=VARCHAR},
+      #{billType,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{hiddenCustomer,jdbcType=INTEGER}, #{secretType,jdbcType=INTEGER}, #{secretKey,jdbcType=VARCHAR},
       #{ivrLimit,jdbcType=INTEGER}, #{agentLimit,jdbcType=INTEGER}, #{groupLimit,jdbcType=INTEGER},
       #{groupAgentLimit,jdbcType=INTEGER}, #{agentState,jdbcType=INTEGER}, #{inboundStat,jdbcType=INTEGER},
       #{outboundStat,jdbcType=INTEGER}, #{groupWaitStat,jdbcType=INTEGER}, #{blacklist,jdbcType=BIGINT},
@@ -112,6 +113,9 @@
       </if>
       <if test="hiddenCustomer != null">
         hidden_customer,
+      </if>
+      <if test="secretType != null">
+        secret_type,
       </if>
       <if test="secretKey != null">
         secret_key,
@@ -205,6 +209,9 @@
       <if test="hiddenCustomer != null">
         #{hiddenCustomer,jdbcType=INTEGER},
       </if>
+      <if test="secretType != null">
+        #{secretType,jdbcType=INTEGER},
+      </if>
       <if test="secretKey != null">
         #{secretKey,jdbcType=VARCHAR},
       </if>
@@ -294,6 +301,9 @@
       <if test="hiddenCustomer != null">
         hidden_customer = #{hiddenCustomer,jdbcType=INTEGER},
       </if>
+      <if test="secretType != null">
+        secret_type = #{secretType,jdbcType=INTEGER},
+      </if>
       <if test="secretKey != null">
         secret_key = #{secretKey,jdbcType=VARCHAR},
       </if>
@@ -346,39 +356,6 @@
         status = #{status,jdbcType=INTEGER},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.Company">
-    update cc_company
-    set cts = #{cts,jdbcType=BIGINT},
-      uts = #{uts,jdbcType=BIGINT},
-      name = #{name,jdbcType=VARCHAR},
-      id_path = #{idPath,jdbcType=VARCHAR},
-      pid = #{pid,jdbcType=BIGINT},
-      company_code = #{companyCode,jdbcType=VARCHAR},
-      contact = #{contact,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=VARCHAR},
-      balance = #{balance,jdbcType=BIGINT},
-      bill_type = #{billType,jdbcType=INTEGER},
-      pay_type = #{payType,jdbcType=INTEGER},
-      hidden_customer = #{hiddenCustomer,jdbcType=INTEGER},
-      secret_key = #{secretKey,jdbcType=VARCHAR},
-      ivr_limit = #{ivrLimit,jdbcType=INTEGER},
-      agent_limit = #{agentLimit,jdbcType=INTEGER},
-      group_limit = #{groupLimit,jdbcType=INTEGER},
-      group_agent_limit = #{groupAgentLimit,jdbcType=INTEGER},
-      agent_state = #{agentState,jdbcType=INTEGER},
-      inbound_stat = #{inboundStat,jdbcType=INTEGER},
-      outbound_stat = #{outboundStat,jdbcType=INTEGER},
-      group_wait_stat = #{groupWaitStat,jdbcType=INTEGER},
-      blacklist = #{blacklist,jdbcType=BIGINT},
-      notify_url = #{notifyUrl,jdbcType=VARCHAR},
-      ext1 = #{ext1,jdbcType=VARCHAR},
-      ext2 = #{ext2,jdbcType=VARCHAR},
-      ext3 = #{ext3,jdbcType=VARCHAR},
-      ext4 = #{ext4,jdbcType=VARCHAR},
-      ext5 = #{ext5,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 

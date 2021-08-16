@@ -131,7 +131,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                     //重新进入技能组
                     String deviceId = nextCommand.getNextValue();
                     GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
-                    groupHandler.hander(deviceId, callInfo, groupInfo);
+                    groupHandler.hander(callInfo, groupInfo, deviceId);
                     return;
                 }
                 if (StringUtils.isNotBlank(nextCommand.getNextValue())) {
@@ -333,7 +333,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                         //重新进入技能组
                         String deviceId = nextCommand.getNextValue();
                         GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
-                        groupHandler.hander(deviceId, callInfo, groupInfo);
+                        groupHandler.hander(callInfo, groupInfo, deviceId);
                     }
                     break;
                 case NEXT_TRANSFER_SUCCESS:

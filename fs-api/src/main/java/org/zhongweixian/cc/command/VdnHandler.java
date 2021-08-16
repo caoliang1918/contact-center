@@ -54,7 +54,7 @@ public class VdnHandler extends BaseHandler {
                 }
                 logger.debug("callId:{} join groupId:{}, groupName:{}", callInfo.getCallId(), vdnSchedulePo.getRouteValue(), groupInfo.getName());
                 callInfo.setGroupId(groupInfo.getId());
-                groupHandler.hander(deviceId, callInfo, groupInfo);
+                groupHandler.hander(callInfo, groupInfo, deviceId);
                 break;
 
             case 2:

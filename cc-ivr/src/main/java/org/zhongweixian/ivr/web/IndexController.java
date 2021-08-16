@@ -20,7 +20,8 @@ public class IndexController {
 
     @GetMapping()
     public String index() {
-        ivrMachine.runIvr(new CallInfo(), 1L);
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(1L).build();
+        ivrMachine.runIvr(callInfo, 1L);
         return "is ok";
     }
 }

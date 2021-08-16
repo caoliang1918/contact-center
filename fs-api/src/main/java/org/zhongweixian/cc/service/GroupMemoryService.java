@@ -1,9 +1,11 @@
-package org.cti.cc.mapper;
+package org.zhongweixian.cc.service;
 
 import org.cti.cc.entity.GroupMemory;
-import org.cti.cc.mapper.base.BaseMapper;
 
-public interface GroupMemoryMapper extends BaseMapper<GroupMemory> {
+/**
+ * Created by caoliang on 2021/8/14
+ */
+public interface GroupMemoryService extends BaseService<GroupMemory>{
 
     /**
      * 查询指定时间内的电话记录
@@ -12,5 +14,4 @@ public interface GroupMemoryMapper extends BaseMapper<GroupMemory> {
      * @return
      */
     GroupMemory selectByGroup(GroupMemory groupMemory);
-
 }

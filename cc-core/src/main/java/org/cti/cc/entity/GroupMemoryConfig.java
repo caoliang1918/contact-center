@@ -35,7 +35,7 @@ public class GroupMemoryConfig implements Serializable {
     private Long groupId;
 
     /**
-     * 匹配成功策略
+     * 匹配成功策略 1:等待记忆坐席 2:超时转其他空闲坐席 3:忙碌转空闲坐席
      */
     private Integer successStrategy;
 
@@ -45,7 +45,12 @@ public class GroupMemoryConfig implements Serializable {
     private Long successStrategyValue;
 
     /**
-     * 匹配失败策略
+     * 匹配失败策略:
+     * 1:其他空闲坐席
+     * 2:其他技能组
+     * 3:vdn
+     * 4:ivr
+     * 5:挂机
      */
     private Integer failStrategy;
 

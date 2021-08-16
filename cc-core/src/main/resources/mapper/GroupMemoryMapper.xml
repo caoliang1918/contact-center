@@ -125,4 +125,22 @@
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  <select id="selectByGroup" parameterType="org.cti.cc.entity.GroupMemory" resultMap="BaseResultMap" databaseId="mysql">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_group_memory
+    where
+        phone = #{phone,jdbcType=VARCHAR} and group_id = #{groupId,jdbcType=BIGINT} and uts >= #{cts} order by id desc limit 1
+  </select>
+
+  <select id="selectByGroup" parameterType="org.cti.cc.entity.GroupMemory" resultMap="BaseResultMap" databaseId="oracle">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_group_memory
+    where
+        phone = #{phone,jdbcType=VARCHAR} and group_id = #{groupId,jdbcType=BIGINT} and uts >= #{cts} and rownum = 1 order by id desc
+  </select>
 </mapper>

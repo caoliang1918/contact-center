@@ -1,11 +1,16 @@
 package org.zhongweixian.cc.command;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.cti.cc.constant.Constants;
+import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.CallDetail;
+import org.cti.cc.entity.GroupMemory;
+import org.cti.cc.entity.GroupMemoryConfig;
 import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.cti.cc.strategy.AgentStrategy;
+import org.cti.cc.util.DataTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -15,6 +20,7 @@ import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.service.AgentService;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -39,26 +45,11 @@ public class GroupHandler extends BaseHandler {
     private Map<Long, PriorityQueue<AgentQueue>> agentInfoMap = new ConcurrentHashMap<>();
 
 
-    @Autowired
-    private CacheService cacheService;
-
-    @Autowired
-    private FsListen fsListen;
-
-    @Autowired
-    private AgentService agentService;
-
-    @Autowired
-    private OverFlowHandler overFlowHandler;
-
-    @Autowired
-    private TransferAgentHandler transferAgentHandler;
-
     /**
      * 转接坐席线程
      */
-    private ThreadPoolExecutor wakeupCallService = new ThreadPoolExecutor(4, 4, 0L,
-            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryBuilder().setNameFormat("wakeup-call-pool-%d").build());
+    private ThreadPoolExecutor callAgentService = new ThreadPoolExecutor(4, 4, 0L,
+            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryBuilder().setNameFormat("call-agent-pool-%d").build());
 
 
     /**
@@ -71,8 +62,10 @@ public class GroupHandler extends BaseHandler {
      * 电话进入技能组,呼入电话有可能多次经过这
      *
      * @param callInfo
+     * @param groupInfo
+     * @param deviceId
      */
-    public void hander(String deviceId, CallInfo callInfo, GroupInfo groupInfo) {
+    public void hander(CallInfo callInfo, GroupInfo groupInfo, String deviceId) {
         if (deviceId == null || groupInfo == null) {
             return;
         }
@@ -93,8 +86,23 @@ public class GroupHandler extends BaseHandler {
         callInfo.getCallDetails().add(joinGroup);
         callInfo.setQueueStartTime(now);
 
+        AgentInfo agentInfo = null;
+        /**
+         * 指定坐席
+         */
+        if (desiganteAgent(callInfo, groupInfo, deviceId)) {
+            return;
+        }
+
+        /**
+         * 走记忆坐席
+         */
+        if (memonryAgent(callInfo, groupInfo, deviceId)) {
+            return;
+        }
+
         Long groupId = callInfo.getGroupId();
-        AgentInfo agentInfo = getAgentQueue(groupId);
+        agentInfo = getAgentQueue(groupId);
         if (agentInfo != null) {
             logger.info("callId:{} get free agent:{} on group:{}", callInfo.getCallId(), agentInfo.getAgentKey(), groupId);
             //呼叫坐席
@@ -114,6 +122,7 @@ public class GroupHandler extends BaseHandler {
         GroupOverflowPo groupOverFlow = getEffectiveOverflow(groupInfo);
         if (groupOverFlow == null) {
             logger.error("callId:{}, groupName:{} 无有效的溢出策略", callInfo.getCallId(), groupInfo.getName());
+            hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
             return;
         }
         logger.info("callId:{}, group:{} overflow:{}", callInfo.getCallId(), groupInfo.getName(), groupOverFlow.getName());
@@ -173,6 +182,113 @@ public class GroupHandler extends BaseHandler {
             }
         }
         transferAgentHandler.hanlder(callInfo, agentInfo, thisDeviceId);
+    }
+
+
+    /**
+     * 转指定坐席
+     *
+     * @param callInfo
+     * @return
+     */
+    private boolean desiganteAgent(CallInfo callInfo, GroupInfo groupInfo, String deviceId) {
+        if (!callInfo.getProcessData().containsKey(Constants.DESIGNATE_AGENT)) {
+            return false;
+        }
+        GroupMemoryConfig groupMemoryConfig = groupInfo.getGroupMemoryConfig();
+        AgentInfo agentInfo = cacheService.getAgentInfo(callInfo.getProcessData().get(Constants.DESIGNATE_AGENT).toString());
+        if (agentInfo != null && agentInfo.getAgentState() == AgentState.READY) {
+            logger.info("callId:{} get desiganteAgent:{} on group:{}", callInfo.getCallId(), agentInfo.getAgentKey(), callInfo.getGroupId());
+            //呼叫坐席
+            Long end = Instant.now().toEpochMilli();
+            callInfo.setQueueEndTime(end);
+            agentNotReady(agentInfo);
+            CallDetail joinGroup = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
+            joinGroup.setEndTime(end);
+            callAgent(agentInfo, callInfo, deviceId);
+            return true;
+        }
+        //没有空闲坐席，走匹配失败策略
+        if (groupMemoryConfig == null) {
+            return false;
+        }
+        switch (groupMemoryConfig.getFailStrategy()) {
+            case 1:
+                //转其他空闲坐席
+                return false;
+            case 2:
+                //转其他技能组
+                hander(callInfo, cacheService.getGroupInfo(groupMemoryConfig.getFailStrategyValue()), deviceId);
+                return true;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 呼入记忆坐席---------------待完
+     *
+     * @param callInfo
+     * @param groupInfo
+     * @param deviceId
+     * @return
+     */
+    private boolean memonryAgent(CallInfo callInfo, GroupInfo groupInfo, String deviceId) {
+        if (groupInfo.getGroupMemoryConfig() == null || groupInfo.getGroupMemoryConfig().getStatus() == 0) {
+            return false;
+        }
+        GroupMemoryConfig groupMemoryConfig = groupInfo.getGroupMemoryConfig();
+        if (groupMemoryConfig == null || groupMemoryConfig.getStatus() != 1) {
+            return false;
+        }
+        Long time = groupMemoryConfig.getMemoryDay() == 0 ? 0L : DataTimeUtil.addday(new Date(), -groupMemoryConfig.getMemoryDay());
+
+        GroupMemory params = new GroupMemory();
+        params.setGroupId(groupInfo.getId());
+        params.setCts(time);
+        params.setPhone(callInfo.getCaller());
+        GroupMemory groupMemory = groupMemoryService.selectByGroup(params);
+
+        if (groupMemory == null) {
+            switch (groupMemoryConfig.getFailStrategy()) {
+                case 1:
+                    return false;
+                case 2:
+                    hander(callInfo, cacheService.getGroupInfo(groupMemoryConfig.getFailStrategyValue()), deviceId);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        AgentInfo agentInfo = cacheService.getAgentInfo(groupMemory.getAgentKey());
+        if (agentInfo != null && agentInfo.getAgentState() == AgentState.READY) {
+            transferAgentHandler.hanlder(callInfo, agentInfo, deviceId);
+            return true;
+        }
+        //匹配上了记忆坐席
+        switch (groupMemoryConfig.getSuccessStrategy()) {
+            case 1:
+                //一直等待记忆坐席(一直放音)
+                return true;
+
+            case 2:
+                //超时转空闲坐席(放音一段时间后转其他空闲坐席)
+                return true;
+
+            case 3:
+                //忙碌转空闲坐席
+                break;
+
+            default:
+                return false;
+        }
+        return false;
     }
 
     /**
@@ -328,7 +444,9 @@ public class GroupHandler extends BaseHandler {
                     while (iterator.hasNext()) {
                         CallQueue callQueue = iterator.next();
                         if (now - callQueue.getStartTime() > callQueue.getGroupOverflowPo().getQueueTimeout().longValue()) {
-                            queueTimeout(callQueue);
+                            callAgentService.execute(() -> {
+                                queueTimeout(callQueue);
+                            });
                             iterator.remove();
                             continue;
                         }
@@ -345,8 +463,10 @@ public class GroupHandler extends BaseHandler {
                             if (deviceInfo != null) {
                                 deviceInfo.setNextCommand(null);
                             }
-                            fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
-                            this.callAgent(agentInfo, callInfo, callQueue.getDeviceId());
+                            callAgentService.execute(() -> {
+                                fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
+                                this.callAgent(agentInfo, callInfo, callQueue.getDeviceId());
+                            });
                         }
                     }
                 }
@@ -356,7 +476,7 @@ public class GroupHandler extends BaseHandler {
 
     public void stop() {
         checkCallService.shutdown();
-        wakeupCallService.shutdown();
+        callAgentService.shutdown();
     }
 
 

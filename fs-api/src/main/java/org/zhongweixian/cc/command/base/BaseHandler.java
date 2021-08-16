@@ -15,6 +15,7 @@ import org.zhongweixian.cc.cache.fastdfs.FastDFSClient;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
+import org.zhongweixian.cc.service.GroupMemoryService;
 import org.zhongweixian.cc.util.SnowflakeIdWorker;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.esl.transport.SendMsg;
@@ -57,6 +58,9 @@ public class BaseHandler {
 
     @Autowired
     protected AgentService agentService;
+
+    @Autowired
+    protected GroupMemoryService groupMemoryService;
 
     @Autowired
     protected OverFlowHandler overFlowHandler;
@@ -134,7 +138,7 @@ public class BaseHandler {
 
             case NEXT_QUEUE_OVERFLOW_GROUP:
                 GroupInfo groupInfo = cacheService.getGroupInfo(Long.parseLong(nextCommand.getNextValue()));
-                groupHandler.hander(deviceInfo.getDeviceId(), callInfo, groupInfo);
+                groupHandler.hander(callInfo, groupInfo, deviceInfo.getDeviceId());
                 break;
 
             case NEXT_QUEUE_OVERFLOW_IVR:

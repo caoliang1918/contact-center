@@ -2,7 +2,6 @@ package org.zhongweixian.cc.tcp;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -18,14 +17,11 @@ import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.configration.HandlerContext;
 import org.zhongweixian.cc.tcp.event.SubLoginEvent;
 import org.zhongweixian.cc.tcp.event.base.SubBaseEvent;
-import org.zhongweixian.cc.util.Json;
 import org.zhongweixian.cc.websocket.event.base.ChannelEntity;
 import org.zhongweixian.cc.EventType;
-import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 import org.zhongweixian.listener.ConnectionListener;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.*;

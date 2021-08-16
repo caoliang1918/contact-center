@@ -13,7 +13,7 @@ import org.zhongweixian.cc.command.base.BaseHandler;
 @Component
 public class OverFlowHandler extends BaseHandler {
 
-    public void overflow(CallInfo callInfo, String deviceId,   GroupOverflowPo groupOverFlow) {
+    public void overflow(CallInfo callInfo, String deviceId, GroupOverflowPo groupOverFlow) {
         logger.info("callId:{} handleType is overflow, overflowType:{}, overflowValue:{}", callInfo.getCallId(), groupOverFlow.getOverflowType(), groupOverFlow.getOverflowValue());
         callInfo.setOverflowCount(callInfo.getOverflowCount() + 1);
 
@@ -24,7 +24,7 @@ public class OverFlowHandler extends BaseHandler {
             case 1:
                 logger.info("callId:{} overflow to group:{}", callInfo.getCallId(), callInfo.getCallId());
                 GroupInfo overFlowGroup = cacheService.getGroupInfo(Long.valueOf(groupOverFlow.getOverflowValue()));
-                groupHandler.hander(deviceId, callInfo, overFlowGroup);
+                groupHandler.hander(callInfo, overFlowGroup, deviceId);
                 break;
 
             case 2:
