@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.fs.handler.base;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CallInfo;
@@ -30,6 +31,9 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
      * @return
      */
     protected int sendAgentMessage(AgentInfo agentInfo, WsResponseEntity responseEntity) {
+        if (StringUtils.isBlank(agentInfo.getHost())) {
+            return 0;
+        }
         return webSocketHandler.sendMessgae(agentInfo.getAgentKey(), agentInfo.getRemoteAddress(), JSON.toJSONString(responseEntity));
     }
 
@@ -40,6 +44,10 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
      * @param agentInfo
      */
     protected void sendAgentStateMessage(AgentInfo agentInfo) {
+        if (StringUtils.isBlank(agentInfo.getHost())) {
+            //没有走正常登录的坐席
+            return;
+        }
         agentService.sendAgentStateMessage(agentInfo);
     }
 

@@ -451,6 +451,7 @@
     <result column="hangup_cause" jdbcType="VARCHAR" property="hangupCause" />
     <result column="media" jdbcType="VARCHAR" property="media" />
     <result column="record" jdbcType="VARCHAR" property="record" />
+    <result column="record_time" jdbcType="BIGINT" property="recordTime" />
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
     <result column="frist_queue_time" jdbcType="BIGINT" property="fristQueueTime" />
     <result column="queue_start_time" jdbcType="BIGINT" property="queueStartTime" />

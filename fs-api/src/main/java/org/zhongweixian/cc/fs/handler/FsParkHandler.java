@@ -235,8 +235,13 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             hangupCall(event.getHostname(), callId, event.getDeviceId());
             return;
         }
+        AgentInfo agentInfo = cacheService.getAgentInfo(agent.getAgentKey());
+        if (agentInfo == null) {
+            agentInfo = agentService.getAgentInfo(agent.getAgentKey());
+            cacheService.addAgentInfo(agentInfo);
+        }
+        logger.info("sipOutbound callId:{}  sip:{} called:{}", callId, event.getCaller(), event.getCalled());
         String calledDisplay = RandomUtil.getRandom(groupInfo.getCalledDisplays());
-
 
         CallInfo callInfo = CallInfo.CallInfoBuilder.builder()
                 .withCallId(callId)
@@ -247,16 +252,20 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCalled(event.getCalled())
                 .withCompanyId(agent.getCompanyId())
                 .withMedia(event.getHostname())
+                .withCallerDisplay(agent.getAgentId())
                 .withCalledDisplay(calledDisplay)
+                .withGroupId(groupInfo.getId())
+                .withAgentKey(agent.getAgentKey())
                 .build();
 
         DeviceInfo deviceInfo = DeviceInfo.DeviceInfoBuilder.builder()
                 .withCallId(callId)
                 .withDeviceId(event.getDeviceId())
+                .withAgentKey(agent.getAgentKey())
                 .withCaller(event.getCaller())
                 .withCalled(event.getCalled())
                 .withCallTime(callInfo.getCallTime())
-                .withDeviceType(2)
+                .withDeviceType(1)
                 .withCdrType(8)
                 .withNextCmd(new NextCommand(NextType.NEXT_CALL_OTHER))
                 .build();
