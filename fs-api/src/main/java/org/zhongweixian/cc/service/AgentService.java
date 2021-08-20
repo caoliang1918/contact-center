@@ -33,4 +33,13 @@ public interface AgentService extends BaseService<Agent> {
      * @param agentInfo
      */
     void sendAgentStateMessage(AgentInfo agentInfo);
+
+    /**
+     *
+     * @param sip
+     * @return
+     */
+    Agent getAgentBySip(String sip);
+
+
 }

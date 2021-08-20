@@ -26,7 +26,7 @@ public class DeviceInfo {
     private Integer deviceType;
 
     /**
-     * 1:呼入,2:外呼,3:内呼,4:转接,5:咨询,6:监听,7:强插
+     * 1:呼入,2:外呼,3:内呼,4:转接,5:咨询,6:监听,7:强插,8:硬话机外呼
      */
     private Integer cdrType;
 

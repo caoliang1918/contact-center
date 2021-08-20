@@ -1,6 +1,8 @@
 package org.zhongweixian.cc.fs.handler;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.constant.FsConstant;
+import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.VdnPhone;
@@ -11,10 +13,13 @@ import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.fs.event.FsParkEvent;
 import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
+import org.zhongweixian.cc.util.RandomUtil;
 import org.zhongweixian.cc.websocket.response.WsCallEntity;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
@@ -30,11 +35,22 @@ import java.time.Instant;
 public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
     private Logger logger = LoggerFactory.getLogger(FsParkHandler.class);
 
+    /**
+     * 硬话机外呼走的profile
+     */
+    @Value("${sip.outbound.profile:internal}")
+    private String outboundProfile;
 
     @Override
     public void handleEvent(FsParkEvent event) {
         CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
         if (callInfo == null && Direction.INBOUND.name().equals(event.getDirection().toUpperCase())) {
+            if (StringUtils.isNotBlank(event.getSipPort()) && FsConstant.INTERNAL.equals(outboundProfile)) {
+                //硬话机外呼
+                sipOutbound(event);
+                return;
+            }
+            //呼入
             inboundCall(event);
             return;
         }
@@ -196,5 +212,64 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callId);
         super.answer(event.getHostname(), deviceId);
+    }
+
+    /**
+     * 硬话机外呼
+     *
+     * @param event
+     */
+    private void sipOutbound(FsParkEvent event) {
+        //通过sip号码获取绑定的坐席
+        Agent agent = agentService.getAgentBySip(event.getCaller());
+        Long callId = snowflakeIdWorker.nextId();
+        if (agent == null || agent.getGroupId() == null) {
+            logger.warn("sipOutbound callId:{}  sip:{} called:{}", callId, event.getCaller(), event.getCalled());
+            hangupCall(event.getHostname(), callId, event.getDeviceId());
+            return;
+        }
+        //获取显号
+        GroupInfo groupInfo = cacheService.getGroupInfo(agent.getGroupId());
+        if (groupInfo == null && CollectionUtils.isEmpty(groupInfo.getCalledDisplays())) {
+            logger.warn("callId:{}, agent:{}, group is null", callId, agent.getAgentKey());
+            hangupCall(event.getHostname(), callId, event.getDeviceId());
+            return;
+        }
+        String calledDisplay = RandomUtil.getRandom(groupInfo.getCalledDisplays());
+
+
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder()
+                .withCallId(callId)
+                .withCallType(CallType.OUTBOUNT_CALL)
+                .withDirection(Direction.OUTBOUND)
+                .withCallTime(Instant.now().toEpochMilli())
+                .withCaller(event.getCaller())
+                .withCalled(event.getCalled())
+                .withCompanyId(agent.getCompanyId())
+                .withMedia(event.getHostname())
+                .withCalledDisplay(calledDisplay)
+                .build();
+
+        DeviceInfo deviceInfo = DeviceInfo.DeviceInfoBuilder.builder()
+                .withCallId(callId)
+                .withDeviceId(event.getDeviceId())
+                .withCaller(event.getCaller())
+                .withCalled(event.getCalled())
+                .withCallTime(callInfo.getCallTime())
+                .withDeviceType(2)
+                .withCdrType(8)
+                .withNextCmd(new NextCommand(NextType.NEXT_CALL_OTHER))
+                .build();
+
+        CompanyInfo companyInfo = cacheService.getCompany(agent.getCompanyId());
+        callInfo.setHiddenCustomer(companyInfo.getHiddenCustomer());
+        callInfo.setCdrNotifyUrl(companyInfo.getNotifyUrl());
+        callInfo.getDeviceInfoMap().put(event.getDeviceId(), deviceInfo);
+        callInfo.getDeviceList().add(event.getDeviceId());
+
+        cacheService.addCallInfo(callInfo);
+        cacheService.addDevice(event.getDeviceId(), callId);
+        super.answer(event.getHostname(), event.getDeviceId());
+
     }
 }

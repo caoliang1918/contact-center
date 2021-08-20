@@ -29,10 +29,13 @@
     <result column="cts" jdbcType="BIGINT" property="cts" />
     <result column="agent_id" jdbcType="VARCHAR" property="agentId" />
     <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
     <result column="agent_code" jdbcType="VARCHAR" property="agentCode" />
     <result column="agent_type" jdbcType="INTEGER" property="agentType" />
+    <result column="diaplay" jdbcType="VARCHAR" property="diaplay" />
     <result column="sip_phone" jdbcType="VARCHAR" property="sipPhone" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="record" jdbcType="INTEGER" property="record" />
   </resultMap>
 
@@ -328,8 +331,16 @@
 
   <select id="selectSimpleAgent" parameterType="Long" resultMap="SimpleResultMap">
     select
-        id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, group_id
+        id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, diaplay,  group_id
    from
-        cc_agent where id = #{id} and status =1
+        cc_agent where id = #{id} and status = 1
   </select>
+
+  <select id="selectAgentBySip" resultMap="SimpleResultMap">
+    select
+      id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, diaplay, group_id
+    from
+      cc_agent where id = (select  agent_id from cc_agent_sip where sip = #{sip} ) and status = 1
+  </select>
+
  </mapper>

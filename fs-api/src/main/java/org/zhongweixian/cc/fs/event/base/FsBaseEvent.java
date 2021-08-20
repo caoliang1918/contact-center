@@ -36,6 +36,9 @@ public class FsBaseEvent {
     @JSONField(name = "ClpMS-IPv4")
     protected String hostname;
 
+    @JSONField(name = "variable_sofia_profile_name")
+    protected String profile;
+
     protected Map<String, String> map = new HashMap<>();
 
     public Map<String, String> getMap() {
@@ -108,6 +111,14 @@ public class FsBaseEvent {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     @Override

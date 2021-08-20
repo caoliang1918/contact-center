@@ -42,6 +42,13 @@ public class FsParkEvent extends FsBaseEvent {
     @JSONField(name = "variable_last_bridge_to")
     private String lastBridgeTo;
 
+    /**
+     * 硬话机发起呼叫时携带
+     */
+    @JSONField(name = "variable_sip_via_port")
+    private String sipPort;
+
+
 
     public String getDirection() {
         return direction;
@@ -89,6 +96,14 @@ public class FsParkEvent extends FsBaseEvent {
 
     public void setLastBridgeTo(String lastBridgeTo) {
         this.lastBridgeTo = lastBridgeTo;
+    }
+
+    public String getSipPort() {
+        return sipPort;
+    }
+
+    public void setSipPort(String sipPort) {
+        this.sipPort = sipPort;
     }
 
     @Override

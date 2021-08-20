@@ -46,4 +46,12 @@ public interface AgentMapper extends BaseMapper<Agent> {
 
 
     Agent selectSimpleAgent(Long id);
+
+    /**
+     * 通过sip查询绑定的坐席
+     *
+     * @param sip
+     * @return
+     */
+    Agent selectAgentBySip(String sip);
 }

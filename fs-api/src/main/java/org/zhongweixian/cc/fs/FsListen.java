@@ -131,6 +131,9 @@ public class FsListen {
             @Override
             public void onEslEvent(Context ctx, EslEvent event) {
                 String eventName = event.getEventName();
+                /**
+                 * https://freeswitch.org/confluence/display/FREESWITCH/Event+List
+                 */
                 switch (event.getEventName()) {
                     case FsConstant.RE_SCHEDULE:
                         return;

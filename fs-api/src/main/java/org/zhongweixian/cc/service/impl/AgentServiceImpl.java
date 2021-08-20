@@ -129,6 +129,11 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         }
     }
 
+    @Override
+    public Agent getAgentBySip(String sip) {
+        return agentMapper.selectAgentBySip(sip);
+    }
+
     /**
      * 更新到数据库
      *

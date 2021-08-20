@@ -27,6 +27,10 @@ public class FsConstant {
 
     public final static String SETVAR = "uuid_setvar";
 
+    public final static String INTERNAL = "internal";
+
+    public final static String EXTERNAL = "external";
+
     public final static String RECORD_STEREO = " RECORD_STEREO true";
 
     public final static String RECORD_SAMPLE_RATE = "record_sample_rate=";

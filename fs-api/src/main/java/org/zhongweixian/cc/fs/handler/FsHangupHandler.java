@@ -42,6 +42,9 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
 
     private RestTemplate restTemplate;
 
+    @Value("${media.record.host:}")
+    private String media;
+
 
     public FsHangupHandler(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout, @Value("${cdr.notify.readTimeout:1000}") Integer readTimeout) {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
@@ -200,42 +203,46 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         callCdrService.saveOrUpdateCallLog(callLog);
 
         cacheService.removeCallInfo(callInfo.getCallId());
-        if (StringUtils.isNoneBlank(callInfo.getCdrNotifyUrl())) {
-            //话单推送
-            CallLogPo callLogPo = new CallLogPo();
-            BeanUtils.copyProperties(callLog, callLogPo);
-            List<CallDevice> callDeviceList = new ArrayList<>();
-
-            callInfo.getDeviceInfoMap().forEach((k, v) -> {
-                CallDevice callDevice = new CallDevice();
-                BeanUtils.copyProperties(v, callDevice);
-                callDeviceList.add(callDevice);
-            });
-            callLogPo.setCallDeviceList(callDeviceList);
-            callLogPo.setCaller(callInfo.getCaller());
-            callLogPo.setCalled(callInfo.getCalled());
-            ResponseEntity<String> responseEntity = null;
-            String payload = JSON.toJSONString(callLogPo, SerializerFeature.WriteNullStringAsEmpty);
-            try {
-                logger.info("send push data:{}", payload);
-                responseEntity = restTemplate.postForEntity(callInfo.getCdrNotifyUrl(), payload, String.class);
-                logger.info("push call:{} to {} success:{}", callInfo.getCallId(), callInfo.getCdrNotifyUrl(), responseEntity.getBody());
-                return;
-            } catch (Exception e) {
-
-            }
-            logger.warn("push call:{} to {} error", callInfo.getCallId(), callInfo.getCdrNotifyUrl());
-            PushFailLog pushFailLog = new PushFailLog();
-            pushFailLog.setCallId(callLogPo.getCallId());
-            pushFailLog.setCts(Instant.now().getEpochSecond());
-            pushFailLog.setUts(0L);
-            pushFailLog.setCompanyId(callLogPo.getCompanyId());
-            pushFailLog.setSendTimes(1);
-            pushFailLog.setSendUrl(callInfo.getCdrNotifyUrl());
-            pushFailLog.setContent(payload);
-            pushFailLog.setStatus(1);
-            callCdrService.savePushFailLog(pushFailLog);
+        if (StringUtils.isBlank(callInfo.getCdrNotifyUrl())) {
+            return;
         }
+        //话单推送
+        CallLogPo callLogPo = new CallLogPo();
+        BeanUtils.copyProperties(callLog, callLogPo);
+        List<CallDevice> callDeviceList = new ArrayList<>();
+
+        callInfo.getDeviceInfoMap().forEach((k, v) -> {
+            CallDevice callDevice = new CallDevice();
+            BeanUtils.copyProperties(v, callDevice);
+            callDeviceList.add(callDevice);
+        });
+        if (StringUtils.isNotBlank(media)) {
+            callLogPo.setMedia(media);
+        }
+        callLogPo.setCallDeviceList(callDeviceList);
+        callLogPo.setCaller(callInfo.getCaller());
+        callLogPo.setCalled(callInfo.getCalled());
+        ResponseEntity<String> responseEntity = null;
+        String payload = JSON.toJSONString(callLogPo, SerializerFeature.WriteNullStringAsEmpty);
+        try {
+            logger.info("send push data:{}", payload);
+            responseEntity = restTemplate.postForEntity(callInfo.getCdrNotifyUrl(), payload, String.class);
+            logger.info("push call:{} to {} success:{}", callInfo.getCallId(), callInfo.getCdrNotifyUrl(), responseEntity.getBody());
+            return;
+        } catch (Exception e) {
+
+        }
+        logger.warn("push call:{} to {} error", callInfo.getCallId(), callInfo.getCdrNotifyUrl());
+        PushFailLog pushFailLog = new PushFailLog();
+        pushFailLog.setCallId(callLogPo.getCallId());
+        pushFailLog.setCts(Instant.now().getEpochSecond());
+        pushFailLog.setUts(0L);
+        pushFailLog.setCompanyId(callLogPo.getCompanyId());
+        pushFailLog.setSendTimes(1);
+        pushFailLog.setSendUrl(callInfo.getCdrNotifyUrl());
+        pushFailLog.setContent(payload);
+        pushFailLog.setStatus(1);
+        callCdrService.savePushFailLog(pushFailLog);
     }
 
 
