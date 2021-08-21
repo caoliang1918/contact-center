@@ -12,12 +12,15 @@ import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
+import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
+import org.zhongweixian.cc.websocket.response.AgentStateResppnse;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 /**
@@ -34,8 +37,14 @@ public class AgentStateListen {
     @Autowired
     private WebSocketHandler webSocketHandler;
 
+    @Autowired
+    private GroupHandler groupHandler;
+
     @Value("${server.address}:${server.port}")
     private String host;
+
+    @Value("${server.instance.id:}")
+    private String instance;
 
 
     /**
@@ -46,35 +55,70 @@ public class AgentStateListen {
     @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.agent-" + "${server.address}:${server.port}", autoDelete = "true"), key = Constants.DEFAULT_KEY, exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC))})
     public void listenAgentState(@Payload String payload) {
         JSONObject json = JSON.parseObject(payload);
-        if (host.equals(json.getString("host"))) {
+        if (host.equals(json.getString("host")) && instance.equals(json.getString("instance"))) {
             return;
         }
+
+        AgentStateResppnse resppnse = JSON.parseObject(payload, AgentStateResppnse.class);
         AgentInfo agentInfo = cacheService.getAgentInfo(json.getString("agentKey"));
         if (agentInfo == null) {
             logger.info("receive agent {} change state {}", json.getString("agentKey"), json.getString("agentState"));
-            agentInfo = JSON.parseObject(payload, AgentInfo.class);
+            agentInfo = new AgentInfo();
+            BeanUtils.copyProperties(resppnse, agentInfo);
             cacheService.addAgentInfo(agentInfo);
             return;
         }
         String state = json.getString("agentState");
-        /**
-         * 别的服务上坐席下线，本服务上坐席不做处理
-         */
-        if (host.equals(agentInfo.getHost()) && "LOGOUT".equals(state)) {
-            return;
-        }
+
         if (agentInfo.getHost().equals(json.getString("host"))) {
-            agentInfo = JSON.parseObject(payload, AgentInfo.class);
+            agentInfo.setAgentKey(resppnse.getAgentKey());
+            agentInfo.setCompanyId(resppnse.getCompanyId());
+            agentInfo.setHost(resppnse.getHost());
+            agentInfo.setCallId(resppnse.getCallId());
+            agentInfo.setLoginTime(resppnse.getLoginTime());
+            agentInfo.setAgentState(resppnse.getAgentState());
+            agentInfo.setLoginType(resppnse.getLoginType());
+            agentInfo.setWorkType(resppnse.getWorkType());
+            agentInfo.setStateTime(resppnse.getStateTime());
+            agentInfo.setBeforeState(resppnse.getBeforeState());
+            agentInfo.setBeforeTime(resppnse.getBeforeTime());
+            agentInfo.setMaxReadyTime(resppnse.getMaxReadyTime());
+            agentInfo.setTotalReadyTime(resppnse.getTotalReadyTime());
+            agentInfo.setMaxTalkTime(resppnse.getMaxTalkTime());
+            agentInfo.setTotalTalkTime(resppnse.getTotalTalkTime());
+            agentInfo.setTotalRingTimes(resppnse.getTotalRingTimes());
+            agentInfo.setTotalAnswerTimes(resppnse.getTotalAnswerTimes());
+            agentInfo.setReadyTimes(resppnse.getReadyTimes());
+            agentInfo.setNotReadyTimes(resppnse.getNotReadyTimes());
+            agentInfo.setTotalAfterTime(resppnse.getTotalAfterTime());
             logger.info("receive agent {} change state {}", agentInfo.getAgentKey(), agentInfo.getAgentState());
+            if (agentInfo.getAgentState() == AgentState.READY) {
+                groupHandler.agentFree(agentInfo);
+            }
+            if (agentInfo.getBeforeState() == AgentState.READY) {
+                groupHandler.agentNotReady(agentInfo);
+            }
             cacheService.addAgentInfo(agentInfo);
             return;
-        } else if (agentInfo.getHost().equals(host)) {
-            //旧坐席退出
+        }
+
+        /**
+         * 呼入转坐席，坐席和电话不在一个服务上
+         */
+        if (host.equals(json.getString("host")) && !instance.equals(json.getString("instance"))) {
+            webSocketHandler.sentWsMessage(agentInfo, payload);
+            return;
+        }
+
+
+        if (state.equals(AgentState.LOGIN.name())) {
+            //d当前坐席退出
             logger.info("agent:{} login on server:{}", agentInfo.getAgentKey(), agentInfo.getHost());
             String logoutResponse = JSON.toJSONString(new WsResponseEntity<>(1005, "坐席在别处登录", AgentState.LOGOUT.name(), agentInfo.getAgentKey()));
-            webSocketHandler.sendMessgae(agentInfo.getAgentKey(), agentInfo.getRemoteAddress(), logoutResponse);
+            webSocketHandler.sentWsMessage(agentInfo, logoutResponse);
             webSocketHandler.close(agentInfo.getAgentKey());
             agentInfo.setHost(json.getString("host"));
+            agentInfo.setAgentState(AgentState.LOGIN);
             return;
         }
     }

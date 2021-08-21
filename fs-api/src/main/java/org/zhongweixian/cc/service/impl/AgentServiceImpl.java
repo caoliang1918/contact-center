@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.AgentStateLog;
@@ -14,6 +15,7 @@ import org.cti.cc.po.AgentState;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
@@ -54,6 +56,9 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         return agentMapper;
     }
 
+    @Value("${server.instance.id:}")
+    private String instance;
+
     @Override
     public AgentInfo getAgentInfo(String agentKey) {
         AgentInfo agentInfo = cacheService.getAgentInfo(agentKey);
@@ -83,6 +88,9 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     @Override
     public void sendAgentStateMessage(AgentInfo agentInfo) {
         try {
+            if (StringUtils.isBlank(agentInfo.getHost())) {
+                return;
+            }
             if (agentInfo.getAgentState() == AgentState.READY) {
                 groupHandler.agentFree(agentInfo);
             }
@@ -115,7 +123,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setReadyTimes(agentInfo.getReadyTimes());
             response.setNotReadyTimes(agentInfo.getNotReadyTimes());
             response.setTotalAfterTime(agentInfo.getTotalAfterTime());
-
+            response.setInstance(instance);
 
             logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
             rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.DEFAULT_KEY, JSON.toJSONString(response));

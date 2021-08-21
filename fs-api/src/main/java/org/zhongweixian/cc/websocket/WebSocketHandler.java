@@ -9,6 +9,7 @@ import io.netty.channel.ChannelId;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constants;
+import org.cti.cc.po.AgentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.zhongweixian.cc.EventType;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.configration.HandlerContext;
+import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.websocket.event.WsLoginEvnet;
 import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.base.ChannelEntity;
@@ -45,6 +47,12 @@ public class WebSocketHandler implements ConnectionListener {
     @Value("${ws.login.timeout:2}")
     private Long timeout;
 
+    @Autowired
+    private AgentService agentService;
+
+    /**
+     * 坐席状态http回调，支持超时配置
+     */
     private RestTemplate restTemplate;
 
     /**
@@ -259,27 +267,40 @@ public class WebSocketHandler implements ConnectionListener {
     /**
      * 发送坐席消息
      *
-     * @param agentKey
-     * @param callBackUrl
+     * @param agentInfo
      * @param payload
-     * @return
      */
-    public int sendMessgae(String agentKey, String callBackUrl, String payload) {
-        Channel channel = agentChannel.get(agentKey);
+    public void sendMessgae(AgentInfo agentInfo, String payload) {
+        Channel channel = agentChannel.get(agentInfo.getAgentKey());
         if (channel != null && channel.isActive()) {
-            logger.info("send agent:{} ws message:{}", agentKey, payload);
+            logger.info("send agent:{} ws message:{}", agentInfo.getAgentKey(), payload);
             channel.writeAndFlush(new TextWebSocketFrame(payload));
-            return 1;
+            return;
         }
-        if (!StringUtils.isBlank(callBackUrl) && callBackUrl.startsWith(Constants.HTTP)) {
-            logger.info("send agent:{} http message:{}", agentKey, payload);
+        if (!StringUtils.isBlank(agentInfo.getRemoteAddress()) && agentInfo.getRemoteAddress().startsWith(Constants.HTTP)) {
+            logger.info("send agent:{} http message:{}", agentInfo.getAgentKey(), payload);
             try {
-                String response = restTemplate.postForEntity(callBackUrl, payload, String.class).getBody();
-                logger.info("send agent:{} http message success, response:{}", agentKey, response);
+                String response = restTemplate.postForEntity(agentInfo.getRemoteAddress(), payload, String.class).getBody();
+                logger.info("send agent:{} http message success, response:{}", agentInfo.getAgentKey(), response);
             } catch (Exception e) {
-                logger.error("send agent:{} http message", agentKey);
+                logger.error("send agent:{} http message", agentInfo.getAgentKey());
             }
         }
-        return 1;
+        agentService.sendAgentStateMessage(agentInfo);
+    }
+
+    /**
+     * 只发送ws信息
+     *
+     * @param agentInfo
+     * @param payload
+     */
+    public void sentWsMessage(AgentInfo agentInfo, String payload) {
+        Channel channel = agentChannel.get(agentInfo.getAgentKey());
+        if (channel != null && channel.isActive()) {
+            logger.info("send agent:{} ws message:{}", agentInfo.getAgentKey(), payload);
+            channel.writeAndFlush(new TextWebSocketFrame(payload));
+            return;
+        }
     }
 }

@@ -28,29 +28,13 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
      *
      * @param agentInfo
      * @param responseEntity
-     * @return
      */
-    protected int sendAgentMessage(AgentInfo agentInfo, WsResponseEntity responseEntity) {
+    protected void sendAgentStateMessage(AgentInfo agentInfo, WsResponseEntity responseEntity) {
         if (StringUtils.isBlank(agentInfo.getHost())) {
-            return 0;
-        }
-        return webSocketHandler.sendMessgae(agentInfo.getAgentKey(), agentInfo.getRemoteAddress(), JSON.toJSONString(responseEntity));
-    }
-
-
-    /**
-     * 坐席状态变更
-     *
-     * @param agentInfo
-     */
-    protected void sendAgentStateMessage(AgentInfo agentInfo) {
-        if (StringUtils.isBlank(agentInfo.getHost())) {
-            //没有走正常登录的坐席
             return;
         }
-        agentService.sendAgentStateMessage(agentInfo);
+        webSocketHandler.sendMessgae(agentInfo, JSON.toJSONString(responseEntity));
     }
-
 
     /**
      * 桥接device

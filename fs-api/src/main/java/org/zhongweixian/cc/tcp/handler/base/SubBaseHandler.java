@@ -1,5 +1,6 @@
 package org.zhongweixian.cc.tcp.handler.base;
 
+import org.cti.cc.po.AgentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public abstract class SubBaseHandler<T extends SubBaseEvent> implements Handler<
     @Autowired
     protected WebSocketHandler webSocketHandler;
 
-    protected void sendAgentMessage(String agentKey,String callBackUrl, String payload) {
-        webSocketHandler.sendMessgae(agentKey, callBackUrl,payload);
+    protected void sendAgentMessage(AgentInfo agentInfo, String payload) {
+        webSocketHandler.sendMessgae(agentInfo,payload);
     }
 }

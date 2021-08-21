@@ -41,10 +41,13 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
     @Value("${sip.outbound.profile:internal}")
     private String outboundProfile;
 
+    @Value("${a:0}")
+    private int a;
+
     @Override
     public void handleEvent(FsParkEvent event) {
         CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
-        if (callInfo == null && Direction.INBOUND.name().equals(event.getDirection().toUpperCase())) {
+        if (callInfo == null && Direction.INBOUND.name().equals(event.getDirection().toUpperCase()) && a == 1) {
             if (StringUtils.isNotBlank(event.getSipPort()) && FsConstant.INTERNAL.equals(outboundProfile)) {
                 //硬话机外呼
                 sipOutbound(event);
@@ -83,7 +86,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                     agentInfo.setAgentState(AgentState.HOLD);
                     break;
             }
-            sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(ringEntity.getAgentState().name(), callInfo.getAgentKey(), ringEntity));
+            sendAgentStateMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(ringEntity.getAgentState().name(), callInfo.getAgentKey(), ringEntity));
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
@@ -108,19 +111,19 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                         if (agentInfo.getHiddenCustomer() == 1) {
                             ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
                         }
-                        sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TRANSFER_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
+                        sendAgentStateMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TRANSFER_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
                     } else {
                         //外呼坐席振铃
                         ringEntity.setAgentState(AgentState.OUT_CALLER_RING);
                         if (agentInfo.getHiddenCustomer() == 1) {
                             ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
                         }
-                        sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLER_RING.name(), callInfo.getAgentKey(), ringEntity));
+                        sendAgentStateMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLER_RING.name(), callInfo.getAgentKey(), ringEntity));
                     }
                 } else if (callType == CallType.INNER_CALL) {
                     //内呼坐席振铃
                     ringEntity.setAgentState(AgentState.IN_CALL_RING);
-                    sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
+                    sendAgentStateMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), callInfo.getAgentKey(), ringEntity));
                 }
             } else {
                 //外呼被叫振铃
@@ -128,7 +131,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 if (agentInfo.getHiddenCustomer() == 1) {
                     ringEntity.setCalled(hiddenNumber(ringEntity.getCalled()));
                 }
-                sendAgentMessage(cacheService.getAgentInfo(callInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLED_RING.name(), callInfo.getAgentKey(), ringEntity));
+                sendAgentStateMessage(cacheService.getAgentInfo(callInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLED_RING.name(), callInfo.getAgentKey(), ringEntity));
             }
         } else if (direction == Direction.INBOUND) {
             if (agentInfo == null) {
@@ -139,7 +142,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             if (agentInfo.getHiddenCustomer() == 1) {
                 ringEntity.setCaller(hiddenNumber(ringEntity.getCaller()));
             }
-            sendAgentMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), deviceInfo.getAgentKey(), ringEntity));
+            sendAgentStateMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), deviceInfo.getAgentKey(), ringEntity));
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setStateTime(Instant.now().toEpochMilli());

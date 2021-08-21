@@ -40,6 +40,11 @@ public class AgentStateResppnse {
     private String host;
 
     /**
+     * 业务所在实例
+     */
+    private String instance;
+
+    /**
      * 所属技能组
      */
     private List<Long> groupIds;
@@ -199,6 +204,14 @@ public class AgentStateResppnse {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getInstance() {
+        return instance;
+    }
+
+    public void setInstance(String instance) {
+        this.instance = instance;
     }
 
     public List<Long> getGroupIds() {

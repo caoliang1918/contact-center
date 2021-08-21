@@ -14,6 +14,7 @@ public class Constants {
 
 
     public static final String HTTP = "http://";
+    public static final String HTTPS = "https://";
 
     /**
      * vip等级进线

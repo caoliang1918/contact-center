@@ -304,18 +304,11 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         WsCallAfterEntity afterEntity = new WsCallAfterEntity();
         BeanUtils.copyProperties(callInfo, afterEntity);
 
-        int result = this.sendAgentMessage(agentInfo, new WsResponseEntity<WsCallAfterEntity>(AgentState.AFTER.name(), agentInfo.getAgentKey(), afterEntity));
-        if (result == 0) {
-            return;
-        }
-        /**
-         * 同步坐席状态
-         */
         agentInfo.setBeforeTime(agentInfo.getStateTime());
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setStateTime(Instant.now().toEpochMilli());
         agentInfo.setAgentState(AgentState.AFTER);
-        sendAgentStateMessage(agentInfo);
+        sendAgentStateMessage(agentInfo, new WsResponseEntity<WsCallAfterEntity>(AgentState.AFTER.name(), agentInfo.getAgentKey(), afterEntity));
         agentInfo.setCallId(null);
         agentInfo.setDeviceId(null);
     }
