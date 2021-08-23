@@ -8,16 +8,6 @@ import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
  */
 public class FsOutgoingEvent extends FsBaseEvent {
 
-    @JSONField(name = "Caller-Direction")
-    private String direction;
-
-    public String getDirection() {
-        return direction;
-    }
-
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
 
     @Override
     public String toString() {

@@ -34,10 +34,14 @@ public class TransferAgentHandler extends BaseHandler {
             logger.error("agent:{} sip is error, callId:{}", agentInfo.getAgentKey(), callInfo.getCallId());
             return;
         }
+        if (callInfo.getHiddenCustomer() == 1) {
+
+        }
 
         logger.info("callId:{} find agent:{}", callInfo.getCallId(), agentInfo.getAgentKey());
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setCaller(agentInfo.getAgentId());
+        //deviceInfo.setDisplay(callInfo.getHiddenCustomer() == 1 ? hiddenNumber(callInfo.getCaller()) : callInfo.getCaller());
         deviceInfo.setDisplay(callInfo.getCaller());
         deviceInfo.setCalled(caller);
         deviceInfo.setCallTime(Instant.now().toEpochMilli());

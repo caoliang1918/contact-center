@@ -1,7 +1,7 @@
 package org.zhongweixian.ivr.cache;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.scxml2.model.SCXML;
+import org.apache.commons.scxml.model.SCXML;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.mapper.PlaybackMapper;

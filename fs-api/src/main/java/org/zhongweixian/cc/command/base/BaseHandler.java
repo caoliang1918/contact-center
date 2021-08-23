@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.command.base;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.DeviceInfo;
 import org.cti.cc.po.GroupInfo;
@@ -168,4 +169,25 @@ public class BaseHandler {
         cacheService.addCallInfo(callInfo);
     }
 
+
+    protected String hiddenNumber(String number) {
+        if (StringUtils.isBlank(number)) {
+            return null;
+        }
+        if (number.length() >= 11) {
+            return number.substring(0, 3) + "****" + number.substring(7);
+        }
+        if (number.length() < 3) {
+            return number;
+        }
+        return number.substring(0, 3) + randomHidden(number.length());
+    }
+
+    private String randomHidden(int num) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i <= num; i++) {
+            builder.append("*");
+        }
+        return builder.toString();
+    }
 }

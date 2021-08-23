@@ -39,6 +39,9 @@ public class FsBaseEvent {
     @JSONField(name = "variable_sofia_profile_name")
     protected String profile;
 
+    @JSONField(name = "Call-Direction")
+    protected String direction;
+
     protected Map<String, String> map = new HashMap<>();
 
     public Map<String, String> getMap() {
@@ -119,6 +122,14 @@ public class FsBaseEvent {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     @Override

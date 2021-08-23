@@ -17,16 +17,6 @@ public class CallLogPo {
     private Long id;
 
     /**
-     * 落单时间
-     */
-    private Long cts;
-
-    /**
-     * 修改时间
-     */
-    private Long uts;
-
-    /**
      * 企业id
      */
     private Long companyId;
@@ -229,22 +219,6 @@ public class CallLogPo {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getCts() {
-        return cts;
-    }
-
-    public void setCts(Long cts) {
-        this.cts = cts;
-    }
-
-    public Long getUts() {
-        return uts;
-    }
-
-    public void setUts(Long uts) {
-        this.uts = uts;
     }
 
     public Long getCompanyId() {
@@ -541,5 +515,50 @@ public class CallLogPo {
 
     public void setCallDetailList(List<CallDetail> callDetailList) {
         this.callDetailList = callDetailList;
+    }
+
+
+    @Override
+    public String toString() {
+        return "CallLogPo{" +
+                "id=" + id +
+                ", companyId=" + companyId +
+                ", callId=" + callId +
+                ", callerDisplay='" + callerDisplay + '\'' +
+                ", caller='" + caller + '\'' +
+                ", calledDisplay='" + calledDisplay + '\'' +
+                ", called='" + called + '\'' +
+                ", agentKey='" + agentKey + '\'' +
+                ", groupId=" + groupId +
+                ", loginType=" + loginType +
+                ", taskId=" + taskId +
+                ", ivrId=" + ivrId +
+                ", botId=" + botId +
+                ", callTime=" + callTime +
+                ", answerTime=" + answerTime +
+                ", endTime=" + endTime +
+                ", callType='" + callType + '\'' +
+                ", direction='" + direction + '\'' +
+                ", answerFlag=" + answerFlag +
+                ", waitTime=" + waitTime +
+                ", answerCount=" + answerCount +
+                ", hangupDir=" + hangupDir +
+                ", hangupCause='" + hangupCause + '\'' +
+                ", media='" + media + '\'' +
+                ", record='" + record + '\'' +
+                ", recordTime=" + recordTime +
+                ", talkTime=" + talkTime +
+                ", fristQueueTime=" + fristQueueTime +
+                ", queueStartTime=" + queueStartTime +
+                ", queueEndTime=" + queueEndTime +
+                ", followData='" + followData + '\'' +
+                ", uuid1='" + uuid1 + '\'' +
+                ", uuid2='" + uuid2 + '\'' +
+                ", ext1='" + ext1 + '\'' +
+                ", ext2='" + ext2 + '\'' +
+                ", ext3='" + ext3 + '\'' +
+                ", callDeviceList=" + callDeviceList +
+                ", callDetailList=" + callDetailList +
+                '}';
     }
 }

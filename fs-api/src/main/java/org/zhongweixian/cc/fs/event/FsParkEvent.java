@@ -9,9 +9,6 @@ import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
  */
 public class FsParkEvent extends FsBaseEvent {
 
-    @JSONField(name = "variable_direction")
-    private String direction;
-
     /**
      * 主叫号码
      */
@@ -48,15 +45,6 @@ public class FsParkEvent extends FsBaseEvent {
     @JSONField(name = "variable_sip_via_port")
     private String sipPort;
 
-
-
-    public String getDirection() {
-        return direction;
-    }
-
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
 
     public String getCalled() {
         return called;

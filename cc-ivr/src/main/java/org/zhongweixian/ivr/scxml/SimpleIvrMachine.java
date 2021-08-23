@@ -1,16 +1,23 @@
 package org.zhongweixian.ivr.scxml;
 
-import org.apache.commons.scxml2.*;
-import org.apache.commons.scxml2.env.SimpleDispatcher;
-import org.apache.commons.scxml2.env.SimpleErrorReporter;
-import org.apache.commons.scxml2.env.jexl.JexlContext;
-import org.apache.commons.scxml2.env.jexl.JexlEvaluator;
-import org.apache.commons.scxml2.io.SCXMLReader;
-import org.apache.commons.scxml2.model.*;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.scxml.Evaluator;
+import org.apache.commons.scxml.SCXMLExecutor;
+import org.apache.commons.scxml.SCXMLListener;
+import org.apache.commons.scxml.TriggerEvent;
+import org.apache.commons.scxml.env.SimpleDispatcher;
+import org.apache.commons.scxml.env.SimpleErrorHandler;
+import org.apache.commons.scxml.env.SimpleErrorReporter;
+import org.apache.commons.scxml.env.jexl.JexlContext;
+import org.apache.commons.scxml.env.jexl.JexlEvaluator;
+import org.apache.commons.scxml.io.SCXMLParser;
+import org.apache.commons.scxml.model.*;
 import org.cti.cc.po.CallInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -30,6 +37,17 @@ public class SimpleIvrMachine {
     private Map<Long, SCXML> scxmlMap = new ConcurrentHashMap<>();
     private Map<Long, SCXMLExecutor> executorMap = new ConcurrentHashMap<>();
 
+    public void getState(Long callId) {
+        State state = getCurrentState(callId);
+        logger.info(" state : {} ", state);
+
+        List<Transition> transitionList = (List<Transition>) state.getTransitionsList();
+        logger.info("transitionList :{}", transitionList.get(0));
+
+        fireEvent(callId, transitionList.get(0).getEvent());
+
+    }
+
 
     public void runIvr(CallInfo callInfo, Long ivrId) {
         SCXML scxml = scxmlMap.get(ivrId);
@@ -39,50 +57,42 @@ public class SimpleIvrMachine {
 
         Evaluator evaluator = new JexlEvaluator();
         SCXMLExecutor executor = new SCXMLExecutor(evaluator, new SimpleDispatcher(), new SimpleErrorReporter());
-
+        executor.setStateMachine(scxml);
+        executor.setSuperStep(true);
+        executor.setRootContext(new JexlContext());
+        executorMap.put(callInfo.getCallId(), executor);
         executor.addListener(scxml, new SCXMLListener() {
             @Override
-            public void onEntry(EnterableState enterableState) {
-                logger.info("enterableState:{}", enterableState.getOnEntries());
+            public void onEntry(TransitionTarget transitionTarget) {
+                logger.info("onEntry transitionTarget {}", transitionTarget.getId());
+                State state = getCurrentState(callInfo.getCallId());
+                logger.info("onEntry id: {} ,  target:{} , isFinal:{] ", transitionTarget.getId(), state.getId(), state.isFinal());
+               /* if (state != null) {
+                    List<Transition> transitionList = (List<Transition>) state.getTransitionsList();
+                    if (!CollectionUtils.isEmpty(transitionList)) {
+                        fireEvent(callInfo.getCallId(), transitionList.get(0).getEvent());
+                    }
+                }*/
+                Transition transition = (Transition) transitionTarget.getTransitionsList().get(0);
+                fireEvent(callInfo.getCallId(), transition.getEvent());
             }
 
             @Override
-            public void onExit(EnterableState enterableState) {
-                logger.info("enterableState:{}", enterableState);
+            public void onExit(TransitionTarget transitionTarget) {
+                logger.info("onExit transitionTarget {}", transitionTarget.getId());
             }
 
             @Override
-            public void onTransition(TransitionTarget transitionTarget, TransitionTarget transitionTarget1, Transition transition, String s) {
-                logger.info("{} , {} , {} , {}", transitionTarget, transitionTarget1, transition, s);
+            public void onTransition(TransitionTarget transitionTarget, TransitionTarget transitionTarget1, Transition transition) {
+                logger.info("{} , {} {} ", transitionTarget.getId(), transitionTarget1.getId(), transition.getTargets());
             }
         });
+
         try {
-            executor.setStateMachine(scxml);
-            executor.setRootContext(new JexlContext());
             executor.go();
-            executorMap.put(callInfo.getCallId(), executor);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-
-        try {
-            Map<String, TransitionTarget> mapTg = scxml.getTargets();
-
-            mapTg.forEach((k, v) -> {
-                logger.info("{}:{}", k, v);
-            });
-
-            SimpleTransition simpleTransition = scxml.getInitialTransition();
-
-            scxml.setInitial("reset");
-
-            executor.triggerEvent(new TriggerEvent("reset", TriggerEvent.CALL_EVENT));
-            executor.triggerEvent(new TriggerEvent("running", TriggerEvent.CALL_EVENT));
-        } catch (ModelException e) {
-            logger.error(e.getMessage(), e);
-        }
-
-
     }
 
 
@@ -103,9 +113,8 @@ public class SimpleIvrMachine {
         }
         //定义好action事件
         List<CustomAction> actionList = new ArrayList<>();
-        SCXMLReader.Configuration configuration = new SCXMLReader.Configuration(null, null, actionList);
         try {
-            SCXML scxml = SCXMLReader.read(new URL("file:" + ivrId + ".xml"), configuration);
+            SCXML scxml = SCXMLParser.parse(new URL("file:" + ivrId + ".xml"), new SimpleErrorHandler());
             scxmlMap.put(ivrId, scxml);
             return scxml;
         } catch (Exception e) {
@@ -121,18 +130,20 @@ public class SimpleIvrMachine {
      * @param event
      * @return
      */
-    public boolean triggerEvent(Long callId, String event) {
-        SCXMLExecutor executor = executorMap.get(callId);
-        if (executor == null) {
+    public boolean fireEvent(Long callId, String event) {
+        if (StringUtils.isBlank(event)) {
             return false;
         }
-        TriggerEvent[] evts = {new TriggerEvent(event, TriggerEvent.SIGNAL_EVENT)};
-        try {
-            executor.triggerEvents(evts);
-        } catch (ModelException e) {
-            logger.error(e.getMessage(), e);
+        if ("end".equals(event)) {
+            logger.info("callId:{} is end", callId);
+            return false;
         }
-        return executor.getStatus().isFinal();
+        TriggerEvent[] evts = new TriggerEvent[]{new TriggerEvent(event, 3, (Object) null)};
+        try {
+            this.executorMap.get(callId).triggerEvents(evts);
+        } catch (ModelException var4) {
+        }
+        return this.executorMap.get(callId).getCurrentStatus().isFinal();
     }
 
     /**
@@ -149,11 +160,18 @@ public class SimpleIvrMachine {
         TriggerEvent triggerEvent = new TriggerEvent(event, TriggerEvent.SIGNAL_EVENT, payload);
         try {
             executor.triggerEvent(triggerEvent);
-        } catch (ModelException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return executor.getStatus().isFinal();
+        return executor.getCurrentStatus().isFinal();
     }
 
+    private State getCurrentState(Long callId) {
+        Set<?> states = executorMap.get(callId).getCurrentStatus().getStates();
+        if (CollectionUtils.isEmpty(states)) {
+            return null;
+        }
+        return ((State) states.iterator().next());
+    }
 
 }

@@ -12,16 +12,23 @@ import org.zhongweixian.ivr.scxml.SimpleIvrMachine;
  */
 
 @RestController
-@RequestMapping("index")
+@RequestMapping("")
 public class IndexController {
 
     @Autowired
     private SimpleIvrMachine ivrMachine;
 
-    @GetMapping()
+    @GetMapping("index")
     public String index() {
-        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(1L).build();
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(100L).build();
         ivrMachine.runIvr(callInfo, 1L);
+        return "is ok";
+    }
+
+    @GetMapping("index2")
+    public String index2() {
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(100L).build();
+        ivrMachine.getState(callInfo.getCallId());
         return "is ok";
     }
 }

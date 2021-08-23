@@ -104,6 +104,8 @@ public class FsConstant {
 
     public final static String CHANNEL_UNBRIDGE = "CHANNEL_UNBRIDGE";
 
+    public final static String DETECTED_SPEECH = "DETECTED_SPEECH";
+
     public final static String CODEC = "CODEC";
 
     public final static String RECV_INFO = "RECV_INFO";

@@ -39,13 +39,6 @@ public class FsBridgeEvent extends FsBaseEvent {
     private String otherCallerIdName;
 
     /**
-     * 呼叫方向
-     */
-    @JSONField(name = "Caller-Logical-Direction")
-    private String direction;
-
-
-    /**
      * 主叫device
      */
     @JSONField(name = "Caller-Unique-ID")
@@ -57,11 +50,27 @@ public class FsBridgeEvent extends FsBaseEvent {
     @JSONField(name = "Other-Leg-Unique-ID")
     private String otherUniqueId;
 
-    @JSONField(name = "variable_channel_name")
-    private String channelName;
 
     @JSONField(name = "Other-Leg-Channel-Name")
     private String otherChannelName;
+
+    /**
+     * 读取编码名
+     */
+    @JSONField(name = "variable_absolute_codec_string")
+    private String writeCodec;
+
+    /**
+     * 目标编码名称
+     */
+    @JSONField(name = "variable_rtp_use_codec_string")
+    private String readCodec;
+
+    /**
+     *
+     */
+    @JSONField(name = "variable_rtp_last_audio_codec_string")
+    private String lastCodec;
 
     public Long getMediaPort() {
         return mediaPort;
@@ -103,14 +112,6 @@ public class FsBridgeEvent extends FsBaseEvent {
         this.otherCallerIdName = otherCallerIdName;
     }
 
-    public String getDirection() {
-        return direction;
-    }
-
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
-
     public String getCallerUniqueId() {
         return callerUniqueId;
     }
@@ -127,22 +128,36 @@ public class FsBridgeEvent extends FsBaseEvent {
         this.otherUniqueId = otherUniqueId;
     }
 
-    @Override
-    public String getChannelName() {
-        return channelName;
-    }
-
-    @Override
-    public void setChannelName(String channelName) {
-        this.channelName = channelName;
-    }
-
     public String getOtherChannelName() {
         return otherChannelName;
     }
 
     public void setOtherChannelName(String otherChannelName) {
         this.otherChannelName = otherChannelName;
+    }
+
+    public String getWriteCodec() {
+        return writeCodec;
+    }
+
+    public void setWriteCodec(String writeCodec) {
+        this.writeCodec = writeCodec;
+    }
+
+    public String getReadCodec() {
+        return readCodec;
+    }
+
+    public void setReadCodec(String readCodec) {
+        this.readCodec = readCodec;
+    }
+
+    public String getLastCodec() {
+        return lastCodec;
+    }
+
+    public void setLastCodec(String lastCodec) {
+        this.lastCodec = lastCodec;
     }
 
     @Override

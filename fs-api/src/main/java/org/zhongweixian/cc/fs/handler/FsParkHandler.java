@@ -60,11 +60,18 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         if (callInfo == null) {
             return;
         }
-        callInfo.setMedia(event.getHostname());
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(event.getDeviceId());
-        if (deviceInfo == null || event.getHangup() != null) {
+        if (deviceInfo == null) {
             return;
         }
+        if (deviceInfo.getAnswerTime() != null && deviceInfo.getDeviceType() == 2) {
+            //呼入坐席挂机,用户收到park，则不处理
+            return;
+        }
+        if (event.getHangup() != null) {
+            return;
+        }
+        callInfo.setMedia(event.getHostname());
         if (StringUtils.isBlank(callInfo.getAgentKey())) {
             return;
         }

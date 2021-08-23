@@ -175,12 +175,6 @@ public class GroupHandler extends BaseHandler {
      * @param thisDeviceId
      */
     private void callAgent(AgentInfo agentInfo, CallInfo callInfo, String thisDeviceId) {
-        if (!CollectionUtils.isEmpty(callInfo.getCallDetails())) {
-            CallDetail callDetail = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
-            if (callDetail != null) {
-                callDetail.setEndTime(Instant.now().toEpochMilli());
-            }
-        }
         transferAgentHandler.hanlder(callInfo, agentInfo, thisDeviceId);
     }
 
@@ -397,6 +391,7 @@ public class GroupHandler extends BaseHandler {
      * @param callQueue
      */
     private void queueTimeout(CallQueue callQueue) {
+        Long now = Instant.MIN.toEpochMilli();
         CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.deviceId);
         GroupOverflowPo groupOverflowPo = callQueue.getGroupOverflowPo();
@@ -428,6 +423,13 @@ public class GroupHandler extends BaseHandler {
                 logger.warn("============:{}", callQueue);
                 break;
         }
+        callInfo.setQueueEndTime(now);
+        if (!CollectionUtils.isEmpty(callInfo.getCallDetails())) {
+            CallDetail callDetail = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
+            if (callDetail != null) {
+                callDetail.setEndTime(now);
+            }
+        }
         fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
         doNextCommand(callInfo, deviceInfo);
     }
@@ -443,7 +445,7 @@ public class GroupHandler extends BaseHandler {
                     Iterator<CallQueue> iterator = v.iterator();
                     while (iterator.hasNext()) {
                         CallQueue callQueue = iterator.next();
-                        if (now - callQueue.getStartTime() > callQueue.getGroupOverflowPo().getQueueTimeout().longValue()) {
+                        if (now - callQueue.getStartTime() >= callQueue.getGroupOverflowPo().getQueueTimeout().longValue()) {
                             callAgentService.execute(() -> {
                                 queueTimeout(callQueue);
                             });

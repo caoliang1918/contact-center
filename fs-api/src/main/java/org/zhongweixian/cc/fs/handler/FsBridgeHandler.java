@@ -3,6 +3,7 @@ package org.zhongweixian.cc.fs.handler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.cti.cc.entity.CallLog;
+import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.po.*;
 import org.slf4j.Logger;
@@ -62,14 +63,23 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
         }
 
         GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
-        if (groupInfo != null && groupInfo.getRecordType() == 2) {
-            //接通录音
-            String record = recordPath +
-                    DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
-            super.record(event.getHostname(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
-            callInfo.setRecord(record);
+        if (groupInfo.getRecordType() > 0) {
+            /**
+             * 手动外呼：接通录音时在此录音
+             * 呼入: 在此录音
+             */
+            if (callInfo.getCallType() == CallType.OUTBOUNT_CALL && groupInfo.getRecordType() == 2) {
+                String record = recordPath +
+                        DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
+                super.record(event.getHostname(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
+                deviceInfo1.setRecord(record);
+            } else if (callInfo.getCallType() == CallType.INBOUND_CALL) {
+                String record = recordPath +
+                        DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
+                super.record(event.getHostname(), callInfo.getCallId(), event.getDeviceId(), record);
+                deviceInfo1.setRecord(record);
+            }
         }
-
 
         if (StringUtils.isBlank(callInfo.getAgentKey())) {
             return;

@@ -22,7 +22,7 @@ public enum CallType {
     /**
      * 自动外呼
      */
-    BOT_CALL(3),
+    AUTO_CALL(3),
 
     /**
      * 半自动外呼

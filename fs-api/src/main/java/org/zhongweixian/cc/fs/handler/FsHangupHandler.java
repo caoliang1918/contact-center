@@ -7,6 +7,7 @@ import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.PushFailLog;
+import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.NextType;
@@ -107,12 +108,17 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         callDevice.setUts(callDevice.getEndTime());
         callInfo.setEndTime(callDevice.getEndTime());
 
-        if (callInfo.getHiddenCustomer() == 1 && deviceInfo.getDeviceType() == 2) {
+        if (callInfo.getHiddenCustomer() == 1) {
             //隐藏客户侧号码
-            if (callInfo.getDirection() == Direction.INBOUND) {
+            if (callInfo.getDirection() == Direction.INBOUND && deviceInfo.getDeviceType() == 2) {
                 callDevice.setCaller(hiddenNumber(deviceInfo.getCaller()));
-            } else if (callInfo.getDirection() == Direction.OUTBOUND) {
+                callDevice.setChannelName(event.getChannelName().replace(deviceInfo.getCaller(), callDevice.getCaller()));
+            } else if (callInfo.getDirection() == Direction.OUTBOUND && deviceInfo.getDeviceType() == 2) {
                 callDevice.setCalled(hiddenNumber(deviceInfo.getCalled()));
+                callDevice.setChannelName(event.getChannelName().replace(deviceInfo.getCalled(), callDevice.getCalled()));
+            }
+            if (callInfo.getDirection() == Direction.INBOUND && deviceInfo.getDeviceType() != 2) {
+                callDevice.setDisplay(hiddenNumber(callDevice.getDisplay()));
             }
         }
         callCdrService.saveCallDevice(callDevice);
@@ -173,6 +179,13 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
      * @param callInfo
      */
     private void hangup(CallInfo callInfo) {
+        //计算用户等待总时长
+        if (callInfo.getCallType() == CallType.INBOUND_CALL || callInfo.getCallType() == CallType.AUTO_CALL) {
+            if (callInfo.getQueueStartTime() != null) {
+                callInfo.setWaitTime(callInfo.getEndTime() - callInfo.getFristQueueTime());
+            }
+        }
+
         CallLog callLog = new CallLog();
         BeanUtils.copyProperties(callInfo, callLog);
         callLog.setCts(callInfo.getCallTime());
@@ -202,6 +215,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         callCdrService.saveCallDetail(callInfo.getCallDetails());
         callCdrService.saveOrUpdateCallLog(callLog);
 
+        //清空电话信息
         cacheService.removeCallInfo(callInfo.getCallId());
         if (StringUtils.isBlank(callInfo.getCdrNotifyUrl())) {
             return;
@@ -303,7 +317,14 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         }
         WsCallAfterEntity afterEntity = new WsCallAfterEntity();
         BeanUtils.copyProperties(callInfo, afterEntity);
-
+        if (callInfo.getHiddenCustomer() == 1) {
+            //隐藏客户侧号码
+            if (callInfo.getDirection() == Direction.INBOUND) {
+                afterEntity.setCaller(hiddenNumber(callInfo.getCaller()));
+            } else if (callInfo.getDirection() == Direction.OUTBOUND) {
+                afterEntity.setCalled(hiddenNumber(callInfo.getCalled()));
+            }
+        }
         agentInfo.setBeforeTime(agentInfo.getStateTime());
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setStateTime(Instant.now().toEpochMilli());

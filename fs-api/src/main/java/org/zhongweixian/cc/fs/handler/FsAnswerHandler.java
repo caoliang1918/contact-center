@@ -1,12 +1,14 @@
 package org.zhongweixian.cc.fs.handler;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.fs.event.FsAnswerEvent;
 import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
@@ -69,6 +71,20 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             case NEXT_CALL_BRIDGE:
                 logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled(), nextCommand.getNextValue(), event.getDeviceId());
                 callBridge(event.getHostname(), event.getDeviceId(), nextCommand.getNextValue());
+                /**
+                 * 呼入电话，坐席接听后，需要桥接
+                 */
+                if (callInfo.getCallType() == CallType.INBOUND_CALL) {
+                    if (callInfo.getQueueStartTime() != null && callInfo.getQueueEndTime() == null && deviceInfo.getDeviceType() == 1) {
+                        callInfo.setQueueEndTime(deviceInfo.getAnswerTime());
+                        if (!CollectionUtils.isEmpty(callInfo.getCallDetails())) {
+                            CallDetail callDetail = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
+                            if (callDetail != null) {
+                                callDetail.setEndTime(deviceInfo.getAnswerTime());
+                            }
+                        }
+                    }
+                }
                 break;
             default:
                 logger.warn("can not match :{}, callId:{}", nextCommand.getNextType(), callInfo.getCallId());
@@ -118,7 +134,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         deviceInfo1.setCdrType(callInfo.getCallType() == CallType.INNER_CALL ? 3 : 2);
         deviceInfo1.setCallId(callInfo.getCallId());
         deviceInfo1.setCalled(called);
-        deviceInfo1.setDisplay(called);
+        deviceInfo1.setDisplay(callInfo.getCalledDisplay());
         deviceInfo1.setCaller(callInfo.getCalledDisplay());
         deviceInfo1.setDeviceId(deviceId);
         deviceInfo1.setCallTime(Instant.now().toEpochMilli());

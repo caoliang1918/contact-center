@@ -104,22 +104,4 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
         return null;
     }
 
-    protected String hiddenNumber(String number) {
-        if (number.length() >= 11) {
-            return number.substring(0, 3) + "****" + number.substring(7);
-        }
-        if (number.length() < 3) {
-            return number;
-        }
-        return number.substring(0, 3) + randomHidden(number.length());
-    }
-
-    private String randomHidden(int num) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i <= num; i++) {
-            builder.append("*");
-        }
-        return builder.toString();
-    }
-
 }

@@ -425,8 +425,6 @@
 
   <resultMap id="BaseResultMapPo" type="org.cti.cc.po.CallLogPo" >
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="cts" jdbcType="BIGINT" property="cts" />
-    <result column="uts" jdbcType="BIGINT" property="uts" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="call_id" jdbcType="BIGINT" property="callId" />
     <result column="caller_display" jdbcType="VARCHAR" property="callerDisplay" />
