@@ -41,6 +41,7 @@ public enum ErrorCode {
     CALL_ANSWERED(2010, "电话已经应答"),
 
 
+    CALL_NUMBER_ERROR(3000, "号码错误"),
     CALLTYPE_ERROR(3001, "呼叫类型错误"),
     CALL_ROUTE_ERROR(3002, "路由错误"),
     CALL_RUNTIME_ERROR(3500, "呼叫中异常");

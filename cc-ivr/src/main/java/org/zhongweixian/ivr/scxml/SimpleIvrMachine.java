@@ -37,17 +37,6 @@ public class SimpleIvrMachine {
     private Map<Long, SCXML> scxmlMap = new ConcurrentHashMap<>();
     private Map<Long, SCXMLExecutor> executorMap = new ConcurrentHashMap<>();
 
-    public void getState(Long callId) {
-        State state = getCurrentState(callId);
-        logger.info(" state : {} ", state);
-
-        List<Transition> transitionList = (List<Transition>) state.getTransitionsList();
-        logger.info("transitionList :{}", transitionList.get(0));
-
-        fireEvent(callId, transitionList.get(0).getEvent());
-
-    }
-
 
     public void runIvr(CallInfo callInfo, Long ivrId) {
         SCXML scxml = scxmlMap.get(ivrId);
@@ -66,15 +55,13 @@ public class SimpleIvrMachine {
             public void onEntry(TransitionTarget transitionTarget) {
                 logger.info("onEntry transitionTarget {}", transitionTarget.getId());
                 State state = getCurrentState(callInfo.getCallId());
-                logger.info("onEntry id: {} ,  target:{} , isFinal:{] ", transitionTarget.getId(), state.getId(), state.isFinal());
-               /* if (state != null) {
-                    List<Transition> transitionList = (List<Transition>) state.getTransitionsList();
+                if (state != null) {
+                    List<Transition> transitionList = (List<Transition>) transitionTarget.getTransitionsList();
                     if (!CollectionUtils.isEmpty(transitionList)) {
+                        logger.info("state id: {}, event:{},  target:{} , isFinal:{} ", state.getId(), transitionList.get(0).getEvent(), transitionList.get(0).getTargets(), state.isFinal());
                         fireEvent(callInfo.getCallId(), transitionList.get(0).getEvent());
                     }
-                }*/
-                Transition transition = (Transition) transitionTarget.getTransitionsList().get(0);
-                fireEvent(callInfo.getCallId(), transition.getEvent());
+                }
             }
 
             @Override
@@ -134,10 +121,6 @@ public class SimpleIvrMachine {
         if (StringUtils.isBlank(event)) {
             return false;
         }
-        if ("end".equals(event)) {
-            logger.info("callId:{} is end", callId);
-            return false;
-        }
         TriggerEvent[] evts = new TriggerEvent[]{new TriggerEvent(event, 3, (Object) null)};
         try {
             this.executorMap.get(callId).triggerEvents(evts);
@@ -172,6 +155,15 @@ public class SimpleIvrMachine {
             return null;
         }
         return ((State) states.iterator().next());
+    }
+
+    public boolean executeNext(Long callId) {
+        State state = getCurrentState(callId);
+        if (state != null) {
+            List<Transition> transitionList = (List<Transition>) state.getTransitionsList();
+            return fireEvent(callId, transitionList.get(0).getEvent());
+        }
+        return false;
     }
 
 }

@@ -28,6 +28,10 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
 
     @Override
     public void handleEvent(WsMakeCallEvent event) {
+        if(StringUtils.isBlank(event.getCalled())) {
+            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_NUMBER_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
+            return;
+        }
         /**
          * 呼叫类型没有匹配上
          */
@@ -93,7 +97,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
                 .withCompanyId(agentInfo.getCompanyId())
                 .withGroupId(agentInfo.getGroupId())
                 .withCaller(caller)
-                .withCalled(event.getCalled())
+                .withCalled(event.getCalled().strip())
                 .withCallerDisplay(callerDisplay)
                 .withCalledDisplay(calledDisplay)
                 .withDirection(Direction.OUTBOUND)
@@ -104,7 +108,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
 
         switch (event.getCallType()) {
             case INNER_CALL:
-                AgentInfo calledAgent = cacheService.getAgentInfo(event.getCalled());
+                AgentInfo calledAgent = cacheService.getAgentInfo(event.getCalled().strip());
                 if (calledAgent == null || calledAgent.getLogoutTime() > 0L) {
                     sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_NOT_ONLINE, AgentState.INNER_CALL.name(), event.getAgentKey()));
                     return;

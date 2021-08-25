@@ -9,7 +9,9 @@ import io.netty.channel.ChannelId;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constants;
+import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
+import org.cti.cc.po.AgentState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.base.ChannelEntity;
 import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 import org.zhongweixian.cc.websocket.handler.WsLogoutHandler;
+import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 import org.zhongweixian.listener.ConnectionListener;
 
 import java.time.Instant;
@@ -146,6 +149,11 @@ public class WebSocketHandler implements ConnectionListener {
                 logger.info("websocket received channel:{} message:{}", channel.id(), text);
                 handler.handleEvent(event);
             } catch (Throwable e) {
+                JSONObject json = new JSONObject();
+                json.put("type", jsonObject.getString("cmd"));
+                json.put("code", 500);
+                json.put("message", "runtime time exception");
+                channel.writeAndFlush(new TextWebSocketFrame(json.toJSONString()));
                 logger.error(e.getMessage(), e);
             }
         });

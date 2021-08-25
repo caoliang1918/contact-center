@@ -28,7 +28,7 @@ public class IndexController {
     @GetMapping("index2")
     public String index2() {
         CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(100L).build();
-        ivrMachine.getState(callInfo.getCallId());
+        ivrMachine.executeNext(callInfo.getCallId());
         return "is ok";
     }
 }

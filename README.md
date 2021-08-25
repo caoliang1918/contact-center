@@ -15,9 +15,6 @@
 <p align="center">
     <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/fs-api.png" alt="流程图">
     <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/freeswitch流程.png" alt="流程图">
+    <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/outbound.png" alt="流程图">
 </p>
 
-
-## join us
-
-### wx:meigu1918
