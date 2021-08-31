@@ -1,6 +1,7 @@
 package org.zhongweixian;
 
 
+import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
