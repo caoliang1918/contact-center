@@ -3,6 +3,7 @@ package org.zhongweixian.cc.listen;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.cti.cc.constant.Constants;
+import org.cti.cc.entity.Station;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
 import org.slf4j.Logger;
@@ -40,8 +41,8 @@ public class AgentStateListen {
     @Autowired
     private GroupHandler groupHandler;
 
-    @Value("${server.address}:${server.port}")
-    private String host;
+    @Autowired
+    private Station station;
 
     @Value("${server.instance.id:}")
     private String instance;
@@ -52,10 +53,10 @@ public class AgentStateListen {
      *
      * @param payload
      */
-    @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.agent-" + "${server.address}:${server.port}", autoDelete = "true"), key = Constants.DEFAULT_KEY, exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC))})
+    @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.agent-" + "${spring.application.id}", autoDelete = "true"), key = Constants.DEFAULT_KEY, exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC))})
     public void listenAgentState(@Payload String payload) {
         JSONObject json = JSON.parseObject(payload);
-        if (host.equals(json.getString("host")) && instance.equals(json.getString("instance"))) {
+        if (station.getHost().equals(json.getString("host")) && instance.equals(json.getString("instance"))) {
             return;
         }
 
@@ -105,7 +106,7 @@ public class AgentStateListen {
         /**
          * 呼入转坐席，坐席和电话不在一个服务上
          */
-        if (host.equals(json.getString("host")) && !instance.equals(json.getString("instance"))) {
+        if (station.getHost().equals(json.getString("host")) && !instance.equals(json.getString("instance"))) {
             webSocketHandler.sentWsMessage(agentInfo, payload);
             return;
         }

@@ -2,6 +2,7 @@ package org.zhongweixian.ivr.tcp;
 
 import com.alibaba.fastjson.JSONObject;
 import org.cti.cc.constant.Constants;
+import org.cti.cc.entity.Station;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class TcpClientManager {
     private List<String> hosts;
 
 
-    @Value("${server.address}:${server.port}")
-    private String host;
+    @Autowired
+    private Station station;
 
     private Map<String, NettyClient> nettyClientMap = new HashMap<>();
 
@@ -39,7 +40,7 @@ public class TcpClientManager {
         JSONObject payload = new JSONObject();
         payload.put("cmd", "login");
         payload.put("stationType", 3);
-        payload.put("domain", Constants.HTTP + host);
+        payload.put("domain", Constants.HTTP + station.getHost());
         authorizationToken.setPayload(payload.toJSONString());
         NettyClient nettyClient = new NettyClient(url, port, authorizationToken, tcpClientHandler);
         nettyClientMap.put(url, nettyClient);

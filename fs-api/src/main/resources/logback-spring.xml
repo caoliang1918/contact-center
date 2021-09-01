@@ -26,15 +26,16 @@
     </appender>
 
     <!-- 开发测试环境 -->
-    <springProfile name="!prod">
+    <springProfile name="dev">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
         </root>
     </springProfile>
     <!-- 生产环境 -->
-    <springProfile name="prod">
+    <springProfile name="prod|nacos">
         <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
         </root>
     </springProfile>

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.entity.Station;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
@@ -40,8 +41,8 @@ import java.time.Instant;
 @HandlerType("WS_LOGIN")
 public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
 
-    @Value("${server.address}:${server.port}")
-    private String host;
+    @Autowired
+    private Station station;
 
     @Autowired
     private AgentService agentService;
@@ -165,7 +166,7 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
         agentInfo.setLoginTime(Instant.now().toEpochMilli());
         agentInfo.setStateTime(agentInfo.getLoginTime());
         agentInfo.setAgentState(AgentState.LOGIN);
-        agentInfo.setHost(host);
+        agentInfo.setHost(station.getHost());
         agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
         agentInfo.setLoginType(event.getLoginType());
         agentInfo.setWorkType(event.getWorkType());

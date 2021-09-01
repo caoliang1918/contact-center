@@ -23,7 +23,7 @@ public class ConfigListen {
      *
      * @param payload
      */
-    @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.config-" + "${server.address}:${server.port}" , autoDelete = "true"),
+    @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.config-" + "${spring.application.id}" , autoDelete = "true"),
             key = Constants.DEFAULT_KEY, exchange = @Exchange(value = Constants.CONFIG_EXCHANGE, type = ExchangeTypes.TOPIC))})
     public void listenAgentState(@Payload String payload) {
         logger.info("receive config message:{}", payload);

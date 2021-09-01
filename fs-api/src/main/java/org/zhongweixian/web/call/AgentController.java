@@ -1,5 +1,6 @@
 package org.zhongweixian.web.call;
 
+import org.cti.cc.entity.Station;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
@@ -44,8 +45,8 @@ public class AgentController extends BaseController {
     @Autowired
     private WsLogoutHandler logoutHandler;
 
-    @Value("${server.address}:${server.port}")
-    private String host;
+    @Autowired
+    private Station station;
 
 
     /**
@@ -66,7 +67,7 @@ public class AgentController extends BaseController {
         agentInfo.setStateTime(agentInfo.getLoginTime());
         agentInfo.setLoginTime(Instant.now().toEpochMilli());
         agentInfo.setAgentState(AgentState.LOGIN);
-        agentInfo.setHost(host);
+        agentInfo.setHost(station.getHost());
         agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
         agentInfo.setLoginType(agentVo.getLoginType());
         agentInfo.setWorkType(agentVo.getWorkType());
