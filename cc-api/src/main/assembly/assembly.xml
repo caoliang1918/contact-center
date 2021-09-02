@@ -26,6 +26,7 @@
             <directory>src/main/resources/</directory>
             <outputDirectory>conf</outputDirectory>
             <includes>
+                <include>bootstrap.properties</include>
                 <include>application-prod.properties</include>
                 <include>*.xml</include>
             </includes>

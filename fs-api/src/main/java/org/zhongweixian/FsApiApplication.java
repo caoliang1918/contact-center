@@ -7,7 +7,6 @@ import com.alibaba.nacos.api.naming.listener.Event;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.alibaba.nacos.spring.context.annotation.discovery.EnableNacosDiscovery;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.cti.cc.entity.Station;
 import org.cti.cc.mapper.StationMapper;
@@ -21,6 +20,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
@@ -35,10 +35,10 @@ import org.zhongweixian.cc.websocket.handler.WsMonitorHandler;
 import java.util.List;
 
 
-@SpringBootApplication
+@EnableDiscoveryClient
 @EnableEncryptableProperties
-@EnableNacosDiscovery
 @MapperScan("org.cti.cc.mapper")
+@SpringBootApplication
 public class FsApiApplication implements CommandLineRunner, ApplicationListener<ContextClosedEvent>, WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
     private Logger logger = LoggerFactory.getLogger(FsApiApplication.class);
 
@@ -93,7 +93,7 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
             System.exit(0);
         }
         try {
-            String name = "cc@@fs-api";
+            String name = "fs-api";
             NamingService namingService = NamingFactory.createNamingService("115.159.101.178:8848");
             List<Instance> instances = namingService.getAllInstances(name);
             logger.info("==========={}", instances);
@@ -108,8 +108,6 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-
-
         return station;
     }
 
