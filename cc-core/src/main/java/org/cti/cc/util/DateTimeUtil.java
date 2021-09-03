@@ -6,7 +6,9 @@ import java.util.Date;
 /**
  * Created by caoliang on 2021/8/14
  */
-public class DataTimeUtil {
+public class DateTimeUtil {
+
+    public final static String YYYYMMDD_HHMMSS = "yyyy-MM-dd HH:mm:ss";
 
 
     public static Long addday(Date date, int day) {

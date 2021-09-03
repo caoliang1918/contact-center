@@ -3,6 +3,7 @@ package org.zhongweixian.cc.cache;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.Playback;
 import org.cti.cc.entity.RouteGetway;
+import org.cti.cc.entity.Station;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.mapper.PlaybackMapper;
 import org.cti.cc.mapper.RouteCallMapper;
@@ -89,6 +90,8 @@ public class CacheService {
      * 呼入被叫号码
      */
     private Map<String, VdnPhone> vdnPhoneMap = null;
+
+    private Map<Integer , List<Station>> stationMap;
 
     /**
      * 获取本地缓存坐席

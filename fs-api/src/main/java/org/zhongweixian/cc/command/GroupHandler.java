@@ -2,7 +2,6 @@ package org.zhongweixian.cc.command;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.cti.cc.constant.Constants;
-import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.GroupMemory;
 import org.cti.cc.entity.GroupMemoryConfig;
@@ -10,14 +9,10 @@ import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.cti.cc.strategy.AgentStrategy;
-import org.cti.cc.util.DataTimeUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.cti.cc.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.base.BaseHandler;
-import org.zhongweixian.cc.fs.FsListen;
-import org.zhongweixian.cc.service.AgentService;
 
 import java.time.Instant;
 import java.util.Date;
@@ -241,7 +236,7 @@ public class GroupHandler extends BaseHandler {
         if (groupMemoryConfig == null || groupMemoryConfig.getStatus() != 1) {
             return false;
         }
-        Long time = groupMemoryConfig.getMemoryDay() == 0 ? 0L : DataTimeUtil.addday(new Date(), -groupMemoryConfig.getMemoryDay());
+        Long time = groupMemoryConfig.getMemoryDay() == 0 ? 0L : DateTimeUtil.addday(new Date(), -groupMemoryConfig.getMemoryDay());
 
         GroupMemory params = new GroupMemory();
         params.setGroupId(groupInfo.getId());

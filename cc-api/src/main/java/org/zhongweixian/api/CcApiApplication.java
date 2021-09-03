@@ -23,6 +23,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
+import org.zhongweixian.api.configration.QuartzConfig;
 
 import java.util.List;
 
@@ -33,6 +34,9 @@ import java.util.List;
 @SpringBootApplication
 public class CcApiApplication implements CommandLineRunner, ApplicationListener<ContextClosedEvent>, WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
     private Logger logger = LoggerFactory.getLogger(CcApiApplication.class);
+
+    @Autowired
+    private QuartzConfig quartzConfig;
 
     @Autowired
     private StationMapper stationMapper;
@@ -47,6 +51,9 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
 
     @Override
     public void run(String... args) throws Exception {
+
+        quartzConfig.initJob();
+
         try {
             String name = "cc-api";
             NamingService namingService = NamingFactory.createNamingService("115.159.101.178:8848");

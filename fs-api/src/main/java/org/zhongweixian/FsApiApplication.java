@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
@@ -65,6 +66,9 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
 
     @Value("${spring.application.id}")
     private Integer applicationId;
+
+    @Autowired
+    private LoadBalancerClient loadBalancerClient;
 
 
     //    @Bean
