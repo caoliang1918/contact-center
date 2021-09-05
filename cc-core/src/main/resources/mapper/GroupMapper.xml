@@ -60,6 +60,11 @@
     from cc_group
     where id = #{id,jdbcType=BIGINT}
   </select>
+
+  <select id="selectGroupIds" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id from cc_group  where company_id = #{companyId,jdbcType=BIGINT} and status = 1
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from cc_group
     where id = #{id,jdbcType=BIGINT}

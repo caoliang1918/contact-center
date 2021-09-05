@@ -2,6 +2,7 @@ package org.cti.cc.po;
 
 import org.cti.cc.entity.Company;
 import org.cti.cc.entity.CompanyDisplay;
+import org.cti.cc.entity.CompanyStat;
 import org.cti.cc.entity.RouteGroup;
 
 import java.util.HashMap;
@@ -27,13 +28,18 @@ public class CompanyInfo extends Company {
     /**
      * vdnId - vdnCode
      */
-    private Map<Long, VdnCodePo> vdnCodeMap ;
+    private Map<Long, VdnCodePo> vdnCodeMap;
 
 
     /**
      * 企业路由字冠集合
      */
     private Map<String, RouteGroupPo> routeGroupMap;
+
+    /**
+     * 企业报表统计
+     */
+    private List<CompanyStat> companyStats;
 
 
     public List<Long> getGroupIds() {
@@ -66,5 +72,13 @@ public class CompanyInfo extends Company {
 
     public void setRouteGroupMap(Map<String, RouteGroupPo> routeGroupMap) {
         this.routeGroupMap = routeGroupMap;
+    }
+
+    public List<CompanyStat> getCompanyStats() {
+        return companyStats;
+    }
+
+    public void setCompanyStats(List<CompanyStat> companyStats) {
+        this.companyStats = companyStats;
     }
 }

@@ -9,6 +9,7 @@
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="agent_id" jdbcType="BIGINT" property="agentId" />
     <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
     <result column="call_id" jdbcType="BIGINT" property="callId" />
     <result column="login_type" jdbcType="INTEGER" property="loginType" />
     <result column="work_type" jdbcType="INTEGER" property="workType" />
@@ -26,7 +27,7 @@
     <result column="ext3" jdbcType="VARCHAR" property="ext3" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, cts, uts, company_id, group_id, agent_id, agent_key, call_id, login_type, work_type, 
+    id, cts, uts, company_id, group_id, agent_id, agent_key, agent_name, call_id, login_type, work_type,
     host, remote_address, before_state, before_time, state, state_time, duration, busy_desc, 
     status, ext1, ext2, ext3
   </sql>
@@ -42,15 +43,15 @@
   </delete>
   <insert id="insert" parameterType="org.cti.cc.entity.AgentStateLog">
     insert into cc_agent_state_log (id, cts, uts, company_id, 
-      group_id, agent_id, agent_key, 
+      group_id, agent_id, agent_key, agent_name,
       call_id, login_type, work_type, 
       host, remote_address, before_state, 
       before_time, state, state_time, 
       duration, busy_desc, status, 
       ext1, ext2, ext3)
     values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
-      #{groupId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{agentKey,jdbcType=VARCHAR}, 
-      #{callId,jdbcType=BIGINT}, #{loginType,jdbcType=INTEGER}, #{workType,jdbcType=INTEGER}, 
+      #{groupId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR},
+      #{callId,jdbcType=BIGINT}, #{loginType,jdbcType=INTEGER}, #{workType,jdbcType=INTEGER},
       #{host,jdbcType=VARCHAR}, #{remoteAddress,jdbcType=VARCHAR}, #{beforeState,jdbcType=VARCHAR}, 
       #{beforeTime,jdbcType=BIGINT}, #{state,jdbcType=VARCHAR}, #{stateTime,jdbcType=BIGINT}, 
       #{duration,jdbcType=INTEGER}, #{busyDesc,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
@@ -79,6 +80,9 @@
       </if>
       <if test="agentKey != null">
         agent_key,
+      </if>
+      <if test="agentName != null">
+        agent_name,
       </if>
       <if test="callId != null">
         call_id,
@@ -148,6 +152,9 @@
       <if test="agentKey != null">
         #{agentKey,jdbcType=VARCHAR},
       </if>
+      <if test="agentName != null">
+        #{agentName,jdbcType=VARCHAR},
+      </if>
       <if test="callId != null">
         #{callId,jdbcType=BIGINT},
       </if>
@@ -216,6 +223,9 @@
       <if test="agentKey != null">
         agent_key = #{agentKey,jdbcType=VARCHAR},
       </if>
+      <if test="agentName != null">
+        agent_name = #{agentName,jdbcType=VARCHAR},
+      </if>
       <if test="callId != null">
         call_id = #{callId,jdbcType=BIGINT},
       </if>
@@ -272,6 +282,7 @@
       group_id = #{groupId,jdbcType=BIGINT},
       agent_id = #{agentId,jdbcType=BIGINT},
       agent_key = #{agentKey,jdbcType=VARCHAR},
+      agent_name = #{agentName,jdbcType=VARCHAR},
       call_id = #{callId,jdbcType=BIGINT},
       login_type = #{loginType,jdbcType=INTEGER},
       work_type = #{workType,jdbcType=INTEGER},
@@ -289,4 +300,24 @@
       ext3 = #{ext3,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="selectListByMap"  parameterType="java.util.Map" resultMap="BaseResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_agent_state_log
+    <where>
+      <if test="companyId!=null">and company_id = #{companyId}</if>
+      <if test="agentKey!=null"> agent_key like CONCAT(#{agentKey},"%")</if>
+      <if test="agentId!=null">and agent_id = #{agentId}</if>
+      <if test="start!=null">and state_time >= #{start}</if>
+      <if test="end!=null">and state_time &lt;  #{end}</if>
+      <if test="true" >and status = 1</if>
+    </where>
+  </select>
+
+  <delete id="clearAgentStateWork" parameterType="Long" >
+     delete from cc_agent_state_log where state_time &lt; #{time}
+  </delete>
+
 </mapper>

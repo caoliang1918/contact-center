@@ -573,4 +573,12 @@
       <if test="uuid2!=null"> and uuid2 = #{uuid2}</if>
     </where>
   </select>
+
+  <update id="createNewTable" >
+    CREATE  TABLE IF NOT EXISTS cc_call_log_${month} SELECT * FROM cc_call_log where cc_call_log.call_time between #{start} and #{end}
+  </update>
+
+  <delete id="clearTable" >
+     delete from cc_call_log where call_time between #{start} and #{end}
+  </delete>
 </mapper>

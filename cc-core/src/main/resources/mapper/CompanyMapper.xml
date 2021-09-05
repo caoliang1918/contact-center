@@ -21,10 +21,6 @@
     <result column="agent_limit" jdbcType="INTEGER" property="agentLimit" />
     <result column="group_limit" jdbcType="INTEGER" property="groupLimit" />
     <result column="group_agent_limit" jdbcType="INTEGER" property="groupAgentLimit" />
-    <result column="agent_state" jdbcType="INTEGER" property="agentState" />
-    <result column="inbound_stat" jdbcType="INTEGER" property="inboundStat" />
-    <result column="outbound_stat" jdbcType="INTEGER" property="outboundStat" />
-    <result column="group_wait_stat" jdbcType="INTEGER" property="groupWaitStat" />
     <result column="blacklist" jdbcType="BIGINT" property="blacklist" />
     <result column="notify_url" jdbcType="VARCHAR" property="notifyUrl" />
     <result column="ext1" jdbcType="VARCHAR" property="ext1" />
@@ -37,8 +33,7 @@
   <sql id="Base_Column_List">
     id, cts, uts, name, id_path, pid, company_code, contact, phone, balance, bill_type, 
     pay_type, hidden_customer, secret_type, secret_key, ivr_limit, agent_limit, group_limit, group_agent_limit,
-    agent_state, inbound_stat, outbound_stat, group_wait_stat, blacklist, notify_url,
-    ext1, ext2, ext3, ext4, ext5, status
+    blacklist, notify_url, ext1, ext2, ext3, ext4, ext5, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -51,24 +46,16 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="org.cti.cc.entity.Company">
-    insert into cc_company (id, cts, uts, name,
-      id_path, pid, company_code,
-      contact, phone, balance,
-      bill_type, pay_type,hidden_customer, secret_type, secret_key,
-      ivr_limit, agent_limit, group_limit,
-      group_agent_limit, agent_state, inbound_stat,
-      outbound_stat, group_wait_stat, blacklist,
-      notify_url, ext1, ext2,
-      ext3, ext4, ext5, status
-      )
+    insert into cc_company (id, cts, uts, name, id_path, pid, company_code, contact, phone, balance,
+      bill_type, pay_type,hidden_customer, secret_type, secret_key,ivr_limit, agent_limit, group_limit,
+      group_agent_limit, blacklist, notify_url, ext1, ext2, ext3, ext4, ext5, status)
     values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
       #{idPath,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, #{companyCode,jdbcType=VARCHAR},
       #{contact,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{balance,jdbcType=BIGINT},
-      #{billType,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{hiddenCustomer,jdbcType=INTEGER}, #{secretType,jdbcType=INTEGER}, #{secretKey,jdbcType=VARCHAR},
-      #{ivrLimit,jdbcType=INTEGER}, #{agentLimit,jdbcType=INTEGER}, #{groupLimit,jdbcType=INTEGER},
-      #{groupAgentLimit,jdbcType=INTEGER}, #{agentState,jdbcType=INTEGER}, #{inboundStat,jdbcType=INTEGER},
-      #{outboundStat,jdbcType=INTEGER}, #{groupWaitStat,jdbcType=INTEGER}, #{blacklist,jdbcType=BIGINT},
-      #{notifyUrl,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR},
+      #{billType,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{hiddenCustomer,jdbcType=INTEGER},
+      #{secretType,jdbcType=INTEGER}, #{secretKey,jdbcType=VARCHAR},#{ivrLimit,jdbcType=INTEGER},
+      #{agentLimit,jdbcType=INTEGER}, #{groupLimit,jdbcType=INTEGER},#{groupAgentLimit,jdbcType=INTEGER},
+      #{blacklist,jdbcType=BIGINT},#{notifyUrl,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR},
       #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
       )
   </insert>
@@ -131,18 +118,6 @@
       </if>
       <if test="groupAgentLimit != null">
         group_agent_limit,
-      </if>
-      <if test="agentState != null">
-        agent_state,
-      </if>
-      <if test="inboundStat != null">
-        inbound_stat,
-      </if>
-      <if test="outboundStat != null">
-        outbound_stat,
-      </if>
-      <if test="groupWaitStat != null">
-        group_wait_stat,
       </if>
       <if test="blacklist != null">
         blacklist,
@@ -227,18 +202,6 @@
       <if test="groupAgentLimit != null">
         #{groupAgentLimit,jdbcType=INTEGER},
       </if>
-      <if test="agentState != null">
-        #{agentState,jdbcType=INTEGER},
-      </if>
-      <if test="inboundStat != null">
-        #{inboundStat,jdbcType=INTEGER},
-      </if>
-      <if test="outboundStat != null">
-        #{outboundStat,jdbcType=INTEGER},
-      </if>
-      <if test="groupWaitStat != null">
-        #{groupWaitStat,jdbcType=INTEGER},
-      </if>
       <if test="blacklist != null">
         #{blacklist,jdbcType=BIGINT},
       </if>
@@ -319,18 +282,6 @@
       <if test="groupAgentLimit != null">
         group_agent_limit = #{groupAgentLimit,jdbcType=INTEGER},
       </if>
-      <if test="agentState != null">
-        agent_state = #{agentState,jdbcType=INTEGER},
-      </if>
-      <if test="inboundStat != null">
-        inbound_stat = #{inboundStat,jdbcType=INTEGER},
-      </if>
-      <if test="outboundStat != null">
-        outbound_stat = #{outboundStat,jdbcType=INTEGER},
-      </if>
-      <if test="groupWaitStat != null">
-        group_wait_stat = #{groupWaitStat,jdbcType=INTEGER},
-      </if>
       <if test="blacklist != null">
         blacklist = #{blacklist,jdbcType=BIGINT},
       </if>
@@ -360,7 +311,8 @@
   </update>
 
   <resultMap id="CompanyInfoResultMap"  type="org.cti.cc.po.CompanyInfo"  extends="BaseResultMap">
-
+      <collection property="groupIds" column="id" select="org.cti.cc.mapper.GroupMapper.selectGroupIds"></collection>
+      <collection property="companyStats" column="id" select="org.cti.cc.mapper.CompanyStatMapper.selectByCompanyId"></collection>
   </resultMap>
 
 

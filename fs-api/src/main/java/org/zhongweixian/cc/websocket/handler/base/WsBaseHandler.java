@@ -40,7 +40,7 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
     protected SnowflakeIdWorker snowflakeIdWorker;
 
     @Autowired
-    private AgentService agentService;
+    protected AgentService agentService;
 
     @Autowired
     protected AgentStateLogMapper agentStateLogMapper;

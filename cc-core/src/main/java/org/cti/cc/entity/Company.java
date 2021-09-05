@@ -105,26 +105,6 @@ public class Company implements Serializable {
     private Integer groupAgentLimit;
 
     /**
-     * 坐席状态统计
-     */
-    private Integer agentState;
-
-    /**
-     * 呼入报表统计
-     */
-    private Integer inboundStat;
-
-    /**
-     * 外呼报表统计
-     */
-    private Integer outboundStat;
-
-    /**
-     * 技能组排队统计
-     */
-    private Integer groupWaitStat;
-
-    /**
      * 黑名单
      */
     private Long blacklist;
@@ -318,38 +298,6 @@ public class Company implements Serializable {
         this.groupAgentLimit = groupAgentLimit;
     }
 
-    public Integer getAgentState() {
-        return agentState;
-    }
-
-    public void setAgentState(Integer agentState) {
-        this.agentState = agentState;
-    }
-
-    public Integer getInboundStat() {
-        return inboundStat;
-    }
-
-    public void setInboundStat(Integer inboundStat) {
-        this.inboundStat = inboundStat;
-    }
-
-    public Integer getOutboundStat() {
-        return outboundStat;
-    }
-
-    public void setOutboundStat(Integer outboundStat) {
-        this.outboundStat = outboundStat;
-    }
-
-    public Integer getGroupWaitStat() {
-        return groupWaitStat;
-    }
-
-    public void setGroupWaitStat(Integer groupWaitStat) {
-        this.groupWaitStat = groupWaitStat;
-    }
-
     public Long getBlacklist() {
         return blacklist;
     }
@@ -438,10 +386,6 @@ public class Company implements Serializable {
         sb.append(", agentLimit=").append(agentLimit);
         sb.append(", groupLimit=").append(groupLimit);
         sb.append(", groupAgentLimit=").append(groupAgentLimit);
-        sb.append(", agentState=").append(agentState);
-        sb.append(", inboundStat=").append(inboundStat);
-        sb.append(", outboundStat=").append(outboundStat);
-        sb.append(", groupWaitStat=").append(groupWaitStat);
         sb.append(", blacklist=").append(blacklist);
         sb.append(", notifyUrl=").append(notifyUrl);
         sb.append(", ext1=").append(ext1);
@@ -485,10 +429,6 @@ public class Company implements Serializable {
                 && (this.getAgentLimit() == null ? other.getAgentLimit() == null : this.getAgentLimit().equals(other.getAgentLimit()))
                 && (this.getGroupLimit() == null ? other.getGroupLimit() == null : this.getGroupLimit().equals(other.getGroupLimit()))
                 && (this.getGroupAgentLimit() == null ? other.getGroupAgentLimit() == null : this.getGroupAgentLimit().equals(other.getGroupAgentLimit()))
-                && (this.getAgentState() == null ? other.getAgentState() == null : this.getAgentState().equals(other.getAgentState()))
-                && (this.getInboundStat() == null ? other.getInboundStat() == null : this.getInboundStat().equals(other.getInboundStat()))
-                && (this.getOutboundStat() == null ? other.getOutboundStat() == null : this.getOutboundStat().equals(other.getOutboundStat()))
-                && (this.getGroupWaitStat() == null ? other.getGroupWaitStat() == null : this.getGroupWaitStat().equals(other.getGroupWaitStat()))
                 && (this.getBlacklist() == null ? other.getBlacklist() == null : this.getBlacklist().equals(other.getBlacklist()))
                 && (this.getNotifyUrl() == null ? other.getNotifyUrl() == null : this.getNotifyUrl().equals(other.getNotifyUrl()))
                 && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
@@ -521,10 +461,6 @@ public class Company implements Serializable {
         result = prime * result + ((getAgentLimit() == null) ? 0 : getAgentLimit().hashCode());
         result = prime * result + ((getGroupLimit() == null) ? 0 : getGroupLimit().hashCode());
         result = prime * result + ((getGroupAgentLimit() == null) ? 0 : getGroupAgentLimit().hashCode());
-        result = prime * result + ((getAgentState() == null) ? 0 : getAgentState().hashCode());
-        result = prime * result + ((getInboundStat() == null) ? 0 : getInboundStat().hashCode());
-        result = prime * result + ((getOutboundStat() == null) ? 0 : getOutboundStat().hashCode());
-        result = prime * result + ((getGroupWaitStat() == null) ? 0 : getGroupWaitStat().hashCode());
         result = prime * result + ((getBlacklist() == null) ? 0 : getBlacklist().hashCode());
         result = prime * result + ((getNotifyUrl() == null) ? 0 : getNotifyUrl().hashCode());
         result = prime * result + ((getExt1() == null) ? 0 : getExt1().hashCode());

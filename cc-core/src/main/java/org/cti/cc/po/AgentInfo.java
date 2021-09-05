@@ -11,10 +11,6 @@ import java.util.List;
  */
 public class AgentInfo extends Agent {
 
-    /**
-     * 登录服务地址
-     */
-    private String host;
 
     /**
      * 客户端地址
@@ -157,14 +153,6 @@ public class AgentInfo extends Agent {
      * 坐席状态通知地址
      */
     private String stateNotifyUrl;
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
 
     public String getRemoteAddress() {
         return remoteAddress;
@@ -400,7 +388,6 @@ public class AgentInfo extends Agent {
     @Override
     public String toString() {
         return "AgentInfo{" +
-                "host='" + host + '\'' +
                 ", groupIds=" + groupIds +
                 ", sips=" + sips +
                 ", skillAgents=" + skillAgents +

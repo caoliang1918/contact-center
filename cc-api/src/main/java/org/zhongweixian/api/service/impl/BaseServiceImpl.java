@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.zhongweixian.api.service.BaseService;
 
@@ -20,6 +21,9 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     abstract BaseMapper<T> baseMapper();
+
+    @Value("${range.size:500}")
+    protected Integer range;
 
     @Override
     public int add(T record) {

@@ -1,6 +1,5 @@
 package org.cti.cc.mapper;
 
-import org.apache.ibatis.annotations.Param;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentInfo;
@@ -54,4 +53,6 @@ public interface AgentMapper extends BaseMapper<Agent> {
      * @return
      */
     Agent selectAgentBySip(String sip);
+
+    List<Agent> selectAgentOnline(Map<String, Object> params);
 }

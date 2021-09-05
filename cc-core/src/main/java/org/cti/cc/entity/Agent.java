@@ -90,6 +90,11 @@ public class Agent implements Serializable {
     private Integer ringTime;
 
     /**
+     * 登录服务地址
+     */
+    private String host;
+
+    /**
      * 扩展1
      */
     private String ext1;
@@ -103,6 +108,8 @@ public class Agent implements Serializable {
      * 扩展3
      */
     private String ext3;
+
+    private Integer state;
 
     /**
      * 状态：1 开通，0关闭
@@ -239,6 +246,14 @@ public class Agent implements Serializable {
         this.ringTime = ringTime;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
     public String getExt1() {
         return ext1;
     }
@@ -261,6 +276,14 @@ public class Agent implements Serializable {
 
     public void setExt3(String ext3) {
         this.ext3 = ext3 == null ? null : ext3.trim();
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
     }
 
     public Integer getStatus() {

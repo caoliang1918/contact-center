@@ -10,17 +10,23 @@ import java.util.Map;
 public interface GroupMapper extends BaseMapper<Group> {
 
     /**
-     *
      * @param params
      * @return
      */
-    List<GroupInfo> selectGroupInfoList(Map<String , Object> params);
+    List<GroupInfo> selectGroupInfoList(Map<String, Object> params);
 
     /**
-     *
      * @param params
      * @return
      */
-    GroupInfo selectGroupInfo(Map<String , Object> params);
+    GroupInfo selectGroupInfo(Map<String, Object> params);
+
+    /**
+     * 查询企业技能组id
+     *
+     * @param companyId
+     * @return
+     */
+    List<Long> selectGroupIds(Long companyId);
 
 }

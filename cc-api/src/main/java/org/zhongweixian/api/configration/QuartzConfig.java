@@ -1,6 +1,5 @@
 package org.zhongweixian.api.configration;
 
-import com.alibaba.fastjson.JSONObject;
 import org.cti.cc.util.DateTimeUtil;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -11,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.util.CollectionUtils;
-import org.zhongweixian.api.quartz.BaseTask;
-import org.zhongweixian.api.quartz.TaskJobOfHour;
-import org.zhongweixian.api.quartz.TaskJobOfSecond;
+import org.zhongweixian.api.quartz.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -183,6 +180,29 @@ public class QuartzConfig {
         return map == null ? new JobDataMap() : new JobDataMap(map);
     }
 
+    public void createMonthJob() throws SchedulerException {
+        JobKey jobKey = new JobKey("TaskJobOfMonth", GROUP);
+        BaseTask task = new BaseTask();
+        task.setJobKey(jobKey);
+        task.setJobKey(jobKey);
+        task.setCronExpression(TaskJobOfMonth.CRON);
+        task.setJobClass(TaskJobOfMonth.class);
+        task.setDescription("TaskJobOfMonth 任务");
+        this.deleteJob(jobKey);
+        this.scheduleJob(task);
+    }
+
+    public void createDayJob() throws SchedulerException {
+        JobKey jobKey = new JobKey("TaskJobOfDay", GROUP);
+        BaseTask task = new BaseTask();
+        task.setJobKey(jobKey);
+        task.setJobKey(jobKey);
+        task.setCronExpression(TaskJobOfDay.CRON);
+        task.setJobClass(TaskJobOfDay.class);
+        task.setDescription("TaskJobOfDay 任务");
+        this.deleteJob(jobKey);
+        this.scheduleJob(task);
+    }
 
     public void createHourJob() throws SchedulerException {
         JobKey jobKey = new JobKey("TaskJobOfHour", GROUP);
@@ -210,21 +230,20 @@ public class QuartzConfig {
 
     public void initJob() {
         try {
-            /*JobKey jobKey = new JobKey(TaskJobOfHour.class.getName(), GROUP);
-            deleteJob(jobKey);*/
-
             List<BaseTask> list = getJobList();
             List<String> jobNames = list.stream().map(BaseTask::getName).collect(Collectors.toList());
-
-            if (!jobNames.contains("TaskJobOfHour")) {
-                createHourJob();
-            }
-
-
             if (!jobNames.contains("TaskJobOfSecond")) {
                 createSecondJob();
             }
-
+            if (!jobNames.contains("TaskJobOfHour")) {
+                createHourJob();
+            }
+            if (!jobNames.contains("TaskJobOfDay")) {
+                createDayJob();
+            }
+            if (!jobNames.contains("TaskJobOfMonth")) {
+                createMonthJob();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }

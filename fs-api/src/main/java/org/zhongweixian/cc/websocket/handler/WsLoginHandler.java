@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.Station;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
@@ -220,5 +221,15 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
          * 广播坐席状态
          */
         sendAgentStateMessage(agentInfo);
+
+        /**
+         * 坐席在线
+         */
+        Agent agent = new Agent();
+        agent.setId(agentInfo.getId());
+        agent.setCompanyId(agentInfo.getCompanyId());
+        agent.setState(1);
+        agent.setHost(station.getHost());
+        agentService.editById(agent);
     }
 }

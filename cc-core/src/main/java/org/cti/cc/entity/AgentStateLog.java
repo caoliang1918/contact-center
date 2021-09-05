@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 坐席状态历史表
  *
  * @author caoliang
- * @date   2020/06/06
+ * @date 2020/06/06
  */
 public class AgentStateLog implements Serializable {
     /**
@@ -43,6 +43,11 @@ public class AgentStateLog implements Serializable {
      * 坐席编号
      */
     private String agentKey;
+
+    /**
+     * 坐席名称
+     */
+    private String agentName;
 
     /**
      * 通话唯一标识
@@ -175,6 +180,14 @@ public class AgentStateLog implements Serializable {
 
     public void setAgentKey(String agentKey) {
         this.agentKey = agentKey == null ? null : agentKey.trim();
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Long getCallId() {
@@ -343,27 +356,27 @@ public class AgentStateLog implements Serializable {
         }
         AgentStateLog other = (AgentStateLog) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
-            && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
-            && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
-            && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
-            && (this.getAgentId() == null ? other.getAgentId() == null : this.getAgentId().equals(other.getAgentId()))
-            && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
-            && (this.getCallId() == null ? other.getCallId() == null : this.getCallId().equals(other.getCallId()))
-            && (this.getLoginType() == null ? other.getLoginType() == null : this.getLoginType().equals(other.getLoginType()))
-            && (this.getWorkType() == null ? other.getWorkType() == null : this.getWorkType().equals(other.getWorkType()))
-            && (this.getHost() == null ? other.getHost() == null : this.getHost().equals(other.getHost()))
-            && (this.getRemoteAddress() == null ? other.getRemoteAddress() == null : this.getRemoteAddress().equals(other.getRemoteAddress()))
-            && (this.getBeforeState() == null ? other.getBeforeState() == null : this.getBeforeState().equals(other.getBeforeState()))
-            && (this.getBeforeTime() == null ? other.getBeforeTime() == null : this.getBeforeTime().equals(other.getBeforeTime()))
-            && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
-            && (this.getStateTime() == null ? other.getStateTime() == null : this.getStateTime().equals(other.getStateTime()))
-            && (this.getDuration() == null ? other.getDuration() == null : this.getDuration().equals(other.getDuration()))
-            && (this.getBusyDesc() == null ? other.getBusyDesc() == null : this.getBusyDesc().equals(other.getBusyDesc()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-            && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
-            && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
-            && (this.getExt3() == null ? other.getExt3() == null : this.getExt3().equals(other.getExt3()));
+                && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
+                && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
+                && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
+                && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
+                && (this.getAgentId() == null ? other.getAgentId() == null : this.getAgentId().equals(other.getAgentId()))
+                && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
+                && (this.getCallId() == null ? other.getCallId() == null : this.getCallId().equals(other.getCallId()))
+                && (this.getLoginType() == null ? other.getLoginType() == null : this.getLoginType().equals(other.getLoginType()))
+                && (this.getWorkType() == null ? other.getWorkType() == null : this.getWorkType().equals(other.getWorkType()))
+                && (this.getHost() == null ? other.getHost() == null : this.getHost().equals(other.getHost()))
+                && (this.getRemoteAddress() == null ? other.getRemoteAddress() == null : this.getRemoteAddress().equals(other.getRemoteAddress()))
+                && (this.getBeforeState() == null ? other.getBeforeState() == null : this.getBeforeState().equals(other.getBeforeState()))
+                && (this.getBeforeTime() == null ? other.getBeforeTime() == null : this.getBeforeTime().equals(other.getBeforeTime()))
+                && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
+                && (this.getStateTime() == null ? other.getStateTime() == null : this.getStateTime().equals(other.getStateTime()))
+                && (this.getDuration() == null ? other.getDuration() == null : this.getDuration().equals(other.getDuration()))
+                && (this.getBusyDesc() == null ? other.getBusyDesc() == null : this.getBusyDesc().equals(other.getBusyDesc()))
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+                && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
+                && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
+                && (this.getExt3() == null ? other.getExt3() == null : this.getExt3().equals(other.getExt3()));
     }
 
     @Override

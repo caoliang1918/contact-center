@@ -52,30 +52,7 @@ public class IndexController {
         return "is ok";
     }
 
-    @RequestMapping("index")
-    public String test2() {
-        File file = new File("/Users/caoliang/Downloads/lyk0417/cc-push.2021-04-16.0.log");
-        if (!file.exists()) {
-            logger.info("file is not exist");
-            return "is error";
-        }
-        try {
-            List<String> contents = FileUtils.readLines(file, "UTF-8");
-            int i = 0;
-            for (String content : contents) {
-                if (StringUtils.isNoneBlank(content) && !StringUtils.contains(content, "success")) {
-                    continue;
-                }
-                logger.info("index:{} ,cts:{} , callId:{}", i, content.substring(0, 23), content.substring(content.length() - 21, content.length()));
-                i++;
-                jdbcTemplate.update(" insert into test1(cts,callid) values(?,?)", content.substring(0, 23), content.substring(content.length() - 21, content.length()));
-            }
 
-        } catch (IOException e) {
-
-        }
-        return "is ok";
-    }
 
     @PostMapping("agent")
     public CommonResponse login(HttpServletRequest request) {

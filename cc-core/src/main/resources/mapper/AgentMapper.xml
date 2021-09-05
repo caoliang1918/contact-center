@@ -18,9 +18,11 @@
     <result column="after_interval" jdbcType="INTEGER" property="afterInterval" />
     <result column="diaplay" jdbcType="VARCHAR" property="diaplay" />
     <result column="ring_time" jdbcType="INTEGER" property="ringTime" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
     <result column="ext1" jdbcType="VARCHAR" property="ext1" />
     <result column="ext2" jdbcType="VARCHAR" property="ext2" />
     <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="state" jdbcType="INTEGER" property="state" />
     <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
 
@@ -37,6 +39,8 @@
     <result column="sip_phone" jdbcType="VARCHAR" property="sipPhone" />
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="record" jdbcType="INTEGER" property="record" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
+    <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
 
   <resultMap id="AgentInfoResultMap" extends="BaseResultMap" type="org.cti.cc.po.AgentInfo">
@@ -46,13 +50,13 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type,
-    sip_phone, record, group_id, after_interval, diaplay, ring_time, ext1,
+    sip_phone, record, group_id, after_interval, diaplay, ring_time, host, ext1,
     ext2, ext3, status
   </sql>
 
   <sql id="ALL_Column_List">
     id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type,
-    passwd, sip_phone, record, group_id, after_interval, diaplay, ring_time, ext1,
+    passwd, sip_phone, record, group_id, after_interval, diaplay, ring_time, host, ext1,
     ext2, ext3, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -75,15 +79,15 @@
       agent_id, agent_key, agent_name, 
       agent_code, agent_type, passwd,
       sip_phone, record, group_id, 
-      after_interval, diaplay, ring_time, 
+      after_interval, diaplay, ring_time, host,
       ext1, ext2, ext3, status
       )
     values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
       #{agentId,jdbcType=VARCHAR}, #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR}, 
       #{agentCode,jdbcType=VARCHAR}, #{agentType,jdbcType=INTEGER}, #{passwd,jdbcType=VARCHAR},
       #{sipPhone,jdbcType=VARCHAR}, #{record,jdbcType=INTEGER}, #{groupId,jdbcType=BIGINT}, 
-      #{afterInterval,jdbcType=INTEGER}, #{diaplay,jdbcType=VARCHAR}, #{ringTime,jdbcType=INTEGER}, 
-      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
+      #{afterInterval,jdbcType=INTEGER}, #{diaplay,jdbcType=VARCHAR}, #{ringTime,jdbcType=INTEGER},
+      #{host,jdbcType=VARCHAR},#{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="org.cti.cc.entity.Agent">
@@ -136,6 +140,12 @@
       </if>
       <if test="ringTime != null">
         ring_time,
+      </if>
+      <if test="host != null">
+        host,
+      </if>
+      <if test="state != null">
+        state,
       </if>
       <if test="ext1 != null">
         ext1,
@@ -199,6 +209,12 @@
       <if test="ringTime != null">
         #{ringTime,jdbcType=INTEGER},
       </if>
+      <if test="host != null">
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
       <if test="ext1 != null">
         #{ext1,jdbcType=VARCHAR},
       </if>
@@ -218,6 +234,12 @@
     <set>
       <if test="uts != null">
         uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="agentId != null">
+        agent_id = #{agentId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentKey != null">
+        agent_key = #{agentKey,jdbcType=VARCHAR},
       </if>
       <if test="agentName != null">
         agent_name = #{agentName,jdbcType=VARCHAR},
@@ -249,6 +271,9 @@
       <if test="ringTime != null">
         ring_time = #{ringTime,jdbcType=INTEGER},
       </if>
+      <if test="host != null">
+        host = #{host,jdbcType=VARCHAR},
+      </if>
       <if test="ext1 != null">
         ext1 = #{ext1,jdbcType=VARCHAR},
       </if>
@@ -257,6 +282,12 @@
       </if>
       <if test="ext3 != null">
         ext3 = #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT} and company_id = #{companyId,jdbcType=BIGINT}
@@ -331,16 +362,25 @@
 
   <select id="selectSimpleAgent" parameterType="Long" resultMap="SimpleResultMap">
     select
-        id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, diaplay,  group_id
+        id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, diaplay,  group_id, state
    from
         cc_agent where id = #{id} and status = 1
   </select>
 
   <select id="selectAgentBySip" resultMap="SimpleResultMap">
     select
-      id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, diaplay, group_id
+      id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, diaplay, group_id, state
     from
       cc_agent where id = (select  agent_id from cc_agent_sip where sip = #{sip} ) and status = 1
+  </select>
+
+  <!--坐席在线切无状态变更 -->
+  <select id="selectAgentOnline" parameterType="java.util.Map" resultMap="SimpleResultMap" databaseId="mysql">
+    select id, agent_key, agent_name, (select state from cc_agent_state_log where cc_agent_state_log.agent_key = cc_agent.agent_key limit 1 ) as ext1  from cc_agent  where exists (select agent_id from  cc_agent_state_log  where cc_agent_state_log.agent_id = cc_agent.id and cc_agent_state_log.state_time > #{start} ) and company_id = #{companyId} and state = 1;
+  </select>
+
+  <select id="selectAgentOnline" parameterType="java.util.Map" resultMap="SimpleResultMap" databaseId="oracle">
+    select id, agent_key, agent_name, (select state from cc_agent_state_log where cc_agent_state_log.agent_key = cc_agent.agent_key and rownum = 1 ) as ext1  from cc_agent  where exists (select agent_id from  cc_agent_state_log  where cc_agent_state_log.agent_id = cc_agent.id and cc_agent_state_log.state_time > #{start} ) and company_id = #{companyId} and state = 1;
   </select>
 
  </mapper>

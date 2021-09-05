@@ -1,11 +1,30 @@
 package org.zhongweixian.api.quartz;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.cti.cc.entity.Agent;
+import org.cti.cc.entity.AgentStateLog;
+import org.cti.cc.entity.CompanyStat;
+import org.cti.cc.entity.StatHourAgentWork;
+import org.cti.cc.mapper.AgentMapper;
+import org.cti.cc.mapper.CompanyMapper;
+import org.cti.cc.po.AgentState;
+import org.cti.cc.po.CompanyInfo;
+import org.cti.cc.util.DateTimeUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.zhongweixian.api.service.StatWorkService;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by caoliang on 2021/9/3
@@ -16,8 +35,137 @@ public class TaskJobOfHour implements Job {
 
     public final static String CRON = "0 0 0/1 * * ?";
 
+    @Autowired
+    private CompanyMapper companyMapper;
+
+    @Autowired
+    private AgentMapper agentMapper;
+
+    @Autowired
+    private StatWorkService agentStateWorkService;
+
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        logger.info("Hour job frist :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
+    public void execute(JobExecutionContext jobExecutionContext) {
+        Instant instant = Instant.now();
+        Long start = instant.toEpochMilli() - 3600 * 1000;
+        Long end = instant.toEpochMilli();
+        logger.info("Hour job start: {} - end:{}", DateFormatUtils.format(start, DateTimeUtil.YYYYMMDD_HHMMSS), DateFormatUtils.format(end, DateTimeUtil.YYYYMMDD_HHMMSS));
+        List<CompanyInfo> companyInfoList = companyMapper.selectCompanyInfoList(null);
+        if (CollectionUtils.isEmpty(companyInfoList)) {
+            return;
+        }
+
+        agentHourStat(start, end, companyInfoList);
+    }
+
+    /**
+     * 坐席工作报表统计
+     *
+     * @param start 开始时间
+     * @param end   结束时间
+     */
+    private void agentHourStat(Long start, Long end, List<CompanyInfo> companyInfoList) {
+        for (CompanyInfo companyInfo : companyInfoList) {
+            if (CollectionUtils.isEmpty(companyInfo.getGroupIds()) || CollectionUtils.isEmpty(companyInfo.getCompanyStats())) {
+                continue;
+            }
+            List<CompanyStat> companyStats = companyInfo.getCompanyStats();
+            int type = 0;
+            companyStats.forEach(companyStat -> {
+                if (companyStat.getType() == 0) {
+                    return;
+                }
+                //如果当前坐席是属于登录在线，但是这段时间的历史表中无记录，则取最近一次状态
+                Map<String, Object> params = new HashMap<>();
+                params.put("companyId", companyInfo.getId());
+                params.put("start", start);
+                params.put("end", end);
+                List<AgentStateLog> agentStateLogs = agentStateWorkService.getListByMap(params);
+                Map<Long, List<AgentStateLog>> listMap = agentStateLogs.stream().collect(Collectors.groupingBy(stateLog -> stateLog.getAgentId()));
+
+                Long login = 0L, ready = 0L, notReady = 0L, busy = 0L, after = 0L, talk = 0L;
+                List<StatHourAgentWork> agentWorkList = new ArrayList<>();
+                StatHourAgentWork agentWork = null;
+
+                for (Map.Entry<Long, List<AgentStateLog>> entry : listMap.entrySet()) {
+                    List<AgentStateLog> stateLogs = entry.getValue();
+                    for (AgentStateLog stateLog : stateLogs) {
+                        agentWork = new StatHourAgentWork();
+                        agentWork.setCompanyId(companyInfo.getId());
+                        agentWork.setAgentKey(stateLog.getAgentKey());
+                        agentWork.setAgentName(stateLog.getAgentName());
+                        agentWork.setStateTime(start);
+                        if (stateLog.getBeforeState().equals(AgentState.READY.name())) {
+                            ready += stateLog.getStateTime() - stateLog.getBeforeTime();
+                        }
+                        if (stateLog.getState().equals(AgentState.READY.name())) {
+                            ready += end - stateLog.getStateTime();
+                        }
+
+                        if (stateLog.getBeforeState().equals(AgentState.NOT_READY.name())) {
+                            notReady += stateLog.getStateTime() - stateLog.getBeforeTime();
+                        }
+                        if (stateLog.getState().equals(AgentState.NOT_READY.name())) {
+                            notReady += end - stateLog.getStateTime();
+                        }
+
+                        if (stateLog.getBeforeState().equals(AgentState.BUSY_OTHER.name())) {
+                            busy += stateLog.getStateTime() - stateLog.getBeforeTime();
+                        }
+                        if (stateLog.getState().equals(AgentState.BUSY_OTHER.name())) {
+                            busy += end - stateLog.getStateTime();
+                        }
+
+                        if (stateLog.getBeforeState().equals(AgentState.AFTER.name())) {
+                            after += stateLog.getStateTime() - stateLog.getBeforeTime();
+                        }
+                        if (stateLog.getState().equals(AgentState.AFTER.name())) {
+                            after += end - stateLog.getStateTime();
+                        }
+
+                        if (stateLog.getBeforeState().equals(AgentState.TALKING.name())) {
+                            talk += stateLog.getStateTime() - stateLog.getBeforeTime();
+                        }
+                        if (stateLog.getState().equals(AgentState.TALKING.name())) {
+                            talk += end - stateLog.getStateTime();
+                        }
+                        agentWork.setLoginTime(login);
+                        agentWork.setReadyTime(ready);
+                        agentWork.setNotReadyTime(notReady);
+                        agentWork.setBusyTime(busy);
+                        agentWork.setAfterTime(after);
+                        agentWork.setTalkTime(talk);
+                        agentWorkList.add(agentWork);
+                    }
+                }
+                //查询最近一小时没有变更状态但是在线的坐席
+                List<Agent> agents = agentMapper.selectAgentOnline(params);
+                for (Agent agent : agents) {
+                    agentWork = new StatHourAgentWork();
+                    agentWork = new StatHourAgentWork();
+                    agentWork.setCompanyId(companyInfo.getId());
+                    agentWork.setAgentKey(agent.getAgentKey());
+                    agentWork.setAgentName(agent.getAgentName());
+                    agentWork.setStateTime(start);
+                    if (AgentState.READY.name().equals(agent.getExt1())) {
+                        agentWork.setReadyTime(3600000L);
+                    }
+                    if (AgentState.NOT_READY.name().equals(agent.getExt1())) {
+                        agentWork.setNotReadyTime(3600000L);
+                    }
+                    if (AgentState.BUSY_OTHER.name().equals(agent.getExt1())) {
+                        agentWork.setBusyTime(3600000L);
+                    }
+                    if (AgentState.AFTER.name().equals(agent.getExt1())) {
+                        agentWork.setAfterTime(3600000L);
+                    }
+                    if (AgentState.TALKING.name().equals(agent.getExt1())) {
+                        agentWork.setTalkTime(3600000L);
+                    }
+                    agentWorkList.add(agentWork);
+                }
+                agentStateWorkService.saveStateHoutAgentWork(agentWorkList);
+            });
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.websocket.handler;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.entity.Agent;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,5 +62,15 @@ public class WsLogoutHandler extends WsBaseHandler<WsLogoutEvent> {
          *  广播坐席状态
          */
         sendAgentStateMessage(agentInfo);
+
+        /**
+         * 坐席下线
+         */
+        Agent agent = new Agent();
+        agent.setId(agentInfo.getId());
+        agent.setCompanyId(agentInfo.getCompanyId());
+        agent.setState(0);
+        agent.setHost(StringUtils.SPACE);
+        agentService.editById(agent);
     }
 }
