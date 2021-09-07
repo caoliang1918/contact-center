@@ -185,4 +185,31 @@
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+  <!-- 批量插入 -->
+  <insert id="batchInsert" parameterType="List"  useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
+    insert into cc_stat_hour_agent_work (cts, company_id, agent_key, agent_name, state_time, login_time, ready_time, not_ready_time, busy_time, after_time, talk_time, status) values
+    <foreach collection ="list" item="item" separator =",">
+      (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT}, #{item.agentKey,jdbcType=VARCHAR}, #{item.agentName,jdbcType=VARCHAR}, #{item.stateTime,jdbcType=BIGINT}, #{item.loginTime,jdbcType=BIGINT},
+       #{item.readyTime,jdbcType=BIGINT}, #{item.notReadyTime,jdbcType=BIGINT},#{item.busyTime,jdbcType=BIGINT}, #{item.afterTime,jdbcType=BIGINT}, #{item.talkTime,jdbcType=BIGINT}, #{item.status,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+  <insert id="batchInsert" parameterType="List"   databaseId="oracle">
+    BEGIN
+    insert into cc_stat_hour_agent_work (cts, company_id, agent_key, agent_name, state_time, login_time, ready_time, not_ready_time, busy_time, after_time, talk_time, status) values
+    <foreach collection ="list" item="item" separator =",">
+      (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT}, #{item.agentKey,jdbcType=VARCHAR}, #{item.agentName,jdbcType=VARCHAR}, #{item.stateTime,jdbcType=BIGINT}, #{item.loginTime,jdbcType=BIGINT},
+      #{item.readyTime,jdbcType=BIGINT}, #{item.notReadyTime,jdbcType=BIGINT},#{item.busyTime,jdbcType=BIGINT}, #{item.afterTime,jdbcType=BIGINT}, #{item.talkTime,jdbcType=BIGINT}, #{item.status,jdbcType=INTEGER})
+    </foreach>
+    COMMIT;
+    END;
+  </insert>
+
+  <!-- 重复统计时，需要先删除数据 -->
+  <delete id="deleteAgentHourStat" parameterType="Long">
+    delete from cc_stat_hour_agent_work where state_time = #{statTime}
+  </delete>
+
 </mapper>

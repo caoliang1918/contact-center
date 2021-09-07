@@ -1,5 +1,9 @@
 package org.zhongweixian.web;
 
+import com.alibaba.nacos.api.annotation.NacosInjected;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.pojo.Instance;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
@@ -19,6 +23,7 @@ import org.zhongweixian.cc.util.SnowflakeIdWorker;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,6 +33,10 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("index")
 public class IndexController {
     private Logger logger = LoggerFactory.getLogger(IndexController.class);
+
+
+    @NacosInjected
+    private NamingService namingService;
 
     @Autowired
     protected FastDFSClient fastDFSClient;
@@ -47,7 +56,7 @@ public class IndexController {
      * @return
      */
     @GetMapping("getcall")
-    public CommonResponse<CallLogPo> getCall(@RequestParam Long callId) {
+    public CommonResponse<CallLogPo> getCall(@RequestParam Long callId) throws NacosException {
         return new CommonResponse<>(callCdrService.getCall(null, callId));
     }
 
@@ -103,20 +112,6 @@ public class IndexController {
         }
     }
 
-    @PostMapping(value = "/uploadfile")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        String result;
-        try {
-            String path = fastDFSClient.uploadFile(file);
-            if (!StringUtils.isEmpty(path)) {
-                result = path;
-            } else {
-                result = path + "上传失败";
-            }
-        } catch (Exception e) {
-            result = "服务异常";
-        }
-        return ResponseEntity.ok(result);
-    }
+
 }
 

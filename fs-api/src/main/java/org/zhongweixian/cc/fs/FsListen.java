@@ -8,6 +8,7 @@ import org.cti.cc.constant.Constants;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
+import org.cti.cc.enums.StationType;
 import org.cti.cc.mapper.StationMapper;
 import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.CommonResponse;
@@ -98,7 +99,7 @@ public class FsListen {
         }
 
         Map<String, Object> params = new HashMap<>();
-        params.put("applicationType", 4);
+        params.put("applicationType", StationType.FS_MEDIA.getType());
         params.put("applicationGroup", station.getApplicationGroup());
         List<Station> fsStations = stationMapper.selectListByMap(params);
 

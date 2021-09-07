@@ -16,4 +16,11 @@ public interface StatHourAgentWorkMapper extends BaseMapper<StatHourAgentWork> {
      * @return
      */
     int batchInsert(List<StatHourAgentWork> list);
+
+    /**
+     * 重复统计时，需要先删除
+     *
+     * @param statTime
+     */
+    void deleteAgentHourStat(Long statTime);
 }

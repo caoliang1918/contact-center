@@ -27,4 +27,10 @@ public interface StatWorkService extends BaseService<StatHourAgentWork> {
 
 
     int clearAgentStateWork(Long time);
+
+    /**
+     *
+     * @param statTime
+     */
+    void deleteAgentHourStat(Long statTime);
 }

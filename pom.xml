@@ -40,7 +40,7 @@
         <springboot.version>2.5.2</springboot.version>
         <fastdfs.version>1.27.2</fastdfs.version>
         <guava.version>28.1-jre</guava.version>
-        <websocket-api.version>2.0.3</websocket-api.version>
+        <websocket-api.version>2.0.5</websocket-api.version>
         <jasypt.version>3.0.3</jasypt.version>
         <springboot.mybatis.version>2.1.4</springboot.mybatis.version>
         <joda-time.version>2.5</joda-time.version>

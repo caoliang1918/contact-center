@@ -3,10 +3,8 @@ package org.cti.cc.entity;
 import java.io.Serializable;
 
 /**
- * 
- *
  * @author caoliang
- * @date   2021/09/05
+ * @date 2021/09/05
  */
 public class StatHourAgentWork implements Serializable {
     /**
@@ -125,7 +123,7 @@ public class StatHourAgentWork implements Serializable {
     }
 
     public Long getLoginTime() {
-        return loginTime;
+        return loginTime == null ? 0L : loginTime;
     }
 
     public void setLoginTime(Long loginTime) {
@@ -133,7 +131,7 @@ public class StatHourAgentWork implements Serializable {
     }
 
     public Long getReadyTime() {
-        return readyTime;
+        return readyTime == null ? 0L : readyTime;
     }
 
     public void setReadyTime(Long readyTime) {
@@ -141,7 +139,7 @@ public class StatHourAgentWork implements Serializable {
     }
 
     public Long getNotReadyTime() {
-        return notReadyTime;
+        return notReadyTime == null ? 0L : notReadyTime;
     }
 
     public void setNotReadyTime(Long notReadyTime) {
@@ -149,7 +147,7 @@ public class StatHourAgentWork implements Serializable {
     }
 
     public Long getBusyTime() {
-        return busyTime;
+        return busyTime == null ? 0L : busyTime;
     }
 
     public void setBusyTime(Long busyTime) {
@@ -157,7 +155,7 @@ public class StatHourAgentWork implements Serializable {
     }
 
     public Long getAfterTime() {
-        return afterTime;
+        return afterTime == null ? 0L : afterTime;
     }
 
     public void setAfterTime(Long afterTime) {
@@ -165,7 +163,7 @@ public class StatHourAgentWork implements Serializable {
     }
 
     public Long getTalkTime() {
-        return talkTime;
+        return talkTime == null ? 0L : talkTime;
     }
 
     public void setTalkTime(Long talkTime) {
@@ -217,18 +215,18 @@ public class StatHourAgentWork implements Serializable {
         }
         StatHourAgentWork other = (StatHourAgentWork) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
-            && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
-            && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
-            && (this.getAgentName() == null ? other.getAgentName() == null : this.getAgentName().equals(other.getAgentName()))
-            && (this.getStateTime() == null ? other.getStateTime() == null : this.getStateTime().equals(other.getStateTime()))
-            && (this.getLoginTime() == null ? other.getLoginTime() == null : this.getLoginTime().equals(other.getLoginTime()))
-            && (this.getReadyTime() == null ? other.getReadyTime() == null : this.getReadyTime().equals(other.getReadyTime()))
-            && (this.getNotReadyTime() == null ? other.getNotReadyTime() == null : this.getNotReadyTime().equals(other.getNotReadyTime()))
-            && (this.getBusyTime() == null ? other.getBusyTime() == null : this.getBusyTime().equals(other.getBusyTime()))
-            && (this.getAfterTime() == null ? other.getAfterTime() == null : this.getAfterTime().equals(other.getAfterTime()))
-            && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+                && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
+                && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
+                && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
+                && (this.getAgentName() == null ? other.getAgentName() == null : this.getAgentName().equals(other.getAgentName()))
+                && (this.getStateTime() == null ? other.getStateTime() == null : this.getStateTime().equals(other.getStateTime()))
+                && (this.getLoginTime() == null ? other.getLoginTime() == null : this.getLoginTime().equals(other.getLoginTime()))
+                && (this.getReadyTime() == null ? other.getReadyTime() == null : this.getReadyTime().equals(other.getReadyTime()))
+                && (this.getNotReadyTime() == null ? other.getNotReadyTime() == null : this.getNotReadyTime().equals(other.getNotReadyTime()))
+                && (this.getBusyTime() == null ? other.getBusyTime() == null : this.getBusyTime().equals(other.getBusyTime()))
+                && (this.getAfterTime() == null ? other.getAfterTime() == null : this.getAfterTime().equals(other.getAfterTime()))
+                && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
     @Override

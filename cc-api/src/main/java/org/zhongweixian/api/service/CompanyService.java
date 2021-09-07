@@ -8,6 +8,7 @@ import org.cti.cc.po.GroupInfo;
 import org.cti.cc.po.GroupOverFlow;
 import org.zhongweixian.api.vo.CompanyVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +33,14 @@ public interface CompanyService extends BaseService<Company> {
     CompanyInfo getCompanyInfo(Long id);
 
     /**
+     * 查询企业
+     *
+     * @param params
+     * @return
+     */
+    List<CompanyInfo> getCompanyList(Map<String, Object> params);
+
+    /**
      * 修改企业
      *
      * @param company
@@ -42,7 +51,7 @@ public interface CompanyService extends BaseService<Company> {
     /**
      * 删除企业
      *
-     * @param company
+     * @param id
      * @return
      */
     int deleteCompany(Long id);

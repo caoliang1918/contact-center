@@ -34,12 +34,12 @@ public class DateTimeUtil {
      * @param day
      * @return
      */
-    public static Integer getDayStartTime(String day) {
+    public static Long getDayStartTime(String day) {
         SimpleDateFormat format = new SimpleDateFormat(YYYYMMDD);
         try {
             Date date = format.parse(day);
-            return (int) (date.getTime() / 1000);
-        } catch (ParseException e) {
+            return date.getTime();
+        } catch (Exception e) {
 
         }
         return null;

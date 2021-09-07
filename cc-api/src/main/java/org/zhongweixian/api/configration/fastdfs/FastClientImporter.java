@@ -1,4 +1,4 @@
-package org.zhongweixian.cc.cache.fastdfs;
+package org.zhongweixian.api.configration.fastdfs;
 
 import com.github.tobato.fastdfs.FdfsClientConfig;
 import org.springframework.context.annotation.Configuration;

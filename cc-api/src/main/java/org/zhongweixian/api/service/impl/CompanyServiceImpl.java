@@ -17,6 +17,7 @@ import org.zhongweixian.api.service.CompanyService;
 import org.zhongweixian.api.vo.CompanyVo;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,6 +55,11 @@ public class CompanyServiceImpl extends BaseServiceImpl<Company> implements Comp
             throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
         }
         return companyMapper.selectById(id);
+    }
+
+    @Override
+    public List<CompanyInfo> getCompanyList(Map<String, Object> params) {
+        return companyMapper.selectCompanyInfoList(null);
     }
 
     @Override
