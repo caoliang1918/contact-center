@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.AgentStateLogMapper">
+<mapper namespace="org.cti.cc.mapper.AgentStatLogMapper">
   <resultMap id="BaseResultMap" type="org.cti.cc.entity.AgentStateLog">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="cts" jdbcType="BIGINT" property="cts" />
@@ -34,15 +34,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from cc_agent_state_log
+    from cc_agent_stat_log
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from cc_agent_state_log
+    delete from cc_agent_stat_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="org.cti.cc.entity.AgentStateLog">
-    insert into cc_agent_state_log (id, cts, uts, company_id, 
+    insert into cc_agent_stat_log (id, cts, uts, company_id,
       group_id, agent_id, agent_key, agent_name,
       call_id, login_type, work_type, 
       host, remote_address, before_state, 
@@ -58,7 +58,7 @@
       #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="org.cti.cc.entity.AgentStateLog">
-    insert into cc_agent_state_log
+    insert into cc_agent_stat_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -203,7 +203,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AgentStateLog">
-    update cc_agent_state_log
+    update cc_agent_stat_log
     <set>
       <if test="cts != null">
         cts = #{cts,jdbcType=BIGINT},
@@ -305,7 +305,7 @@
     select
         <include refid="Base_Column_List" />
     from
-        cc_agent_state_log
+        cc_agent_stat_log
     <where>
       <if test="companyId!=null">and company_id = #{companyId}</if>
       <if test="agentKey!=null"> agent_key like CONCAT(#{agentKey},"%")</if>
@@ -316,8 +316,11 @@
     </where>
   </select>
 
+  <!-- 定时清空历史数据 -->
   <delete id="clearAgentStateWork" parameterType="Long" >
-     delete from cc_agent_state_log where state_time &lt; #{time}
+     delete from cc_agent_stat_log where state_time &lt; #{time}
   </delete>
+
+
 
 </mapper>
