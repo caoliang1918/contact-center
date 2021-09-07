@@ -9,8 +9,8 @@ import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 /**
  * Created by caoliang on 2020/8/23
  */
-@Component
-@HandlerType("PLAYBACK_START")
+//@Component
+//@HandlerType("PLAYBACK_START")
 public class FsPlaybackStartHandler extends BaseEventHandler<FsPlaybackStartEvent> {
     @Override
     public void handleEvent(FsPlaybackStartEvent event) {

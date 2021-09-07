@@ -386,7 +386,7 @@ public class GroupHandler extends BaseHandler {
      * @param callQueue
      */
     private void queueTimeout(CallQueue callQueue) {
-        Long now = Instant.MIN.toEpochMilli();
+        Long now = Instant.now().toEpochMilli();
         CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.deviceId);
         GroupOverflowPo groupOverflowPo = callQueue.getGroupOverflowPo();

@@ -109,7 +109,7 @@ public class BaseHandler {
         SendMsg digits = new SendMsg(deviceId);
         digits.addCallCommand("execute");
         digits.addExecuteAppName("play_and_get_digits");
-        digits.addExecuteAppArg("1 1 1 5000 # /app/clpms/sounds/1295e6a58f9e2115332666.wav silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ 3000");
+        digits.addExecuteAppArg("3 3 2 5000 # /app/clpms/sounds/1295e6a58f9e2115332666.wav silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ 3000");
         fsListen.sendMessage(media, digits);
     }
 

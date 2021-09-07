@@ -33,7 +33,6 @@ public class FsBaseEvent {
     @JSONField(name = "Caller-Channel-Name")
     protected String channelName;
 
-    @JSONField(name = "ClpMS-IPv4")
     protected String hostname;
 
     @JSONField(name = "variable_sofia_profile_name")

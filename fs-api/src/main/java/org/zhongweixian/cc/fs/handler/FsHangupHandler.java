@@ -77,7 +77,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
          */
         if (StringUtils.isNotBlank(deviceInfo.getRecord())) {
             try {
-                ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getHostname() + deviceInfo.getRecord(), byte[].class);
+                ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
                 String fileName = fastDFSClient.uploadFile(responseEntity.getBody(), deviceInfo.getRecord());
                 logger.info("callId:{}, record fileName : {}", deviceInfo.getCallId(), fileName);
                 deviceInfo.setRecord(fileName);

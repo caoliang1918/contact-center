@@ -164,15 +164,29 @@
 
   <select id="selectByAppId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from cc_station
-    where application_id = #{applicationId} and status = 1
+        <include refid="Base_Column_List" />
+    from
+        cc_station
+    where
+        application_id = #{applicationId} and status = 1
   </select>
 
-  <select id="selectByGroup" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectListByMap" parameterType="Map" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from cc_station
-    where application_id = #{applicationId}
+        <include refid="Base_Column_List" />
+    from
+        cc_station
+    <where>
+      <if test="applicationId != null">
+        application_id = #{applicationId,jdbcType=INTEGER}
+      </if>
+      <if test="applicationType != null">
+        and application_type = #{applicationType,jdbcType=INTEGER}
+      </if>
+      <if test="applicationGroup != null">
+        and application_group = #{applicationGroup,jdbcType=VARCHAR}
+      </if>
+      <if test="true">and status = 1</if>
+    </where>
   </select>
 </mapper>

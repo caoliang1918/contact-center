@@ -52,6 +52,15 @@ public class FsHangupEvent extends FsBaseEvent {
     @JSONField(name = "variable_sip_term_status")
     private String sipStatus;
 
+    @JSONField(name = "variable_local_media_ip")
+    private String localMediaIp;
+
+    @JSONField(name = "variable_sip_from_uri")
+    private String fromUri;
+
+    @JSONField(name = "variable_sip_to_uri")
+    private String toUri;
+
     public String getCaller() {
         return caller;
     }
@@ -110,6 +119,30 @@ public class FsHangupEvent extends FsBaseEvent {
 
     public void setSipStatus(String sipStatus) {
         this.sipStatus = sipStatus;
+    }
+
+    public String getLocalMediaIp() {
+        return localMediaIp;
+    }
+
+    public void setLocalMediaIp(String localMediaIp) {
+        this.localMediaIp = localMediaIp;
+    }
+
+    public String getFromUri() {
+        return fromUri;
+    }
+
+    public void setFromUri(String fromUri) {
+        this.fromUri = fromUri;
+    }
+
+    public String getToUri() {
+        return toUri;
+    }
+
+    public void setToUri(String toUri) {
+        this.toUri = toUri;
     }
 
     @Override

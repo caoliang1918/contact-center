@@ -24,6 +24,9 @@ public class FsPlaybackStopHandler extends BaseEventHandler<FsPlaybackStopEvent>
             return;
         }
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(event.getDeviceId());
+        if (deviceInfo.getEndTime() != null) {
+            return;
+        }
         NextCommand nextCommand = deviceInfo.getNextCommand();
         if (deviceInfo == null || nextCommand == null) {
             return;

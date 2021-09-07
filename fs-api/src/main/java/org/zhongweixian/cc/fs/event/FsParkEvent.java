@@ -45,6 +45,9 @@ public class FsParkEvent extends FsBaseEvent {
     @JSONField(name = "variable_sip_via_port")
     private String sipPort;
 
+    @JSONField(name = "variable_sip_contact_uri")
+    private String contactUri;
+
 
     public String getCalled() {
         return called;
@@ -92,6 +95,14 @@ public class FsParkEvent extends FsBaseEvent {
 
     public void setSipPort(String sipPort) {
         this.sipPort = sipPort;
+    }
+
+    public String getContactUri() {
+        return contactUri;
+    }
+
+    public void setContactUri(String contactUri) {
+        this.contactUri = contactUri;
     }
 
     @Override

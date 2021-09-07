@@ -60,13 +60,6 @@ public class FsDtmfEvent extends FsBaseEvent {
                 ", dtmfSource='" + dtmfSource + '\'' +
                 ", dtmf='" + dtmf + '\'' +
                 ", duration='" + duration + '\'' +
-                ", eventName='" + eventName + '\'' +
-                ", context=" + context +
-                ", coreUuid='" + coreUuid + '\'' +
-                ", deviceId='" + deviceId + '\'' +
-                ", timestamp=" + timestamp +
-                ", channelName='" + channelName + '\'' +
-                ", hostname='" + hostname + '\'' +
                 '}';
     }
 }

@@ -167,7 +167,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
     private void inboundCall(FsParkEvent event) {
         Long callId = snowflakeIdWorker.nextId();
         String deviceId = event.getDeviceId();
-        logger.info("inbount callId:{} park, caller:{}, called:{}, deviceId:{}", callId, event.getCaller(), event.getCalled(), event.getDeviceId());
+        logger.info("inbount callId:{} park, caller:{}, called:{}, deviceId:{}, uri:{}", callId, event.getCaller(), event.getCalled(), event.getDeviceId(), event.getContactUri());
         VdnPhone vdnPhone = cacheService.getVdnPhone(event.getCalled());
         if (vdnPhone == null) {
             logger.error("inbount callId:{} called:{} is not match for vdn", callId, event.getCalled());
