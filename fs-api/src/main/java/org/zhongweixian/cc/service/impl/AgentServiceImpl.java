@@ -97,6 +97,10 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             if (agentInfo.getBeforeState() == AgentState.READY) {
                 groupHandler.agentNotReady(agentInfo);
             }
+            if (agentInfo.getAgentState() == AgentState.AFTER || agentInfo.getBeforeState() == AgentState.TALKING) {
+                //更新坐席服务时间
+                agentInfo.setServiceTime(agentInfo.getStateTime());
+            }
             AgentStateResppnse response = new AgentStateResppnse();
             response.setId(agentInfo.getId());
             response.setAgentKey(agentInfo.getAgentKey());

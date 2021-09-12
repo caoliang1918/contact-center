@@ -70,8 +70,8 @@ public class SimpleIvrMachine {
             }
 
             @Override
-            public void onTransition(TransitionTarget transitionTarget, TransitionTarget transitionTarget1, Transition transition) {
-                logger.info("{} , {} {} ", transitionTarget.getId(), transitionTarget1.getId(), transition.getTargets());
+            public void onTransition(TransitionTarget from, TransitionTarget to, Transition transition) {
+                logger.info("{} , {} {} ", from.getId(), to.getId(), transition.getTargets());
             }
         });
 

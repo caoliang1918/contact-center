@@ -7,18 +7,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constants;
-import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
-import org.cti.cc.po.AgentState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.cc.EventType;
@@ -32,7 +28,6 @@ import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.base.ChannelEntity;
 import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 import org.zhongweixian.cc.websocket.handler.WsLogoutHandler;
-import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 import org.zhongweixian.listener.ConnectionListener;
 
 import java.time.Instant;
@@ -53,7 +48,7 @@ public class WebSocketHandler implements ConnectionListener {
     @Value("${ws.login.timeout:2}")
     private Long timeout;
 
-    @Value("${ws.thread.num:8}")
+    @Value("${ws.thread.num:32}")
     private Integer threadNum;
 
     @Autowired
@@ -104,7 +99,7 @@ public class WebSocketHandler implements ConnectionListener {
      */
     public WebSocketHandler(@Value("${cti.callback.connectTimeout:100}") Integer connectTimeout,
                             @Value("${cti.callback.readTimeout:300}") Integer readTimeout,
-                            @Value("${ws.thread.num:8}") Integer threadNum) {
+                            @Value("${ws.thread.num:32}") Integer threadNum) {
         for (int i = 0; i < threadNum; i++) {
             ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("ws-server-pool-" + i).build();
             ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory);
@@ -297,6 +292,7 @@ public class WebSocketHandler implements ConnectionListener {
      * @param payload
      */
     public void sendMessgae(AgentInfo agentInfo, String payload) {
+        agentService.sendAgentStateMessage(agentInfo);
         Channel channel = agentChannel.get(agentInfo.getAgentKey());
         if (channel != null && channel.isActive()) {
             logger.info("send agent:{} ws message:{}", agentInfo.getAgentKey(), payload);
@@ -312,7 +308,6 @@ public class WebSocketHandler implements ConnectionListener {
                 logger.error("send agent:{} http message", agentInfo.getAgentKey());
             }
         }
-        agentService.sendAgentStateMessage(agentInfo);
     }
 
     /**

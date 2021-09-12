@@ -83,6 +83,10 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
                                 callDetail.setEndTime(deviceInfo.getAnswerTime());
                             }
                         }
+
+                        //更新坐席应答次数
+                        AgentInfo agentInfo = cacheService.getAgentInfo(deviceInfo.getAgentKey());
+                        agentInfo.setTotalAnswerTimes(agentInfo.getTotalRingTimes() + 1);
                     }
                 }
                 break;

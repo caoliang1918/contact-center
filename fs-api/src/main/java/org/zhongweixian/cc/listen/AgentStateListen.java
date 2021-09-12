@@ -92,6 +92,7 @@ public class AgentStateListen {
             agentInfo.setReadyTimes(resppnse.getReadyTimes());
             agentInfo.setNotReadyTimes(resppnse.getNotReadyTimes());
             agentInfo.setTotalAfterTime(resppnse.getTotalAfterTime());
+            agentInfo.setServiceTime(resppnse.getServiceTime());
             logger.info("receive agent {} change state {}", agentInfo.getAgentKey(), agentInfo.getAgentState());
             if (agentInfo.getAgentState() == AgentState.READY) {
                 groupHandler.agentFree(agentInfo);
