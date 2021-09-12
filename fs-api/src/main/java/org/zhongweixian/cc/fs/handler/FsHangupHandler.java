@@ -2,7 +2,13 @@ package org.zhongweixian.cc.fs.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import io.minio.MinioClient;
+import io.minio.ObjectWriteArgs;
+import io.minio.ObjectWriteResponse;
+import io.minio.PutObjectArgs;
+import org.apache.commons.lang3.Streams;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
@@ -15,6 +21,7 @@ import org.cti.cc.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -27,8 +34,10 @@ import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 import org.zhongweixian.cc.websocket.response.WsCallAfterEntity;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
+import java.io.ByteArrayInputStream;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,8 +52,14 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
 
     private RestTemplate restTemplate;
 
-    @Value("${media.record.host:}")
+    @Value("${minio.endpoint:}")
     private String media;
+
+    @Value("${minio.bucket:cc-record}")
+    private String bucket;
+
+    @Autowired
+    private MinioClient minioClient;
 
 
     public FsHangupHandler(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout, @Value("${cdr.notify.readTimeout:1000}") Integer readTimeout) {
@@ -77,9 +92,11 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
          */
         if (StringUtils.isNotBlank(deviceInfo.getRecord())) {
             try {
+                String fileName = DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + ".wav";
                 ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
-                String fileName = fastDFSClient.uploadFile(responseEntity.getBody(), deviceInfo.getRecord());
-                logger.info("callId:{}, record fileName : {}", deviceInfo.getCallId(), fileName);
+                logger.info("get record file:{}", deviceInfo.getRecord());
+                ObjectWriteResponse writeResponse = minioClient.putObject(PutObjectArgs.builder().stream(new ByteArrayInputStream(responseEntity.getBody()), responseEntity.getBody().length, -1).object(fileName).bucket(bucket).build());
+                logger.info("callId:{}, record fileName:{}", deviceInfo.getCallId(), fileName);
                 deviceInfo.setRecord(fileName);
                 if (StringUtils.isBlank(callInfo.getRecord())) {
                     callInfo.setRecord(fileName);

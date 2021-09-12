@@ -25,5 +25,13 @@ public class RandomUtil {
         return null;
     }
 
+    public static Integer getNum(String coreUuid, Integer threadNum) {
+        if (coreUuid == null) {
+            return threadNum - 1;
+        }
+        int hash = coreUuid.hashCode();
+        return Math.abs(hash % threadNum);
+    }
+
 
 }

@@ -18,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/companyInfo/")
+        registry.addMapping("/config/")
                 .allowCredentials(true)
                 .allowedMethods("GET", "POST", "DELETE", "PUT","PATCH")
                 .maxAge(3600);
@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HttpRequestInteceptor(adminAccountMapper))
-                .addPathPatterns("/companyInfo/**")
+                .addPathPatterns("/call/**")
                 .addPathPatterns("/config/**")
                 .excludePathPatterns("/**/*.js", "/**/*.css", "/**/*.png");
     }

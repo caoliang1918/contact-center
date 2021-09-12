@@ -14,10 +14,8 @@ import org.cti.cc.vo.AgentVo;
 import org.cti.cc.vo.GroupInfoVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.zhongweixian.api.service.*;
 import org.zhongweixian.api.vo.*;
 import org.zhongweixian.api.vo.excel.ExcelAgentEntity;
 
@@ -38,24 +36,8 @@ public class CompanyController extends BaseController {
     protected Logger logger = LoggerFactory.getLogger(CompanyController.class);
 
 
-    @Autowired
-    private CompanyService companyService;
-
-    @Autowired
-    private AgentService agentService;
-
-    @Autowired
-    private GroupService groupService;
-
-    @Autowired
-    private RouteService routeService;
-
-    @Autowired
-    private DisplayService displayService;
-
-
     /**
-     * 1.1 企业列表
+     * 1.1.1 企业列表
      *
      * @param pageInfo
      * @param query
@@ -68,7 +50,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 1.2 企业详情
+     * 1.1.2 企业详情
      *
      * @param adminAccountInfo
      * @param id
@@ -83,7 +65,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 1.3 添加企业
+     * 1.1.3 添加企业
      *
      * @param adminAccountInfo
      * @param companyVo
@@ -96,7 +78,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 1.4 修改企业
+     * 1.1.4 修改企业
      *
      * @param adminAccountInfo
      * @param company
@@ -114,7 +96,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     * 1.5 删除企业
+     * 1.1.5 删除企业
      *
      * @param adminAccountInfo
      * @return
@@ -128,7 +110,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 3.1 sip列表
+     * 1.3.1 sip列表
      *
      * @param adminAccountInfo
      * @param pageInfo
@@ -142,7 +124,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 3.2 添加sip号码
+     * 1.3.2 添加sip号码
      *
      * @param adminAccountInfo
      * @param agentSipVo
@@ -157,7 +139,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 3.3 修改sip号
+     * 1.3.3 修改sip号
      *
      * @param adminAccountInfo
      * @param id
@@ -174,7 +156,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 3.4 删除sip
+     * 1.3.4 删除sip
      *
      * @param adminAccountInfo
      * @param id
@@ -188,7 +170,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     * 4.1 显号列表
+     * 1.4.1 显号列表
      *
      * @param adminAccountInfo
      * @param pageInfo
@@ -202,7 +184,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 4.2 添加显号
+     * 1.4.2 添加显号
      *
      * @param adminAccountInfo
      * @param companyPhoneVo
@@ -218,7 +200,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 4.3 修改显号
+     * 1.4.3 修改显号
      *
      * @param adminAccountInfo
      * @param id
@@ -237,7 +219,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 4.4 删除显号
+     * 1.4.4 删除显号
      *
      * @param adminAccountInfo
      * @param id
@@ -251,7 +233,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 4.5 显号池列表
+     * 1.4.5 显号池列表
      *
      * @param adminAccountInfo
      * @param pageInfo
@@ -265,7 +247,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 4.6 获取池列表详情
+     * 1.4.6 获取池列表详情
      *
      * @param adminAccountInfo
      * @param id
@@ -277,7 +259,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 4.7 添加号码池
+     * 1.4.7 添加号码池
      *
      * @param adminAccountInfo
      * @param displayGroupVo
@@ -295,7 +277,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 4.8 号码池更新号码
+     * 1.4.8 号码池更新号码
      *
      * @param adminAccountInfo
      * @param displayGroupVo
@@ -313,7 +295,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 4.9 删除号码池
+     * 1.4.9 删除号码池
      *
      * @param adminAccountInfo
      * @param id
@@ -333,7 +315,7 @@ public class CompanyController extends BaseController {
     /*******************************************************************************/
 
     /**
-     * 5.1 网关列表
+     * 1.5.1 网关列表
      *
      * @param adminAccountInfo
      * @param pageInfo
@@ -347,7 +329,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.2 网关详情
+     * 1.5.2 网关详情
      *
      * @param adminAccountInfo
      * @param id
@@ -359,7 +341,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.3 添加网关
+     * 1.5.3 添加网关
      *
      * @param adminAccountInfo
      * @param routeGetwayVo
@@ -374,7 +356,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.4 修改网关
+     * 1.5.4 修改网关
      *
      * @param adminAccountInfo
      * @param id
@@ -389,7 +371,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.5 删除网关
+     * 1.5.5 删除网关
      *
      * @param adminAccountInfo
      * @param id
@@ -401,7 +383,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.6 网关组列表
+     * 1.5.6 网关组列表
      *
      * @param adminAccountInfo
      * @param pageInfo
@@ -415,7 +397,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.7 网关组详情
+     * 1.5.7 网关组详情
      *
      * @param adminAccountInfo
      * @param id
@@ -427,7 +409,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.8 添加网关组
+     * 1.5.8 添加网关组
      *
      * @param adminAccountInfo
      * @param routeGroupVo
@@ -440,7 +422,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.9 修改网关组
+     * 1.5.9 修改网关组
      *
      * @param adminAccountInfo
      * @param routeGroupVo
@@ -453,7 +435,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.10 删除网关组
+     * 1.5.10 删除网关组
      *
      * @param adminAccountInfo
      * @param id
@@ -465,7 +447,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.11 字冠列表
+     * 1.5.11 字冠列表
      *
      * @param adminAccountInfo
      * @param pageInfo
@@ -479,7 +461,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.12 字冠详情
+     * 1.5.12 字冠详情
      *
      * @param adminAccountInfo
      * @param id
@@ -494,7 +476,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.13 新增字冠
+     * 1.5.13 新增字冠
      *
      * @param adminAccountInfo
      * @param routeCallVo
@@ -511,7 +493,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.14 修改字冠
+     * 1.5.14 修改字冠
      *
      * @param adminAccountInfo
      * @param routeCallVo
@@ -526,7 +508,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 5.15 删除字冠
+     * 1.5.15 删除字冠
      *
      * @param adminAccountInfo
      * @param id
@@ -538,7 +520,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 6.1 技能组列表
+     * 1.6.1 技能组列表
      *
      * @param adminAccountInfo
      * @param pageInfo
@@ -552,7 +534,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 6.2 技能组详情
+     * 1.6.2 技能组详情
      *
      * @param adminAccountInfo
      * @param id
@@ -564,7 +546,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 6.3 添加技能组
+     * 1.6.3 添加技能组
      *
      * @param adminAccountInfo
      * @param groupInfoVo
@@ -579,7 +561,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 6.4 修改技能组
+     * 1.6.4 修改技能组
      *
      * @param adminAccountInfo
      * @param groupInfoVo
@@ -594,7 +576,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 6.5 删除技能组
+     * 1.6.5 删除技能组
      *
      * @param adminAccountInfo
      * @param id
@@ -606,7 +588,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 8.1 坐席列表
+     * 1.8.1 坐席列表
      *
      * @param adminAccountInfo
      * @param pageInfo
@@ -620,7 +602,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 8.2 坐席详情
+     * 1.8.2 坐席详情
      *
      * @param adminAccountInfo
      * @param id
@@ -632,7 +614,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 8.3 添加坐席
+     * 1.8.3 添加坐席
      *
      * @param adminAccountInfo
      * @param agentVo
@@ -647,7 +629,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 8.4 修改坐席
+     * 1.8.4 修改坐席
      *
      * @param adminAccountInfo
      * @param id
@@ -662,7 +644,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 8.5 删除坐席
+     * 1.8.5 删除坐席
      *
      * @param adminAccountInfo
      * @param id
@@ -676,7 +658,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     * 8.6 批量添加坐席
+     * 1.8.6 批量添加坐席
      *
      * @param adminAccountInfo
      * @param count
@@ -692,7 +674,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 8.7 坐席导出
+     * 1.8.7 坐席导出
      *
      * @param response
      * @param adminAccountInfo

@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constants;
 import org.cti.cc.enums.ErrorCode;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.cc.EventType;
@@ -24,6 +26,7 @@ import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.configration.HandlerContext;
 import org.zhongweixian.cc.service.AgentService;
+import org.zhongweixian.cc.util.RandomUtil;
 import org.zhongweixian.cc.websocket.event.WsLoginEvnet;
 import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.base.ChannelEntity;
@@ -50,6 +53,9 @@ public class WebSocketHandler implements ConnectionListener {
     @Value("${ws.login.timeout:2}")
     private Long timeout;
 
+    @Value("${ws.thread.num:8}")
+    private Integer threadNum;
+
     @Autowired
     private AgentService agentService;
 
@@ -57,19 +63,6 @@ public class WebSocketHandler implements ConnectionListener {
      * 坐席状态http回调，支持超时配置
      */
     private RestTemplate restTemplate;
-
-    /**
-     * 构造函数中初始化 restTemplate
-     *
-     * @param connectTimeout
-     * @param readTimeout
-     */
-    public WebSocketHandler(@Value("${cti.callback.connectTimeout:100}") Integer connectTimeout, @Value("${cti.callback.readTimeout:300}") Integer readTimeout) {
-        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
-        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
-        restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
-    }
 
 
     @Autowired
@@ -82,14 +75,16 @@ public class WebSocketHandler implements ConnectionListener {
     private CacheService cacheService;
 
 
-    private ThreadPoolExecutor executor = new ThreadPoolExecutor(8, 8, 0L,
-            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryBuilder().setNameFormat("ws-server-pool-%d").build());
+    /**
+     * 线程组
+     */
+    private Map<Integer, ThreadPoolExecutor> executorMap = new ConcurrentHashMap<>();
 
 
     /**
      * 为避免恶意链接，建立链接不发送login，需要定时检测
      */
-    private ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("check-ws-login-pool-%d").build());
+    private ScheduledExecutorService checkThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("check-ws-login-pool-%d").build());
 
     /**
      *
@@ -100,6 +95,27 @@ public class WebSocketHandler implements ConnectionListener {
      *
      */
     private Map<String, Channel> agentChannel = new ConcurrentHashMap<>();
+
+    /**
+     * 构造函数中初始化 restTemplate
+     *
+     * @param connectTimeout
+     * @param readTimeout
+     */
+    public WebSocketHandler(@Value("${cti.callback.connectTimeout:100}") Integer connectTimeout,
+                            @Value("${cti.callback.readTimeout:300}") Integer readTimeout,
+                            @Value("${ws.thread.num:8}") Integer threadNum) {
+        for (int i = 0; i < threadNum; i++) {
+            ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("ws-server-pool-" + i).build();
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory);
+            executorMap.put(i, executor);
+        }
+
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+        restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+    }
 
     @Override
     public void onClose(Channel channel, int i, String s) {
@@ -144,7 +160,9 @@ public class WebSocketHandler implements ConnectionListener {
         if (event == null) {
             return;
         }
-        executor.execute(() -> {
+
+        ExecutorService executorService = executorMap.get(RandomUtil.getNum(event.getAgentKey(), threadNum));
+        executorService.execute(() -> {
             try {
                 logger.info("websocket received channel:{} message:{}", channel.id(), text);
                 handler.handleEvent(event);
@@ -199,7 +217,7 @@ public class WebSocketHandler implements ConnectionListener {
      * 检测长时间没有发送login的channel
      */
     public void check() {
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
+        checkThread.scheduleAtFixedRate(() -> {
             Iterator<Map.Entry<ChannelId, ChannelEntity>> iterator = channelIds.entrySet().iterator();
             Long now = Instant.now().getEpochSecond();
             try {
@@ -223,12 +241,12 @@ public class WebSocketHandler implements ConnectionListener {
      * 关闭线程
      */
     public void stop() {
-        if (executor != null) {
+        if (checkThread != null) {
+            checkThread.shutdown();
+        }
+        executorMap.forEach((i, executor) -> {
             executor.shutdown();
-        }
-        if (scheduledExecutorService != null) {
-            scheduledExecutorService.shutdown();
-        }
+        });
     }
 
     /**

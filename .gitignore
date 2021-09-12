@@ -15,8 +15,7 @@ logs
 
 # BlueJ files
 *.ctxt
-bin
-build.sh
+
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

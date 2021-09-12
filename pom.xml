@@ -38,9 +38,9 @@
         <maven.compiler.source>11</maven.compiler.source>
 
         <springboot.version>2.5.2</springboot.version>
-        <fastdfs.version>1.27.2</fastdfs.version>
-        <guava.version>28.1-jre</guava.version>
-        <websocket-api.version>2.0.5</websocket-api.version>
+        <minio.version>7.1.4</minio.version>
+        <pgsql.version>42.2.23</pgsql.version>
+        <websocket-api.version>2.0.4</websocket-api.version>
         <jasypt.version>3.0.3</jasypt.version>
         <springboot.mybatis.version>2.1.4</springboot.mybatis.version>
         <joda-time.version>2.5</joda-time.version>
@@ -102,14 +102,19 @@
                 <version>${mysql.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${pgsql.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.zhongweixian</groupId>
                 <artifactId>websocket-api</artifactId>
                 <version>${websocket-api.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.tobato</groupId>
-                <artifactId>fastdfs-client</artifactId>
-                <version>${fastdfs.version}</version>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>

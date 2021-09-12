@@ -8,6 +8,7 @@ import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import io.minio.MinioClient;
 import org.cti.cc.entity.Station;
 import org.cti.cc.mapper.StationMapper;
 import org.mybatis.spring.annotation.MapperScan;
@@ -79,6 +80,16 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
         redisTemplate.setConnectionFactory(connectionFactory);
         return redisTemplate;
     }*/
+
+    @Bean
+    public MinioClient minioClient(@Value("${minio.endpoint:}") String endpoint, @Value("${minio.access.key:}") String accessKey, @Value("${minio.secret.key:}") String secretKey) {
+        try {
+            return new MinioClient.Builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return null;
+    }
 
     @Bean
     public SnowflakeIdWorker snowflakeIdWorker() {

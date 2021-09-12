@@ -8,9 +8,11 @@ import org.cti.cc.entity.AdminAccount;
 import org.cti.cc.po.AdminAccountInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.zhongweixian.api.service.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +21,25 @@ import java.util.Map;
  * Create by caoliang on 2020/12/15
  */
 public class BaseController {
-    Logger logger = LoggerFactory.getLogger(BaseController.class);
+    protected Logger logger = LoggerFactory.getLogger(BaseController.class);
+
+    @Autowired
+    protected CompanyService companyService;
+
+    @Autowired
+    protected AgentService agentService;
+
+    @Autowired
+    protected GroupService groupService;
+
+    @Autowired
+    protected RouteService routeService;
+
+    @Autowired
+    protected DisplayService displayService;
+
+    @Autowired
+    protected CallLogService callLogService;
 
     @ModelAttribute("adminAccountInfo")
     public AdminAccount adminAccountInfo() {
@@ -38,7 +58,7 @@ public class BaseController {
             ObjectMapper mapper = new ObjectMapper();
             try {
                 params = mapper.readValue(query, Map.class);
-            } catch (JsonProcessingException e) {
+            } catch (Exception e) {
                 logger.error("query format to json error, {}", query);
             }
         }
@@ -53,7 +73,6 @@ public class BaseController {
             }
         }else {
             params.put("companyId", adminAccountInfo.getBindCompanyId());
-
         }
         if (pageInfo != null) {
             params.put("pageNum", pageInfo.getPageNum());

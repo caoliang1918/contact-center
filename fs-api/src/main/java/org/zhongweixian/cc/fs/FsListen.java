@@ -252,10 +252,10 @@ public class FsListen {
                     if (callInfo == null) {
                         return;
                     }
-                    executorService = executorMap.get(getNum(callInfo.getCallId().toString()));
+                    executorService = executorMap.get(RandomUtil.getNum(callInfo.getCallId().toString(), threadNum));
                 }
                 if (executorService == null) {
-                    executorService = executorMap.get(getNum(formatEvent.getDeviceId()));
+                    executorService = executorMap.get(RandomUtil.getNum(formatEvent.getDeviceId(), threadNum));
                 }
                 executorService.execute(() -> {
                     try {
@@ -326,16 +326,6 @@ public class FsListen {
             }
         }
     }
-
-    /**
-     * @param coreUuid
-     * @return
-     */
-    private Integer getNum(String coreUuid) {
-        int hash = coreUuid.hashCode();
-        return Math.abs(hash % threadNum);
-    }
-
 
     /**
      *

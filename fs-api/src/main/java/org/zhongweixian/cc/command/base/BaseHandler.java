@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.*;
-import org.zhongweixian.cc.cache.fastdfs.FastDFSClient;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
@@ -68,10 +67,6 @@ public class BaseHandler {
 
     @Autowired
     protected SnowflakeIdWorker snowflakeIdWorker;
-
-    @Autowired
-    protected FastDFSClient fastDFSClient;
-
 
     /**
      * 被叫挂机时，需要把主叫挂机，主叫挂机时不需要单独挂被叫

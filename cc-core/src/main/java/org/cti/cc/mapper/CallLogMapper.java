@@ -5,6 +5,9 @@ import org.cti.cc.entity.CallLog;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.CallLogPo;
 
+import java.util.List;
+import java.util.Map;
+
 
 public interface CallLogMapper extends BaseMapper<CallLog> {
 
@@ -54,4 +57,11 @@ public interface CallLogMapper extends BaseMapper<CallLog> {
      * @param end
      */
     void clearTable(@Param("start") Long start, @Param("end") Long end);
+
+    /**
+     * 查询话单列表
+     * @param params
+     * @return
+     */
+    List<CallLogPo> getcallList(Map<String, Object> params);
 }

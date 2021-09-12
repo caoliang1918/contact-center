@@ -3,27 +3,24 @@ package org.zhongweixian.web;
 import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.pojo.Instance;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
-import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.po.CommonResponse;
 import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.zhongweixian.cc.cache.fastdfs.FastDFSClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.util.SnowflakeIdWorker;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,9 +34,6 @@ public class IndexController {
 
     @NacosInjected
     private NamingService namingService;
-
-    @Autowired
-    protected FastDFSClient fastDFSClient;
 
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
