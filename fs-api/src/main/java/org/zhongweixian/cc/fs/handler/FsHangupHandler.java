@@ -50,6 +50,9 @@ import java.util.List;
 public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
     private Logger logger = LoggerFactory.getLogger(FsHangupHandler.class);
 
+    private static final String YYYYMMDDHH = "yyyyMMddHH";
+
+
     private RestTemplate restTemplate;
 
     @Value("${minio.endpoint:}")
@@ -92,7 +95,8 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
          */
         if (StringUtils.isNotBlank(deviceInfo.getRecord())) {
             try {
-                String fileName = DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + ".wav";
+                String day = DateFormatUtils.format(new Date(), YYYYMMDDHH);
+                String fileName = day.substring(0, 8) + "/" + day.substring(8, 10) + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + ".wav";
                 ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
                 logger.info("get record file:{}", deviceInfo.getRecord());
                 ObjectWriteResponse writeResponse = minioClient.putObject(PutObjectArgs.builder().stream(new ByteArrayInputStream(responseEntity.getBody()), responseEntity.getBody().length, -1).object(fileName).bucket(bucket).build());

@@ -1,5 +1,13 @@
 package org.zhongweixian.cc.cache;
 
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingFactory;
+import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.listener.Event;
+import com.alibaba.nacos.api.naming.listener.EventListener;
+import com.alibaba.nacos.api.naming.listener.NamingEvent;
+import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.Playback;
 import org.cti.cc.entity.RouteGetway;
@@ -12,6 +20,7 @@ import org.cti.cc.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.command.GroupHandler;
@@ -23,6 +32,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,6 +62,23 @@ public class CacheService {
 
     @Autowired
     private PlaybackMapper playbackMapper;
+
+    @Value("${spring.application.id}")
+    private String appId;
+
+    @Value("${spring.instance.id}")
+    private String instanceId;
+
+    @Value("${spring.cloud.nacos.server-addr}")
+    private String nacosAddr;
+
+    private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("nacos=service-check").build());
+
+    private boolean master;
+
+    private NamingService namingService;
+
+    private String applicationName = "fs-api";
 
     /**
      * callInfo
@@ -91,7 +120,7 @@ public class CacheService {
      */
     private Map<String, VdnPhone> vdnPhoneMap = null;
 
-    private Map<Integer , List<Station>> stationMap;
+    private Map<Integer, List<Station>> stationMap;
 
     /**
      * 获取本地缓存坐席
@@ -156,6 +185,36 @@ public class CacheService {
 
 
     public void initCompany() {
+        try {
+            namingService = NamingFactory.createNamingService(nacosAddr);
+            List<Instance> instances = namingService.getAllInstances(applicationName);
+            instances.forEach(instance -> {
+                if (appId.equals(instance.getMetadata().get("appId")) && !instanceId.equals(instance.getMetadata().get("random"))) {
+                    logger.error("spring.application.id:{} is exist", appId);
+                    System.exit(-1);
+                    return;
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        executorService.scheduleAtFixedRate(() -> {
+            try {
+                List<Instance> instances = namingService.getAllInstances(applicationName);
+                if (!CollectionUtils.isEmpty(instances)) {
+                    if (appId.equals(instances.get(0).getMetadata().get("appId"))) {
+                        setMaster(true);
+                    } else {
+                        setMaster(false);
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+
+        }, 2, 2, TimeUnit.SECONDS);
+
+
         this.companyMap = companyService.initAll();
         if (companyMap.isEmpty()) {
             return;
@@ -230,4 +289,15 @@ public class CacheService {
         return playbackMap.get(id);
     }
 
+    public boolean isMaster() {
+        return master;
+    }
+
+    public void setMaster(boolean master) {
+        this.master = master;
+    }
+
+    public void stop() {
+        executorService.shutdown();
+    }
 }

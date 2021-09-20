@@ -555,8 +555,8 @@
     from
         cc_call_log
     <where>
-      <if test="callId!=null"> call_id = #{callId}</if>
-      <if test="companyId!=null"> and company_id = #{companyId}</if>
+      <if test="callId!=null"> call_id = #{callId,jdbcType=BIGINT}</if>
+      <if test="companyId!=null"> and company_id = #{companyId,jdbcType=BIGINT}</if>
     </where>
   </select>
 
@@ -566,9 +566,9 @@
     from
         cc_call_log
     <where>
-      <if test="companyId!=null"> company_id = #{companyId}</if>
-      <if test="startTime!=null"> and call_time >= #{startTime}</if>
-      <if test="endTime!=null"> and call_time &lt; #{endTime}</if>
+      <if test="companyId!=null"> company_id = #{companyId,jdbcType=BIGINT}</if>
+      <if test="startTime!=null"> and call_time >= #{startTime,jdbcType=BIGINT}</if>
+      <if test="endTime!=null"> and call_time &lt; #{endTime,jdbcType=BIGINT}</if>
       <if test="uuid1!=null"> and uuid1 = #{uuid1}</if>
       <if test="uuid2!=null"> and uuid2 = #{uuid2}</if>
     </where>
@@ -581,8 +581,8 @@
         cc_call_log
     <where>
       <if test="agentKey != null"> agent_key = #{agentKey,jdbcType=VARCHAR}</if>
-      <if test="companyId!=null"> and company_id = #{companyId}</if>
-      <if test="callId!=null"> and call_id = #{callId}</if>
+      <if test="companyId!=null"> and company_id = #{companyId,jdbcType=BIGINT}</if>
+      <if test="callId!=null"> and call_id = #{callId,jdbcType=BIGINT}</if>
       <if test="groupId != null"> and group_id = #{groupId,jdbcType=BIGINT}</if>
       <if test="loginType != null"> and login_type = #{loginType,jdbcType=INTEGER}</if>
       <if test="taskId != null"> and task_id = #{taskId,jdbcType=BIGINT} </if>

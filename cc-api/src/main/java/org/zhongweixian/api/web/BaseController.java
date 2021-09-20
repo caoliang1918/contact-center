@@ -58,6 +58,7 @@ public class BaseController {
             ObjectMapper mapper = new ObjectMapper();
             try {
                 params = mapper.readValue(query, Map.class);
+                logger.info("query params:{}", query);
             } catch (Exception e) {
                 logger.error("query format to json error, {}", query);
             }
@@ -71,7 +72,7 @@ public class BaseController {
             } else {
                 params.put("companyId", params.get("companyId"));
             }
-        }else {
+        } else {
             params.put("companyId", adminAccountInfo.getBindCompanyId());
         }
         if (pageInfo != null) {

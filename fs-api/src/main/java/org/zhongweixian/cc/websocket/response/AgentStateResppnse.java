@@ -42,7 +42,7 @@ public class AgentStateResppnse {
     /**
      * 业务所在实例
      */
-    private String instance;
+    private Integer appId;
 
     /**
      * 所属技能组
@@ -206,12 +206,12 @@ public class AgentStateResppnse {
         this.host = host;
     }
 
-    public String getInstance() {
-        return instance;
+    public Integer getAppId() {
+        return appId;
     }
 
-    public void setInstance(String instance) {
-        this.instance = instance;
+    public void setAppId(Integer appId) {
+        this.appId = appId;
     }
 
     public List<Long> getGroupIds() {
@@ -382,5 +382,37 @@ public class AgentStateResppnse {
         this.serviceTime = serviceTime;
     }
 
-
+    @Override
+    public String toString() {
+        return "AgentStateResppnse{" +
+                "id=" + id +
+                ", agentKey='" + agentKey + '\'' +
+                ", companyId=" + companyId +
+                ", sipPhone='" + sipPhone + '\'' +
+                ", groupId=" + groupId +
+                ", host='" + host + '\'' +
+                ", appId=" + appId +
+                ", groupIds=" + groupIds +
+                ", sips=" + sips +
+                ", callId=" + callId +
+                ", loginTime=" + loginTime +
+                ", loginType=" + loginType +
+                ", workType=" + workType +
+                ", agentState=" + agentState +
+                ", stateTime=" + stateTime +
+                ", beforeState=" + beforeState +
+                ", beforeTime=" + beforeTime +
+                ", logoutTime=" + logoutTime +
+                ", serviceTime=" + serviceTime +
+                ", maxReadyTime=" + maxReadyTime +
+                ", totalReadyTime=" + totalReadyTime +
+                ", readyTimes=" + readyTimes +
+                ", notReadyTimes=" + notReadyTimes +
+                ", totalAfterTime=" + totalAfterTime +
+                ", maxTalkTime=" + maxTalkTime +
+                ", totalTalkTime=" + totalTalkTime +
+                ", totalRingTimes=" + totalRingTimes +
+                ", totalAnswerTimes=" + totalAnswerTimes +
+                '}';
+    }
 }

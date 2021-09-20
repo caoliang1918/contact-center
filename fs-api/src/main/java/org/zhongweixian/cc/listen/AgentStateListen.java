@@ -44,8 +44,8 @@ public class AgentStateListen {
     @Autowired
     private Station station;
 
-    @Value("${server.instance.id:}")
-    private String instance;
+    @Value("${spring.application.id:}")
+    private String appId;
 
 
     /**
@@ -56,7 +56,7 @@ public class AgentStateListen {
     @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.agent-" + "${spring.application.id}", autoDelete = "true"), key = Constants.DEFAULT_KEY, exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC))})
     public void listenAgentState(@Payload String payload) {
         JSONObject json = JSON.parseObject(payload);
-        if (station.getHost().equals(json.getString("host")) && instance.equals(json.getString("instance"))) {
+        if (station.getHost().equals(json.getString("host")) && appId.equals(json.getString("appId"))) {
             return;
         }
 
@@ -107,7 +107,7 @@ public class AgentStateListen {
         /**
          * 呼入转坐席，坐席和电话不在一个服务上
          */
-        if (station.getHost().equals(json.getString("host")) && !instance.equals(json.getString("instance"))) {
+        if (station.getHost().equals(json.getString("host")) && !appId.equals(json.getString("appId"))) {
             webSocketHandler.sentWsMessage(agentInfo, payload);
             return;
         }

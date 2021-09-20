@@ -57,7 +57,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     }
 
     @Value("${server.instance.id:}")
-    private String instance;
+    private Integer appId;
 
     @Override
     public AgentInfo getAgentInfo(String agentKey) {
@@ -127,7 +127,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setReadyTimes(agentInfo.getReadyTimes());
             response.setNotReadyTimes(agentInfo.getNotReadyTimes());
             response.setTotalAfterTime(agentInfo.getTotalAfterTime());
-            response.setInstance(instance);
+            response.setAppId(appId);
 
             logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
             rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.DEFAULT_KEY, JSON.toJSONString(response));

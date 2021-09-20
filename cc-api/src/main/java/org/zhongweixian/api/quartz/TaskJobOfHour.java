@@ -95,9 +95,22 @@ public class TaskJobOfHour implements Job {
                     for (int i = 0; i < stateLogs.size(); i++) {
                         AgentStateLog stateLog = stateLogs.get(i);
                         boolean last = stateLogs.size() == i + 1;
+
+                        //login 通过做减法，去除退出系统时间
+                        if (stateLog.getState().equals(AgentState.LOGIN.name())) {
+                            if (i == 0) {
+                                login += 3600000L - (start - stateLog.getStateTime());
+                            } else {
+                                login += 3600000L - (stateLog.getStateTime() - stateLog.getBeforeTime());
+                            }
+                        }
+                        //在当前小时内，最后一次logout才需要计算进去
+                        if (last && stateLog.getState().equals(AgentState.LOGOUT.name())) {
+                            login = 3600000L - (end - stateLog.getStateTime());
+                        }
+
                         if (stateLog.getBeforeState().equals(AgentState.READY.name())) {
                             ready += stateLog.getStateTime() - stateLog.getBeforeTime();
-
                         }
                         if (last && stateLog.getState().equals(AgentState.READY.name())) {
                             ready += end - stateLog.getStateTime();
@@ -144,6 +157,9 @@ public class TaskJobOfHour implements Job {
                 //查询最近一小时没有变更状态但是在线的坐席
                 List<Agent> agents = agentMapper.selectAgentOnline(params);
                 for (Agent agent : agents) {
+                    if (listMap.containsKey(agent.getId())) {
+                        continue;
+                    }
                     agentWork = new StatHourAgentWork();
                     agentWork.setCompanyId(companyInfo.getId());
                     agentWork.setAgentKey(agent.getAgentKey());
@@ -168,7 +184,9 @@ public class TaskJobOfHour implements Job {
                     }
                     agentWorkList.add(agentWork);
                 }
-                agentStateWorkService.saveStateHoutAgentWork(agentWorkList);
+                if (!CollectionUtils.isEmpty(agentWorkList)) {
+                    agentStateWorkService.saveStateHoutAgentWork(agentWorkList);
+                }
             });
         }
     }

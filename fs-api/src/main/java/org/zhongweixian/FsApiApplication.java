@@ -9,6 +9,7 @@ import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import io.minio.MinioClient;
+import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.Station;
 import org.cti.cc.mapper.StationMapper;
 import org.mybatis.spring.annotation.MapperScan;
@@ -34,6 +35,7 @@ import org.zhongweixian.cc.util.SnowflakeIdWorker;
 import org.zhongweixian.cc.websocket.WebSocketManager;
 import org.zhongweixian.cc.websocket.handler.WsMonitorHandler;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -66,7 +68,13 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     private StationMapper stationMapper;
 
     @Value("${spring.application.id}")
-    private Integer applicationId;
+    private String appId;
+
+    @Value("${spring.instance.id}")
+    private String instanceId;
+
+    @Value("${spring.cloud.nacos.server-addr}")
+    private String nacosAddr;
 
     @Autowired
     private LoadBalancerClient loadBalancerClient;
@@ -98,30 +106,14 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
 
     @Bean
     public Station station() {
-        if (applicationId == null || applicationId == 0) {
+        if (StringUtils.isBlank(appId)) {
             logger.error("spring.application.id is null");
             System.exit(0);
         }
-        Station station = stationMapper.selectByAppId(applicationId);
+        Station station = stationMapper.selectByAppId(Integer.parseInt(appId));
         if (station == null) {
-            logger.error("station {} is not exist", applicationId);
-            System.exit(0);
-        }
-        try {
-            String name = "fs-api";
-            NamingService namingService = NamingFactory.createNamingService("115.159.101.178:8848");
-            List<Instance> instances = namingService.getAllInstances(name);
-            logger.info("==========={}", instances);
-            namingService.subscribe(name, new EventListener() {
-                @Override
-                public void onEvent(Event event) {
-                    logger.info(" ============== {}", ((NamingEvent) event).getServiceName());
-                    logger.info("============== = {}", ((NamingEvent) event).getInstances());
-                }
-            });
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("station {} is not exist", appId);
+            System.exit(-1);
         }
         return station;
     }
@@ -144,6 +136,7 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
 
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
+        cacheService.stop();
         webSocketManager.stop();
         tcpServer.stop();
         fsListen.stop();
