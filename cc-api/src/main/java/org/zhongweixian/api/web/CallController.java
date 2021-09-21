@@ -4,10 +4,13 @@ import com.github.pagehelper.PageInfo;
 import org.cti.cc.po.AdminAccountInfo;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.po.CommonResponse;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -32,6 +35,24 @@ public class CallController extends BaseController {
     public CommonResponse<PageInfo<CallLogPo>> calllog(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, PageInfo pageInfo, String query) {
         Map<String, Object> params = parseMap(adminAccountInfo, pageInfo, query);
         return new CommonResponse<>(callLogService.calllogList(params));
+    }
+
+    /**
+     * 话单导出
+     *
+     * @param response
+     * @param adminAccountInfo
+     * @param query
+     * @throws IOException
+     */
+    @GetMapping("calllog/export")
+    public void calllogExport(HttpServletResponse response, @ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, String query) {
+        Map<String, Object> params = parseMap(adminAccountInfo, null, query);
+        try {
+            callLogService.calllogExport(response, params);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
 }

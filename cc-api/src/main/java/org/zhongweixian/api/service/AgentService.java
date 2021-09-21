@@ -7,6 +7,8 @@ import org.cti.cc.po.AgentSipPo;
 import org.cti.cc.vo.AgentVo;
 import org.zhongweixian.api.vo.AgentSipVo;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -87,4 +89,13 @@ public interface AgentService extends BaseService<Agent> {
      * @return
      */
     int deleteSip(Long companyId, Long id);
+
+
+    /**
+     * 坐席导出
+     *
+     * @param response
+     * @param params
+     */
+    void agentExport(HttpServletResponse response, Map<String, Object> params) throws IOException;
 }

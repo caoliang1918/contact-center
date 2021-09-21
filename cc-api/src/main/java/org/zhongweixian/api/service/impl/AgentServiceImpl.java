@@ -1,9 +1,13 @@
 package org.zhongweixian.api.service.impl;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.cti.cc.entity.*;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.mapper.*;
@@ -20,7 +24,12 @@ import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.AgentService;
 import org.zhongweixian.api.util.BcryptUtil;
 import org.zhongweixian.api.vo.AgentSipVo;
+import org.zhongweixian.api.vo.excel.ExcelAgentEntity;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -252,6 +261,20 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agentSip.setStatus(0);
         agentSip.setSip(agentSip.getSip() + randomDelete());
         return agentSipMapper.updateByPrimaryKeySelective(agentSip);
+    }
+
+    @Override
+    public void agentExport(HttpServletResponse response, Map<String, Object> params) throws IOException {
+        List<Agent> agentList = agentMapper.selectListByMap(params);
+//        agentList.forEach(agent->agent.setCts(FormatDateUtil.stampToTime(Long.parseLong(e.getUpdateTime()))));
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(
+                null, "坐席列表", ExcelType.XSSF), ExcelAgentEntity.class, agentList);
+        String filename = URLEncoder.encode("坐席列表.xlsx", "UTF8");
+        response.setHeader("content-disposition", "attachment;Filename=" + filename);
+        response.setContentType("application/vnd.ms-excel");
+        ServletOutputStream out = response.getOutputStream();
+        workbook.write(out);
+        out.flush();
     }
 
 }

@@ -1,11 +1,7 @@
 package org.zhongweixian.api.web;
 
 
-import cn.afterturn.easypoi.excel.ExcelExportUtil;
-import cn.afterturn.easypoi.excel.entity.ExportParams;
-import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import com.github.pagehelper.PageInfo;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.cti.cc.entity.*;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.page.Page;
@@ -17,12 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.api.vo.*;
-import org.zhongweixian.api.vo.excel.ExcelAgentEntity;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -678,24 +671,15 @@ public class CompanyController extends BaseController {
      *
      * @param response
      * @param adminAccountInfo
-     * @param pageInfo
      * @param query
      * @throws IOException
      */
     @GetMapping("agent/export")
     public void agentExport(HttpServletResponse response,
                             @ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
-                            PageInfo pageInfo, String query) throws IOException {
-        Map<String, Object> params = parseMap(adminAccountInfo, pageInfo, query);
-        List<Agent> agentList = agentService.findByPageParams(params).getList();
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(
-                null, "坐席列表", ExcelType.XSSF), ExcelAgentEntity.class, agentList);
-        String filename = URLEncoder.encode("坐席列表.xlsx", "UTF8");
-        response.setHeader("content-disposition", "attachment;Filename=" + filename);
-        response.setContentType("application/vnd.ms-excel");
-        ServletOutputStream out = response.getOutputStream();
-        workbook.write(out);
-        out.flush();
+                            String query) throws IOException {
+        Map<String, Object> params = parseMap(adminAccountInfo, null, query);
+        agentService.agentExport(response, params);
     }
 
 

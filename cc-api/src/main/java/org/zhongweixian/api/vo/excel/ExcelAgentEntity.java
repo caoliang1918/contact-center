@@ -19,7 +19,7 @@ public class ExcelAgentEntity extends Agent {
     /**
      *
      */
-    @Excel(name = "创建时间", width = 20, format = "yyyy-MM-dd")
+    @Excel(name = "创建时间", width = 20, exportFormat="yyyy-MM-dd HH:mm:ss")
     private Date cts;
 
 

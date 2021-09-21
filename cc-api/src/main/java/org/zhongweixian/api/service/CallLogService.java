@@ -3,8 +3,9 @@ package org.zhongweixian.api.service;
 import com.github.pagehelper.PageInfo;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.po.CallLogPo;
-import org.cti.cc.po.CommonResponse;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -25,8 +26,17 @@ public interface CallLogService extends BaseService<CallLog> {
 
     /**
      * 分页
+     *
      * @param params
      * @return
      */
     PageInfo<CallLogPo> calllogList(Map<String, Object> params);
+
+    /**
+     * 话单导出
+     *
+     * @param response
+     * @param params
+     */
+    void calllogExport(HttpServletResponse response, Map<String, Object> params) throws IOException;
 }

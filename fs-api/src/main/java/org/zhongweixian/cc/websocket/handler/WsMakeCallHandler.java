@@ -3,6 +3,7 @@ package org.zhongweixian.cc.websocket.handler;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.RouteGetway;
+import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.enums.NextType;
@@ -28,7 +29,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
 
     @Override
     public void handleEvent(WsMakeCallEvent event) {
-        if(StringUtils.isBlank(event.getCalled())) {
+        if (StringUtils.isBlank(event.getCalled())) {
             sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_NUMBER_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
             return;
         }
@@ -173,6 +174,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
      * @param event
      */
     private void innerCall(AgentInfo agentInfo, CallInfo callInfo, String callerDisplay, String caller, WsMakeCallEvent event) {
+        callInfo.setCallType(CallType.INNER_CALL);
         String deviceId = getDeviceId();
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setCaller(agentInfo.getAgentId());
@@ -182,7 +184,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         deviceInfo.setCallId(callInfo.getCallId());
         deviceInfo.setDeviceId(deviceId);
         deviceInfo.setDeviceType(1);
-        deviceInfo.setCdrType(2);
+        deviceInfo.setCdrType(3);
         deviceInfo.setAgentKey(agentInfo.getAgentKey());
         deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER));
 
@@ -245,6 +247,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
      * @param event
      */
     private void outboundCall(AgentInfo agentInfo, CallInfo callInfo, String callerDisplay, String caller, WsMakeCallEvent event) {
+        callInfo.setCallType(CallType.OUTBOUNT_CALL);
         String deviceId = getDeviceId();
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setCaller(agentInfo.getAgentId());
