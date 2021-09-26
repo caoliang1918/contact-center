@@ -157,7 +157,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
      * @param deviceInfo
      */
     private void matchVdnCode(FsAnswerEvent event, CallInfo callInfo, DeviceInfo deviceInfo) {
-        VdnPhone vdnPhone = cacheService.getVdnPhone(callInfo.getCalled());
+        VdnPhone vdnPhone = cacheService.getVdnPhone(callInfo.getCallerDisplay());
         logger.info("inbount caller:{} called:{} for vdnId:{}", event.getCaller(), event.getCalled(), vdnPhone.getVdnId());
         CompanyInfo companyInfo = cacheService.getCompany(vdnPhone.getCompanyId());
         if (companyInfo == null || companyInfo.getStatus() == 0) {

@@ -3,10 +3,8 @@ package org.zhongweixian.cc.fs.handler;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import io.minio.MinioClient;
-import io.minio.ObjectWriteArgs;
 import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
-import org.apache.commons.lang3.Streams;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.cti.cc.constant.Constants;
@@ -203,7 +201,10 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         //计算用户等待总时长
         if (callInfo.getCallType() == CallType.INBOUND_CALL || callInfo.getCallType() == CallType.AUTO_CALL) {
             if (callInfo.getQueueStartTime() != null) {
-                callInfo.setWaitTime(callInfo.getEndTime() - callInfo.getFristQueueTime());
+                if (callInfo.getQueueEndTime() == null) {
+                    callInfo.setQueueEndTime(callInfo.getEndTime());
+                }
+                callInfo.setWaitTime(callInfo.getQueueEndTime() - callInfo.getQueueStartTime());
             }
         }
 

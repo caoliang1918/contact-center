@@ -5,6 +5,7 @@ import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.enums.Direction;
@@ -15,6 +16,8 @@ import org.cti.cc.mapper.CallDtmfMapper;
 import org.cti.cc.mapper.CallLogMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.CallLogPo;
+import org.cti.cc.util.DateTimeUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -84,9 +89,13 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Override
     public void calllogExport(HttpServletResponse response, Map<String, Object> params) throws IOException {
         Long count = callLogMapper.selectCountByMap(params);
+        if (count == 0L) {
+            new BusinessException(ErrorCode.EXPORT_EMPTY);
+        }
         if (count > calllogLimit) {
             new BusinessException(ErrorCode.CALL_LOG_EXPORT_LIMIT);
         }
+
         String direction = (String) params.getOrDefault("direction", "OUTBOUND");
         params.put("direction", direction);
         List<CallLog> callLogs = callLogMapper.selectListByMap(params);
@@ -94,16 +103,41 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
         String sheetName = null;
         Workbook workbook = null;
         if (Direction.OUTBOUND.name().equals(direction)) {
+            List<ExcelOutboundCallLogEntity> entityList = new ArrayList<>();
+            ExcelOutboundCallLogEntity entity = null;
+            for (CallLog callLog : callLogs) {
+                entity = new ExcelOutboundCallLogEntity();
+                BeanUtils.copyProperties(callLog, entity);
+                entity.setCallTime(DateTimeUtil.format(callLog.getCallTime()));
+                entity.setAnswerTime(DateTimeUtil.format(callLog.getAnswerTime()));
+                entity.setEndTime(DateTimeUtil.format(callLog.getEndTime()));
+                entity.setRecordTime(DateTimeUtil.format(callLog.getRecordTime()));
+                entityList.add(entity);
+            }
             sheetName = "外呼详单";
             workbook = ExcelExportUtil.exportExcel(new ExportParams(
-                    null, sheetName, ExcelType.XSSF), ExcelOutboundCallLogEntity.class, callLogs);
+                    null, sheetName, ExcelType.XSSF), ExcelOutboundCallLogEntity.class, entityList);
         } else if (Direction.INBOUND.name().equals(direction)) {
+            List<ExcelInboundCallLogEntity> entityList = new ArrayList<>();
+            ExcelInboundCallLogEntity entity = null;
+            for (CallLog callLog : callLogs) {
+                entity = new ExcelInboundCallLogEntity();
+                BeanUtils.copyProperties(callLog, entity);
+                entity.setCallTime(DateTimeUtil.format(callLog.getCallTime()));
+                entity.setAnswerTime(DateTimeUtil.format(callLog.getAnswerTime()));
+                entity.setEndTime(DateTimeUtil.format(callLog.getEndTime()));
+                entity.setRecordTime(DateTimeUtil.format(callLog.getRecordTime()));
+                entity.setFristQueueTime(DateTimeUtil.format(callLog.getFristQueueTime()));
+                entity.setQueueStartTime(DateTimeUtil.format(callLog.getQueueStartTime()));
+                entity.setQueueEndTime(DateTimeUtil.format(callLog.getQueueEndTime()));
+                entityList.add(entity);
+            }
             sheetName = "呼入详单";
             workbook = ExcelExportUtil.exportExcel(new ExportParams(
-                    null, sheetName, ExcelType.XSSF), ExcelInboundCallLogEntity.class, callLogs);
+                    null, sheetName, ExcelType.XSSF), ExcelInboundCallLogEntity.class, entityList);
         }
 
-        String filename = URLEncoder.encode(sheetName + ".xlsx", "UTF8");
+        String filename = URLEncoder.encode(sheetName + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", "UTF8");
         response.setHeader("content-disposition", "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();

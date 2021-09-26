@@ -53,8 +53,8 @@ public class SimpleIvrMachine {
         executor.addListener(scxml, new SCXMLListener() {
             @Override
             public void onEntry(TransitionTarget transitionTarget) {
-                logger.info("onEntry transitionTarget {}", transitionTarget.getId());
                 State state = getCurrentState(callInfo.getCallId());
+                logger.info("onEntry transitionTarget {},{}", transitionTarget.getId(), state);
                 if (state != null) {
                     List<Transition> transitionList = (List<Transition>) transitionTarget.getTransitionsList();
                     if (!CollectionUtils.isEmpty(transitionList)) {
@@ -99,9 +99,9 @@ public class SimpleIvrMachine {
             logger.info("create new {} file", ivrId);
         }
         //定义好action事件
-        List<CustomAction> actionList = new ArrayList<>();
+        List<CustomAction> actionList = initActions();
         try {
-            SCXML scxml = SCXMLParser.parse(new URL("file:" + ivrId + ".xml"), new SimpleErrorHandler());
+            SCXML scxml = SCXMLParser.parse(new URL("file:" + ivrId + ".xml"), new SimpleErrorHandler(), actionList);
             scxmlMap.put(ivrId, scxml);
             return scxml;
         } catch (Exception e) {
@@ -166,4 +166,10 @@ public class SimpleIvrMachine {
         return false;
     }
 
+
+    private List<CustomAction> initActions(){
+        List<CustomAction> actions = new ArrayList<>();
+
+        return actions;
+    }
 }

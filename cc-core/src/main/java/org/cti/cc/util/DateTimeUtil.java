@@ -1,5 +1,7 @@
 package org.cti.cc.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -82,5 +84,15 @@ public class DateTimeUtil {
         date = calendar.getTime();
         String accDate = format.format(date);
         return accDate;
+    }
+
+    public static String format(Long timestame) {
+        String time = StringUtils.EMPTY;
+        if (timestame == null || timestame == 0) {
+            return time;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(YYYYMMDD_HHMMSS);
+        time = sdf.format(new Date(timestame));
+        return time;
     }
 }

@@ -53,6 +53,7 @@ public class TransferAgentHandler extends BaseHandler {
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
         callInfo.setAgentKey(agentInfo.getAgentKey());
+        callInfo.setCalled(agentInfo.getCalled());
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callInfo.getCallId());
 

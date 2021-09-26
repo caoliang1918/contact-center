@@ -196,8 +196,10 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallType(CallType.INBOUND_CALL)
                 .withDirection(Direction.INBOUND)
                 .withCallTime(Instant.now().toEpochMilli())
+                //用户号码
                 .withCaller(event.getCaller())
-                .withCalled(event.getCalled())
+                //接入号码
+                .withCallerDisplay(event.getCalled())
                 .withCompanyId(vdnPhone.getCompanyId())
                 .withMedia(event.getHostname())
                 .build();
