@@ -3,7 +3,6 @@ package org.zhongweixian.cc.fs.handler;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.entity.Agent;
-import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.enums.CallType;
@@ -92,12 +91,15 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                     ringEntity.setAgentState(AgentState.HOLD);
                     agentInfo.setAgentState(AgentState.HOLD);
                     break;
+
+                default:
+                    break;
             }
             sendAgentStateMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(ringEntity.getAgentState().name(), callInfo.getAgentKey(), ringEntity));
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
-            agentService.sendAgentStateMessage(agentInfo);
+            agentService.syncAgentStateMessage(agentInfo);
             return;
 
         }
@@ -154,7 +156,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
             agentInfo.setAgentState(AgentState.IN_CALL_RING);
-            agentService.sendAgentStateMessage(agentInfo);
+            agentService.syncAgentStateMessage(agentInfo);
         }
     }
 
@@ -185,7 +187,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             callLog.setAnswerFlag(3);
             callLog.setDirection(Direction.INBOUND.name());
             callLog.setHangupDir(3);
-            callLog.setHangupCause(CauseEnums.VDN_ERROR.name());
+            callLog.setHangupCode(CauseEnums.VDN_ERROR.getHuangupCode());
             callCdrService.saveOrUpdateCallLog(callLog);
             hangupCall(event.getHostname(), uuid, event.getDeviceId());
             return;
@@ -212,7 +214,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallTime(callInfo.getCallTime())
                 .withDeviceType(2)
                 .withCdrType(1)
-                .withNextCmd(new NextCommand(NextType.NEXT_VDN))
+                .withNextCommand(new NextCommand(NextType.NEXT_VDN))
                 .build();
 
         CompanyInfo companyInfo = cacheService.getCompany(vdnPhone.getCompanyId());
@@ -279,7 +281,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallTime(callInfo.getCallTime())
                 .withDeviceType(1)
                 .withCdrType(8)
-                .withNextCmd(new NextCommand(NextType.NEXT_CALL_OTHER))
+                .withNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER))
                 .build();
 
         CompanyInfo companyInfo = cacheService.getCompany(agent.getCompanyId());

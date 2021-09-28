@@ -86,7 +86,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     }
 
     @Override
-    public void sendAgentStateMessage(AgentInfo agentInfo) {
+    public void syncAgentStateMessage(AgentInfo agentInfo) {
         try {
             if (StringUtils.isBlank(agentInfo.getHost())) {
                 return;
@@ -134,11 +134,9 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        try {
-            saveAgentLog(agentInfo);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+
+        saveAgentLog(agentInfo);
+
     }
 
     @Override
@@ -152,7 +150,8 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
      * @param agentInfo
      * @return
      */
-    private void saveAgentLog(AgentInfo agentInfo) {
+    @Override
+    public void saveAgentLog(AgentInfo agentInfo) {
         AgentStateLog agentStateLog = new AgentStateLog();
         agentStateLog.setAgentId(agentInfo.getId());
         agentStateLog.setCallId(agentInfo.getCallId());

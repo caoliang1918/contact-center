@@ -40,6 +40,9 @@ public class FsExecuteComplateHandler extends BaseEventHandler<FsExecuteComplate
 
             case "break":
                 break;
+
+            default:
+                break;
         }
 
         logger.info("callId:{}  execute:{} data:{} resposne:{}", callInfo.getCallId(), event.getApplication(), event.getApplicationData(), event.getResponse());

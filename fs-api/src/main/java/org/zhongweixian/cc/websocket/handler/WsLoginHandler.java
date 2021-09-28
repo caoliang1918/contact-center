@@ -219,7 +219,7 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
         /**
          * 广播坐席状态
          */
-        sendAgentStateMessage(agentInfo);
+        syncAgentStateMessage(agentInfo);
 
         /**
          * 坐席在线

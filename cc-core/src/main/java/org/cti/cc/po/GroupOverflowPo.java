@@ -4,6 +4,7 @@ import org.cti.cc.entity.OverflowFront;
 import org.cti.cc.strategy.LineupStrategy;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Created by caoliang on 2020/11/25
@@ -59,9 +60,12 @@ public class GroupOverflowPo extends GroupOverFlow {
                     // 3:呼损率
                     int persent = 0;
                     if (callInAnswer > 0) {
-                        persent = (int) (new BigDecimal(1).subtract(new BigDecimal(callInAnswer).divide(new BigDecimal(callInTotal), 2, BigDecimal.ROUND_HALF_EVEN)).doubleValue() * 100);
+                        persent = (int) (new BigDecimal(1).subtract(new BigDecimal(callInAnswer).divide(new BigDecimal(callInTotal), 2, RoundingMode.HALF_EVEN)).doubleValue() * 100);
                     }
                     result = compareCondition(persent, front);
+                    break;
+
+                default:
                     break;
             }
             if (result) {
@@ -95,6 +99,9 @@ public class GroupOverflowPo extends GroupOverFlow {
                 break;
             case 4:
                 result = front.getRankValue().compareTo(var) < 0;
+                break;
+
+            default:
                 break;
         }
         return result;

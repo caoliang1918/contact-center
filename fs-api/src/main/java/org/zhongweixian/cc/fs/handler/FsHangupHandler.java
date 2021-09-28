@@ -145,10 +145,6 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             //同步坐席状态
             agentState(deviceInfo, callInfo, cause);
         }
-
-        if (callInfo.getHangupCause() == null) {
-            callInfo.setHangupCause(cause);
-        }
         if (!CauseEnums.NORMAL_CLEARING.name().equals(cause)) {
             //非正常挂机处理
             hangupDir(callInfo, deviceInfo, cause);

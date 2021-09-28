@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
  * Created by caoliang on 2021/9/3
  */
@@ -19,6 +21,10 @@ public class TaskJobOfSecond implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        Date date = new Date();
+        if (date.after(jobExecutionContext.getNextFireTime())) {
+            return;
+        }
         logger.info("Second job frist :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
     }
 }

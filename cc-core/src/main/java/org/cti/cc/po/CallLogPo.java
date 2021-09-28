@@ -3,14 +3,14 @@ package org.cti.cc.po;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
-import org.cti.cc.entity.CallLog;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by caoliang on 2020/11/14
  */
-public class CallLogPo {
+public class CallLogPo implements Serializable {
     /**
      *
      */
@@ -136,7 +136,7 @@ public class CallLogPo {
     /**
      * 挂机原因
      */
-    private String hangupCause;
+    private Integer hangupCode;
 
     /**
      * 媒体服务器
@@ -389,12 +389,12 @@ public class CallLogPo {
         this.hangupDir = hangupDir;
     }
 
-    public String getHangupCause() {
-        return hangupCause;
+    public Integer getHangupCode() {
+        return hangupCode;
     }
 
-    public void setHangupCause(String hangupCause) {
-        this.hangupCause = hangupCause;
+    public void setHangupCode(Integer hangupCode) {
+        this.hangupCode = hangupCode;
     }
 
     public String getMedia() {
@@ -543,7 +543,7 @@ public class CallLogPo {
                 ", waitTime=" + waitTime +
                 ", answerCount=" + answerCount +
                 ", hangupDir=" + hangupDir +
-                ", hangupCause='" + hangupCause + '\'' +
+                ", hangupCode=" + hangupCode +
                 ", media='" + media + '\'' +
                 ", record='" + record + '\'' +
                 ", recordTime=" + recordTime +

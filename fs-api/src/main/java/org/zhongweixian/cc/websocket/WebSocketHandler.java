@@ -292,7 +292,7 @@ public class WebSocketHandler implements ConnectionListener {
      * @param payload
      */
     public void sendMessgae(AgentInfo agentInfo, String payload) {
-        agentService.sendAgentStateMessage(agentInfo);
+        agentService.syncAgentStateMessage(agentInfo);
         Channel channel = agentChannel.get(agentInfo.getAgentKey());
         if (channel != null && channel.isActive()) {
             logger.info("send agent:{} ws message:{}", agentInfo.getAgentKey(), payload);

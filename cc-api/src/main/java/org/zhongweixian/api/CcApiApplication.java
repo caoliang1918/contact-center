@@ -95,7 +95,7 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
 
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
-
+        quartzConfig.stop();
     }
 }
 

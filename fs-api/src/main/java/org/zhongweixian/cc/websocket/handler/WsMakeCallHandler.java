@@ -202,7 +202,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
             agentInfo.setAgentState(AgentState.AFTER);
-            sendAgentStateMessage(agentInfo);
+            syncAgentStateMessage(agentInfo);
             agentInfo.setCallId(null);
 
             /**
@@ -233,7 +233,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         /**
          * 广播坐席状态
          */
-        sendAgentStateMessage(agentInfo);
+        syncAgentStateMessage(agentInfo);
     }
 
 
@@ -282,7 +282,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
             agentInfo.setAgentState(AgentState.AFTER);
-            sendAgentStateMessage(agentInfo);
+            syncAgentStateMessage(agentInfo);
             agentInfo.setCallId(null);
 
             /**
@@ -311,6 +311,6 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         /**
          * 广播坐席状态
          */
-        sendAgentStateMessage(agentInfo);
+        syncAgentStateMessage(agentInfo);
     }
 }

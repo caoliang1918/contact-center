@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.service.AgentService;
 
 /**
@@ -16,6 +17,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private AgentService agentService;
+
+    @Autowired
+    private CacheService cacheService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -30,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HttpRequestInteceptor(agentService, applicationContext))
+        registry.addInterceptor(new HttpRequestInteceptor(agentService, cacheService, applicationContext))
                 .addPathPatterns("/v1/cti/call/**")
                 .addPathPatterns("/v1/cti/agent/**")
                 .addPathPatterns("/v1/cti/admin/**")

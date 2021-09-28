@@ -130,7 +130,7 @@ public class CallInfo implements Serializable {
     /**
      * 挂机原因
      */
-    private String hangupCause;
+    private Integer hangupCode;
 
 
     /**
@@ -496,12 +496,12 @@ public class CallInfo implements Serializable {
         this.uuid2 = uuid2;
     }
 
-    public String getHangupCause() {
-        return hangupCause;
+    public Integer getHangupCode() {
+        return hangupCode;
     }
 
-    public void setHangupCause(String hangupCause) {
-        this.hangupCause = hangupCause;
+    public void setHangupCode(Integer hangupCode) {
+        this.hangupCode = hangupCode;
     }
 
     public String getCdrNotifyUrl() {
@@ -551,6 +551,8 @@ public class CallInfo implements Serializable {
         private int answerCount;
         private Long endTime;
         private Long talkTime;
+        private String uuid1;
+        private String uuid2;
         private List<String> deviceList = new ArrayList<>();
         private Map<String, DeviceInfo> deviceInfoMap = new HashMap<>();
         private Map<String, Object> followData = new HashMap<>();
@@ -671,6 +673,14 @@ public class CallInfo implements Serializable {
             this.talkTime = talkTime;
             return this;
         }
+        public CallInfoBuilder withUuid1(String uuid1){
+            this.uuid1 = uuid1;
+            return this;
+        }
+        public CallInfoBuilder withUuid2(String uuid2){
+            this.uuid2 = uuid2;
+            return this;
+        }
 
         public CallInfoBuilder withDeviceList(List<String> deviceList) {
             this.deviceList = deviceList;
@@ -743,7 +753,7 @@ public class CallInfo implements Serializable {
                 ", waitTime=" + waitTime +
                 ", answerCount=" + answerCount +
                 ", hangupDir=" + hangupDir +
-                ", hangupCause='" + hangupCause + '\'' +
+                ", hangupCode=" + hangupCode +
                 ", answerTime=" + answerTime +
                 ", endTime=" + endTime +
                 ", talkTime=" + talkTime +

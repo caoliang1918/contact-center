@@ -443,7 +443,7 @@ public class DeviceInfo {
             return this;
         }
 
-        public DeviceInfoBuilder withNextCmd(NextCommand nextCommand) {
+        public DeviceInfoBuilder withNextCommand(NextCommand nextCommand) {
             this.nextCommand = nextCommand;
             return this;
         }

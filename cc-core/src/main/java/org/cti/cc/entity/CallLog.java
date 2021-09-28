@@ -132,7 +132,7 @@ public class CallLog implements Serializable {
     /**
      * 挂机原因
      */
-    private String hangupCause;
+    private Integer hangupCode;
 
     /**
      * 媒体服务器
@@ -398,12 +398,12 @@ public class CallLog implements Serializable {
         this.hangupDir = hangupDir;
     }
 
-    public String getHangupCause() {
-        return hangupCause;
+    public Integer getHangupCode() {
+        return hangupCode;
     }
 
-    public void setHangupCause(String hangupCause) {
-        this.hangupCause = hangupCause == null ? null : hangupCause.trim();
+    public void setHangupCode(Integer hangupCode) {
+        this.hangupCode = hangupCode;
     }
 
     public String getMedia() {
@@ -548,7 +548,7 @@ public class CallLog implements Serializable {
         sb.append(", waitTime=").append(waitTime);
         sb.append(", answerCount=").append(answerCount);
         sb.append(", hangupDir=").append(hangupDir);
-        sb.append(", hangupCause=").append(hangupCause);
+        sb.append(", hangupCode=").append(hangupCode);
         sb.append(", media=").append(media);
         sb.append(", record=").append(record);
         sb.append(", talkTime=").append(talkTime);
@@ -600,7 +600,7 @@ public class CallLog implements Serializable {
                 && (this.getWaitTime() == null ? other.getWaitTime() == null : this.getWaitTime().equals(other.getWaitTime()))
                 && (this.getAnswerCount() == null ? other.getAnswerCount() == null : this.getAnswerCount().equals(other.getAnswerCount()))
                 && (this.getHangupDir() == null ? other.getHangupDir() == null : this.getHangupDir().equals(other.getHangupDir()))
-                && (this.getHangupCause() == null ? other.getHangupCause() == null : this.getHangupCause().equals(other.getHangupCause()))
+                && (this.getHangupCode() == null ? other.getHangupCode() == null : this.getHangupCode().equals(other.getHangupCode()))
                 && (this.getMedia() == null ? other.getMedia() == null : this.getMedia().equals(other.getMedia()))
                 && (this.getRecord() == null ? other.getRecord() == null : this.getRecord().equals(other.getRecord()))
                 && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
@@ -641,7 +641,7 @@ public class CallLog implements Serializable {
         result = prime * result + ((getWaitTime() == null) ? 0 : getWaitTime().hashCode());
         result = prime * result + ((getAnswerCount() == null) ? 0 : getAnswerCount().hashCode());
         result = prime * result + ((getHangupDir() == null) ? 0 : getHangupDir().hashCode());
-        result = prime * result + ((getHangupCause() == null) ? 0 : getHangupCause().hashCode());
+        result = prime * result + ((getHangupCode() == null) ? 0 : getHangupCode().hashCode());
         result = prime * result + ((getMedia() == null) ? 0 : getMedia().hashCode());
         result = prime * result + ((getRecord() == null) ? 0 : getRecord().hashCode());
         result = prime * result + ((getTalkTime() == null) ? 0 : getTalkTime().hashCode());

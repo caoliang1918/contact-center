@@ -55,8 +55,8 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
     /**
      * @param agentInfo
      */
-    protected void sendAgentStateMessage(AgentInfo agentInfo) {
-        agentService.sendAgentStateMessage(agentInfo);
+    protected void syncAgentStateMessage(AgentInfo agentInfo) {
+        agentService.syncAgentStateMessage(agentInfo);
     }
 
 

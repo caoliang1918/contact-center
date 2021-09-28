@@ -91,6 +91,9 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
                     break;
                 case 7:
                     agentStrategy = new RandomAssign();
+                    break;
+                default:
+                    break;
             }
         } else if (agentStrategyType == 2) {
             agentStrategy = new AgentCustomAssign(groupInfo.getGroupAgentStrategyPo().getCustomExpression());

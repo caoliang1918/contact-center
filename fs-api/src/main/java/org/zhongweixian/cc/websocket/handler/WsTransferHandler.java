@@ -132,6 +132,6 @@ public class WsTransferHandler extends WsBaseHandler<WsTransferEvent> {
         /**
          * 广播坐席状态
          */
-        sendAgentStateMessage(agentInfo);
+        syncAgentStateMessage(agentInfo);
     }
 }

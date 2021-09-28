@@ -34,7 +34,6 @@ public class TransferCallHandler extends BaseHandler {
          * 转外呼
          */
         callInfo.setCalled(called);
-        callInfo.setCallType(CallType.TRANSFER_OUT_CALL);
 
         String deviceId = getDeviceId();
         RouteGetway routeGetway = cacheService.getRouteGetway(callInfo.getCompanyId(), callInfo.getCalled());
@@ -53,7 +52,7 @@ public class TransferCallHandler extends BaseHandler {
                 .withCallId(callInfo.getCallId())
                 .withCallTime(Instant.now().toEpochMilli())
                 .withDisplay(callInfo.getCaller())
-                .withNextCmd(new NextCommand(NextType.NEXT_CALL_BRIDGE, deviceId))
+                .withNextCommand(new NextCommand(NextType.NEXT_CALL_BRIDGE, deviceId))
                 .build();
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, device);

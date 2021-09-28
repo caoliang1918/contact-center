@@ -154,7 +154,7 @@ public class GroupHandler extends BaseHandler {
                 logger.info("group:{} handleType is hangup, callId:{}", groupInfo.getName(), callInfo.getCallId());
                 //技能组策略挂机
                 callInfo.setHangupDir(3);
-                callInfo.setHangupCause(CauseEnums.OVERFLOW_TIMEOUT.name());
+                callInfo.setHangupCode(CauseEnums.OVERFLOW_TIMEOUT.getHuangupCode());
                 hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
                 break;
             default:
@@ -216,6 +216,9 @@ public class GroupHandler extends BaseHandler {
             case 5:
                 hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
                 return true;
+
+            default:
+                break;
         }
         return false;
     }
@@ -404,12 +407,15 @@ public class GroupHandler extends BaseHandler {
                     case 3:
                         deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_QUEUE_OVERFLOW_VDN, groupOverflowPo.getOverflowValue().toString()));
                         break;
+
+                    default:
+                        break;
                 }
                 break;
             case 2:
                 //排队超时挂机
                 callInfo.setHangupDir(3);
-                callInfo.setHangupCause(CauseEnums.QUEUE_TIMEOUT.name());
+                callInfo.setHangupCode(CauseEnums.QUEUE_TIMEOUT.getHuangupCode());
                 callInfo.setQueueEndTime(Instant.now().toEpochMilli());
                 deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_HANGUP, groupOverflowPo.getOverflowValue().toString()));
                 break;

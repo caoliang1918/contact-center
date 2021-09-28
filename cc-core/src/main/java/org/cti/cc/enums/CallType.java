@@ -20,34 +20,26 @@ public enum CallType {
     OUTBOUNT_CALL(2),
 
     /**
-     * 自动外呼
+     * 预测外呼
      */
     AUTO_CALL(3),
 
     /**
-     * 半自动外呼
+     * 预览外呼
      */
     PREVIEW_CALL(4),
 
     /**
+     * 双向外呼
+     */
+    BOTH_CALL(5),
+
+    /**
      * 内呼
      */
-    INNER_CALL(5),
+    INNER_CALL(6);
 
-    /**
-     * 转接
-     */
-    TRANSFER_CALL(6),
 
-    /**
-     * 咨询
-     */
-    CONSULT_CALL(7),
-
-    /**
-     * 转外线
-     */
-    TRANSFER_OUT_CALL(10);
 
     private Integer code;
 

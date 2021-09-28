@@ -27,8 +27,8 @@ public enum ErrorCode {
     GROUP_AGENT_OVER_LIMIT(1206, "技能组中坐席超过限制"),
     GROUP_SKILL_OVER_LIMIT(1207, "技能组中技能不能超过10个"),
     AGENT_SKILL_OVER_LIMIT(1208, "坐席技能不能超过20个"),
-    CALL_LOG_EXPORT_LIMIT(1209 , "话单导出不能超时{0}"),
-    EXPORT_EMPTY(1210 , "导出数据为空"),
+    CALL_LOG_EXPORT_LIMIT(1209, "话单导出不能超时{0}"),
+    EXPORT_EMPTY(1210, "导出数据为空"),
 
 
     AGENT_GROUP_NULL(2001, "技能组为空"),
@@ -47,6 +47,8 @@ public enum ErrorCode {
     CALL_NUMBER_ERROR(3000, "号码错误"),
     CALLTYPE_ERROR(3001, "呼叫类型错误"),
     CALL_ROUTE_ERROR(3002, "路由错误"),
+    CALLER_DISPLAY_ERROR(3003, "主叫显号错误"),
+    CALLED_DISPLAY_ERROR(3004, "被叫显号错误"),
     CALL_RUNTIME_ERROR(3500, "呼叫中异常");
 
 

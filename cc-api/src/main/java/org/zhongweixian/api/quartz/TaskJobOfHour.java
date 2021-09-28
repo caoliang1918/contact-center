@@ -165,7 +165,7 @@ public class TaskJobOfHour implements Job {
                     agentWork.setAgentKey(agent.getAgentKey());
                     agentWork.setAgentName(agent.getAgentName());
                     agentWork.setStateTime(start);
-                    agentWork.setCts(end);
+                    agentWork.setCts(end / 1000);
                     agentWork.setStatus(1);
                     if (AgentState.READY.name().equals(agent.getExt1())) {
                         agentWork.setReadyTime(3600000L);

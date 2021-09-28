@@ -20,11 +20,13 @@ public class MakeCallVo {
     /**
      * uuid1
      */
+    @Size(min = 2, max = 32, message = "uuid1必须在2,32字符")
     private String uuid1;
 
     /**
      * uuid2
      */
+    @Size(min = 2, max = 32, message = "uuid2必须在2,32字符")
     private String uuid2;
 
     /**
@@ -34,6 +36,12 @@ public class MakeCallVo {
     private CallType callType;
 
     /**
+     * 主叫，如果没有传，则使用坐席号码
+     */
+    @Size(min = 2, max = 16, message = "号码必须在2,16字符")
+    private String caller;
+
+    /**
      * 被叫
      */
     @NotNull(message = "被叫号码不能为空")
@@ -41,16 +49,17 @@ public class MakeCallVo {
     private String called;
 
     /**
-     * 用户侧显号，前端没传就用主技能配置
-     */
-    @Size(min = 2, max = 16, message = "显号必须在2,16字符")
-    private String display;
-
-    /**
-     * 坐席侧显号，前端没有传就用主技能组配置
+     * 主叫显号，接口没有传就用主技能组配置
      */
     @Size(min = 2, max = 16, message = "坐席显号必须在2,16字符")
     private String callerDiaplay;
+
+    /**
+     * 被叫显号，接口没传就用主技能配置
+     */
+    @Size(min = 2, max = 16, message = "显号必须在2,16字符")
+    private String calledDiaplay;
+
 
     public Map<String, Object> getFollowData() {
         return followData;
@@ -84,6 +93,14 @@ public class MakeCallVo {
         this.callType = callType;
     }
 
+    public String getCaller() {
+        return caller;
+    }
+
+    public void setCaller(String caller) {
+        this.caller = caller;
+    }
+
     public String getCalled() {
         return called;
     }
@@ -92,19 +109,33 @@ public class MakeCallVo {
         this.called = called;
     }
 
-    public String getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(String display) {
-        this.display = display;
-    }
-
     public String getCallerDiaplay() {
         return callerDiaplay;
     }
 
     public void setCallerDiaplay(String callerDiaplay) {
         this.callerDiaplay = callerDiaplay;
+    }
+
+    public String getCalledDiaplay() {
+        return calledDiaplay;
+    }
+
+    public void setCalledDiaplay(String calledDiaplay) {
+        this.calledDiaplay = calledDiaplay;
+    }
+
+    @Override
+    public String toString() {
+        return "MakeCallVo{" +
+                "followData=" + followData +
+                ", uuid1='" + uuid1 + '\'' +
+                ", uuid2='" + uuid2 + '\'' +
+                ", callType=" + callType +
+                ", caller='" + caller + '\'' +
+                ", called='" + called + '\'' +
+                ", callerDiaplay='" + callerDiaplay + '\'' +
+                ", calledDiaplay='" + calledDiaplay + '\'' +
+                '}';
     }
 }

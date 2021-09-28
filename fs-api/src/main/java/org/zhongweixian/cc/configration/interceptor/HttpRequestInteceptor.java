@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.util.BcryptUtil;
 
@@ -34,8 +35,11 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
 
     private AgentService agentService;
 
-    public HttpRequestInteceptor(AgentService agentService, ApplicationContext applicationContext) {
+    private CacheService cacheService;
+
+    public HttpRequestInteceptor(AgentService agentService, CacheService cacheService, ApplicationContext applicationContext) {
         this.agentService = agentService;
+        this.cacheService = cacheService;
         this.applicationContext = applicationContext;
     }
 
@@ -87,9 +91,10 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
             logger.warn("response for 401 status");
             return true;
         }
+
         logger.info("username:{} , password:{}", userAndPass[0], userAndPass[1]);
-        AgentInfo agentInfo = agentService.getAgentInfo(userAndPass[0]);
-        if (agentInfo == null || agentInfo.getStatus() == 0 || !BcryptUtil.checkPwd(userAndPass[1], agentInfo.getPasswd())) {
+        AgentInfo agentInfo = cacheService.getAgentInfo(userAndPass[0]);
+        if (agentInfo == null) {
             response.setStatus(401);
             response.setHeader("Content-Type", "application/json;charset=UTF-8");
             logger.warn("response for 401 status");
@@ -99,7 +104,17 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
             writer.close();
             return false;
         }
-        logger.info("agentInfo:{}", agentInfo);
+        if (agentInfo == null || agentInfo.getStatus() == 0 || !BcryptUtil.checkPwd(userAndPass[1], agentInfo.getPasswd())) {
+            response.setStatus(403);
+            response.setHeader("Content-Type", "application/json;charset=UTF-8");
+            logger.warn("response for 403 status");
+            PrintWriter writer = response.getWriter();
+            writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_ERROR)));
+            writer.flush();
+            writer.close();
+            return false;
+        }
+
         PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(agentInfo, agentInfo.getPasswd(), null);
         authenticationToken.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

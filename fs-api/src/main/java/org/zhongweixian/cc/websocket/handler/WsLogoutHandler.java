@@ -61,7 +61,7 @@ public class WsLogoutHandler extends WsBaseHandler<WsLogoutEvent> {
         /**
          *  广播坐席状态
          */
-        sendAgentStateMessage(agentInfo);
+        syncAgentStateMessage(agentInfo);
 
         /**
          * 坐席下线

@@ -1,5 +1,7 @@
 package org.zhongweixian.cc.util;
 
+import org.springframework.util.CollectionUtils;
+
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +11,9 @@ import java.util.Set;
 public class RandomUtil {
 
     public static String getRandom(List<String> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
         int index = (int) (Math.random() * list.size());
         return list.get(index);
     }

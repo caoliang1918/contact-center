@@ -48,6 +48,6 @@ public class WsNotReadyHandler extends WsBaseHandler<WsNotReadyEvent> {
         /**
          * 广播坐席状态
          */
-        sendAgentStateMessage(agentInfo);
+        syncAgentStateMessage(agentInfo);
     }
 }

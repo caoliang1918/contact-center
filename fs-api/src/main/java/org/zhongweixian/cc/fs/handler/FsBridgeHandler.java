@@ -41,9 +41,9 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
             callLog.setCts(callInfo.getCallTime());
             if (callInfo.getHiddenCustomer() == 1) {
                 //隐藏客户侧号码
-                if (callInfo.getDirection().name().equals("INBOUND")) {
+                if (Direction.INBOUND == callInfo.getDirection()) {
                     callLog.setCaller(hiddenNumber(callInfo.getCaller()));
-                } else if (callInfo.getDirection().name().equals("OUTBOUND")) {
+                } else if (Direction.OUTBOUND == callInfo.getDirection()) {
                     callLog.setCalled(hiddenNumber(callInfo.getCalled()));
                 }
             }

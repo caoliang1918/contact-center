@@ -32,7 +32,7 @@ public interface AgentService extends BaseService<Agent> {
     /**
      * @param agentInfo
      */
-    void sendAgentStateMessage(AgentInfo agentInfo);
+    void syncAgentStateMessage(AgentInfo agentInfo);
 
     /**
      *
@@ -40,6 +40,8 @@ public interface AgentService extends BaseService<Agent> {
      * @return
      */
     Agent getAgentBySip(String sip);
+
+    void saveAgentLog(AgentInfo agentInfo);
 
 
 }

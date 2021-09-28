@@ -249,4 +249,14 @@ public class QuartzConfig {
         }
     }
 
+    public void stop() {
+        if (scheduler != null) {
+            try {
+                scheduler.shutdown();
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
 }

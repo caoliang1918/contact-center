@@ -90,6 +90,9 @@ public class VdnSchedulePo extends VdnSchedule implements Comparable<VdnSchedule
                     return false;
                 }
                 break;
+
+            default:
+                break;
         }
 
 
