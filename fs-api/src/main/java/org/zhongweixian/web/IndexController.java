@@ -8,6 +8,7 @@ import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.po.CommonResponse;
+import org.cti.cc.util.SnowflakeIdWorker;
 import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zhongweixian.cc.service.CallCdrService;
-import org.zhongweixian.cc.util.SnowflakeIdWorker;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

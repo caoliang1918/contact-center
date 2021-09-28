@@ -6,6 +6,7 @@ import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.DeviceInfo;
 import org.cti.cc.po.GroupInfo;
 import org.cti.cc.po.NextCommand;
+import org.cti.cc.util.SnowflakeIdWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.service.GroupMemoryService;
-import org.zhongweixian.cc.util.SnowflakeIdWorker;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.esl.transport.SendMsg;
 

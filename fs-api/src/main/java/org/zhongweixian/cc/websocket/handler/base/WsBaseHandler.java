@@ -7,6 +7,7 @@ import org.cti.cc.mapper.AgentStateLogMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.GroupInfo;
+import org.cti.cc.util.SnowflakeIdWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,7 +18,6 @@ import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
-import org.zhongweixian.cc.util.SnowflakeIdWorker;
 import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 import org.zhongweixian.esl.transport.message.EslMessage;
 

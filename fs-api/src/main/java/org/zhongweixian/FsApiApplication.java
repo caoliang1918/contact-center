@@ -1,17 +1,12 @@
 package org.zhongweixian;
 
 
-import com.alibaba.nacos.api.naming.NamingFactory;
-import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.listener.Event;
-import com.alibaba.nacos.api.naming.listener.EventListener;
-import com.alibaba.nacos.api.naming.listener.NamingEvent;
-import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import io.minio.MinioClient;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.Station;
 import org.cti.cc.mapper.StationMapper;
+import org.cti.cc.util.SnowflakeIdWorker;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +26,8 @@ import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.tcp.TcpServer;
-import org.zhongweixian.cc.util.SnowflakeIdWorker;
 import org.zhongweixian.cc.websocket.WebSocketManager;
 import org.zhongweixian.cc.websocket.handler.WsMonitorHandler;
-
-import java.util.Date;
-import java.util.List;
 
 
 @EnableDiscoveryClient
