@@ -30,6 +30,11 @@ public class AdminAccount implements Serializable {
     private Long companyId;
 
     /**
+     * 企业code
+     */
+    private String code;
+
+    /**
      * 用户名
      */
     private String username;
@@ -81,6 +86,14 @@ public class AdminAccount implements Serializable {
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getUsername() {

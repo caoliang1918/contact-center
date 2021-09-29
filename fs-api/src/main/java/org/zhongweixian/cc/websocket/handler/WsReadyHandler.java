@@ -29,7 +29,7 @@ public class WsReadyHandler extends WsBaseHandler<WsReadyEvent> {
             return;
         }
         if (agentInfo.getAgentState() == AgentState.READY) {
-            logger.warn("agent:{} READY error, agent state:{}", event.getAgentKey(), agentInfo.getAgentState());
+            logger.warn("agent:{} already READY, agent state:{}", event.getAgentKey(), agentInfo.getAgentState());
             sendMessgae(event, new WsResponseEntity<String>(ErrorCode.AGENT_ALREADY_READY, event.getCmd(), event.getAgentKey()));
             return;
         }

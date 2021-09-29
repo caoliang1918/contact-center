@@ -67,6 +67,9 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
      * @param payload
      */
     public void sendMessgae(T t, Object payload) {
+        if (t.getChannel() == null) {
+            return;
+        }
         if (!t.getChannel().isActive()) {
             logger.warn("agent:{} is close", t.getAgentKey());
             return;

@@ -92,9 +92,19 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
             return true;
         }
 
-        logger.info("username:{} , password:{}", userAndPass[0], userAndPass[1]);
+        logger.debug("username:{} , password:{}", userAndPass[0], userAndPass[1]);
         AgentInfo agentInfo = cacheService.getAgentInfo(userAndPass[0]);
         if (agentInfo == null) {
+            response.setStatus(401);
+            response.setHeader("Content-Type", "application/json;charset=UTF-8");
+            logger.warn("response for 401 status");
+            PrintWriter writer = response.getWriter();
+            writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_NOT_LOGIN)));
+            writer.flush();
+            writer.close();
+            return false;
+        }
+        if (agentInfo.getStatus() == 0 || !BcryptUtil.checkPwd(userAndPass[1], agentInfo.getPasswd())) {
             response.setStatus(401);
             response.setHeader("Content-Type", "application/json;charset=UTF-8");
             logger.warn("response for 401 status");
@@ -104,22 +114,10 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
             writer.close();
             return false;
         }
-        if (agentInfo == null || agentInfo.getStatus() == 0 || !BcryptUtil.checkPwd(userAndPass[1], agentInfo.getPasswd())) {
-            response.setStatus(403);
-            response.setHeader("Content-Type", "application/json;charset=UTF-8");
-            logger.warn("response for 403 status");
-            PrintWriter writer = response.getWriter();
-            writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_ERROR)));
-            writer.flush();
-            writer.close();
-            return false;
-        }
-
         PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(agentInfo, agentInfo.getPasswd(), null);
         authenticationToken.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         return true;
-
     }
 
 
@@ -133,9 +131,9 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
         if (StringUtils.isBlank(token)) {
             return false;
         }
-
         AdminAccount adminAccount = new AdminAccount();
         adminAccount.setCompanyId(1L);
+        adminAccount.setCode("test");
         PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(adminAccount, adminAccount.getPasswd(), null);
         authenticationToken.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

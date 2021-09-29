@@ -31,7 +31,6 @@ public class BaseController {
         if (authentication == null) {
             return null;
         }
-        logger.info("authentication:{}", authentication);
         return (AgentInfo) authentication.getPrincipal();
     }
 

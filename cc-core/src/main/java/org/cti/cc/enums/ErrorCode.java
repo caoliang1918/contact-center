@@ -17,6 +17,7 @@ public enum ErrorCode {
     ACCOUNT_ERROR(1102, "账号或密码错误"),
     ACCOUNT_DISABLED(1103, "账号被禁用"),
     ACCOUNT_AUTH_ERROR(1104, "账号权限错误"),
+    ACCOUNT_NOT_LOGIN(1105, "账号未登录"),
 
 
     ACCOUNT_SIP_NOTNUL(1201, "坐席sip号不能为空"),

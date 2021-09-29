@@ -24,11 +24,13 @@ public class WsNotReadyHandler extends WsBaseHandler<WsNotReadyEvent> {
     public void handleEvent(WsNotReadyEvent event) {
         AgentInfo agentInfo = getAgent(event);
         if (agentInfo == null || agentInfo.getStatus() == 0) {
-            event.getChannel().close();
+            if (event.getChannel() != null) {
+                event.getChannel().close();
+            }
             return;
         }
         if (agentInfo.getAgentState() == AgentState.NOT_READY) {
-            logger.warn("agent:{} NOT_READY error, agent state:{}", event.getAgentKey(), agentInfo.getAgentState());
+            logger.warn("agent:{} already NOT_READY, agent state:{}", event.getAgentKey(), agentInfo.getAgentState());
             sendMessgae(event, new WsResponseEntity<String>(ErrorCode.AGENT_ALREADY_NOT_READY, event.getCmd(), event.getAgentKey()));
             return;
         }

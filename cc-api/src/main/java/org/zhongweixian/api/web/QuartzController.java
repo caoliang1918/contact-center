@@ -63,7 +63,7 @@ public class QuartzController {
                 statWorkService.deleteAgentHourStat(startTime);
                 taskJobOfHour.agentHourStat(startTime, startTime + 3600000, companyInfoList);
             } catch (Exception e) {
-                logger.info(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
             }
             startTime += 3600000;
         }

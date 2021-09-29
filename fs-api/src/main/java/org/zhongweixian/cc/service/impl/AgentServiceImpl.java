@@ -56,7 +56,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         return agentMapper;
     }
 
-    @Value("${server.instance.id:}")
+    @Value("${spring.application.id:}")
     private Integer appId;
 
     @Override

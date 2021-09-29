@@ -35,7 +35,7 @@ public class AgentCallController extends BaseController {
     @PostMapping("makecall")
     public CommonResponse makecall(@ModelAttribute("agentInfo") AgentInfo agentInfo, @RequestBody @Validated MakeCallVo makeCallVo) {
         if (agentInfo.getAgentState() != null) {
-            if (agentInfo.getAgentState().name().contains("CALL") || agentInfo.getAgentState() == AgentState.TALKING) {
+            if (agentInfo.getCallId() != null || agentInfo.getAgentState() == AgentState.TALKING) {
                 return new CommonResponse(ErrorCode.AGENT_CALLING);
             }
         }

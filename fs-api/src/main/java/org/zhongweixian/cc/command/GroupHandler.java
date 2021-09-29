@@ -15,10 +15,7 @@ import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.command.base.BaseHandler;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -344,6 +341,24 @@ public class GroupHandler extends BaseHandler {
             agentQueues.remove(new AgentQueue(1L, agentInfo.getAgentKey()));
             agentInfoMap.put(groupId, agentQueues);
         });
+    }
+
+    /**
+     * 技能组中所有空闲坐席
+     *
+     * @param groupId
+     * @return
+     */
+    public List<String> getFreeAgents(Long groupId) {
+        PriorityQueue<AgentQueue> agentQueues = agentInfoMap.get(groupId);
+        if (CollectionUtils.isEmpty(agentQueues)) {
+            return null;
+        }
+        List<String> freeAgents = new ArrayList<>();
+        for (AgentQueue agentQueue : agentQueues) {
+            freeAgents.add(agentQueue.getAgentKey());
+        }
+        return freeAgents;
     }
 
     /**

@@ -207,10 +207,11 @@ public class TaskJobOfHour implements Job {
      * @param start
      * @param end
      */
-    private void pushFailLog(Long start, Long end) {
+    public void pushFailLog(Long start, Long end) {
         Map<String, Object> params = new HashMap<>();
-        params.put("start", start);
-        params.put("end", end);
+        params.put("start", start / 1000);
+        params.put("end", end / 1000);
+        params.put("status", 1);
         List<PushFailLog> pushFailLogs = pushFailLogMapper.selectListByMap(params);
         if (CollectionUtils.isEmpty(pushFailLogs)) {
             return;
@@ -221,11 +222,12 @@ public class TaskJobOfHour implements Job {
                 if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
                     pushFailLog.setPushResponse(responseEntity.getBody());
                     pushFailLog.setStatus(2);
+                    pushFailLog.setCts(Instant.now().getEpochSecond());
                     pushFailLogMapper.pushSuccess(pushFailLog);
                     logger.info("push call:{} to {} success:{}", pushFailLog.getCallId(), pushFailLog.getCdrNotifyUrl(), responseEntity.getBody());
                 }
             } catch (Exception e) {
-                pushFailLog.setUts(pushFailLog.getUts() + 3600 * calculate(pushFailLog.getPushTimes()));
+                pushFailLog.setUts(end / 1000 + 3600 * calculate(pushFailLog.getPushTimes()));
                 pushFailLog.setPushTimes(pushFailLog.getPushTimes() + 1);
                 pushFailLogMapper.updateByPrimaryKey(pushFailLog);
             }
@@ -233,8 +235,9 @@ public class TaskJobOfHour implements Job {
     }
 
     private static int calculate(int n) {
-        if (n == 0)
+        if (n == 0) {
             return 1;
+        }
         return 2 * calculate(n - 1);
     }
 }

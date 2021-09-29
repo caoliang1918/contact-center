@@ -255,7 +255,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         callLogPo.setCaller(callInfo.getCaller());
         callLogPo.setCalled(callInfo.getCalled());
         ResponseEntity<String> responseEntity = null;
-        String payload = JSON.toJSONString(callLogPo, SerializerFeature.WriteNullStringAsEmpty);
+        String payload = JSON.toJSONString(callLogPo);
         PushFailLog pushFailLog = new PushFailLog();
         pushFailLog.setCallId(callLogPo.getCallId());
         pushFailLog.setCts(Instant.now().getEpochSecond());
@@ -270,7 +270,6 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             logger.info("push call:{} to {} success:{}", callInfo.getCallId(), callInfo.getCdrNotifyUrl(), responseEntity.getBody());
             pushFailLog.setStatus(2);
             pushFailLog.setPushResponse(responseEntity.getBody());
-            return;
         } catch (Exception e) {
             pushFailLog.setStatus(1);
             logger.warn("push call:{} to {} error", callInfo.getCallId(), callInfo.getCdrNotifyUrl());
@@ -296,13 +295,13 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
          */
         if (callInfo.getDirection() == Direction.OUTBOUND) {
             if (deviceInfo.getDeviceType() == 1) {
-                if (!CauseEnums.NORMAL_CLEARING.name().equals(cause)) {
+                if (deviceInfo.getAnswerTime() == null) {
                     callInfo.setAnswerFlag(1);
                 }
                 //主叫挂机
                 callInfo.setHangupDir(1);
-            } else {
-                if (!CauseEnums.NORMAL_CLEARING.name().equals(cause)) {
+            } else if (deviceInfo.getDeviceType() == 2) {
+                if (deviceInfo.getAnswerTime() == null) {
                     callInfo.setAnswerFlag(2);
                 }
                 callInfo.setHangupDir(2);
@@ -313,7 +312,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                 //主叫挂机
                 callInfo.setHangupDir(1);
             } else {
-                if (!CauseEnums.NORMAL_CLEARING.name().equals(cause)) {
+                if (deviceInfo.getAnswerTime() == null) {
                     callInfo.setAnswerFlag(3);
                 }
                 callInfo.setHangupDir(2);
