@@ -191,6 +191,31 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         return 0;
     }
 
+    @Override
+    public void hangupCall(CallInfo callInfo, String deviceId) {
+        fsListen.hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+    }
+
+    @Override
+    public void hold(CallInfo callInfo, String deviceId) {
+        fsListen.hold(callInfo.getMedia(), deviceId);
+    }
+
+    @Override
+    public void cancelHold(CallInfo callInfo, String deviceId) {
+        fsListen.callBridge(callInfo.getMedia(), callInfo.getDeviceList().get(0), callInfo.getDeviceList().get(1));
+    }
+
+    @Override
+    public void readyMute(CallInfo callInfo, String deviceId) {
+        fsListen.sendBgapiMessage(callInfo.getMedia(), "uuid_audio", deviceId + " start read mute 1");
+    }
+
+    @Override
+    public void cancelMute(CallInfo callInfo, String deviceId) {
+        fsListen.sendBgapiMessage(callInfo.getMedia(), "uuid_audio", deviceId + " stop");
+    }
+
     /**
      * @param agentInfo
      * @param makeCallVo

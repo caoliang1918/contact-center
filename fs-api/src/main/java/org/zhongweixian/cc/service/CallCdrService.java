@@ -5,6 +5,7 @@ import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.PushFailLog;
 import org.cti.cc.po.AgentInfo;
+import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.CallLogPo;
 import org.zhongweixian.cc.entity.MakeCallVo;
 
@@ -53,4 +54,44 @@ public interface CallCdrService extends BaseService<CallLog> {
      * @return
      */
     int makeCall(MakeCallVo makeCallVo, AgentInfo agentInfo);
+
+    /**
+     * 挂机
+     *
+     * @param deviceId
+     */
+    void hangupCall(CallInfo callInfo, String deviceId);
+
+
+    /**
+     * 通话保持
+     *
+     * @param callInfo
+     * @param deviceId
+     */
+    void hold(CallInfo callInfo, String deviceId);
+
+    /**
+     * 取消保持
+     *
+     * @param callInfo
+     * @param deviceId
+     */
+    void cancelHold(CallInfo callInfo, String deviceId);
+
+    /**
+     * 静音
+     *
+     * @param callInfo
+     * @param deviceId
+     */
+    void readyMute(CallInfo callInfo, String deviceId);
+
+    /**
+     * 取消静音
+     *
+     * @param callInfo
+     * @param deviceId
+     */
+    void cancelMute(CallInfo callInfo, String deviceId);
 }

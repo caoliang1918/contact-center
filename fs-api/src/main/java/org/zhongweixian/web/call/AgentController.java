@@ -32,22 +32,6 @@ import java.time.Instant;
 @RequestMapping("/v1/cti/agent")
 public class AgentController extends BaseController {
 
-    @Autowired
-    private AgentService agentService;
-
-    @Autowired
-    private WsReadyHandler readyHandler;
-
-    @Autowired
-    private WsNotReadyHandler notReadyHandler;
-
-    @Autowired
-    private WsLogoutHandler logoutHandler;
-
-    @Autowired
-    private Station station;
-
-
     /**
      * 3.1.1 坐席登录
      *

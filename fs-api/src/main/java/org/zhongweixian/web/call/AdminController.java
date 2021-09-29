@@ -6,15 +6,11 @@ import org.cti.cc.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.zhongweixian.cc.cache.CacheService;
-import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.exception.BusinessException;
-import org.zhongweixian.cc.service.AgentService;
-import org.zhongweixian.cc.service.CallCdrService;
+import org.zhongweixian.web.base.BaseController;
 
 import java.util.List;
 
@@ -26,20 +22,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("v1/cti/admin")
-public class AdminController {
+public class AdminController extends BaseController {
     private Logger logger = LoggerFactory.getLogger(AdminController.class);
-
-    @Autowired
-    private CallCdrService callCdrService;
-
-    @Autowired
-    private CacheService cacheService;
-
-    @Autowired
-    private AgentService agentService;
-
-    @Autowired
-    private GroupHandler groupHandler;
 
     @ModelAttribute("adminAccount")
     public AdminAccount adminAccount() {
