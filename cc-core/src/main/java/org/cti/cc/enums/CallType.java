@@ -35,6 +35,11 @@ public enum CallType {
     BOTH_CALL(5),
 
     /**
+     * 硬话机外呼
+     */
+    SIP_OUTBOUND_CALL(6),
+
+    /**
      * 内呼
      */
     INNER_CALL(6);

@@ -49,7 +49,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         if (callInfo == null && Direction.INBOUND.name().equals(event.getDirection().toUpperCase()) && a == 1) {
             if (StringUtils.isNotBlank(event.getSipPort()) && FsConstant.INTERNAL.equals(outboundProfile)) {
                 //硬话机外呼
-                sipOutbound(event);
+                sipOutboundCall(event);
                 return;
             }
             //呼入
@@ -233,7 +233,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
      *
      * @param event
      */
-    private void sipOutbound(FsParkEvent event) {
+    private void sipOutboundCall(FsParkEvent event) {
         //通过sip号码获取绑定的坐席
         Agent agent = agentService.getAgentBySip(event.getCaller());
         Long callId = snowflakeIdWorker.nextId();
@@ -259,7 +259,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
 
         CallInfo callInfo = CallInfo.CallInfoBuilder.builder()
                 .withCallId(callId)
-                .withCallType(CallType.OUTBOUNT_CALL)
+                .withCallType(CallType.SIP_OUTBOUND_CALL)
                 .withDirection(Direction.OUTBOUND)
                 .withCallTime(Instant.now().toEpochMilli())
                 .withCaller(event.getCaller())
@@ -280,7 +280,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCalled(event.getCalled())
                 .withCallTime(callInfo.getCallTime())
                 .withDeviceType(1)
-                .withCdrType(8)
+                .withCdrType(2)
                 .withNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER))
                 .build();
 

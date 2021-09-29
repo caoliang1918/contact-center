@@ -30,7 +30,7 @@ public class AgentVo {
     /**
      * rest 接口回调地址
      */
-    @NotNull
+    @NotNull(message = "回调地址不能为空")
     @Size(min = 15, max = 150, message = "回调地址超过150字符限制")
     private String callBackUrl;
 

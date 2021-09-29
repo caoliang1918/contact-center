@@ -14,6 +14,7 @@ import org.cti.cc.mapper.CallLogMapper;
 import org.cti.cc.mapper.PushFailLogMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.*;
+import org.cti.cc.util.SnowflakeIdWorker;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +27,7 @@ import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.util.RandomUtil;
-import org.zhongweixian.cc.util.SnowflakeIdWorker;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
-import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 import java.time.Instant;
 import java.util.List;
@@ -103,7 +102,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         if (callLog == null) {
             return 0;
         }
-        logger.info("callId:{}, answerTime:{}", callLog.getCallId(), callLog.getAnswerTime());
+        logger.info("callId:{}, answerTime:{}, endTime:{}", callLog.getCallId(), callLog.getAnswerTime(), callLog.getEndTime());
         if (callCdrMq == 1) {
             rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
             return 0;

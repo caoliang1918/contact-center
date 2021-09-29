@@ -23,6 +23,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.api.configration.QuartzConfig;
 
 import java.util.List;
@@ -96,6 +98,14 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
         quartzConfig.stop();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(100);
+        simpleClientHttpRequestFactory.setReadTimeout(500);
+        return new RestTemplate(simpleClientHttpRequestFactory);
     }
 }
 

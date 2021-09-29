@@ -26,7 +26,7 @@ public interface StatWorkService extends BaseService<StatHourAgentWork> {
     int saveStateHoutAgentWork(List<StatHourAgentWork> agentWorkList);
 
 
-    int clearAgentStateWork(Long time);
+    int deleteAgentStateWork(Long time);
 
     /**
      *

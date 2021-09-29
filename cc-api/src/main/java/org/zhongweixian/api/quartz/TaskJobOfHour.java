@@ -1,12 +1,10 @@
 package org.zhongweixian.api.quartz;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.cti.cc.entity.Agent;
-import org.cti.cc.entity.AgentStateLog;
-import org.cti.cc.entity.CompanyStat;
-import org.cti.cc.entity.StatHourAgentWork;
+import org.cti.cc.entity.*;
 import org.cti.cc.mapper.AgentMapper;
 import org.cti.cc.mapper.CompanyMapper;
+import org.cti.cc.mapper.PushFailLogMapper;
 import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CompanyInfo;
 import org.cti.cc.util.DateTimeUtil;
@@ -15,8 +13,11 @@ import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.api.service.StatWorkService;
 
 import java.time.Instant;
@@ -44,6 +45,12 @@ public class TaskJobOfHour implements Job {
     @Autowired
     private StatWorkService agentStateWorkService;
 
+    @Autowired
+    private PushFailLogMapper pushFailLogMapper;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
         Instant instant = Instant.now();
@@ -56,6 +63,8 @@ public class TaskJobOfHour implements Job {
         logger.info("Hour job execute start:{} - end:{}", DateFormatUtils.format(start, DateTimeUtil.YYYYMMDD_HHMMSS), DateFormatUtils.format(end, DateTimeUtil.YYYYMMDD_HHMMSS));
 
         agentHourStat(start, end, companyInfoList);
+
+        pushFailLog(start, end);
     }
 
     /**
@@ -189,5 +198,43 @@ public class TaskJobOfHour implements Job {
                 }
             });
         }
+    }
+
+
+    /**
+     * 每小时重推最近1000条数据
+     *
+     * @param start
+     * @param end
+     */
+    private void pushFailLog(Long start, Long end) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", start);
+        params.put("end", end);
+        List<PushFailLog> pushFailLogs = pushFailLogMapper.selectListByMap(params);
+        if (CollectionUtils.isEmpty(pushFailLogs)) {
+            return;
+        }
+        for (PushFailLog pushFailLog : pushFailLogs) {
+            try {
+                ResponseEntity<String> responseEntity = restTemplate.postForEntity(pushFailLog.getCdrNotifyUrl(), pushFailLog.getContent(), String.class);
+                if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+                    pushFailLog.setPushResponse(responseEntity.getBody());
+                    pushFailLog.setStatus(2);
+                    pushFailLogMapper.pushSuccess(pushFailLog);
+                    logger.info("push call:{} to {} success:{}", pushFailLog.getCallId(), pushFailLog.getCdrNotifyUrl(), responseEntity.getBody());
+                }
+            } catch (Exception e) {
+                pushFailLog.setUts(pushFailLog.getUts() + 3600 * calculate(pushFailLog.getPushTimes()));
+                pushFailLog.setPushTimes(pushFailLog.getPushTimes() + 1);
+                pushFailLogMapper.updateByPrimaryKey(pushFailLog);
+            }
+        }
+    }
+
+    private static int calculate(int n) {
+        if (n == 0)
+            return 1;
+        return 2 * calculate(n - 1);
     }
 }

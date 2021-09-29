@@ -11,6 +11,6 @@ public interface AgentStateLogMapper extends BaseMapper<AgentStateLog> {
      * @param time
      * @return
      */
-    int clearAgentStateWork(Long time);
+    int deleteAgentStateWork(Long time);
 
 }

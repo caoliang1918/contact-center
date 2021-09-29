@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.zhongweixian.cc.exception.BusinessException;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.util.BcryptUtil;
 import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
@@ -56,7 +57,14 @@ public class AgentController extends BaseController {
      */
     @PostMapping("login")
     public CommonResponse<AgentInfo> login(@RequestBody @Validated AgentVo agentVo) {
-        AgentInfo agentInfo = agentService.getAgentInfo(agentVo.getAgentKey());
+        AgentInfo agentInfo = cacheService.getAgentInfo(agentVo.getAgentKey());
+        if (agentInfo == null) {
+            agentInfo = agentService.getAgentInfo(agentVo.getAgentKey());
+        }
+        if (agentInfo == null || agentInfo.getStatus() != 1) {
+            logger.warn("agentKey:{} is not exist", agentVo.getAgentKey());
+            throw new BusinessException(ErrorCode.ACCOUNT_ERROR);
+        }
         if (!BcryptUtil.checkPwd(agentVo.getPasswd(), agentInfo.getPasswd())) {
             logger.error("agent:{}  password {} is error", agentVo.getAgentKey(), agentVo.getPasswd());
             return new CommonResponse<>(ErrorCode.ACCOUNT_ERROR);
@@ -72,7 +80,10 @@ public class AgentController extends BaseController {
         agentInfo.setWorkType(agentVo.getWorkType());
         agentInfo.setRemoteAddress(agentVo.getCallBackUrl());
         cacheService.addAgentInfo(agentInfo);
-        return new CommonResponse<AgentInfo>(agentInfo);
+        AgentInfo agentInfo1 = new AgentInfo();
+        BeanUtils.copyProperties(agentInfo, agentInfo1);
+        agentInfo1.setPasswd(null);
+        return new CommonResponse<AgentInfo>(agentInfo1);
     }
 
     /**

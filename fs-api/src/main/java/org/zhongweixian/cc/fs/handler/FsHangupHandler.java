@@ -123,8 +123,8 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         callInfo.getDeviceList().remove(event.getDeviceId());
         CallDevice callDevice = new CallDevice();
         BeanUtils.copyProperties(deviceInfo, callDevice);
-        callDevice.setCts(deviceInfo.getCallTime());
-        callDevice.setUts(callDevice.getEndTime());
+        callDevice.setCts(deviceInfo.getCallTime() / 1000);
+        callDevice.setUts(callDevice.getEndTime() / 1000);
         callInfo.setEndTime(callDevice.getEndTime());
 
         if (callInfo.getHiddenCustomer() == 1) {
@@ -206,8 +206,8 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
 
         CallLog callLog = new CallLog();
         BeanUtils.copyProperties(callInfo, callLog);
-        callLog.setCts(callInfo.getCallTime());
-        callLog.setUts(callInfo.getEndTime());
+        callLog.setCts(callInfo.getCallTime() / 1000);
+        callLog.setUts(callInfo.getEndTime() / 1000);
         callLog.setEndTime(callInfo.getEndTime());
         callLog.setCallType(callInfo.getCallType().name());
         callLog.setDirection(callInfo.getDirection().name());
@@ -256,24 +256,25 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         callLogPo.setCalled(callInfo.getCalled());
         ResponseEntity<String> responseEntity = null;
         String payload = JSON.toJSONString(callLogPo, SerializerFeature.WriteNullStringAsEmpty);
+        PushFailLog pushFailLog = new PushFailLog();
+        pushFailLog.setCallId(callLogPo.getCallId());
+        pushFailLog.setCts(Instant.now().getEpochSecond());
+        pushFailLog.setUts(Instant.now().getEpochSecond());
+        pushFailLog.setCompanyId(callLogPo.getCompanyId());
+        pushFailLog.setPushTimes(1);
+        pushFailLog.setCdrNotifyUrl(callInfo.getCdrNotifyUrl());
+        pushFailLog.setContent(payload);
         try {
             logger.info("send push data:{}", payload);
             responseEntity = restTemplate.postForEntity(callInfo.getCdrNotifyUrl(), payload, String.class);
             logger.info("push call:{} to {} success:{}", callInfo.getCallId(), callInfo.getCdrNotifyUrl(), responseEntity.getBody());
+            pushFailLog.setStatus(2);
+            pushFailLog.setPushResponse(responseEntity.getBody());
             return;
         } catch (Exception e) {
-
+            pushFailLog.setStatus(1);
+            logger.warn("push call:{} to {} error", callInfo.getCallId(), callInfo.getCdrNotifyUrl());
         }
-        logger.warn("push call:{} to {} error", callInfo.getCallId(), callInfo.getCdrNotifyUrl());
-        PushFailLog pushFailLog = new PushFailLog();
-        pushFailLog.setCallId(callLogPo.getCallId());
-        pushFailLog.setCts(Instant.now().getEpochSecond());
-        pushFailLog.setUts(0L);
-        pushFailLog.setCompanyId(callLogPo.getCompanyId());
-        pushFailLog.setSendTimes(1);
-        pushFailLog.setSendUrl(callInfo.getCdrNotifyUrl());
-        pushFailLog.setContent(payload);
-        pushFailLog.setStatus(1);
         callCdrService.savePushFailLog(pushFailLog);
     }
 

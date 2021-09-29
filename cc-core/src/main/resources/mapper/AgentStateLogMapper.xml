@@ -317,7 +317,7 @@
   </select>
 
   <!-- 定时清空历史数据 -->
-  <delete id="clearAgentStateWork" parameterType="Long" >
+  <delete id="deleteAgentStateWork" parameterType="Long" >
      delete from cc_agent_state_log where state_time &lt; #{time}
   </delete>
 
