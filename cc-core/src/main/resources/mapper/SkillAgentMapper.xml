@@ -53,5 +53,19 @@
         a.company_id = b.company_id and a.id = b.skill_id and b.agent_id = #{id} and a.status = 1
   </select>
 
+  <!-- 删除坐席技能 -->
+  <delete id="deleteSkillAgent" parameterType="org.cti.cc.vo.AgentBindSkill" >
+     delete from cc_skill_agent where company_id = #{companyId} and skill_id = #{skillId} and agent_id in <foreach
+          collection="agentIds" separator="," open="(" close=")" item="id"> #{id} </foreach>
+  </delete>
+
+  <select id="selectBySkill" parameterType="Long" resultMap="BaseResultMap">
+    select
+      b.id, b.cts, b.uts, b.company_id, b.skill_id, b.agent_id, b.rank_value, b.status
+    from
+      cc_skill a , cc_skill_agent b
+    where
+      a.company_id = b.company_id and a.id = b.skill_id and a.id = #{id} and a.status = 1
+  </select>
 
 </mapper>

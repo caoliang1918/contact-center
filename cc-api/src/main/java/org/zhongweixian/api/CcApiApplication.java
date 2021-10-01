@@ -101,10 +101,11 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
     }
 
     @Bean
-    public RestTemplate restTemplate() {
+    public RestTemplate restTemplate(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout,
+                                     @Value("${cdr.notify.readTimeout:200}") Integer readTimeout) {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-        simpleClientHttpRequestFactory.setConnectTimeout(100);
-        simpleClientHttpRequestFactory.setReadTimeout(500);
+        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
         return new RestTemplate(simpleClientHttpRequestFactory);
     }
 }

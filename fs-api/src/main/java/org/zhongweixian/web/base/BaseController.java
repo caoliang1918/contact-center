@@ -50,20 +50,6 @@ public class BaseController {
     @Autowired
     protected FsListen fsListen;
 
-    /**
-     * RestTemplate restTemplate = new RestTemplate();
-     * <p>
-     * restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor("user", "pwd"));
-     *
-     * @return
-     */
-    @ModelAttribute("agentInfo")
-    public AgentInfo agentInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return null;
-        }
-        return (AgentInfo) authentication.getPrincipal();
-    }
+
 
 }

@@ -40,6 +40,10 @@ public class BaseController {
     @Autowired
     protected CallLogService callLogService;
 
+
+    @Autowired
+    protected SkillService skillService;
+
     @ModelAttribute("adminAccountInfo")
     public AdminAccount adminAccountInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

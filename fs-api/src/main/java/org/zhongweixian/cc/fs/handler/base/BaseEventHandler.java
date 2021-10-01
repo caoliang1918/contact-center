@@ -20,8 +20,17 @@ import org.zhongweixian.esl.transport.SendMsg;
 public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandler implements Handler<T> {
     protected Logger logger = LoggerFactory.getLogger(BaseEventHandler.class);
 
-    @Value("${SAMPLE_RATE:8000}")
-    private String sampleRate;
+    @Value("${sample_rate:8000}")
+    protected String sampleRate;
+
+    @Value("${record.file:wav}")
+    protected String recordFile;
+
+    @Value("${minio.endpoint:}")
+    protected String media;
+
+    @Value("${minio.bucket:cc-record}")
+    protected String bucket;
 
     /**
      * 给坐席客户端发送消息

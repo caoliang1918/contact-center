@@ -69,6 +69,19 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
             event.getChannel().close();
             return;
         }
+        if (agentInfo.getGroupId() == null || agentInfo.getGroupId() == 0L) {
+            logger.info("agent:{} 技能组为空 , mainGroup is null", event.getAgentKey());
+            sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_GROUP_NULL, event.getCmd(), event.getAgentKey()));
+            event.getChannel().close();
+            return;
+        }
+        if (agentInfo.getStatus() == 0) {
+            logger.warn("agent:{} 坐席被禁用", event.getAgentKey());
+            sendMessgae(event, new WsResponseEntity<>(ErrorCode.ACCOUNT_DISABLED, event.getCmd(), event.getAgentKey()));
+            event.getChannel().close();
+            return;
+        }
+
         agentInfo.setLoginType(event.getLoginType());
         agentInfo.setWorkType(event.getWorkType());
 
@@ -110,19 +123,6 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
             return;
         }
 
-        if (agentInfo.getStatus() == 0) {
-            logger.warn("agent:{} 坐席被禁用", event.getAgentKey());
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.ACCOUNT_DISABLED, event.getCmd(), event.getAgentKey()));
-            event.getChannel().close();
-            return;
-        }
-
-        if (agentInfo.getGroupId() == null || agentInfo.getGroupId() == 0L) {
-            logger.info("agent:{} 技能组为空 , mainGroup is null", event.getAgentKey());
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_GROUP_NULL, event.getCmd(), event.getAgentKey()));
-            event.getChannel().close();
-            return;
-        }
         //判断坐席登录方式
         if (agentInfo.getLoginType() == null) {
             sendMessgae(event, new WsResponseEntity<>(ErrorCode.PARAMETER_ERROR, event.getCmd(), event.getAgentKey(), "loginType"));
@@ -198,8 +198,6 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
         agentInfo.setHiddenCustomer(companyInfo.getHiddenCustomer());
         //话单回调
         agentInfo.setCdrNotifyUrl(companyInfo.getNotifyUrl());
-        //http坐席状态通知
-        agentInfo.setStateNotifyUrl("");
 
         AgentStateResppnse response = new AgentStateResppnse();
         response.setId(agentInfo.getId());

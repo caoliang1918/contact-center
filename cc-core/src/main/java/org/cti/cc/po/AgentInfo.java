@@ -3,6 +3,7 @@ package org.cti.cc.po;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.Skill;
 import org.cti.cc.entity.SkillAgent;
+import org.cti.cc.vo.AgentPreset;
 
 import java.util.List;
 
@@ -70,6 +71,11 @@ public class AgentInfo extends Agent {
      * 当天状态时间
      */
     private Long stateTime = 0L;
+
+    /**
+     * 坐席状态预设
+     */
+    private AgentPreset agentPreset;
 
     /**
      * 上一次状态
@@ -148,11 +154,6 @@ public class AgentInfo extends Agent {
      * 话单通知地址
      */
     private String cdrNotifyUrl;
-
-    /**
-     * 坐席状态通知地址
-     */
-    private String stateNotifyUrl;
 
     public String getRemoteAddress() {
         return remoteAddress;
@@ -246,6 +247,14 @@ public class AgentInfo extends Agent {
         return beforeState;
     }
 
+    public AgentPreset getAgentPreset() {
+        return agentPreset;
+    }
+
+    public void setAgentPreset(AgentPreset agentPreset) {
+        this.agentPreset = agentPreset;
+    }
+
     public void setBeforeState(AgentState beforeState) {
         this.beforeState = beforeState;
     }
@@ -328,14 +337,6 @@ public class AgentInfo extends Agent {
 
     public void setCdrNotifyUrl(String cdrNotifyUrl) {
         this.cdrNotifyUrl = cdrNotifyUrl;
-    }
-
-    public String getStateNotifyUrl() {
-        return stateNotifyUrl;
-    }
-
-    public void setStateNotifyUrl(String stateNotifyUrl) {
-        this.stateNotifyUrl = stateNotifyUrl;
     }
 
     public Long getReadyTimes() {

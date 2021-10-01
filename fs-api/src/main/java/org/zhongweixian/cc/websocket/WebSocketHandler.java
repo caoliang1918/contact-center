@@ -57,6 +57,7 @@ public class WebSocketHandler implements ConnectionListener {
     /**
      * 坐席状态http回调，支持超时配置
      */
+    @Autowired
     private RestTemplate restTemplate;
 
 
@@ -97,19 +98,14 @@ public class WebSocketHandler implements ConnectionListener {
      * @param connectTimeout
      * @param readTimeout
      */
-    public WebSocketHandler(@Value("${cti.callback.connectTimeout:100}") Integer connectTimeout,
-                            @Value("${cti.callback.readTimeout:300}") Integer readTimeout,
-                            @Value("${ws.thread.num:32}") Integer threadNum) {
+    public WebSocketHandler(@Value("${ws.thread.num:32}") Integer threadNum) {
         for (int i = 0; i < threadNum; i++) {
             ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("ws-server-pool-" + i).build();
             ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory);
             executorMap.put(i, executor);
         }
 
-        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
-        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
-        restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+
     }
 
     @Override

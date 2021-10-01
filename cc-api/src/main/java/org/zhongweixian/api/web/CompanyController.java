@@ -6,18 +6,15 @@ import org.cti.cc.entity.*;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.page.Page;
 import org.cti.cc.po.*;
-import org.cti.cc.vo.AgentVo;
-import org.cti.cc.vo.GroupInfoVo;
+import org.cti.cc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.zhongweixian.api.vo.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -682,20 +679,44 @@ public class CompanyController extends BaseController {
         agentService.agentExport(response, params);
     }
 
-
     /**
-     * 技能中添加坐席
+     * 1.7.1 技能列表
      *
      * @param adminAccountInfo
-     * @param skillId
-     * @param rank
-     * @param agentIds
+     * @param pageInfo
+     * @param query
      * @return
      */
-    @PostMapping("agent/bindskill/{skillId}")
-    public CommonResponse agentSindSkill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
-                                         @PathVariable Long skillId, @RequestParam Integer rank, @RequestBody List<Long> agentIds) {
+    @GetMapping("skill")
+    public CommonResponse<PageInfo<Skill>> skillList(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, PageInfo pageInfo, String query) {
+        Map<String, Object> params = parseMap(adminAccountInfo, pageInfo, query);
+        return new CommonResponse(skillService.findByPageParams(params));
+    }
 
+    /**
+     * 1.7.2 技能详情
+     *
+     * @param adminAccountInfo
+     * @param id
+     * @return
+     */
+    @GetMapping("skill/{id}")
+    public CommonResponse<SkillInfo> skill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id) {
+        return new CommonResponse<>(skillService.skillInfo(adminAccountInfo.getCompanyId(), id));
+    }
+
+    /**
+     * 坐席绑定技能
+     *
+     * @param adminAccountInfo
+     * @param agentBindSkill
+     * @return
+     */
+    @PostMapping("agent/bindskill")
+    public CommonResponse agentSindSkill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
+                                         @Validated @RequestBody AgentBindSkill agentBindSkill) {
+        agentBindSkill.setCompanyId(adminAccountInfo.getCompanyId());
+        agentService.agentBindSkill(agentBindSkill);
         return new CommonResponse();
     }
 

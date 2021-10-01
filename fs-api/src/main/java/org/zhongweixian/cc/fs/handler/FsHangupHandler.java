@@ -1,7 +1,6 @@
 package org.zhongweixian.cc.fs.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
@@ -16,13 +15,12 @@ import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
+import org.cti.cc.vo.AgentPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -51,24 +49,11 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
     private static final String YYYYMMDDHH = "yyyyMMddHH";
 
 
+    @Autowired
     private RestTemplate restTemplate;
-
-    @Value("${minio.endpoint:}")
-    private String media;
-
-    @Value("${minio.bucket:cc-record}")
-    private String bucket;
 
     @Autowired
     private MinioClient minioClient;
-
-
-    public FsHangupHandler(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout, @Value("${cdr.notify.readTimeout:1000}") Integer readTimeout) {
-        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
-        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
-        restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
-    }
 
     @Override
     public void handleEvent(FsHangupEvent event) {
@@ -94,7 +79,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         if (StringUtils.isNotBlank(deviceInfo.getRecord())) {
             try {
                 String day = DateFormatUtils.format(new Date(), YYYYMMDDHH);
-                String fileName = day.substring(0, 8) + "/" + day.substring(8, 10) + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + ".wav";
+                String fileName = day.substring(0, 8) + "/" + day.substring(8, 10) + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + "." + recordFile;
                 ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
                 logger.info("get record file:{}", deviceInfo.getRecord());
                 ObjectWriteResponse writeResponse = minioClient.putObject(PutObjectArgs.builder().stream(new ByteArrayInputStream(responseEntity.getBody()), responseEntity.getBody().length, -1).object(fileName).bucket(bucket).build());
@@ -350,6 +335,23 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         sendAgentStateMessage(agentInfo, new WsResponseEntity<WsCallAfterEntity>(AgentState.AFTER.name(), agentInfo.getAgentKey(), afterEntity));
         agentInfo.setCallId(null);
         agentInfo.setDeviceId(null);
+
+        /**
+         * 接口设置了预设状态
+         */
+        if (agentInfo.getAgentPreset() == null || agentInfo.getAgentPreset().getAgentState() == null) {
+            return;
+        }
+        AgentPreset agentPreset = agentInfo.getAgentPreset();
+        agentInfo.setBeforeTime(agentInfo.getStateTime());
+        agentInfo.setBeforeState(agentInfo.getAgentState());
+        agentInfo.setStateTime(Instant.now().toEpochMilli());
+        if (agentPreset.getAgentState() == AgentState.READY) {
+            agentInfo.setAgentState(AgentState.READY);
+        } else if (agentPreset.getAgentState() == AgentState.NOT_READY) {
+            agentInfo.setAgentState(AgentState.NOT_READY);
+        }
+        sendAgentStateMessage(agentInfo, new WsResponseEntity<String>(agentPreset.getAgentState().name(), agentInfo.getAgentKey(), null));
     }
 
     /**

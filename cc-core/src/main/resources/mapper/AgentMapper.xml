@@ -327,6 +327,7 @@
       <if test="agentKey!=null"> agent_key like CONCAT(#{agentKey},"%")</if>
       <if test="companyId!=null">and company_id = #{companyId}</if>
       <if test="agentId!=null">and agent_id = #{agentId}</if>
+      <if test="ids!=null"> and id in  <foreach collection ="list" item="id" separator ="," open="(" close =")"> #{id} </foreach> </if>
       <if test="true" >and status = 1</if>
     </where>
   </select>
@@ -376,11 +377,11 @@
 
   <!--坐席在线切无状态变更 -->
   <select id="selectAgentOnline" parameterType="java.util.Map" resultMap="SimpleResultMap" databaseId="mysql">
-    select id, agent_key, agent_name, (select state from cc_agent_state_log where cc_agent_state_log.agent_key = cc_agent.agent_key limit 1 ) as ext1  from cc_agent  where exists (select agent_id from  cc_agent_state_log  where cc_agent_state_log.agent_id = cc_agent.id and cc_agent_state_log.state_time > #{start} ) and company_id = #{companyId} and state = 1;
+    select id, agent_key, agent_name, (select state from cc_agent_state_log where cc_agent_state_log.agent_key = cc_agent.agent_key limit 1 ) as ext1  from cc_agent  where exists (select agent_id from  cc_agent_state_log  where cc_agent_state_log.agent_id = cc_agent.id and cc_agent_state_log.state_time > #{start} ) and company_id = #{companyId} and state = 1
   </select>
 
   <select id="selectAgentOnline" parameterType="java.util.Map" resultMap="SimpleResultMap" databaseId="oracle">
-    select id, agent_key, agent_name, (select state from cc_agent_state_log where cc_agent_state_log.agent_key = cc_agent.agent_key and rownum = 1 ) as ext1  from cc_agent  where exists (select agent_id from  cc_agent_state_log  where cc_agent_state_log.agent_id = cc_agent.id and cc_agent_state_log.state_time > #{start} ) and company_id = #{companyId} and state = 1;
+    select id, agent_key, agent_name, (select state from cc_agent_state_log where cc_agent_state_log.agent_key = cc_agent.agent_key and rownum = 1 ) as ext1  from cc_agent  where exists (select agent_id from  cc_agent_state_log  where cc_agent_state_log.agent_id = cc_agent.id and cc_agent_state_log.state_time > #{start} ) and company_id = #{companyId} and state = 1
   </select>
 
  </mapper>

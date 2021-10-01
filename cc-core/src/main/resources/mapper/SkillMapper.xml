@@ -124,4 +124,15 @@
     where
         id = #{id,jdbcType=BIGINT} and company_id = #{companyId,jdbcType=BIGINT} and status = 1
   </select>
+
+  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_skill
+      <where>
+        <if test="id!=null"> id = #{id}</if>
+        <if test="companyId!=null">and company_id = #{companyId}</if>
+      </where>
+  </select>
 </mapper>

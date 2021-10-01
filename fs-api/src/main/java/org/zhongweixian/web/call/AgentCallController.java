@@ -7,6 +7,8 @@ import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.cc.entity.MakeCallVo;
@@ -22,6 +24,23 @@ import org.zhongweixian.web.base.BaseController;
 @RequestMapping("/v1/cti/call")
 public class AgentCallController extends BaseController {
     private Logger logger = LoggerFactory.getLogger(AgentCallController.class);
+
+
+    /**
+     * RestTemplate restTemplate = new RestTemplate();
+     * <p>
+     * restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor("user", "pwd"));
+     *
+     * @return
+     */
+    @ModelAttribute("agentInfo")
+    public AgentInfo agentInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        return (AgentInfo) authentication.getPrincipal();
+    }
 
     /**
      * 4.1.1 发起呼叫

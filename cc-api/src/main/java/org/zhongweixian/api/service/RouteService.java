@@ -5,9 +5,9 @@ import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.RouteGroup;
 import org.cti.cc.po.RouteCallInfo;
 import org.cti.cc.po.RouteGroupPo;
-import org.zhongweixian.api.vo.RouteCallVo;
-import org.zhongweixian.api.vo.RouteGetwayVo;
-import org.zhongweixian.api.vo.RouteGroupVo;
+import org.cti.cc.vo.RouteCallVo;
+import org.cti.cc.vo.RouteGetwayVo;
+import org.cti.cc.vo.RouteGroupVo;
 
 import java.util.Map;
 

@@ -3,8 +3,8 @@ package org.zhongweixian.api.service;
 import com.github.pagehelper.PageInfo;
 import org.cti.cc.entity.CompanyPhone;
 import org.cti.cc.po.CompanyDisplayPo;
-import org.zhongweixian.api.vo.CompanyPhoneVo;
-import org.zhongweixian.api.vo.DisplayGroupVo;
+import org.cti.cc.vo.CompanyPhoneVo;
+import org.cti.cc.vo.DisplayGroupVo;
 
 import java.util.Map;
 

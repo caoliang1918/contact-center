@@ -23,7 +23,8 @@ import org.springframework.util.CollectionUtils;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.AgentService;
 import org.zhongweixian.api.util.BcryptUtil;
-import org.zhongweixian.api.vo.AgentSipVo;
+import org.cti.cc.vo.AgentBindSkill;
+import org.cti.cc.vo.AgentSipVo;
 import org.zhongweixian.api.vo.excel.ExcelAgentEntity;
 
 import javax.servlet.ServletOutputStream;
@@ -275,6 +276,37 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         ServletOutputStream out = response.getOutputStream();
         workbook.write(out);
         out.flush();
+    }
+
+    @Override
+    public int agentBindSkill(AgentBindSkill agentBindSkill) {
+        /**
+         * 先判断坐席
+         */
+        Skill skill = skillMapper.selectById(agentBindSkill.getCompanyId(), agentBindSkill.getSkillId());
+        if (skill == null) {
+            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
+        }
+        Map<String , Object> params = new HashMap<>();
+        params.put("companyId" , agentBindSkill.getCompanyId());
+        params.put("ids" , agentBindSkill.getAgentIds());
+        List<Agent> agents = agentMapper.selectListByMap(params);
+        if (CollectionUtils.isEmpty(agents)){
+            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
+        }
+        //删除已有数据
+        skillAgentMapper.deleteSkillAgent(agentBindSkill);
+
+        List<SkillAgent> skillAgents = new ArrayList<>();
+        for (Agent agent : agents){
+            SkillAgent skillAgent = new SkillAgent();
+            skillAgent.setCompanyId(agentBindSkill.getCompanyId());
+            skillAgent.setAgentId(agent.getId());
+            skillAgent.setSkillId(agentBindSkill.getSkillId());
+            skillAgent.setRankValue(agentBindSkill.getRankValue());
+            skillAgents.add(skillAgent);
+        }
+        return skillAgentMapper.batchInsert(skillAgents);
     }
 
 }

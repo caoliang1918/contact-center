@@ -5,7 +5,8 @@ import org.cti.cc.entity.Agent;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentSipPo;
 import org.cti.cc.vo.AgentVo;
-import org.zhongweixian.api.vo.AgentSipVo;
+import org.cti.cc.vo.AgentBindSkill;
+import org.cti.cc.vo.AgentSipVo;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -98,4 +99,12 @@ public interface AgentService extends BaseService<Agent> {
      * @param params
      */
     void agentExport(HttpServletResponse response, Map<String, Object> params) throws IOException;
+
+    /**
+     * 坐席绑定技能
+     *
+     * @param agentBindSkill
+     * @return
+     */
+    int agentBindSkill(AgentBindSkill agentBindSkill);
 }

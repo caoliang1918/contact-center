@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.CompanyService;
-import org.zhongweixian.api.vo.CompanyVo;
+import org.cti.cc.vo.CompanyVo;
 
 import java.time.Instant;
 import java.util.List;

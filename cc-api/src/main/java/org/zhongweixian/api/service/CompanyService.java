@@ -6,7 +6,7 @@ import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CompanyInfo;
 import org.cti.cc.po.GroupInfo;
 import org.cti.cc.po.GroupOverFlow;
-import org.zhongweixian.api.vo.CompanyVo;
+import org.cti.cc.vo.CompanyVo;
 
 import java.util.List;
 import java.util.Map;

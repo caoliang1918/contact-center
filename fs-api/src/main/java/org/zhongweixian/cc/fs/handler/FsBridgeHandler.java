@@ -70,12 +70,12 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
              */
             if (callInfo.getCallType() == CallType.OUTBOUNT_CALL && groupInfo.getRecordType() == 2) {
                 String record = recordPath +
-                        DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
+                        DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + "." + recordFile;
                 super.record(event.getHostname(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
                 deviceInfo1.setRecord(record);
             } else if (callInfo.getCallType() == CallType.INBOUND_CALL) {
                 String record = recordPath +
-                        DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + ".wav";
+                        DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + "." + recordFile;
                 super.record(event.getHostname(), callInfo.getCallId(), event.getDeviceId(), record);
                 deviceInfo1.setRecord(record);
             }

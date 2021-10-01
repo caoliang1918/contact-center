@@ -108,7 +108,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         if (groupInfo != null && groupInfo.getRecordType() == 1) {
             //振铃录音
             String record = recordPath +
-                    DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + ".wav";
+                    DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + "." + recordFile;
             super.record(callInfo.getMedia(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
             deviceInfo.setRecord(record);
         }

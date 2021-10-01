@@ -22,6 +22,8 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.fs.FsListen;
@@ -139,5 +141,14 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     public void customize(ConfigurableServletWebServerFactory factory) {
         Station station = station();
         factory.setPort(station.getApplicationPort());
+    }
+
+    @Bean
+    public RestTemplate restTemplate(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout,
+                                     @Value("${cdr.notify.readTimeout:200}") Integer readTimeout) {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+        return new RestTemplate(simpleClientHttpRequestFactory);
     }
 }

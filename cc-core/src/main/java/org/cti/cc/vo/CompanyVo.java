@@ -1,4 +1,4 @@
-package org.zhongweixian.api.vo;
+package org.cti.cc.vo;
 
 import org.hibernate.validator.constraints.Range;
 

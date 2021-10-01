@@ -38,14 +38,14 @@
         <maven.compiler.source>11</maven.compiler.source>
 
         <springboot.version>2.5.2</springboot.version>
-        <minio.version>7.1.4</minio.version>
+        <minio.version>8.2.1</minio.version>
         <pgsql.version>42.2.23</pgsql.version>
         <mysql.version>8.0.25</mysql.version>
         <websocket-api.version>2.0.4</websocket-api.version>
         <jasypt.version>3.0.3</jasypt.version>
         <springboot.mybatis.version>2.1.4</springboot.mybatis.version>
         <joda-time.version>2.5</joda-time.version>
-        <fastjson.version>1.2.76</fastjson.version>
+        <fastjson.version>1.2.78</fastjson.version>
         <pagehelper.version>1.2.3</pagehelper.version>
         <easypoi.version>4.3.0</easypoi.version>
         <commons-io.version>2.11.0</commons-io.version>

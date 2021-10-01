@@ -109,7 +109,7 @@ public class TaskJobOfHour implements Job {
                         if (stateLog.getState().equals(AgentState.LOGIN.name())) {
                             if (i == 0) {
                                 login += 3600000L - (start - stateLog.getStateTime());
-                            } else {
+                            } else if (stateLog.getBeforeState() != null) {
                                 login += 3600000L - (stateLog.getStateTime() - stateLog.getBeforeTime());
                             }
                         }
@@ -227,13 +227,23 @@ public class TaskJobOfHour implements Job {
                     logger.info("push call:{} to {} success:{}", pushFailLog.getCallId(), pushFailLog.getCdrNotifyUrl(), responseEntity.getBody());
                 }
             } catch (Exception e) {
-                pushFailLog.setUts(end / 1000 + 3600 * calculate(pushFailLog.getPushTimes()));
                 pushFailLog.setPushTimes(pushFailLog.getPushTimes() + 1);
+                pushFailLog.setUts(end / 1000 + 3600 * calculate(pushFailLog.getPushTimes()));
                 pushFailLogMapper.updateByPrimaryKey(pushFailLog);
             }
         }
     }
 
+    /**
+     * 1 次  9:30
+     * 2 次  10:00   3600*4
+     * 3 次  14:00   3600*8
+     * 4 次  22:00   3600*16
+     * 5 次  08:00(第二天)  3600*32
+     *
+     * @param n
+     * @return
+     */
     private static int calculate(int n) {
         if (n == 0) {
             return 1;

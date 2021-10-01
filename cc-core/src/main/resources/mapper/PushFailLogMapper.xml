@@ -122,10 +122,10 @@
         cc_push_fail_log
     <where>
       <if test="start!=null"> uts > #{start} </if>
-      <if test="end!=null"> and uts &lt; #{end} </if>
+      <if test="end!=null"> and uts &lt;= #{end} </if>
       <if test="companyId!=null"> and company_id = #{companyId} </if>
       <if test="status!=null"> and status = #{status} </if>
-    </where>  order by uts desc limit 1000
+    </where>  order by id desc limit 1000
   </select>
 
   <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap" databaseId="oracle">
@@ -135,10 +135,10 @@
         cc_push_fail_log
     <where>
       <if test="start!=null"> uts > #{start} </if>
-      <if test="end!=null"> and uts &lt; #{end} </if>
+      <if test="end!=null"> and uts &lt;= #{end} </if>
       <if test="companyId!=null"> and company_id = #{companyId} </if>
       <if test="status!=null"> and status = #{status} </if>
-    </where> and rownum = 1000  order by uts desc
+    </where> and rownum = 1000  order by id desc
   </select>
 
   <delete id="deletePushFailLog" parameterType="Long" >

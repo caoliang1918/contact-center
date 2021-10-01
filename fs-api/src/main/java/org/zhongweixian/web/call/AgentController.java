@@ -1,13 +1,17 @@
 package org.zhongweixian.web.call;
 
+import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.Station;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CommonResponse;
+import org.cti.cc.vo.AgentPreset;
 import org.cti.cc.vo.AgentVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.cc.exception.BusinessException;
@@ -31,6 +35,23 @@ import java.time.Instant;
 @RestController
 @RequestMapping("/v1/cti/agent")
 public class AgentController extends BaseController {
+
+
+    /**
+     * RestTemplate restTemplate = new RestTemplate();
+     * <p>
+     * restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor("user", "pwd"));
+     *
+     * @return
+     */
+    @ModelAttribute("agentInfo")
+    public AgentInfo agentInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        return (AgentInfo) authentication.getPrincipal();
+    }
 
     /**
      * 3.1.1 坐席登录
@@ -67,6 +88,21 @@ public class AgentController extends BaseController {
         BeanUtils.copyProperties(agentInfo, agentInfo1);
         agentInfo1.setPasswd(null);
         logger.info("agent:{} login success", agentInfo.getAgentKey());
+
+        /**
+         * 广播坐席状态
+         */
+        agentService.syncAgentStateMessage(agentInfo);
+
+        /**
+         * 坐席在线
+         */
+        Agent agent = new Agent();
+        agent.setId(agentInfo.getId());
+        agent.setCompanyId(agentInfo.getCompanyId());
+        agent.setState(1);
+        agent.setHost(station.getHost());
+        agentService.editById(agent);
         return new CommonResponse<AgentInfo>(agentInfo1);
     }
 
@@ -130,6 +166,18 @@ public class AgentController extends BaseController {
         event.setAgentKey(agentInfo.getAgentKey());
         event.setCmd("LOGOUT");
         logoutHandler.handleEvent(event);
+        return new CommonResponse<>();
+    }
+
+    /**
+     * 3.1.6 话后状态预测
+     *
+     * @param agentInfo
+     * @return
+     */
+    @PostMapping("preset")
+    public CommonResponse preset(@ModelAttribute("agentInfo") AgentInfo agentInfo, @Validated AgentPreset agentPreset) {
+        agentInfo.setAgentPreset(agentPreset);
         return new CommonResponse<>();
     }
 

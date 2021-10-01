@@ -26,16 +26,16 @@ public class GroupInfoVo {
     private String name;
 
     /**
-     * 控制开关：0：技能组控制(1:技能组,2:坐席)
+     * 技能组控制(1:技能组,2:坐席)
      */
     @NotNull
-    @Range(min = 0, max = 2, message = "技能组控制设置错误")
+    @Range(min = 1, max = 2, message = "技能组控制设置错误")
     private Integer controlFlag;
 
     /**
      * 话后自动空闲时长
      */
-    @Range(min = 0, max = 100, message = "话后市场设置错误")
+    @Range(min = 0, max = 100, message = "话后时长设置错误")
     private Integer afterInterval;
 
     /**
@@ -80,6 +80,7 @@ public class GroupInfoVo {
     /**
      * 转接提示音
      */
+    @NotNull(message = "转接坐席音不能为空")
     private Long transferPlay;
 
     /**
