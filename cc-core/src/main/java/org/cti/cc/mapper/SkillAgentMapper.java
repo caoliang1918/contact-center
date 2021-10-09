@@ -1,5 +1,6 @@
 package org.cti.cc.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.cti.cc.entity.SkillAgent;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.vo.AgentBindSkill;
@@ -40,5 +41,5 @@ public interface SkillAgentMapper extends BaseMapper<SkillAgent> {
      * @param id
      * @return
      */
-    List<SkillAgent> selectBySkill(Long companyId, Long id);
+    List<SkillAgent> selectBySkill(@Param("companyId") Long companyId,@Param("id") Long id);
 }
