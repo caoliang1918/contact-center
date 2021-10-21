@@ -89,35 +89,8 @@ do_stop(){
   return 1;
 }
 
-force_stop() {
-  [[ -f $pid_file ]] || { echoYellow "Not running (pidfile not found)"; return 0; }
-  pid=$(cat "$pid_file")
-  isRunning "$pid" || { echoYellow "Not running (process ${pid}). Removing stale pid file."; rm -f "$pid_file"; return 0; }
-  do_force_stop "$pid" "$pid_file"
-}
-
-do_force_stop() {
-  kill -9 "$1" &> /dev/null || { echoRed "Unable to kill process $1"; return 1; }
-  for i in $(seq 1 $STOP_WAIT_TIME); do
-    isRunning "$1" || { echoGreen "Stopped [$1]"; rm -f "$2"; return 0; }
-    [[ $i -eq STOP_WAIT_TIME/2 ]] && kill -9 "$1" &> /dev/null
-    sleep 1
-  done
-  echoRed "Unable to kill process $1";
-  return 1;
-}
-
 restart() {
   stop && start
-}
-
-force_reload() {
-  [[ -f $pid_file ]] || { echoRed "Not running (pidfile not found)"; return 7; }
-  pid=$(cat "$pid_file")
-  rm -f "$pid_file"
-  isRunning "$pid" || { echoRed "Not running (process ${pid} not found)"; return 7; }
-  do_stop "$pid" "$pid_file"
-  do_start
 }
 
 status() {
@@ -151,18 +124,14 @@ start)
   start "$@"; exit $?;;
 stop)
   stop "$@"; exit $?;;
-force-stop)
-  force_stop "$@"; exit $?;;
 restart)
   restart "$@"; exit $?;;
-force-reload)
-  force_reload "$@"; exit $?;;
 status)
   status "$@"; exit $?;;
 run)
   run "$@"; exit $?;;
 *)
-  echo "Usage: $0 {start|stop|force-stop|restart|force-reload|status|run}"; exit 1;
+  echo "Usage: $0 {start|stop|restart|status|run}"; exit 1;
 esac
 
 exit 0

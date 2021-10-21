@@ -146,6 +146,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         deviceInfo1.setNextCommand(new NextCommand(NextType.NEXT_CALL_BRIDGE, deviceInfo.getDeviceId()));
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo1);
         cacheService.addDevice(deviceId, callInfo.getCallId());
+        cacheService.addCallInfo(callInfo);
     }
 
 

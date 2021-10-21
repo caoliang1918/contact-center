@@ -1,11 +1,8 @@
 package org.zhongweixian.cc.cache;
 
-import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.listener.Event;
-import com.alibaba.nacos.api.naming.listener.EventListener;
-import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.command.GroupHandler;
@@ -71,6 +69,9 @@ public class CacheService {
 
     @Value("${spring.cloud.nacos.server-addr}")
     private String nacosAddr;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("nacos=service-check").build());
 
@@ -142,6 +143,7 @@ public class CacheService {
 
     public void addCallInfo(CallInfo callInfo) {
         callInfoMap.put(callInfo.getCallId(), callInfo);
+        redisTemplate.opsForValue().set("callInfo:" + callInfo.getCallId(), JSON.toJSONString(callInfo));
     }
 
     public CallInfo getCallInfo(String deviceId) {
@@ -167,6 +169,7 @@ public class CacheService {
                 deviceCall.remove(k);
             });
         }
+        redisTemplate.delete("callInfo:" + callId);
         groupHandler.removeCall(callInfo.getGroupId(), callId);
     }
 

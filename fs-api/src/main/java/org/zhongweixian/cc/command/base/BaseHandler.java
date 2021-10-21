@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.*;
 import org.zhongweixian.cc.fs.FsListen;
@@ -67,6 +68,9 @@ public class BaseHandler {
 
     @Autowired
     protected SnowflakeIdWorker snowflakeIdWorker;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 被叫挂机时，需要把主叫挂机，主叫挂机时不需要单独挂被叫

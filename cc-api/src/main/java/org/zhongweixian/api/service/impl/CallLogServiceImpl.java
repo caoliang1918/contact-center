@@ -79,10 +79,20 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public PageInfo<CallLogPo> calllogList(Map<String, Object> params) {
+        Long start = (Long) params.get("start");
+        Long end = (Long) params.get("end");
+        if (start == null) {
+            start = DateTimeUtil.getBeforeDay(0);
+            params.put("start" , start);
+        }
+        if (end == null) {
+            end = DateTimeUtil.getBeforeDay(-1);
+            params.put("end" , end);
+        }
         Integer pageNum = (Integer) params.get("pageNum");
         Integer pageSize = (Integer) params.get("pageSize");
         PageHelper.startPage(pageNum, pageSize);
-        List<CallLogPo> list = callLogMapper.getcallList(params);
+        List<CallLogPo> list = callLogMapper.getCallList(params);
         return new PageInfo<>(list);
     }
 

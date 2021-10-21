@@ -63,5 +63,5 @@ public interface CallLogMapper extends BaseMapper<CallLog> {
      * @param params
      * @return
      */
-    List<CallLogPo> getcallList(Map<String, Object> params);
+    List<CallLogPo> getCallList(Map<String, Object> params);
 }

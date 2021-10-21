@@ -29,6 +29,7 @@
     <result column="hangup_code" jdbcType="INTEGER" property="hangupCode" />
     <result column="media" jdbcType="VARCHAR" property="media" />
     <result column="record" jdbcType="VARCHAR" property="record" />
+    <result column="record2" jdbcType="VARCHAR" property="record2" />
     <result column="record_time" jdbcType="BIGINT" property="recordTime" />
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
     <result column="frist_queue_time" jdbcType="BIGINT" property="fristQueueTime" />
@@ -46,7 +47,7 @@
     id, cts, uts, company_id, call_id, caller_display, caller, called_display, called, 
     agent_key, group_id, login_type, task_id, ivr_id, bot_id, call_time, answer_time, 
     end_time, call_type, direction, answer_flag, wait_time, answer_count, hangup_dir, 
-    hangup_code, media, record, record_time, talk_time, frist_queue_time, queue_start_time,
+    hangup_code, media, record, record2, record_time, talk_time, frist_queue_time, queue_start_time,
     queue_end_time, follow_data, uuid1, uuid2, ext1, ext2, ext3, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -143,6 +144,9 @@
       </if>
       <if test="record != null">
         record,
+      </if>
+      <if test="record2 != null">
+        record2,
       </if>
       <if test="recordTime != null">
         record_time,
@@ -263,6 +267,9 @@
       <if test="record != null">
         #{record,jdbcType=VARCHAR},
       </if>
+      <if test="record2 != null">
+        #{record2,jdbcType=VARCHAR},
+      </if>
       <if test="recordTime != null">
         #{recordTime,jdbcType=BIGINT},
       </if>
@@ -382,6 +389,9 @@
       <if test="record != null">
         record = #{record,jdbcType=VARCHAR},
       </if>
+      <if test="record2 != null">
+        record2 = #{record2,jdbcType=VARCHAR},
+      </if>
       <if test="recordTime != null">
         record_time = #{recordTime,jdbcType=BIGINT},
       </if>
@@ -449,6 +459,7 @@
     <result column="hangup_code" jdbcType="VARCHAR" property="hangupCode" />
     <result column="media" jdbcType="VARCHAR" property="media" />
     <result column="record" jdbcType="VARCHAR" property="record" />
+    <result column="record2" jdbcType="VARCHAR" property="record2" />
     <result column="record_time" jdbcType="BIGINT" property="recordTime" />
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
     <result column="frist_queue_time" jdbcType="BIGINT" property="fristQueueTime" />
@@ -473,8 +484,8 @@
       <if test="loginType != null"> and login_type = #{loginType,jdbcType=INTEGER}</if>
       <if test="taskId != null"> and task_id = #{taskId,jdbcType=BIGINT} </if>
       <if test="ivrId != null"> and ivr_id = #{ivrId,jdbcType=BIGINT} </if>
-      <if test="answerTime != null"> and answer_time = #{answerTime,jdbcType=BIGINT} </if>
-      <if test="endTime != null"> and end_time = #{endTime,jdbcType=BIGINT} </if>
+      <if test="start!=null"> and call_time >= #{start,jdbcType=BIGINT}</if>
+      <if test="end!=null"> and call_time &lt; #{end,jdbcType=BIGINT}</if>
       <if test="callType != null"> and call_type = #{callType,jdbcType=VARCHAR} </if>
       <if test="direction != null"> and direction = #{direction,jdbcType=VARCHAR}</if>
       <if test="answerFlag != null"> and answer_flag = #{answerFlag,jdbcType=INTEGER} </if>
@@ -541,6 +552,9 @@
       <if test="record != null">
         record = #{record,jdbcType=VARCHAR},
       </if>
+      <if test="record2 != null">
+        record2 = #{record2,jdbcType=VARCHAR},
+      </if>
       <if test="recordTime != null">
         record_time = #{recordTime,jdbcType=BIGINT},
       </if>
@@ -587,19 +601,19 @@
         cc_call_log
     <where>
       <if test="companyId!=null"> company_id = #{companyId,jdbcType=BIGINT}</if>
-      <if test="startTime!=null"> and call_time >= #{startTime,jdbcType=BIGINT}</if>
-      <if test="endTime!=null"> and call_time &lt; #{endTime,jdbcType=BIGINT}</if>
+      <if test="start!=null"> and call_time >= #{start,jdbcType=BIGINT}</if>
+      <if test="end!=null"> and call_time &lt; #{end,jdbcType=BIGINT}</if>
       <if test="uuid1!=null"> and uuid1 = #{uuid1}</if>
       <if test="uuid2!=null"> and uuid2 = #{uuid2}</if>
     </where>
   </select>
 
-  <select id="getcallList" parameterType="java.util.Map" resultMap="BaseResultMapPo">
+  <select id="getCallList" parameterType="java.util.Map" resultMap="BaseResultMapPo">
     select
         <include refid="Base_Column_List" />
     from
         cc_call_log
-      <include refid="Base_Where"/>
+      <include refid="Base_Where"/> order by call_time desc
   </select>
 
   <select id="selectCountByMap" parameterType="java.util.Map" resultType="Long">
@@ -608,7 +622,7 @@
 
   <!-- 单表查询 -->
   <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
-     select <include refid="Base_Column_List" />  from cc_call_log   <include refid="Base_Where"/>
+     select <include refid="Base_Column_List" />  from cc_call_log   <include refid="Base_Where"/> order by call_time desc
   </select>
 
 

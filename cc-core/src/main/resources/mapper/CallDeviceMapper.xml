@@ -24,6 +24,7 @@
     <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
     <result column="sip_protocol" jdbcType="VARCHAR" property="sipProtocol" />
     <result column="record" jdbcType="VARCHAR" property="record" />
+    <result column="record2" jdbcType="VARCHAR" property="record2" />
     <result column="record_time" jdbcType="BIGINT" property="recordTime" />
     <result column="channel_name" jdbcType="VARCHAR" property="channelName" />
     <result column="hangup_cause" jdbcType="VARCHAR" property="hangupCause" />
@@ -36,7 +37,7 @@
   <sql id="Base_Column_List">
     id, cts, uts, call_id, device_id, agent_key, device_type, cdr_type, caller, called, 
     display, called_location, caller_location, call_time, ring_start_time, ring_end_time, 
-    answer_time, bridge_time, end_time, talk_time, sip_protocol, record, record_time,
+    answer_time, bridge_time, end_time, talk_time, sip_protocol, record, record2, record_time,
     channel_name, hangup_cause, ring_cause, sip_status, ext1, ext2, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -118,6 +119,9 @@
       </if>
       <if test="record != null">
         record,
+      </if>
+      <if test="record2 != null">
+        record2,
       </if>
       <if test="recordTime != null">
         record_time,
@@ -210,6 +214,9 @@
       </if>
       <if test="record != null">
         #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="record2 != null">
+        #{record2,jdbcType=VARCHAR},
       </if>
       <if test="recordTime != null">
         #{recordTime,jdbcType=BIGINT},
@@ -304,6 +311,9 @@
       <if test="record != null">
         record = #{record,jdbcType=VARCHAR},
       </if>
+      <if test="record2 != null">
+        record2 = #{record2,jdbcType=VARCHAR},
+      </if>
       <if test="recordTime != null">
         record_time = #{recordTime,jdbcType=BIGINT},
       </if>
@@ -338,7 +348,7 @@
     from
         cc_call_device
     where
-        call_id = #{id,jdbcType=BIGINT} order by call_time asc
+        call_id = #{callId,jdbcType=BIGINT} order by call_time asc
   </select>
 
   <update id="createNewTable" >

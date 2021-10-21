@@ -145,6 +145,11 @@ public class CallLog implements Serializable {
     private String record;
 
     /**
+     * 备用录音地址
+     */
+    private String record2;
+
+    /**
      * 录音开始时间
      */
     private Long recordTime;
@@ -420,6 +425,14 @@ public class CallLog implements Serializable {
 
     public void setRecord(String record) {
         this.record = record == null ? null : record.trim();
+    }
+
+    public String getRecord2() {
+        return record2;
+    }
+
+    public void setRecord2(String record2) {
+        this.record2 = record2;
     }
 
     public Long getRecordTime() {

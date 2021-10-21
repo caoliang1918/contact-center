@@ -16,7 +16,10 @@ import org.zhongweixian.cc.command.base.BaseHandler;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Create by caoliang on 2020/8/23
@@ -42,13 +45,6 @@ public class GroupHandler extends BaseHandler {
      */
     private ThreadPoolExecutor callAgentService = new ThreadPoolExecutor(4, 4, 0L,
             TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryBuilder().setNameFormat("call-agent-pool-%d").build());
-
-
-    /**
-     * 检测电话排队定时线程
-     */
-    private ScheduledExecutorService checkCallService = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("check-call-pool-%d").build());
-
 
     /**
      * 电话进入技能组,呼入电话有可能多次经过这
@@ -453,47 +449,46 @@ public class GroupHandler extends BaseHandler {
     /**
      * 进入到队列的电话，需要定时找空闲坐席
      */
-    public void start() {
-        checkCallService.scheduleAtFixedRate(() -> {
-            Long now = Instant.now().getEpochSecond();
-            callInfoMap.forEach((k, v) -> {
-                if (!v.isEmpty()) {
-                    Iterator<CallQueue> iterator = v.iterator();
-                    while (iterator.hasNext()) {
-                        CallQueue callQueue = iterator.next();
-                        if (now - callQueue.getStartTime() >= callQueue.getGroupOverflowPo().getQueueTimeout().longValue()) {
-                            callAgentService.execute(() -> {
-                                queueTimeout(callQueue);
-                            });
-                            iterator.remove();
-                            continue;
-                        }
-                        //查找空闲坐席
-                        AgentInfo agentInfo = this.getAgentQueue(k);
-                        if (agentInfo != null) {
-                            iterator.remove();
-                            //先停止放音
-                            CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
-                            if (callInfo == null) {
-                                continue;
-                            }
-                            DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.getDeviceId());
-                            if (deviceInfo != null) {
-                                deviceInfo.setNextCommand(null);
-                            }
-                            callAgentService.execute(() -> {
-                                fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
-                                this.callAgent(agentInfo, callInfo, callQueue.getDeviceId());
-                            });
-                        }
-                    }
+    public void acd() {
+        Long now = Instant.now().getEpochSecond();
+        for (Map.Entry<Long, PriorityQueue<CallQueue>> entry : callInfoMap.entrySet()) {
+            if (CollectionUtils.isEmpty(entry.getValue())) {
+                continue;
+            }
+            Iterator<CallQueue> iterator = entry.getValue().iterator();
+            while (iterator.hasNext()) {
+                CallQueue callQueue = iterator.next();
+                if (now - callQueue.getStartTime() >= callQueue.getGroupOverflowPo().getQueueTimeout().longValue()) {
+                    callAgentService.execute(() -> {
+                        queueTimeout(callQueue);
+                    });
+                    iterator.remove();
+                    continue;
                 }
-            });
-        }, 5000, 200, TimeUnit.MILLISECONDS);
+                //查找空闲坐席
+                AgentInfo agentInfo = this.getAgentQueue(entry.getKey());
+                if (agentInfo != null) {
+                    iterator.remove();
+                    //先停止放音
+                    CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
+                    if (callInfo == null) {
+                        continue;
+                    }
+                    DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.getDeviceId());
+                    if (deviceInfo != null) {
+                        deviceInfo.setNextCommand(null);
+                    }
+                    callAgentService.execute(() -> {
+                        fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
+                        this.callAgent(agentInfo, callInfo, callQueue.getDeviceId());
+                    });
+                }
+            }
+        }
+
     }
 
     public void stop() {
-        checkCallService.shutdown();
         callAgentService.shutdown();
     }
 
@@ -537,7 +532,7 @@ public class GroupHandler extends BaseHandler {
     }
 
 
-    class CallQueue implements Comparable<CallQueue> {
+    class CallQueue  {
         private Long priority;
 
         private Long callId;
@@ -607,14 +602,6 @@ public class GroupHandler extends BaseHandler {
             this.deviceId = deviceId;
         }
 
-        @Override
-        public int compareTo(CallQueue o) {
-            return o.priority.compareTo(this.priority);
-        }
 
-        @Override
-        public boolean equals(Object obj) {
-            return this.callId.equals(obj);
-        }
     }
 }

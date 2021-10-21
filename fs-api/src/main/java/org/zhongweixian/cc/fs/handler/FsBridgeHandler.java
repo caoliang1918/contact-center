@@ -48,6 +48,7 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
                 }
             }
             callCdrService.saveOrUpdateCallLog(callLog);
+            cacheService.addCallInfo(callInfo);
         }
         logger.info("桥接成功 callId:{}, device:{}, otherDevice:{}", callInfo.getCallId(), event.getDeviceId(), event.getOtherUniqueId());
         DeviceInfo deviceInfo1 = callInfo.getDeviceInfoMap().get(event.getDeviceId());

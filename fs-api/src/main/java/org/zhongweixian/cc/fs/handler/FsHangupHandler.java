@@ -256,6 +256,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             pushFailLog.setStatus(2);
             pushFailLog.setPushResponse(responseEntity.getBody());
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             pushFailLog.setStatus(1);
             logger.warn("push call:{} to {} error", callInfo.getCallId(), callInfo.getCdrNotifyUrl());
         }

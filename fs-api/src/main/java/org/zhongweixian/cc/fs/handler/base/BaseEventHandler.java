@@ -33,6 +33,20 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
     protected String bucket;
 
     /**
+     * 硬话机外呼走的profile
+     */
+    @Value("${sip.outbound.profile:internal}")
+    protected String outboundProfile;
+
+    @Value("${spring.application.id}")
+    protected String appId;
+
+    @Value("${a:0}")
+    protected int a;
+
+
+
+    /**
      * 给坐席客户端发送消息
      *
      * @param agentInfo

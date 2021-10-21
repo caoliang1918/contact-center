@@ -104,6 +104,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
                 .withDirection(Direction.OUTBOUND)
                 .withCallType(event.getCallType())
                 .withCallTime(now)
+                .withAppId(appId)
                 .withFollowData(event.getFollowData())
                 .build();
 

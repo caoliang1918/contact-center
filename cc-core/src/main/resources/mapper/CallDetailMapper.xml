@@ -179,6 +179,6 @@
     from
         cc_call_detail
     where
-        call_id = #{id,jdbcType=BIGINT}
+        call_id = #{callId,jdbcType=BIGINT} order by start_time asc
   </select>
 </mapper>

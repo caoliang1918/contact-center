@@ -83,6 +83,11 @@ public class CallInfo implements Serializable {
     private String media;
 
     /**
+     * 应用id
+     */
+    private String appId;
+
+    /**
      * 录音地址
      */
     private String record;
@@ -320,6 +325,14 @@ public class CallInfo implements Serializable {
         this.media = media;
     }
 
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
     public String getRecord() {
         return record;
     }
@@ -542,6 +555,7 @@ public class CallInfo implements Serializable {
         private Integer loginType;
         private Long ivrId;
         private String media;
+        private String appId;
         private String record;
         private Long callTime;
         private CallType callType;
@@ -629,6 +643,11 @@ public class CallInfo implements Serializable {
             return this;
         }
 
+        public CallInfoBuilder withAppId(String appId) {
+            this.appId = appId;
+            return this;
+        }
+
         public CallInfoBuilder withRecord(String record) {
             this.record = record;
             return this;
@@ -673,11 +692,13 @@ public class CallInfo implements Serializable {
             this.talkTime = talkTime;
             return this;
         }
-        public CallInfoBuilder withUuid1(String uuid1){
+
+        public CallInfoBuilder withUuid1(String uuid1) {
             this.uuid1 = uuid1;
             return this;
         }
-        public CallInfoBuilder withUuid2(String uuid2){
+
+        public CallInfoBuilder withUuid2(String uuid2) {
             this.uuid2 = uuid2;
             return this;
         }
@@ -707,6 +728,7 @@ public class CallInfo implements Serializable {
             callInfo.callType = this.callType;
             callInfo.coreUuid = this.coreUuid;
             callInfo.media = this.media;
+            callInfo.appId = this.appId;
             callInfo.answerTime = this.answerTime;
             callInfo.record = this.record;
             callInfo.calledDisplay = this.calledDisplay;
@@ -745,6 +767,7 @@ public class CallInfo implements Serializable {
                 ", ivrId=" + ivrId +
                 ", taskId=" + taskId +
                 ", media='" + media + '\'' +
+                ", appId='" + appId + '\'' +
                 ", record='" + record + '\'' +
                 ", callTime=" + callTime +
                 ", callType=" + callType +

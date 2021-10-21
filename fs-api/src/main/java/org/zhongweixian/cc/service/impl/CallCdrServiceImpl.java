@@ -71,6 +71,9 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Value("${call.cdr.mq:0}")
     private Integer callCdrMq;
 
+    @Value("${spring.application.id}")
+    private String appId;
+
 
     @Override
     BaseMapper<CallLog> baseMapper() {
@@ -146,6 +149,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 .withLoginType(agentInfo.getLoginType())
                 .withCompanyId(agentInfo.getCompanyId())
                 .withGroupId(agentInfo.getGroupId())
+                .withAppId(appId)
 //                .withCaller(caller)
                 .withCalled(makeCallVo.getCalled().strip())
 //                .withCallerDisplay(callerDisplay)

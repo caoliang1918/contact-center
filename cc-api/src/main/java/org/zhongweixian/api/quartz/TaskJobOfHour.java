@@ -227,9 +227,11 @@ public class TaskJobOfHour implements Job {
                     logger.info("push call:{} to {} success:{}", pushFailLog.getCallId(), pushFailLog.getCdrNotifyUrl(), responseEntity.getBody());
                 }
             } catch (Exception e) {
-                pushFailLog.setPushTimes(pushFailLog.getPushTimes() + 1);
-                pushFailLog.setUts(end / 1000 + 3600 * calculate(pushFailLog.getPushTimes()));
-                pushFailLogMapper.updateByPrimaryKey(pushFailLog);
+                PushFailLog failLog = new PushFailLog();
+                failLog.setId(pushFailLog.getId());
+                failLog.setPushTimes(pushFailLog.getPushTimes() + 1);
+                failLog.setUts(end / 1000 + 3600 * calculate(pushFailLog.getPushTimes()));
+                pushFailLogMapper.updateByPrimaryKey(failLog);
             }
         }
     }

@@ -34,14 +34,6 @@ import java.time.Instant;
 public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
     private Logger logger = LoggerFactory.getLogger(FsParkHandler.class);
 
-    /**
-     * 硬话机外呼走的profile
-     */
-    @Value("${sip.outbound.profile:internal}")
-    private String outboundProfile;
-
-    @Value("${a:0}")
-    private int a;
 
     @Override
     public void handleEvent(FsParkEvent event) {
@@ -147,16 +139,15 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 return;
             }
             //呼入振铃
-            ringEntity.setAgentState(AgentState.IN_CALL_RING);
-            if (agentInfo.getHiddenCustomer() == 1) {
-                ringEntity.setCaller(hiddenNumber(ringEntity.getCaller()));
-            }
-            sendAgentStateMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), deviceInfo.getAgentKey(), ringEntity));
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setStateTime(Instant.now().toEpochMilli());
             agentInfo.setAgentState(AgentState.IN_CALL_RING);
-            agentService.syncAgentStateMessage(agentInfo);
+            ringEntity.setAgentState(agentInfo.getAgentState());
+            if (agentInfo.getHiddenCustomer() == 1) {
+                ringEntity.setCaller(hiddenNumber(ringEntity.getCaller()));
+            }
+            sendAgentStateMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.IN_CALL_RING.name(), deviceInfo.getAgentKey(), ringEntity));
         }
     }
 
@@ -204,6 +195,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallerDisplay(event.getCalled())
                 .withCompanyId(vdnPhone.getCompanyId())
                 .withMedia(event.getHostname())
+                .withAppId(appId)
                 .build();
 
         DeviceInfo deviceInfo = DeviceInfo.DeviceInfoBuilder.builder()

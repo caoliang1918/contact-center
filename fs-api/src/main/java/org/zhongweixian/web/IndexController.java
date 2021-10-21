@@ -1,11 +1,10 @@
 package org.zhongweixian.web;
 
-import com.alibaba.nacos.api.annotation.NacosInjected;
-import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.fastjson.JSON;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
+import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.po.CommonResponse;
 import org.cti.cc.util.SnowflakeIdWorker;
@@ -13,10 +12,12 @@ import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.service.CallCdrService;
 
 import java.time.Instant;
@@ -32,9 +33,6 @@ public class IndexController {
     private Logger logger = LoggerFactory.getLogger(IndexController.class);
 
 
-    @NacosInjected
-    private NamingService namingService;
-
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
 
@@ -44,13 +42,29 @@ public class IndexController {
     @Autowired
     private StringEncryptor encrypt;
 
+    @Autowired
+    private GroupHandler groupHandler;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+
+    @GetMapping("cacheCall")
+    public CommonResponse cacheCall(@RequestParam Long callId) {
+        Object obj = redisTemplate.opsForValue().get("callInfo:" + callId);
+        if (obj == null) {
+            return new CommonResponse();
+        }
+        CallInfo callInfo = JSON.parseObject(obj.toString(), CallInfo.class);
+        return new CommonResponse(callInfo);
+    }
 
     /**
      * @param callId
      * @return
      */
     @GetMapping("getcall")
-    public CommonResponse<CallLogPo> getCall(@RequestParam Long callId) throws NacosException {
+    public CommonResponse<CallLogPo> getCall(@RequestParam Long callId) {
         return new CommonResponse<>(callCdrService.getCall(null, callId));
     }
 
@@ -63,6 +77,12 @@ public class IndexController {
     @GetMapping("/decrypt")
     public CommonResponse decrypt(@RequestParam String text) {
         return new CommonResponse(encrypt.decrypt(text));
+    }
+
+    @GetMapping("/acd")
+    public CommonResponse acd() {
+        groupHandler.acd();
+        return new CommonResponse();
     }
 
     /**
