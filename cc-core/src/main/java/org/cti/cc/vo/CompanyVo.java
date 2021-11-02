@@ -94,7 +94,7 @@ public class CompanyVo {
      * 单技能组中坐席上限
      */
     @NotNull(message = "单技能组中坐席上限数不能为空")
-    @Range(min = 0, max = 3000, message = "单技能组中坐席上限数设置错误")
+    @Range(min = 0, max = 1000, message = "单技能组中坐席上限数设置错误")
     private Integer groupAgentLimit;
 
     /**

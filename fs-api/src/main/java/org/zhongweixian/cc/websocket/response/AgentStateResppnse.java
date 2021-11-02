@@ -42,7 +42,7 @@ public class AgentStateResppnse {
     /**
      * 业务所在实例
      */
-    private Integer appId;
+    private String appId;
 
     /**
      * 所属技能组
@@ -206,11 +206,11 @@ public class AgentStateResppnse {
         this.host = host;
     }
 
-    public Integer getAppId() {
+    public String getAppId() {
         return appId;
     }
 
-    public void setAppId(Integer appId) {
+    public void setAppId(String appId) {
         this.appId = appId;
     }
 

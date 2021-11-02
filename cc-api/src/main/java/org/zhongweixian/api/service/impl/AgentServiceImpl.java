@@ -14,7 +14,10 @@ import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentSipPo;
+import org.cti.cc.vo.AgentBindSkill;
+import org.cti.cc.vo.AgentSipVo;
 import org.cti.cc.vo.AgentVo;
+import org.cti.cc.vo.BatchAddAgentVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +26,6 @@ import org.springframework.util.CollectionUtils;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.AgentService;
 import org.zhongweixian.api.util.BcryptUtil;
-import org.cti.cc.vo.AgentBindSkill;
-import org.cti.cc.vo.AgentSipVo;
 import org.zhongweixian.api.vo.excel.ExcelAgentEntity;
 
 import javax.servlet.ServletOutputStream;
@@ -109,31 +110,26 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     }
 
     @Override
-    public Integer batchAddAgent(Long companyId, Integer count, String prefix, Long start, String pwd) {
-        Company company = companyMapper.selectByPrimaryKey(companyId);
+    public Integer batchAddAgent(BatchAddAgentVo addAgentVo) {
+        Company company = companyMapper.selectByPrimaryKey(addAgentVo.getCompanyId());
         Map<String, Object> params = new HashMap<>();
-        params.put("companyId", companyId);
+        params.put("companyId", addAgentVo.getCompanyId());
         Long agentCount = agentMapper.selectCountByMap(params);
         if (agentCount >= company.getAgentLimit()) {
             throw new BusinessException(ErrorCode.AGENT_OVER_LIMIT);
         }
-        if (prefix == null) {
-            prefix = StringUtils.EMPTY;
-        }
-        if ((prefix + start).length() > 10 || (prefix + start).length() < 2) {
-            new BusinessException(ErrorCode.AGENT_NAME_LENGTH_ERROR);
-        }
+
         List<Agent> agents = new ArrayList<>();
         List<Map<String, Object>> agentSips = new ArrayList<>();
         Integer result = 0;
         Agent agent = null;
         AgentSip agentSip = null;
         Map<String, Object> sipMap = null;
-        for (Integer i = 0; i < count; i++) {
+        for (Integer i = 0; i < addAgentVo.getCount(); i++) {
             agent = new Agent();
-            agent.setCompanyId(companyId);
-            agent.setAgentId(prefix + (start + i));
-            agent.setPasswd(BcryptUtil.encrypt(pwd));
+            agent.setCompanyId(addAgentVo.getCompanyId());
+            agent.setAgentId(addAgentVo.getPrefix() + (addAgentVo.getStart() + i));
+            agent.setPasswd(BcryptUtil.encrypt(addAgentVo.getPasswd()));
             agent.setAgentKey(agent.getAgentId() + "@" + company.getCompanyCode());
             agent.setAgentName(agent.getAgentId());
             agent.setAgentType(2);
@@ -144,7 +140,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             //添加sip号
             sipMap = new HashMap<>();
             sipMap.put("cts", agent.getCts());
-            sipMap.put("companyId", companyId);
+            sipMap.put("companyId", addAgentVo.getCompanyId());
             sipMap.put("sip", sipPrefix + "" + Instant.now().toEpochMilli());
             sipMap.put("agentKey", agent.getAgentKey());
             sipMap.put("sipPwd", RandomStringUtils.randomNumeric(16));
@@ -287,18 +283,18 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         if (skill == null) {
             throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
         }
-        Map<String , Object> params = new HashMap<>();
-        params.put("companyId" , agentBindSkill.getCompanyId());
-        params.put("ids" , agentBindSkill.getAgentIds());
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", agentBindSkill.getCompanyId());
+        params.put("ids", agentBindSkill.getAgentIds());
         List<Agent> agents = agentMapper.selectListByMap(params);
-        if (CollectionUtils.isEmpty(agents)){
+        if (CollectionUtils.isEmpty(agents)) {
             throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
         }
         //删除已有数据
         skillAgentMapper.deleteSkillAgent(agentBindSkill);
 
         List<SkillAgent> skillAgents = new ArrayList<>();
-        for (Agent agent : agents){
+        for (Agent agent : agents) {
             SkillAgent skillAgent = new SkillAgent();
             skillAgent.setCompanyId(agentBindSkill.getCompanyId());
             skillAgent.setAgentId(agent.getId());

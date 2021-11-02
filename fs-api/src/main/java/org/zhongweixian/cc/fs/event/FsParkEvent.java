@@ -118,7 +118,6 @@ public class FsParkEvent extends FsBaseEvent {
                 ", deviceId='" + deviceId + '\'' +
                 ", timestamp=" + timestamp +
                 ", channelName='" + channelName + '\'' +
-                ", hostname='" + hostname + '\'' +
                 '}';
     }
 }

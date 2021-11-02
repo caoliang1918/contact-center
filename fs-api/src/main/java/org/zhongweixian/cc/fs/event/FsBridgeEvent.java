@@ -179,7 +179,6 @@ public class FsBridgeEvent extends FsBaseEvent {
                 ", uuid='" + coreUuid + '\'' +
                 ", timestamp=" + timestamp +
                 ", channelName='" + channelName + '\'' +
-                ", hostname='" + hostname + '\'' +
                 ", map=" + map +
                 '}';
     }

@@ -33,7 +33,9 @@ public class FsBaseEvent {
     @JSONField(name = "Caller-Channel-Name")
     protected String channelName;
 
-    protected String hostname;
+    protected String localAddress;
+
+    protected String remoteAddress;
 
     @JSONField(name = "variable_sofia_profile_name")
     protected String profile;
@@ -99,12 +101,20 @@ public class FsBaseEvent {
         this.channelName = channelName;
     }
 
-    public String getHostname() {
-        return hostname;
+    public String getLocalAddress() {
+        return localAddress;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setLocalAddress(String localAddress) {
+        this.localAddress = localAddress;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public void setRemoteAddress(String remoteAddress) {
+        this.remoteAddress = remoteAddress;
     }
 
     public String getDeviceId() {
@@ -141,7 +151,7 @@ public class FsBaseEvent {
                 ", timestamp=" + timestamp +
                 ", answerState='" + answerState + '\'' +
                 ", channelName='" + channelName + '\'' +
-                ", hostname='" + hostname + '\'' +
+                ", remoteAddress='" + remoteAddress + '\'' +
                 ", map=" + map +
                 '}';
     }

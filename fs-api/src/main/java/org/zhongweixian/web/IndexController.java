@@ -12,6 +12,9 @@ import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +54,16 @@ public class IndexController {
 
     @GetMapping("cacheCall")
     public CommonResponse cacheCall(@RequestParam Long callId) {
+        redisTemplate.executePipelined(new RedisCallback<String>() {
+            @Override
+            public String doInRedis(RedisConnection connection) throws DataAccessException {
+                for (int i = 0; i < 10; i++) {
+                    connection.set((i + "").getBytes(), (i + "").getBytes());
+                }
+                return null;
+            }
+        });
+
         Object obj = redisTemplate.opsForValue().get("callInfo:" + callId);
         if (obj == null) {
             return new CommonResponse();

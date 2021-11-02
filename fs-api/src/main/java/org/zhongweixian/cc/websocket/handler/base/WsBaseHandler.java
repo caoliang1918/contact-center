@@ -10,9 +10,9 @@ import org.cti.cc.po.GroupInfo;
 import org.cti.cc.util.SnowflakeIdWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.configration.Handler;
@@ -35,7 +35,7 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
     protected FsListen fsListen;
 
     @Autowired
-    protected RabbitTemplate rabbitTemplate;
+    protected KafkaTemplate kafkaTemplate;
 
     @Autowired
     protected SnowflakeIdWorker snowflakeIdWorker;
@@ -51,9 +51,6 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
 
     @Autowired
     protected CallCdrService callCdrService;
-
-    @Value("${spring.application.id}")
-    protected String appId;
 
     /**
      * @param agentInfo

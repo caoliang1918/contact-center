@@ -69,7 +69,7 @@ public class AdminController extends BaseController {
      * @return
      */
     @GetMapping("agent/{agentKey}")
-    public CommonResponse getAgentState(@ModelAttribute("adminAccount") AdminAccount adminAccount, @PathVariable String agentKey) {
+    public CommonResponse<AgentInfo> getAgentState(@ModelAttribute("adminAccount") AdminAccount adminAccount, @PathVariable String agentKey) {
         if (agentKey.split("@").length != 2) {
             throw new BusinessException(ErrorCode.PARAMETER_ERROR, "agentKey");
         }
@@ -113,7 +113,7 @@ public class AdminController extends BaseController {
         groupAgentFree.setName(groupInfo.getName());
         List<String> agentQueues = groupHandler.getFreeAgents(groupInfo.getId());
         groupAgentFree.setFreeAgents(agentQueues);
-        return new CommonResponse(groupAgentFree);
+        return new CommonResponse<GroupAgentFree>(groupAgentFree);
     }
 
 }

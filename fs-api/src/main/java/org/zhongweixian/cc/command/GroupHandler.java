@@ -134,7 +134,7 @@ public class GroupHandler extends BaseHandler {
                 /**
                  * 放音
                  */
-                fsListen.playback(callInfo.getMedia(), deviceId, "/app/clpms/sounds/queue.wav");
+                fsListen.playback(callInfo.getMedia(), deviceId, "sounds/queue.wav");
                 DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(deviceId);
                 deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_QUEUE_PLAY));
                 break;

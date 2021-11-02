@@ -83,9 +83,9 @@ public class CallInfo implements Serializable {
     private String media;
 
     /**
-     * 应用id
+     * 服务地址
      */
-    private String appId;
+    private String host;
 
     /**
      * 录音地址
@@ -325,12 +325,12 @@ public class CallInfo implements Serializable {
         this.media = media;
     }
 
-    public String getAppId() {
-        return appId;
+    public String getHost() {
+        return host;
     }
 
-    public void setAppId(String appId) {
-        this.appId = appId;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public String getRecord() {
@@ -555,7 +555,7 @@ public class CallInfo implements Serializable {
         private Integer loginType;
         private Long ivrId;
         private String media;
-        private String appId;
+        private String host;
         private String record;
         private Long callTime;
         private CallType callType;
@@ -643,8 +643,8 @@ public class CallInfo implements Serializable {
             return this;
         }
 
-        public CallInfoBuilder withAppId(String appId) {
-            this.appId = appId;
+        public CallInfoBuilder withHost(String host) {
+            this.host = host;
             return this;
         }
 
@@ -728,7 +728,7 @@ public class CallInfo implements Serializable {
             callInfo.callType = this.callType;
             callInfo.coreUuid = this.coreUuid;
             callInfo.media = this.media;
-            callInfo.appId = this.appId;
+            callInfo.host = this.host;
             callInfo.answerTime = this.answerTime;
             callInfo.record = this.record;
             callInfo.calledDisplay = this.calledDisplay;
@@ -767,7 +767,7 @@ public class CallInfo implements Serializable {
                 ", ivrId=" + ivrId +
                 ", taskId=" + taskId +
                 ", media='" + media + '\'' +
-                ", appId='" + appId + '\'' +
+                ", host='" + host + '\'' +
                 ", record='" + record + '\'' +
                 ", callTime=" + callTime +
                 ", callType=" + callType +

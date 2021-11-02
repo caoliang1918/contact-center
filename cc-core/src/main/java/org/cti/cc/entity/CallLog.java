@@ -140,6 +140,11 @@ public class CallLog implements Serializable {
     private String media;
 
     /**
+     * cti地址
+     */
+    private String host;
+
+    /**
      * 录音地址
      */
     private String record;
@@ -417,6 +422,14 @@ public class CallLog implements Serializable {
 
     public void setMedia(String media) {
         this.media = media == null ? null : media.trim();
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public String getRecord() {

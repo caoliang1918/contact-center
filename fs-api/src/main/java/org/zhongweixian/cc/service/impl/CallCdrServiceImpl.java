@@ -15,9 +15,9 @@ import org.cti.cc.mapper.PushFailLogMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.*;
 import org.cti.cc.util.SnowflakeIdWorker;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.cache.CacheService;
@@ -51,7 +51,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     private PushFailLogMapper pushFailLogMapper;
 
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private KafkaTemplate kafkaTemplate;
 
     @Autowired
     private CacheService cacheService;
@@ -71,9 +71,6 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Value("${call.cdr.mq:0}")
     private Integer callCdrMq;
 
-    @Value("${spring.application.id}")
-    private String appId;
-
 
     @Override
     BaseMapper<CallLog> baseMapper() {
@@ -83,7 +80,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Override
     public int saveCallDevice(CallDevice callDevice) {
         if (callCdrMq == 1) {
-            rabbitTemplate.convertAndSend(Constants.CALL_DEVICE_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDevice));
+            kafkaTemplate.send(Constants.CALL_DEVICE_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDevice));
             return 0;
         }
         return callDeviceMapper.insertSelective(callDevice);
@@ -95,7 +92,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return 0;
         }
         callDetails.forEach(callDetail -> {
-            rabbitTemplate.convertAndSend(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
+            kafkaTemplate.send(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
         });
         return 1;
     }
@@ -107,7 +104,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         }
         logger.info("callId:{}, answerTime:{}, endTime:{}", callLog.getCallId(), callLog.getAnswerTime(), callLog.getEndTime());
         if (callCdrMq == 1) {
-            rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
+            kafkaTemplate.send(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
             return 0;
         }
 
@@ -149,7 +146,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 .withLoginType(agentInfo.getLoginType())
                 .withCompanyId(agentInfo.getCompanyId())
                 .withGroupId(agentInfo.getGroupId())
-                .withAppId(appId)
+                .withHost(agentInfo.getHost())
 //                .withCaller(caller)
                 .withCalled(makeCallVo.getCalled().strip())
 //                .withCallerDisplay(callerDisplay)

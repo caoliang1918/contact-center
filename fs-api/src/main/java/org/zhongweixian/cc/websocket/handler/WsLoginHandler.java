@@ -5,12 +5,12 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.Agent;
-import org.cti.cc.entity.Station;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CompanyInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
@@ -23,6 +23,7 @@ import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
 import org.zhongweixian.cc.websocket.response.AgentStateResppnse;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
+import java.net.InetSocketAddress;
 import java.time.Instant;
 
 /**
@@ -42,13 +43,13 @@ import java.time.Instant;
 public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
 
     @Autowired
-    private Station station;
-
-    @Autowired
     private AgentService agentService;
 
     @Autowired
     private WebSocketHandler webSocketHandler;
+
+    @Value("${server.port}")
+    private Integer port;
 
 
     @Override
@@ -166,11 +167,13 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
         agentInfo.setLoginTime(Instant.now().toEpochMilli());
         agentInfo.setStateTime(agentInfo.getLoginTime());
         agentInfo.setAgentState(AgentState.LOGIN);
-        agentInfo.setHost(station.getHost());
         agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
         agentInfo.setLoginType(event.getLoginType());
         agentInfo.setWorkType(event.getWorkType());
         agentInfo.setRemoteAddress(event.getChannel().remoteAddress().toString().substring(1));
+        //记录坐席所在服务器
+        InetSocketAddress address = (InetSocketAddress) event.getChannel().localAddress();
+        agentInfo.setHost(address.getHostName() + ":" + port);
         cacheService.addAgentInfo(agentInfo);
 
 
@@ -226,7 +229,7 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
         agent.setId(agentInfo.getId());
         agent.setCompanyId(agentInfo.getCompanyId());
         agent.setState(1);
-        agent.setHost(station.getHost());
+        agent.setHost(agentInfo.getHost());
         agentService.editById(agent);
     }
 }

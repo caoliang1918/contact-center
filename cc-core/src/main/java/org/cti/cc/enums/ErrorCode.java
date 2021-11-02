@@ -26,7 +26,7 @@ public enum ErrorCode {
     AGENT_OVER_LIMIT(1204, "企业坐席超过限制"),
     GROUP_OVER_LIMIT(1205, "企业技能组超过限制"),
     GROUP_AGENT_OVER_LIMIT(1206, "技能组中坐席超过限制"),
-    GROUP_SKILL_OVER_LIMIT(1207, "技能组中技能不能超过10个"),
+    GROUP_SKILL_OVER_LIMIT(1207, "技能组中技能超过限制"),
     AGENT_SKILL_OVER_LIMIT(1208, "坐席技能不能超过20个"),
     CALL_LOG_EXPORT_LIMIT(1209, "话单导出不能超时{0}"),
     EXPORT_EMPTY(1210, "导出数据为空"),

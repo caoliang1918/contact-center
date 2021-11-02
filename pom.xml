@@ -50,6 +50,7 @@
         <easypoi.version>4.3.0</easypoi.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-codec.version>1.15</commons-codec.version>
+        <kafka.version>2.7.8</kafka.version>
 
         <docker.repostory>192.168.180.37:5000</docker.repostory>
         <docker.registry.name>caoliang</docker.registry.name>
@@ -106,6 +107,11 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${springboot.mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>2.7.8</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>

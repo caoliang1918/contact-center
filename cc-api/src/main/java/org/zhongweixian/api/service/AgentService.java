@@ -7,6 +7,7 @@ import org.cti.cc.po.AgentSipPo;
 import org.cti.cc.vo.AgentVo;
 import org.cti.cc.vo.AgentBindSkill;
 import org.cti.cc.vo.AgentSipVo;
+import org.cti.cc.vo.BatchAddAgentVo;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -28,14 +29,10 @@ public interface AgentService extends BaseService<Agent> {
     /**
      * 批量添加坐席
      *
-     * @param companyId
-     * @param count
-     * @param prefix
-     * @param start
-     * @param pwd
+     * @param addAgentVo
      * @return
      */
-    Integer batchAddAgent(Long companyId, Integer count, String prefix, Long start, String pwd);
+    Integer batchAddAgent(BatchAddAgentVo addAgentVo);
 
     /**
      * 获取坐席详情

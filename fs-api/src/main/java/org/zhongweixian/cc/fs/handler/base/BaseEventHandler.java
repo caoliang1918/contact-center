@@ -38,9 +38,6 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
     @Value("${sip.outbound.profile:internal}")
     protected String outboundProfile;
 
-    @Value("${spring.application.id}")
-    protected String appId;
-
     @Value("${a:0}")
     protected int a;
 

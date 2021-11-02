@@ -70,7 +70,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
                 break;
             case NEXT_CALL_BRIDGE:
                 logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled(), nextCommand.getNextValue(), event.getDeviceId());
-                callBridge(event.getHostname(), event.getDeviceId(), nextCommand.getNextValue());
+                callBridge(event.getRemoteAddress(), event.getDeviceId(), nextCommand.getNextValue());
                 /**
                  * 呼入电话，坐席接听后，需要桥接
                  */

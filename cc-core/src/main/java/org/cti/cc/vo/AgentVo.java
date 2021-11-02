@@ -61,7 +61,7 @@ public class AgentVo {
      * 座席密码
      */
     @NotNull(message = "坐席密码不能为空")
-    @Size(min = 32, max = 64, message = "密码长度不对")
+    @Size(min = 8, max = 32, message = "密码长度不对")
     private String passwd;
 
     /**

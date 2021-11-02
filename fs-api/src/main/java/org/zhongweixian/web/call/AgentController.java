@@ -1,7 +1,6 @@
 package org.zhongweixian.web.call;
 
 import org.cti.cc.entity.Agent;
-import org.cti.cc.entity.Station;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
@@ -9,22 +8,18 @@ import org.cti.cc.po.CommonResponse;
 import org.cti.cc.vo.AgentPreset;
 import org.cti.cc.vo.AgentVo;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.cc.exception.BusinessException;
-import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.util.BcryptUtil;
 import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.WsNotReadyEvent;
 import org.zhongweixian.cc.websocket.event.WsReadyEvent;
-import org.zhongweixian.cc.websocket.handler.WsLogoutHandler;
-import org.zhongweixian.cc.websocket.handler.WsNotReadyHandler;
-import org.zhongweixian.cc.websocket.handler.WsReadyHandler;
 import org.zhongweixian.web.base.BaseController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 
 /**
@@ -60,7 +55,7 @@ public class AgentController extends BaseController {
      * @return
      */
     @PostMapping("login")
-    public CommonResponse<AgentInfo> login(@RequestBody @Validated AgentVo agentVo) {
+    public CommonResponse<AgentInfo> login(HttpServletRequest request, @RequestBody @Validated AgentVo agentVo) {
         AgentInfo agentInfo = cacheService.getAgentInfo(agentVo.getAgentKey());
         if (agentInfo == null) {
             agentInfo = agentService.getAgentInfo(agentVo.getAgentKey());
@@ -78,7 +73,7 @@ public class AgentController extends BaseController {
         agentInfo.setStateTime(agentInfo.getLoginTime());
         agentInfo.setLoginTime(Instant.now().toEpochMilli());
         agentInfo.setAgentState(AgentState.LOGIN);
-        agentInfo.setHost(station.getHost());
+        agentInfo.setHost(request.getLocalAddr());
         agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
         agentInfo.setLoginType(agentVo.getLoginType());
         agentInfo.setWorkType(agentVo.getWorkType());
@@ -101,7 +96,7 @@ public class AgentController extends BaseController {
         agent.setId(agentInfo.getId());
         agent.setCompanyId(agentInfo.getCompanyId());
         agent.setState(1);
-        agent.setHost(station.getHost());
+        agent.setHost(request.getRemoteAddr());
         agentService.editById(agent);
         return new CommonResponse<AgentInfo>(agentInfo1);
     }

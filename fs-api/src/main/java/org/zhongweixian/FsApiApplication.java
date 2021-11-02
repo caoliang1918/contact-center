@@ -3,9 +3,6 @@ package org.zhongweixian;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import io.minio.MinioClient;
-import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.entity.Station;
-import org.cti.cc.mapper.StationMapper;
 import org.cti.cc.util.SnowflakeIdWorker;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -15,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.context.ApplicationListener;
@@ -33,7 +28,6 @@ import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.tcp.TcpServer;
 import org.zhongweixian.cc.websocket.WebSocketManager;
-import org.zhongweixian.cc.websocket.handler.WsMonitorHandler;
 
 import java.io.Serializable;
 
@@ -42,7 +36,7 @@ import java.io.Serializable;
 @EnableEncryptableProperties
 @MapperScan("org.cti.cc.mapper")
 @SpringBootApplication
-public class FsApiApplication implements CommandLineRunner, ApplicationListener<ContextClosedEvent>, WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
+public class FsApiApplication implements CommandLineRunner, ApplicationListener<ContextClosedEvent> {
     private Logger logger = LoggerFactory.getLogger(FsApiApplication.class);
 
     @Autowired
@@ -58,16 +52,7 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     private GroupHandler groupHandler;
 
     @Autowired
-    private WsMonitorHandler wsMonitorHandler;
-
-    @Autowired
     private CacheService cacheService;
-
-    @Autowired
-    private StationMapper stationMapper;
-
-    @Value("${spring.application.id}")
-    private String appId;
 
     @Value("${spring.instance.id}")
     private String instanceId;
@@ -103,20 +88,6 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
         return new SnowflakeIdWorker(0, 0);
     }
 
-    @Bean
-    public Station station() {
-        if (StringUtils.isBlank(appId)) {
-            logger.error("spring.application.id is null");
-            System.exit(0);
-        }
-        Station station = stationMapper.selectByAppId(Integer.parseInt(appId));
-        if (station == null) {
-            logger.error("station {} is not exist", appId);
-            System.exit(-1);
-        }
-        return station;
-    }
-
 
     public static void main(String[] args) {
         SpringApplication.run(FsApiApplication.class, args);
@@ -128,7 +99,6 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
         webSocketManager.start();
         tcpServer.start();
         fsListen.start();
-        wsMonitorHandler.start();
     }
 
 
@@ -139,13 +109,6 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
         tcpServer.stop();
         fsListen.stop();
         groupHandler.stop();
-        wsMonitorHandler.stop();
-    }
-
-    @Override
-    public void customize(ConfigurableServletWebServerFactory factory) {
-        Station station = station();
-        factory.setPort(station.getApplicationPort());
     }
 
     @Bean

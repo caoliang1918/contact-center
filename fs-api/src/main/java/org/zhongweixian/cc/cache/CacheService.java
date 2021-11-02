@@ -1,9 +1,7 @@
 package org.zhongweixian.cc.cache;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.Playback;
@@ -32,7 +30,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,9 +57,6 @@ public class CacheService {
 
     @Autowired
     private PlaybackMapper playbackMapper;
-
-    @Value("${spring.application.id}")
-    private String appId;
 
     @Value("${spring.instance.id}")
     private String instanceId;
@@ -188,36 +182,6 @@ public class CacheService {
 
 
     public void initCompany() {
-        try {
-            namingService = NamingFactory.createNamingService(nacosAddr);
-            List<Instance> instances = namingService.getAllInstances(applicationName);
-            instances.forEach(instance -> {
-                if (appId.equals(instance.getMetadata().get("appId")) && !instanceId.equals(instance.getMetadata().get("random"))) {
-                    logger.error("spring.application.id:{} is exist", appId);
-                    System.exit(-1);
-                    return;
-                }
-            });
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        executorService.scheduleAtFixedRate(() -> {
-            try {
-                List<Instance> instances = namingService.getAllInstances(applicationName);
-                if (!CollectionUtils.isEmpty(instances)) {
-                    if (appId.equals(instances.get(0).getMetadata().get("appId"))) {
-                        setMaster(true);
-                    } else {
-                        setMaster(false);
-                    }
-                }
-            } catch (Exception e) {
-
-            }
-
-        }, 2, 2, TimeUnit.SECONDS);
-
-
         this.companyMap = companyService.initAll();
         if (companyMap.isEmpty()) {
             return;
@@ -290,14 +254,6 @@ public class CacheService {
 
     public Playback getPlayback(Long id) {
         return playbackMap.get(id);
-    }
-
-    public boolean isMaster() {
-        return master;
-    }
-
-    public void setMaster(boolean master) {
-        this.master = master;
     }
 
     public void stop() {

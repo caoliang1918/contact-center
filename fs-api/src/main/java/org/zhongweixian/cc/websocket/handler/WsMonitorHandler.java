@@ -64,25 +64,5 @@ public class WsMonitorHandler extends WsBaseHandler<WsMonitorEvent> {
         });
     }
 
-    public void monitorCancel(String agentKey) {
-        monitorEventMap.remove(agentKey);
-    }
 
-    /**
-     * 班长定时监听坐席
-     */
-    public void start() {
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
-            if (CollectionUtils.isEmpty(monitorEventMap)) {
-                return;
-            }
-            monitorEventMap.forEach((k, v) -> {
-                handleEvent(v);
-            });
-        }, 30, 5, TimeUnit.SECONDS);
-    }
-
-    public void stop() {
-        scheduledExecutorService.shutdown();
-    }
 }

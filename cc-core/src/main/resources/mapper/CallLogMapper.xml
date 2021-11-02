@@ -28,6 +28,7 @@
     <result column="hangup_dir" jdbcType="INTEGER" property="hangupDir" />
     <result column="hangup_code" jdbcType="INTEGER" property="hangupCode" />
     <result column="media" jdbcType="VARCHAR" property="media" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
     <result column="record" jdbcType="VARCHAR" property="record" />
     <result column="record2" jdbcType="VARCHAR" property="record2" />
     <result column="record_time" jdbcType="BIGINT" property="recordTime" />
@@ -47,7 +48,7 @@
     id, cts, uts, company_id, call_id, caller_display, caller, called_display, called, 
     agent_key, group_id, login_type, task_id, ivr_id, bot_id, call_time, answer_time, 
     end_time, call_type, direction, answer_flag, wait_time, answer_count, hangup_dir, 
-    hangup_code, media, record, record2, record_time, talk_time, frist_queue_time, queue_start_time,
+    hangup_code, media, host, record, record2, record_time, talk_time, frist_queue_time, queue_start_time,
     queue_end_time, follow_data, uuid1, uuid2, ext1, ext2, ext3, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -141,6 +142,9 @@
       </if>
       <if test="media != null">
         media,
+      </if>
+      <if test="host != null">
+        host,
       </if>
       <if test="record != null">
         record,
@@ -264,6 +268,9 @@
       <if test="media != null">
         #{media,jdbcType=VARCHAR},
       </if>
+      <if test="host != null">
+        #{host,jdbcType=VARCHAR},
+      </if>
       <if test="record != null">
         #{record,jdbcType=VARCHAR},
       </if>
@@ -386,6 +393,9 @@
       <if test="media != null">
         media = #{media,jdbcType=VARCHAR},
       </if>
+      <if test="host != null">
+        host = #{host,jdbcType=VARCHAR},
+      </if>
       <if test="record != null">
         record = #{record,jdbcType=VARCHAR},
       </if>
@@ -458,6 +468,7 @@
     <result column="hangup_dir" jdbcType="INTEGER" property="hangupDir" />
     <result column="hangup_code" jdbcType="VARCHAR" property="hangupCode" />
     <result column="media" jdbcType="VARCHAR" property="media" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
     <result column="record" jdbcType="VARCHAR" property="record" />
     <result column="record2" jdbcType="VARCHAR" property="record2" />
     <result column="record_time" jdbcType="BIGINT" property="recordTime" />
@@ -492,6 +503,7 @@
       <if test="hangupDir != null"> hangup_dir = #{hangupDir,jdbcType=INTEGER} </if>
       <if test="hangupCode != null"> and hangup_code = #{hangupCode,jdbcType=INTEGER} </if>
       <if test="media != null"> and  media = #{media,jdbcType=VARCHAR} </if>
+      <if test="host != null"> and  host = #{host,jdbcType=VARCHAR} </if>
       <if test="recordTime != null"> and record_time > #{recordTime,jdbcType=BIGINT} </if>
       <if test="talkTime != null"> and talk_time > #{talkTime,jdbcType=BIGINT} </if>
       <if test="uuid1 != null"> and uuid1 = #{uuid1,jdbcType=VARCHAR} </if>
@@ -548,6 +560,9 @@
       </if>
       <if test="media != null">
         media = #{media,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null">
+        host = #{host,jdbcType=VARCHAR},
       </if>
       <if test="record != null">
         record = #{record,jdbcType=VARCHAR},

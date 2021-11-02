@@ -11,12 +11,10 @@ import org.cti.cc.entity.Station;
 import org.cti.cc.enums.StationType;
 import org.cti.cc.mapper.StationMapper;
 import org.cti.cc.po.CallInfo;
-import org.cti.cc.po.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.EventType;
@@ -30,7 +28,6 @@ import org.zhongweixian.esl.inbound.Client;
 import org.zhongweixian.esl.inbound.IEslEventListener;
 import org.zhongweixian.esl.internal.Context;
 import org.zhongweixian.esl.internal.IModEslApi;
-import org.zhongweixian.esl.transport.CommandResponse;
 import org.zhongweixian.esl.transport.SendMsg;
 import org.zhongweixian.esl.transport.event.EslEvent;
 import org.zhongweixian.esl.transport.message.EslMessage;
@@ -48,13 +45,11 @@ import java.util.concurrent.*;
 public class FsListen {
     private Logger logger = LoggerFactory.getLogger(FsListen.class);
 
-    private Station station;
-
-    @Value("${spring.application.id}")
-    private Integer applicationId;
-
     @Value("${fs.thread.num:16}")
     private Integer threadNum;
+
+    @Value("${spring.application.group}")
+    private String group;
 
     @Autowired
     private StationMapper stationMapper;
@@ -63,6 +58,11 @@ public class FsListen {
     private String codecs;
 
     private static final String SPLIT = ",";
+
+    @Value("${server.port}")
+    private String localPort;
+
+    private String localAddress;
 
 
     private ScheduledExecutorService checkFsThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("check-freeswitch-pool-%d").build());
@@ -91,7 +91,6 @@ public class FsListen {
 
 
     public void start() {
-        station = stationMapper.selectByAppId(applicationId);
         for (int i = 0; i < threadNum; i++) {
             ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("fs-pool-" + i).build();
             ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory);
@@ -100,7 +99,7 @@ public class FsListen {
 
         Map<String, Object> params = new HashMap<>();
         params.put("applicationType", StationType.FS_MEDIA.getType());
-        params.put("applicationGroup", station.getApplicationGroup());
+        params.put("applicationGroup", group);
         List<Station> fsStations = stationMapper.selectListByMap(params);
 
         if (CollectionUtils.isEmpty(fsStations)) {
@@ -127,6 +126,11 @@ public class FsListen {
         try {
             fsClient.put(host + ":" + port, client);
             client.connect(new InetSocketAddress(host, port), password, 2);
+
+            if (localAddress == null) {
+                InetSocketAddress address = (InetSocketAddress) client.getChannel().localAddress();
+                localAddress = address.getHostName() + ":" + localPort;
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
@@ -241,7 +245,8 @@ public class FsListen {
                 if (formatEvent == null) {
                     return;
                 }
-                formatEvent.setHostname(host + ":" + port);
+                formatEvent.setRemoteAddress(host + ":" + port);
+                formatEvent.setLocalAddress(localAddress);
 
                 /**
                  * 一个callId挂机处理必须使用一个相同的线程
@@ -310,7 +315,7 @@ public class FsListen {
     private void checkConnect() {
         Map<String, Object> params = new HashMap<>();
         params.put("applicationType", 4);
-        params.put("applicationGroup", station.getApplicationGroup());
+        params.put("applicationGroup", group);
         List<Station> fsStations = stationMapper.selectListByMap(params);
 
         for (Station station : fsStations) {

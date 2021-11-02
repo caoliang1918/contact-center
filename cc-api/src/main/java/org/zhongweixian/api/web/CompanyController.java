@@ -651,15 +651,14 @@ public class CompanyController extends BaseController {
      * 1.8.6 批量添加坐席
      *
      * @param adminAccountInfo
-     * @param count
-     * @param start
+     * @param addAgentVo
      * @return
      */
     @PostMapping("agent/batch")
     public CommonResponse batchAddAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
-                                        @RequestParam Integer count, @RequestParam String prefix,
-                                        @RequestParam Long start, @RequestParam String pwd) {
-        Integer result = agentService.batchAddAgent(adminAccountInfo.getBindCompanyId(), count, prefix, start, pwd);
+                                        @Validated @RequestBody BatchAddAgentVo addAgentVo) {
+        addAgentVo.setCompanyId(adminAccountInfo.getBindCompanyId());
+        Integer result = agentService.batchAddAgent(addAgentVo);
         return new CommonResponse<>(result);
     }
 

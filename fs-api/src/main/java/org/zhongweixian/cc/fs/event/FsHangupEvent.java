@@ -157,7 +157,6 @@ public class FsHangupEvent extends FsBaseEvent {
                 ", eventName='" + eventName + '\'' +
                 ", coreUuid='" + coreUuid + '\'' +
                 ", deviceId='" + deviceId + '\'' +
-                ", hostname='" + hostname + '\'' +
                 '}';
     }
 }

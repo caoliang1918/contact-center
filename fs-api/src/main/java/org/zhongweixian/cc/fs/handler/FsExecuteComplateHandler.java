@@ -29,7 +29,7 @@ public class FsExecuteComplateHandler extends BaseEventHandler<FsExecuteComplate
                     logger.info("callId:{}, deviceId:{}, playback:{} success", callInfo.getCallId(), event.getDeviceId(), event.getApplicationData());
                 } else if ("FILE NOT FOUND".equals(event.getResponse())) {
                     logger.error("callId:{}, deviceId:{}  file:{} not found", callInfo.getCallId(), event.getDeviceId(), event.getApplicationData());
-                    hangupCall(event.getHostname(), callInfo.getCallId(), event.getDeviceId());
+                    hangupCall(event.getRemoteAddress(), callInfo.getCallId(), event.getDeviceId());
                     return;
                 }
                 break;

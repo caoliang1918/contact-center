@@ -144,6 +144,11 @@ public class CallLogPo implements Serializable {
     private String media;
 
     /**
+     * cti地址
+     */
+    private String host;
+
+    /**
      * 录音地址
      */
     private String record;
@@ -408,6 +413,14 @@ public class CallLogPo implements Serializable {
 
     public void setMedia(String media) {
         this.media = media;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public String getRecord() {

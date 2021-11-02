@@ -2,21 +2,15 @@ package org.zhongweixian.cc.listen;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.cti.cc.constant.Constants;
-import org.cti.cc.entity.Station;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.ExchangeTypes;
-import org.springframework.amqp.rabbit.annotation.Exchange;
-import org.springframework.amqp.rabbit.annotation.Queue;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
@@ -41,26 +35,22 @@ public class AgentStateListen {
     @Autowired
     private GroupHandler groupHandler;
 
-    @Autowired
-    private Station station;
-
-    @Value("${spring.application.id:}")
+    @Value("${spring.application.group}" + "${spring.instance.id}")
     private String appId;
 
-
     /**
-     * 指定监听，绑定队列队列的路由和路由
+     * 同步坐席状态
      *
-     * @param payload
+     * @param record
      */
-    @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.agent-" + "${spring.application.id}", autoDelete = "true"), key = Constants.DEFAULT_KEY, exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC))})
-    public void listenAgentState(@Payload String payload) {
-        JSONObject json = JSON.parseObject(payload);
-        if (station.getHost().equals(json.getString("host")) && appId.equals(json.getString("appId"))) {
+    @KafkaListener(topics = "sync.agent" + "${spring.application.group}", groupId = "${spring.instance.id}")
+    public void listenAgentState(ConsumerRecord<String, String> record) {
+        JSONObject json = JSON.parseObject(record.value());
+        if (appId.equals(json.getString("appId"))) {
             return;
         }
 
-        AgentStateResppnse resppnse = JSON.parseObject(payload, AgentStateResppnse.class);
+        AgentStateResppnse resppnse = JSON.parseObject(record.value(), AgentStateResppnse.class);
         AgentInfo agentInfo = cacheService.getAgentInfo(json.getString("agentKey"));
         if (agentInfo == null) {
             logger.info("receive agent {} change state {}", json.getString("agentKey"), json.getString("agentState"));
@@ -107,10 +97,10 @@ public class AgentStateListen {
         /**
          * 呼入转坐席，坐席和电话不在一个服务上
          */
-        if (station.getHost().equals(json.getString("host")) && !appId.equals(json.getString("appId"))) {
-            webSocketHandler.sentWsMessage(agentInfo, payload);
+        /*if (station.getHost().equals(json.getString("host")) && !appId.equals(json.getString("appId"))) {
+            webSocketHandler.sentWsMessage(agentInfo, record.value());
             return;
-        }
+        }*/
 
 
         if (state.equals(AgentState.LOGIN.name())) {
