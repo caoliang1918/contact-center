@@ -130,7 +130,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setAppId(appId);
 
             logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
-            kafkaTemplate.send(Constants.AGENT_STATE_EXCHANGE, Constants.DEFAULT_KEY, JSON.toJSONString(response));
+            kafkaTemplate.send(Constants.AGENT_STATE, JSON.toJSONString(response));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -170,6 +170,6 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agentStateLog.setRemoteAddress(agentInfo.getRemoteAddress());
         //持续时长
         agentStateLog.setDuration(agentInfo.getBeforeTime() == 0 ? 0 : (int) (agentInfo.getStateTime() - agentInfo.getBeforeTime()));
-        kafkaTemplate.send(Constants.AGENT_STATE_LOG_EXCHANGE, Constants.DEFAULT_KEY, JSON.toJSONString(agentStateLog));
+        kafkaTemplate.send(Constants.AGENT_STATE_LOG, JSON.toJSONString(agentStateLog));
     }
 }

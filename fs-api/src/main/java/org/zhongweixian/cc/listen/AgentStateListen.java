@@ -2,7 +2,9 @@ package org.zhongweixian.cc.listen;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.cti.cc.constant.Constants;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
@@ -42,15 +45,21 @@ public class AgentStateListen {
      * 同步坐席状态
      *
      * @param record
+     * @param ack
      */
-    @KafkaListener(topics = "sync.agent" + "${spring.application.group}", groupId = "${spring.instance.id}")
-    public void listenAgentState(ConsumerRecord<String, String> record) {
-        JSONObject json = JSON.parseObject(record.value());
+    @KafkaListener(topics = {Constants.AGENT_STATE}, groupId = "${spring.instance.id}")
+    public void listenAgentState(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        if (StringUtils.isBlank(record.value())) {
+            return;
+        }
+        ack.acknowledge();
+        String payload = record.value();
+        JSONObject json = JSON.parseObject(payload);
         if (appId.equals(json.getString("appId"))) {
             return;
         }
 
-        AgentStateResppnse resppnse = JSON.parseObject(record.value(), AgentStateResppnse.class);
+        AgentStateResppnse resppnse = JSON.parseObject(payload, AgentStateResppnse.class);
         AgentInfo agentInfo = cacheService.getAgentInfo(json.getString("agentKey"));
         if (agentInfo == null) {
             logger.info("receive agent {} change state {}", json.getString("agentKey"), json.getString("agentState"));

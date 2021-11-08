@@ -112,8 +112,8 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     }
 
     @Bean
-    public RestTemplate restTemplate(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout,
-                                     @Value("${cdr.notify.readTimeout:200}") Integer readTimeout) {
+    public RestTemplate restTemplate(@Value("${cdr.notify.connectTimeout:200}") Integer connectTimeout,
+                                     @Value("${cdr.notify.readTimeout:500}") Integer readTimeout) {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
         simpleClientHttpRequestFactory.setReadTimeout(readTimeout);

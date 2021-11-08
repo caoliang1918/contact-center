@@ -80,7 +80,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Override
     public int saveCallDevice(CallDevice callDevice) {
         if (callCdrMq == 1) {
-            kafkaTemplate.send(Constants.CALL_DEVICE_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDevice));
+            kafkaTemplate.send(Constants.CALL_DEVICE, JSON.toJSONString(callDevice));
             return 0;
         }
         return callDeviceMapper.insertSelective(callDevice);
@@ -92,7 +92,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return 0;
         }
         callDetails.forEach(callDetail -> {
-            kafkaTemplate.send(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
+            kafkaTemplate.send(Constants.CALL_DETAIL, JSON.toJSONString(callDetail));
         });
         return 1;
     }
@@ -104,7 +104,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         }
         logger.info("callId:{}, answerTime:{}, endTime:{}", callLog.getCallId(), callLog.getAnswerTime(), callLog.getEndTime());
         if (callCdrMq == 1) {
-            kafkaTemplate.send(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
+            kafkaTemplate.send(Constants.CALL_LOG, JSON.toJSONString(callLog));
             return 0;
         }
 

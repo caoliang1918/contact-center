@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +24,8 @@ import java.util.stream.Collectors;
  */
 @Configuration
 @Component
-public class AmqpConfig {
-    private Logger logger = LoggerFactory.getLogger(AmqpConfig.class);
+public class KafkaMqConfig {
+    private Logger logger = LoggerFactory.getLogger(KafkaMqConfig.class);
 
     @Autowired
     private KafkaAdmin kafkaAdmin;
@@ -64,7 +65,7 @@ public class AmqpConfig {
      */
     @Bean
     public NewTopic agentStateExchange() {
-        return new NewTopic(Constants.AGENT_STATE_EXCHANGE, 2, (short) 1);
+        return TopicBuilder.name(Constants.AGENT_STATE).partitions(2).replicas(1).build();
     }
 
     /**
@@ -74,28 +75,27 @@ public class AmqpConfig {
      */
     @Bean
     public NewTopic configTopic() {
-        return new NewTopic(Constants.CONFIG_EXCHANGE, 2, (short) 1);
+        return TopicBuilder.name(Constants.CC_CONFIG).partitions(2).replicas(1).build();
     }
-
 
     @Bean
     public NewTopic callDeviceTopic() {
-        return new NewTopic(Constants.CALL_DEVICE_EXCHANGE, 2, (short) 1);
+        return TopicBuilder.name(Constants.CALL_DEVICE).partitions(2).replicas(1).build();
     }
 
     @Bean
     public NewTopic callLogTopic() {
-        return new NewTopic(Constants.CALL_LOG_EXCHANGE, 2, (short) 1);
+        return TopicBuilder.name(Constants.CALL_LOG).partitions(2).replicas(1).build();
     }
 
     @Bean
     public NewTopic callDetailTopic() {
-        return new NewTopic(Constants.CALL_DETAIL_EXCHANGE, 2, (short) 1);
+        return TopicBuilder.name(Constants.CALL_DETAIL).partitions(2).replicas(1).build();
     }
 
     @Bean
     public NewTopic agentStateLogTopic() {
-        return new NewTopic(Constants.AGENT_STATE_LOG_EXCHANGE, 2, (short) 1);
+        return TopicBuilder.name(Constants.AGENT_STATE_LOG).partitions(2).replicas(1).build();
     }
 
 

@@ -48,7 +48,7 @@ public class WebSocketHandler implements ConnectionListener {
     @Value("${ws.login.timeout:2}")
     private Long timeout;
 
-    @Value("${ws.thread.num:32}")
+    @Value("${ws.thread.num:16}")
     private Integer threadNum;
 
     @Autowired
@@ -238,6 +238,8 @@ public class WebSocketHandler implements ConnectionListener {
         executorMap.forEach((i, executor) -> {
             executor.shutdown();
         });
+
+
     }
 
     /**

@@ -1,7 +1,6 @@
 package org.zhongweixian.cc.cache;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.nacos.api.naming.NamingService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.Playback;
@@ -68,12 +67,6 @@ public class CacheService {
     private RedisTemplate redisTemplate;
 
     private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("nacos=service-check").build());
-
-    private boolean master;
-
-    private NamingService namingService;
-
-    private String applicationName = "fs-api";
 
     /**
      * callInfo
@@ -148,12 +141,28 @@ public class CacheService {
         return callInfoMap.get(callId);
     }
 
+    /**
+     * 获取callInfo
+     *
+     * @param callId
+     * @return
+     */
     public CallInfo getCallInfo(Long callId) {
         if (callId == null) {
             return null;
         }
-        return callInfoMap.get(callId);
+        CallInfo callInfo = callInfoMap.get(callId);
+        if (callInfo != null) {
+            return callInfo;
+        }
+        Object obj = redisTemplate.opsForValue().get(callId);
+        if (obj == null) {
+            return null;
+        }
+        callInfo = JSON.parseObject(obj.toString(), CallInfo.class);
+        return callInfo;
     }
+
 
     public void removeCallInfo(Long callId) {
         CallInfo callInfo = callInfoMap.remove(callId);

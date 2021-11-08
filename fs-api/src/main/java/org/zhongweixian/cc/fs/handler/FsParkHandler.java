@@ -134,7 +134,9 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 }
                 sendAgentStateMessage(cacheService.getAgentInfo(callInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLED_RING.name(), callInfo.getAgentKey(), ringEntity));
             }
-        } else if (direction == Direction.INBOUND) {
+            return;
+        }
+        if (direction == Direction.INBOUND) {
             if (agentInfo == null) {
                 return;
             }
@@ -189,7 +191,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallType(CallType.INBOUND_CALL)
                 .withDirection(Direction.INBOUND)
                 .withCallTime(Instant.now().toEpochMilli())
-                //                .withCaller(event.getCaller())
+                //.withCaller(event.getCaller())
                 //接入号码
                 .withCallerDisplay(event.getCalled())
                 .withCompanyId(vdnPhone.getCompanyId())

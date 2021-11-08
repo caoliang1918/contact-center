@@ -304,6 +304,9 @@ public class GroupHandler extends BaseHandler {
      * @param agentInfo
      */
     public void agentFree(AgentInfo agentInfo) {
+        if (CollectionUtils.isEmpty(agentInfo.getGroupIds())) {
+            return;
+        }
         agentInfo.getGroupIds().forEach(groupId -> {
             PriorityQueue<AgentQueue> agentQueues = agentInfoMap.get(groupId);
             if (agentQueues == null) {
@@ -312,6 +315,9 @@ public class GroupHandler extends BaseHandler {
             logger.info("agent:{} ready for group:{}", agentInfo.getAgentKey(), groupId);
             //根据空闲策略
             GroupInfo groupInfo = cacheService.getGroupInfo(groupId);
+            if (groupInfo == null) {
+                return;
+            }
             //坐席空闲策略接口
             AgentStrategy agentStrategy = groupInfo.getGroupAgentStrategyPo().getAgentStrategy();
             Long priority = agentStrategy.calculateLevel(agentInfo);
@@ -532,7 +538,7 @@ public class GroupHandler extends BaseHandler {
     }
 
 
-    class CallQueue  {
+    class CallQueue {
         private Long priority;
 
         private Long callId;

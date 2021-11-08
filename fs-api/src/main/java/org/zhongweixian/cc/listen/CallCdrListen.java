@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by caoliang on 2021/8/3
  */
-@Component
+//@Component
 public class CallCdrListen {
     private Logger logger = LoggerFactory.getLogger(CallCdrListen.class);
 
@@ -40,7 +40,7 @@ public class CallCdrListen {
     @Autowired
     private AgentStateLogMapper agentStateLogMapper;
 
-    @KafkaListener(topics = Constants.AGENT_STATE_LOG_QUEUE)
+    @KafkaListener(topics = Constants.AGENT_STATE_LOG)
     public void listenAgentStateLog(ConsumerRecord<String, String> record) {
         AgentStateLog agentStateLog = JSONObject.parseObject(record.value(), AgentStateLog.class);
         if (agentStateLog != null && pressure == 0) {
@@ -52,7 +52,7 @@ public class CallCdrListen {
     /**
      * @param record
      */
-    @KafkaListener(topics = Constants.CALL_DEVICE_QUEUE)
+    @KafkaListener(topics = Constants.CALL_DEVICE)
     public void listenCallDevice(ConsumerRecord<String, String> record) {
         CallDevice callDevice = JSONObject.parseObject(record.value(), CallDevice.class);
         if (callDevice != null) {
@@ -63,7 +63,7 @@ public class CallCdrListen {
     /**
      * @param record
      */
-    @KafkaListener(topics = Constants.CALL_DETAIL_QUEUE)
+    @KafkaListener(topics = Constants.CALL_DETAIL)
     public void listenCallDetailQueue(ConsumerRecord<String, String> record) {
         CallDetail callDetail = JSONObject.parseObject(record.value(), CallDetail.class);
         logger.info("{}", record.value());
@@ -77,7 +77,7 @@ public class CallCdrListen {
      *
      * @param record
      */
-    @KafkaListener(topics = Constants.CALL_LOG_QUEUE)
+    @KafkaListener(topics = Constants.CALL_LOG)
     public void listenCallLog(ConsumerRecord<String, String> record) {
         logger.info("callLog:{}", record.value());
         CallLog callLog = JSONObject.parseObject(record.value(), CallLog.class);

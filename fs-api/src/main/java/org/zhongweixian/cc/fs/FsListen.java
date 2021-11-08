@@ -8,6 +8,7 @@ import org.cti.cc.constant.Constants;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
+import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.enums.StationType;
 import org.cti.cc.mapper.StationMapper;
 import org.cti.cc.po.CallInfo;
@@ -21,6 +22,7 @@ import org.zhongweixian.cc.EventType;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.configration.HandlerContext;
+import org.zhongweixian.cc.exception.BusinessException;
 import org.zhongweixian.cc.fs.event.FsHangupEvent;
 import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
 import org.zhongweixian.cc.util.RandomUtil;
@@ -103,6 +105,7 @@ public class FsListen {
         List<Station> fsStations = stationMapper.selectListByMap(params);
 
         if (CollectionUtils.isEmpty(fsStations)) {
+            logger.warn("fsStations is empty");
             return;
         }
         for (Station station : fsStations) {
@@ -362,6 +365,9 @@ public class FsListen {
      */
     public void makeCall(RouteGetway routeGetway, String display, String called, String deviceId, String... sipHeaders) {
         String media = RandomUtil.getRandomKey(fsClient.keySet());
+        if (StringUtils.isBlank(media)) {
+            throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
+        }
         makeCall(media, routeGetway, display, called, deviceId, sipHeaders);
     }
 

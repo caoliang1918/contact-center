@@ -13,6 +13,7 @@ public enum ErrorCode {
     PARAMETER_ERROR(1010, "%s参数异常"),
     DATA_IS_USED(1011, "数据被引用，请先删除引用数据"),
 
+    MEDIA_NOT_AVALIABLE(1100, "媒体不可用"),
     COMPANY_NOT_AVALIABLE(1101, "企业不可用"),
     ACCOUNT_ERROR(1102, "账号或密码错误"),
     ACCOUNT_DISABLED(1103, "账号被禁用"),

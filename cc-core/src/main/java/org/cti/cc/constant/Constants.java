@@ -48,29 +48,25 @@ public class Constants {
     /**
      * 坐席状态相关
      */
-    public final static String AGENT_STATE_EXCHANGE = "agent.state.exchange";
+    public final static String AGENT_STATE = "agent.state";
     public final static String DEFAULT_KEY = "";
 
     /**
      * 话单相关
      */
     public final static String CALL_CDR_ROUTING = "callCdr";
-    public final static String CALL_DEVICE_EXCHANGE = "call.device.exchange";
-    public final static String CALL_DEVICE_QUEUE = "call.device.queue";
-    public final static String CALL_LOG_EXCHANGE = "call.log.exchange";
-    public final static String CALL_LOG_QUEUE = "call.log.queue";
-    public final static String CALL_DETAIL_EXCHANGE = "call.detail.exchange";
-    public final static String CALL_DETAIL_QUEUE = "call.detail.queue";
+    public final static String CALL_DEVICE = "call.device";
+    public final static String CALL_LOG = "call.log";
+    public final static String CALL_DETAIL = "call.detail";
 
 
-    public final static String AGENT_STATE_LOG_EXCHANGE = "agent.state.log.exchange";
-    public final static String AGENT_STATE_LOG_QUEUE = "agent.state.log.queue";
+    public final static String AGENT_STATE_LOG = "agent.state.log";
 
 
     /**
      * 配置变更相关
      */
-    public final static String CONFIG_EXCHANGE = "cc.config.exchange";
+    public final static String CC_CONFIG = "cc.config";
 
 
 }
