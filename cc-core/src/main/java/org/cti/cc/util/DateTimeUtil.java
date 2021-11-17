@@ -163,7 +163,7 @@ public class DateTimeUtil {
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
         date = calendar.getTime();
         String accDate = format.format(date);
-        return accDate;
+        return "_" + accDate;
     }
 
     /**

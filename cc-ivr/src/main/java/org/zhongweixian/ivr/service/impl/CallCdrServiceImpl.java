@@ -102,7 +102,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         String binaryString = Long.toBinaryString(callId);
         Long time = Long.parseLong(binaryString.substring(0, 36), 2) + SnowflakeIdWorker.WORK_START;
         logger.info("callId:{} callTime:{} ", callId, DateTimeUtil.format(time));
-        return callLogMapper.getCall(companyId, callId, "_"+DateTimeUtil.getMonth(time));
+        return callLogMapper.getCall(companyId, callId, DateTimeUtil.getMonth(time));
     }
 
     @Override
