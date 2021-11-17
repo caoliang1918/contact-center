@@ -14,6 +14,7 @@ import org.cti.cc.mapper.CallLogMapper;
 import org.cti.cc.mapper.PushFailLogMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.*;
+import org.cti.cc.util.DateTimeUtil;
 import org.cti.cc.util.SnowflakeIdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,8 +69,8 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Autowired
     private AgentService agentService;
 
-    @Value("${call.cdr.mq:0}")
-    private Integer callCdrMq;
+    @Value("${call.cdr.pressure:0}")
+    private Integer callCdrPressure;
 
 
     @Override
@@ -79,7 +80,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public int saveCallDevice(CallDevice callDevice) {
-        if (callCdrMq == 1) {
+        if (callCdrPressure == 1) {
             kafkaTemplate.send(Constants.CALL_DEVICE, JSON.toJSONString(callDevice));
             return 0;
         }
@@ -103,7 +104,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return 0;
         }
         logger.info("callId:{}, answerTime:{}, endTime:{}", callLog.getCallId(), callLog.getAnswerTime(), callLog.getEndTime());
-        if (callCdrMq == 1) {
+        if (callCdrPressure == 1) {
             kafkaTemplate.send(Constants.CALL_LOG, JSON.toJSONString(callLog));
             return 0;
         }
@@ -125,8 +126,15 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public CallLogPo getCall(Long companyId, Long callId) {
-        return callLogMapper.getCall(companyId, callId);
+        /**
+         * 解析callId产生的时间
+         */
+        String binaryString = Long.toBinaryString(callId);
+        Long time = Long.parseLong(binaryString.substring(0, 36), 2) + SnowflakeIdWorker.WORK_START;
+        logger.info("callId:{} callTime:{} ", callId, DateTimeUtil.format(time));
+        return callLogMapper.getCall(companyId, callId, "_" + DateTimeUtil.getMonth(time));
     }
+
 
     @Override
     public int savePushFailLog(PushFailLog pushFailLog) {

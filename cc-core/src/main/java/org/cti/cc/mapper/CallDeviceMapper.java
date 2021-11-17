@@ -10,7 +10,7 @@ public interface CallDeviceMapper extends BaseMapper<CallDevice> {
      * @param callId
      * @return
      */
-    CallDevice selectByCallId(Long callId);
+    CallDevice selectByCallId(Long callId , String month);
 
 
     /**

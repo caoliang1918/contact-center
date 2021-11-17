@@ -5,8 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.cti.cc.constant.Constants;
+import org.cti.cc.entity.AgentStateLog;
+import org.cti.cc.mapper.AgentStateLogMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
+import org.cti.cc.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +23,8 @@ import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.cc.websocket.response.AgentStateResppnse;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
+
+import java.time.Instant;
 
 /**
  * Create by caoliang on 2020/11/1
@@ -38,8 +43,14 @@ public class AgentStateListen {
     @Autowired
     private GroupHandler groupHandler;
 
+    @Autowired
+    private AgentStateLogMapper agentStateLogMapper;
+
     @Value("${spring.application.group}" + "${spring.instance.id}")
     private String appId;
+
+    @Value("${agent.state.log.pressure:0}")
+    private Integer pressure;
 
     /**
      * 同步坐席状态
@@ -47,8 +58,9 @@ public class AgentStateListen {
      * @param record
      * @param ack
      */
-    @KafkaListener(topics = {Constants.AGENT_STATE}, groupId = "${spring.instance.id}")
+    @KafkaListener(topics = {Constants.AGENT_STATE}, groupId = "${spring.application.name}")
     public void listenAgentState(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        logger.debug("receive agent state payload  {} ", record.value());
         if (StringUtils.isBlank(record.value())) {
             return;
         }
@@ -121,6 +133,33 @@ public class AgentStateListen {
             agentInfo.setHost(json.getString("host"));
             agentInfo.setAgentState(AgentState.LOGIN);
             return;
+        }
+    }
+
+
+    @KafkaListener(topics = Constants.AGENT_STATE_LOG, groupId = "${spring.application.name}")
+    public void listenAgentStateLog(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        AgentStateLog agentStateLog = JSONObject.parseObject(record.value(), AgentStateLog.class);
+        ack.acknowledge();
+        if (agentStateLog == null || pressure == 1) {
+            return;
+        }
+        agentStateLog.setCts(Instant.now().getEpochSecond());
+        agentStateLog.setUts(agentStateLog.getCts());
+        agentStateLogMapper.insertSelective(agentStateLog);
+
+
+        String time = "_" + DateTimeUtil.getNowMonth();
+        agentStateLog.setMonth(time);
+        try {
+            //当前月份表
+            agentStateLogMapper.insert(agentStateLog);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            if (e.getMessage().contains("exist")) {
+                //cc_agent_state_log 每个月创建新表
+                agentStateLogMapper.createNewTable(time);
+            }
         }
     }
 }

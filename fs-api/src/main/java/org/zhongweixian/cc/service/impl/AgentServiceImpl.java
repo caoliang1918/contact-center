@@ -129,7 +129,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setTotalAfterTime(agentInfo.getTotalAfterTime());
             response.setAppId(appId);
 
-            logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
+            logger.info("send kafka agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
             kafkaTemplate.send(Constants.AGENT_STATE, JSON.toJSONString(response));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -156,6 +156,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agentStateLog.setAgentId(agentInfo.getId());
         agentStateLog.setCallId(agentInfo.getCallId());
         agentStateLog.setAgentKey(agentInfo.getAgentKey());
+        agentStateLog.setAgentName(agentInfo.getAgentName());
         agentStateLog.setBeforeTime(agentInfo.getBeforeTime());
         agentStateLog.setBeforeState(agentInfo.getBeforeState().name());
         agentStateLog.setState(agentInfo.getAgentState().name());
@@ -163,8 +164,6 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agentStateLog.setHost(agentInfo.getHost());
         agentStateLog.setCompanyId(agentInfo.getCompanyId());
         agentStateLog.setGroupId(agentInfo.getGroupId());
-        agentStateLog.setCts(agentInfo.getStateTime() / 1000);
-        agentStateLog.setUts(agentInfo.getStateTime() / 1000);
         agentStateLog.setLoginType(agentInfo.getLoginType());
         agentStateLog.setWorkType(agentInfo.getWorkType());
         agentStateLog.setRemoteAddress(agentInfo.getRemoteAddress());

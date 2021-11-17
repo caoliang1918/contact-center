@@ -10,10 +10,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.mapper.CallDetailMapper;
-import org.cti.cc.mapper.CallDeviceMapper;
-import org.cti.cc.mapper.CallDtmfMapper;
-import org.cti.cc.mapper.CallLogMapper;
+import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.util.DateTimeUtil;
@@ -30,6 +27,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +51,9 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Autowired
     private CallDtmfMapper callDtmfMapper;
 
+    @Autowired
+    private AgentStateLogMapper agentStateLogMapper;
+
     /**
      * 最大50万下载
      */
@@ -69,12 +70,24 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
         // cc_call_log
         callLogMapper.createNewTable(start, end, month);
         callLogMapper.clearTable(start, end);
-
+        callLogMapper.updateTableMonth(month);
 
         //cc_call_device
         callDeviceMapper.createNewTable(start, end, month);
         callDeviceMapper.clearTable(start, end);
 
+        //cc_call_detail
+        callDetailMapper.createNewTable(start, end, month);
+        callDetailMapper.clearTable(start, end);
+
+        //cc_call_dtmf
+        callDtmfMapper.createNewTable(start, end, month);
+        callDtmfMapper.clearTable(start, end);
+
+        //cc_agent_state_log 每个月创建新表
+        String nowMonth = "_" + DateTimeUtil.getNowMonth();
+        agentStateLogMapper.createNewTable(nowMonth);
+        agentStateLogMapper.clearTable(nowMonth);
     }
 
     @Override
@@ -83,11 +96,11 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
         Long end = (Long) params.get("end");
         if (start == null) {
             start = DateTimeUtil.getBeforeDay(0);
-            params.put("start" , start);
+            params.put("start", start);
         }
         if (end == null) {
             end = DateTimeUtil.getBeforeDay(-1);
-            params.put("end" , end);
+            params.put("end", end);
         }
         Integer pageNum = (Integer) params.get("pageNum");
         Integer pageSize = (Integer) params.get("pageSize");

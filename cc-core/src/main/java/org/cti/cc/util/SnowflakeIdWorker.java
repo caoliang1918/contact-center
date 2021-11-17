@@ -9,7 +9,7 @@ public class SnowflakeIdWorker {
     /**
      * 开始时间截 (2020-01-01)
      */
-    private final long twepoch = 1577808000000L;
+    public static final long WORK_START = 1577808000000L;
 
     /**
      * 机器id所占的位数
@@ -129,7 +129,7 @@ public class SnowflakeIdWorker {
         lastTimestamp = timestamp;
 
         //移位并通过或运算拼到一起组成64位的ID
-        return ((timestamp - twepoch) << timestampLeftShift)
+        return ((timestamp - WORK_START) << timestampLeftShift)
                 | (datacenterId << datacenterIdShift)
                 | (workerId << workerIdShift)
                 | sequence;

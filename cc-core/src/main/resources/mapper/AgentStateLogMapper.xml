@@ -42,21 +42,151 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="org.cti.cc.entity.AgentStateLog">
-    insert into cc_agent_state_log (id, cts, uts, company_id,
-      group_id, agent_id, agent_key, agent_name,
-      call_id, login_type, work_type, 
-      host, remote_address, before_state, 
-      before_time, state, state_time, 
-      duration, busy_desc, status, 
-      ext1, ext2, ext3)
-    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
-      #{groupId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR},
-      #{callId,jdbcType=BIGINT}, #{loginType,jdbcType=INTEGER}, #{workType,jdbcType=INTEGER},
-      #{host,jdbcType=VARCHAR}, #{remoteAddress,jdbcType=VARCHAR}, #{beforeState,jdbcType=VARCHAR}, 
-      #{beforeTime,jdbcType=BIGINT}, #{state,jdbcType=VARCHAR}, #{stateTime,jdbcType=BIGINT}, 
-      #{duration,jdbcType=INTEGER}, #{busyDesc,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR})
+    insert into cc_agent_state_log${month}
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="agentId != null">
+        agent_id,
+      </if>
+      <if test="agentKey != null">
+        agent_key,
+      </if>
+      <if test="agentName != null">
+        agent_name,
+      </if>
+      <if test="callId != null">
+        call_id,
+      </if>
+      <if test="loginType != null">
+        login_type,
+      </if>
+      <if test="workType != null">
+        work_type,
+      </if>
+      <if test="host != null">
+        host,
+      </if>
+      <if test="remoteAddress != null">
+        remote_address,
+      </if>
+      <if test="beforeState != null">
+        before_state,
+      </if>
+      <if test="beforeTime != null">
+        before_time,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="stateTime != null">
+        state_time,
+      </if>
+      <if test="duration != null">
+        duration,
+      </if>
+      <if test="busyDesc != null">
+        busy_desc,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="ext3 != null">
+        ext3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="agentId != null">
+        #{agentId,jdbcType=BIGINT},
+      </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="agentName != null">
+        #{agentName,jdbcType=VARCHAR},
+      </if>
+      <if test="callId != null">
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="loginType != null">
+        #{loginType,jdbcType=INTEGER},
+      </if>
+      <if test="workType != null">
+        #{workType,jdbcType=INTEGER},
+      </if>
+      <if test="host != null">
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteAddress != null">
+        #{remoteAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeState != null">
+        #{beforeState,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeTime != null">
+        #{beforeTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="stateTime != null">
+        #{stateTime,jdbcType=BIGINT},
+      </if>
+      <if test="duration != null">
+        #{duration,jdbcType=INTEGER},
+      </if>
+      <if test="busyDesc != null">
+        #{busyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        #{ext3,jdbcType=VARCHAR},
+      </if>
+    </trim>
   </insert>
+
   <insert id="insertSelective" parameterType="org.cti.cc.entity.AgentStateLog">
     insert into cc_agent_state_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -319,6 +449,15 @@
   <!-- 定时清空历史数据 -->
   <delete id="deleteAgentStateWork" parameterType="Long" >
      delete from cc_agent_state_log where state_time &lt; #{time}
+  </delete>
+
+  <!-- 每个月创建新表 -->
+  <update id="createNewTable" >
+    CREATE  TABLE IF NOT EXISTS cc_agent_state_log${month} SELECT * FROM cc_agent_state_log
+  </update>
+
+  <delete id="clearTable" >
+    delete from cc_agent_state_log${month}
   </delete>
 
 

@@ -110,6 +110,11 @@ public class AgentStateLog implements Serializable {
     private Integer status;
 
     /**
+     *
+     */
+    private String month;
+
+    /**
      * 扩展字段1
      */
     private String ext1;
@@ -284,6 +289,15 @@ public class AgentStateLog implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
     }
 
     public String getExt1() {

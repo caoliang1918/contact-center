@@ -130,7 +130,11 @@ public class CacheService {
 
     public void addCallInfo(CallInfo callInfo) {
         callInfoMap.put(callInfo.getCallId(), callInfo);
-        redisTemplate.opsForValue().set("callInfo:" + callInfo.getCallId(), JSON.toJSONString(callInfo));
+        try {
+            redisTemplate.opsForValue().set("callInfo:" + callInfo.getCallId(), JSON.toJSONString(callInfo));
+        } catch (Exception e) {
+            logger.error("cache callInfo error, callId:{}", callInfo.getCallId());
+        }
     }
 
     public CallInfo getCallInfo(String deviceId) {
@@ -172,8 +176,12 @@ public class CacheService {
                 deviceCall.remove(k);
             });
         }
-        redisTemplate.delete("callInfo:" + callId);
         groupHandler.removeCall(callInfo.getGroupId(), callId);
+        try {
+            redisTemplate.delete("callInfo:" + callId);
+        } catch (Exception e) {
+
+        }
     }
 
 

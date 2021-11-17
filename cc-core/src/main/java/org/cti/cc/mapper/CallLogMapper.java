@@ -16,9 +16,10 @@ public interface CallLogMapper extends BaseMapper<CallLog> {
      *
      * @param companyId
      * @param callId
+     * @param month
      * @return
      */
-    CallLogPo getCall(@Param("companyId") Long companyId, @Param("callId") Long callId);
+    CallLogPo getCall(@Param("companyId") Long companyId, @Param("callId") Long callId , @Param("month")String month);
 
 
     /**
@@ -57,6 +58,12 @@ public interface CallLogMapper extends BaseMapper<CallLog> {
      * @param end
      */
     void clearTable(@Param("start") Long start, @Param("end") Long end);
+
+    /**
+     *
+     * @param month
+     */
+    void updateTableMonth(String month);
 
     /**
      * 查询话单列表

@@ -36,6 +36,7 @@
     <result column="frist_queue_time" jdbcType="BIGINT" property="fristQueueTime" />
     <result column="queue_start_time" jdbcType="BIGINT" property="queueStartTime" />
     <result column="queue_end_time" jdbcType="BIGINT" property="queueEndTime" />
+    <result column="month_time" jdbcType="VARCHAR" property="monthTime" />
     <result column="follow_data" jdbcType="VARCHAR" property="followData" />
     <result column="uuid1" jdbcType="VARCHAR" property="uuid1" />
     <result column="uuid2" jdbcType="VARCHAR" property="uuid2" />
@@ -49,7 +50,7 @@
     agent_key, group_id, login_type, task_id, ivr_id, bot_id, call_time, answer_time, 
     end_time, call_type, direction, answer_flag, wait_time, answer_count, hangup_dir, 
     hangup_code, media, host, record, record2, record_time, talk_time, frist_queue_time, queue_start_time,
-    queue_end_time, follow_data, uuid1, uuid2, ext1, ext2, ext3, status
+    queue_end_time, month_time, follow_data, uuid1, uuid2, ext1, ext2, ext3, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select
@@ -166,6 +167,9 @@
       </if>
       <if test="queueEndTime != null">
         queue_end_time,
+      </if>
+      <if test="monthTime != null">
+        month_time,
       </if>
       <if test="followData != null">
         follow_data,
@@ -292,6 +296,9 @@
       <if test="queueEndTime != null">
         #{queueEndTime,jdbcType=BIGINT},
       </if>
+      <if test="monthTime != null">
+        #{monthTime,jdbcType=VARCHAR},
+      </if>
       <if test="followData != null">
         #{followData,jdbcType=VARCHAR},
       </if>
@@ -417,6 +424,9 @@
       <if test="queueEndTime != null">
         queue_end_time = #{queueEndTime,jdbcType=BIGINT},
       </if>
+      <if test="monthTime != null">
+        month_time = #{monthTime,jdbcType=VARCHAR},
+      </if>
       <if test="followData != null">
         follow_data = #{followData,jdbcType=VARCHAR},
       </if>
@@ -476,14 +486,15 @@
     <result column="frist_queue_time" jdbcType="BIGINT" property="fristQueueTime" />
     <result column="queue_start_time" jdbcType="BIGINT" property="queueStartTime" />
     <result column="queue_end_time" jdbcType="BIGINT" property="queueEndTime" />
+    <result column="month_time" jdbcType="VARCHAR" property="monthTime" />
     <result column="follow_data" jdbcType="VARCHAR" property="followData" />
     <result column="uuid1" jdbcType="VARCHAR" property="uuid1" />
     <result column="uuid2" jdbcType="VARCHAR" property="uuid2" />
     <result column="ext1" jdbcType="VARCHAR" property="ext1" />
     <result column="ext2" jdbcType="VARCHAR" property="ext2" />
     <result column="ext3" jdbcType="VARCHAR" property="ext3" />
-    <collection property="callDeviceList" column="call_id" select="org.cti.cc.mapper.CallDeviceMapper.selectByCallId"></collection>
-    <collection property="callDetailList" column="call_id" select="org.cti.cc.mapper.CallDetailMapper.selectByCallId"></collection>
+    <collection property="callDeviceList" column="{callId=call_id,monthTime=month_time}" select="org.cti.cc.mapper.CallDeviceMapper.selectByCallId"></collection>
+    <collection property="callDetailList" column="{callId=call_id,monthTime=month_time}" select="org.cti.cc.mapper.CallDetailMapper.selectByCallId"></collection>
   </resultMap>
 
   <sql id="Base_Where" >
@@ -601,12 +612,16 @@
     where call_id = #{callId,jdbcType=BIGINT}
   </update>
 
-  <select id="getCall" parameterType="Long" resultMap="BaseResultMapPo" >
+  <select id="getCall"   resultMap="BaseResultMapPo">
     select
         <include refid="Base_Column_List" />
     from
-        cc_call_log
-    <include refid="Base_Where"/>
+        cc_call_log${month}
+    <where>
+        <if test="companyId!=null"> company_id = #{companyId,jdbcType=BIGINT}</if>
+        <if test="callId!=null"> and call_id = #{callId,jdbcType=BIGINT}</if>
+    </where>
+
   </select>
 
   <select id="getCallByUuid1" resultMap="BaseResultMapPo">
@@ -642,10 +657,14 @@
 
 
   <update id="createNewTable" >
-    CREATE  TABLE IF NOT EXISTS cc_call_log_${month} SELECT * FROM cc_call_log where cc_call_log.call_time between #{start} and #{end}
+    CREATE  TABLE IF NOT EXISTS cc_call_log${month} SELECT * FROM cc_call_log where call_time > #{start} and  call_time &lt; #{end}
   </update>
 
   <delete id="clearTable" >
-     delete from cc_call_log where call_time between #{start} and #{end}
+     delete from cc_call_log where call_time > #{start} and call_time &lt; #{end}
   </delete>
+
+  <update id="updateTableMonth"  parameterType="String">
+      update cc_call_log${month} set month_time = #{month}
+  </update>
 </mapper>

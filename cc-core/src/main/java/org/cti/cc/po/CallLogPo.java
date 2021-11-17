@@ -188,6 +188,10 @@ public class CallLogPo implements Serializable {
     @JSONField(defaultValue = "0")
     private Long queueEndTime;
 
+    /**
+     * 月份
+     */
+    private String monthTime;
 
     /**
      * 通话随路数据(2048)
@@ -477,6 +481,14 @@ public class CallLogPo implements Serializable {
 
     public void setQueueEndTime(Long queueEndTime) {
         this.queueEndTime = queueEndTime;
+    }
+
+    public String getMonthTime() {
+        return monthTime;
+    }
+
+    public void setMonthTime(String monthTime) {
+        this.monthTime = monthTime;
     }
 
     public String getFollowData() {

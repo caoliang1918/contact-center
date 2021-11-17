@@ -29,7 +29,7 @@ public class TaskJobOfDay implements Job {
     /**
      * 坐席日志表保留天数
      */
-    @Value("${agent.state.work.retain:10}")
+    @Value("${agent.state.work.retain:2}")
     private Integer agentStateWorkRetain;
 
     @Value("${push.log.retain:5}")
