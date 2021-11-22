@@ -32,8 +32,8 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             return;
         }
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(event.getDeviceId());
-        NextCommand nextCommand = deviceInfo.getNextCommand();
-        logger.info("channel answer callId:{}, device:{}, nextCommand:{}", callInfo.getCallId(), event.getDeviceId(), nextCommand.getNextType());
+        NextCommand nextCommand = callInfo.getEaryCommand();
+        logger.info("channel answer callId:{}, device:{}", callInfo.getCallId(), event.getDeviceId());
 
         //接听时间也是振铃结束时间
         deviceInfo.setAnswerTime(event.getTimestamp() / 1000);
@@ -43,7 +43,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         if (nextCommand == null) {
             return;
         }
-        deviceInfo.setNextCommand(null);
+        callInfo.getNextCommands().remove(nextCommand);
         switch (nextCommand.getNextType()) {
             case NEXT_VDN:
                 matchVdnCode(event, callInfo, deviceInfo);
@@ -58,7 +58,8 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
                 String fromDeviceId = nextCommand.getNextValue();
                 // deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_BRIDGE, callInfo.getDeviceList().get(1)));
                 DeviceInfo fromDevice = callInfo.getDeviceInfoMap().get(fromDeviceId);
-                fromDevice.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_SUCCESS, event.getDeviceId() + ":" + callInfo.getDeviceList().get(1)));
+                callInfo.getNextCommands().add(new NextCommand(event.getDeviceId(), NextType.NEXT_TRANSFER_SUCCESS, event.getDeviceId() + ":" + callInfo.getDeviceList().get(1)));
+                // fromDevice.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_SUCCESS, event.getDeviceId() + ":" + callInfo.getDeviceList().get(1)));
                 logger.info("转接电话中 callId:{} from:{} to:{} ", callInfo.getCallId(), fromDeviceId, event.getDeviceId());
                 try {
                     transferCall(callInfo.getMedia(), callInfo.getDeviceList().get(1), event.getDeviceId());
@@ -143,7 +144,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         deviceInfo1.setDeviceId(deviceId);
         deviceInfo1.setCallTime(Instant.now().toEpochMilli());
         deviceInfo1.setAgentKey(callInfo.getAgentKey());
-        deviceInfo1.setNextCommand(new NextCommand(NextType.NEXT_CALL_BRIDGE, deviceInfo.getDeviceId()));
+        callInfo.getNextCommands().add(new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_CALL_BRIDGE, deviceInfo.getDeviceId()));
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo1);
         cacheService.addDevice(deviceId, callInfo.getCallId());
         cacheService.addCallInfo(callInfo);

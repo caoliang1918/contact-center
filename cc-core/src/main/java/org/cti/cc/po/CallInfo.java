@@ -194,8 +194,14 @@ public class CallInfo implements Serializable {
     private Long queueLevel;
 
 
+    /**
+     * 当前通话的设备
+     */
     private List<String> deviceList = new ArrayList<>();
 
+    /**
+     * K-V
+     */
     private Map<String, DeviceInfo> deviceInfoMap = new HashMap<>();
 
     /**
@@ -207,6 +213,11 @@ public class CallInfo implements Serializable {
      * 模块流程间数据
      */
     private Map<String, Object> processData = new HashMap<>();
+
+    /**
+     * 执行下一步命令
+     */
+    private List<NextCommand> nextCommands = new ArrayList<>();
 
     /**
      * 电话流程
@@ -539,6 +550,21 @@ public class CallInfo implements Serializable {
 
     public void setQueueLevel(Long queueLevel) {
         this.queueLevel = queueLevel;
+    }
+
+    public List<NextCommand> getNextCommands() {
+        return nextCommands;
+    }
+
+    public void setNextCommands(List<NextCommand> nextCommands) {
+        this.nextCommands = nextCommands;
+    }
+
+    public NextCommand getEaryCommand() {
+        if (nextCommands.size() == 0) {
+            return null;
+        }
+        return nextCommands.get(0);
     }
 
     public static final class CallInfoBuilder {

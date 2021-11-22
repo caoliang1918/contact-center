@@ -10,6 +10,7 @@ import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
+import org.cti.cc.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -181,6 +182,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             callLog.setDirection(Direction.INBOUND.name());
             callLog.setHangupDir(3);
             callLog.setHangupCode(CauseEnums.VDN_ERROR.getHuangupCode());
+            callLog.setMonthTime(DateTimeUtil.getNowMonth());
             callCdrService.saveOrUpdateCallLog(callLog);
             hangupCall(event.getRemoteAddress(), uuid, event.getDeviceId());
             return;
@@ -207,7 +209,6 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallTime(callInfo.getCallTime())
                 .withDeviceType(2)
                 .withCdrType(1)
-                .withNextCommand(new NextCommand(NextType.NEXT_VDN))
                 .build();
 
         CompanyInfo companyInfo = cacheService.getCompany(vdnPhone.getCompanyId());
@@ -215,6 +216,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         callInfo.setCdrNotifyUrl(companyInfo.getNotifyUrl());
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
         callInfo.getDeviceList().add(deviceId);
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_VDN, null));
 
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callId);
@@ -274,7 +276,6 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallTime(callInfo.getCallTime())
                 .withDeviceType(1)
                 .withCdrType(2)
-                .withNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER))
                 .build();
 
         CompanyInfo companyInfo = cacheService.getCompany(agent.getCompanyId());
@@ -283,6 +284,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         callInfo.getDeviceInfoMap().put(event.getDeviceId(), deviceInfo);
         callInfo.getDeviceList().add(event.getDeviceId());
 
+        callInfo.getNextCommands().add(new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_CALL_OTHER, null));
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(event.getDeviceId(), callId);
         super.answer(event.getRemoteAddress(), event.getDeviceId());

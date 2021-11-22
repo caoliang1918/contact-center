@@ -20,6 +20,7 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
+import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.cc.websocket.response.AgentStateResppnse;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
@@ -45,6 +46,9 @@ public class AgentStateListen {
 
     @Autowired
     private AgentStateLogMapper agentStateLogMapper;
+
+    @Autowired
+    private CallCdrService callCdrService;
 
     @Value("${spring.application.group}" + "${spring.instance.id}")
     private String appId;
@@ -149,17 +153,20 @@ public class AgentStateListen {
         agentStateLogMapper.insertSelective(agentStateLog);
 
 
-        String time = "_" + DateTimeUtil.getNowMonth();
+        String time = DateTimeUtil.getNowMonth();
         agentStateLog.setMonth(time);
         try {
             //当前月份表
-            agentStateLogMapper.insert(agentStateLog);
+            agentStateLogMapper.insertMonthSelective(agentStateLog);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            if (e.getMessage().contains("exist")) {
-                //cc_agent_state_log 每个月创建新表
-                agentStateLogMapper.createNewTable(time);
+            if (e.getMessage().contains("doesn't exist")) {
+                /**
+                 * 初始化月表
+                 */
+                callCdrService.subTable(DateTimeUtil.getNowMonth());
+                return;
             }
+            logger.error(e.getMessage(), e);
         }
     }
 }

@@ -244,6 +244,199 @@
       </if>
     </trim>
   </insert>
+  <insert id="insertMonthSelective" parameterType="org.cti.cc.entity.CallDevice">
+    insert into cc_call_device${month}
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="callId != null">
+        call_id,
+      </if>
+      <if test="deviceId != null">
+        device_id,
+      </if>
+      <if test="agentKey != null">
+        agent_key,
+      </if>
+      <if test="deviceType != null">
+        device_type,
+      </if>
+      <if test="cdrType != null">
+        cdr_type,
+      </if>
+      <if test="caller != null">
+        caller,
+      </if>
+      <if test="called != null">
+        called,
+      </if>
+      <if test="display != null">
+        display,
+      </if>
+      <if test="calledLocation != null">
+        called_location,
+      </if>
+      <if test="callerLocation != null">
+        caller_location,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="ringStartTime != null">
+        ring_start_time,
+      </if>
+      <if test="ringEndTime != null">
+        ring_end_time,
+      </if>
+      <if test="answerTime != null">
+        answer_time,
+      </if>
+      <if test="bridgeTime != null">
+        bridge_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="talkTime != null">
+        talk_time,
+      </if>
+      <if test="sipProtocol != null">
+        sip_protocol,
+      </if>
+      <if test="record != null">
+        record,
+      </if>
+      <if test="record2 != null">
+        record2,
+      </if>
+      <if test="recordTime != null">
+        record_time,
+      </if>
+      <if test="channelName != null">
+        channel_name,
+      </if>
+      <if test="hangupCause != null">
+        hangup_cause,
+      </if>
+      <if test="ringCause != null">
+        ring_cause,
+      </if>
+      <if test="sipStatus != null">
+        sip_status,
+      </if>
+      <if test="ext1 != null">
+        ext1,
+      </if>
+      <if test="ext2 != null">
+        ext2,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null">
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="deviceId != null">
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        #{deviceType,jdbcType=INTEGER},
+      </if>
+      <if test="cdrType != null">
+        #{cdrType,jdbcType=INTEGER},
+      </if>
+      <if test="caller != null">
+        #{caller,jdbcType=VARCHAR},
+      </if>
+      <if test="called != null">
+        #{called,jdbcType=VARCHAR},
+      </if>
+      <if test="display != null">
+        #{display,jdbcType=VARCHAR},
+      </if>
+      <if test="calledLocation != null">
+        #{calledLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="callerLocation != null">
+        #{callerLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="ringStartTime != null">
+        #{ringStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="ringEndTime != null">
+        #{ringEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerTime != null">
+        #{answerTime,jdbcType=BIGINT},
+      </if>
+      <if test="bridgeTime != null">
+        #{bridgeTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="talkTime != null">
+        #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="sipProtocol != null">
+        #{sipProtocol,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null">
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="record2 != null">
+        #{record2,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null">
+        #{recordTime,jdbcType=BIGINT},
+      </if>
+      <if test="channelName != null">
+        #{channelName,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupCause != null">
+        #{hangupCause,jdbcType=VARCHAR},
+      </if>
+      <if test="ringCause != null">
+        #{ringCause,jdbcType=VARCHAR},
+      </if>
+      <if test="sipStatus != null">
+        #{sipStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
 
   <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallDevice">
     update cc_call_device
@@ -351,11 +544,16 @@
         call_id = #{callId,jdbcType=BIGINT} order by call_time asc
   </select>
 
-  <update id="createNewTable" >
-    CREATE  TABLE IF NOT EXISTS cc_call_device${month} SELECT * FROM cc_call_device where call_time > #{start} and call_time &lt; #{end}
+  <!-- 每个月创建新表 -->
+  <update id="createNewTable" databaseId="mysql">
+    create table if not exists cc_call_device${month} (like cc_call_device)
+  </update>
+
+  <update id="createNewTable" databaseId="oracle">
+    create table cc_call_device${month} like cc_call_device
   </update>
 
   <delete id="clearTable" >
-    delete from cc_call_device where call_time > #{start} and call_time &lt; #{end}
+    delete from cc_call_device where  call_time &lt; #{end}
   </delete>
 </mapper>

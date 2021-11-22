@@ -70,24 +70,25 @@ public class VdnHandler extends BaseHandler {
                 //放音类型(1:按键导航,2:技能组,3:ivr,4:路由字码,5:挂机)
                 logger.info("playback tyep:{}, value:{}", vdnSchedulePo.getPlayType(), vdnSchedulePo.getPlayValue());
                 if (vdnSchedulePo.getPlayType() != 1) {
+                    NextCommand nextCommand = null;
                     switch (vdnSchedulePo.getPlayType()) {
                         case 2:
-                            deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_GROUP, vdnSchedulePo.getPlayValue().toString()));
+                            nextCommand = new NextCommand(deviceId, NextType.NEXT_GROUP, vdnSchedulePo.getPlayValue().toString());
                             break;
                         case 3:
-                            deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_IVR, vdnSchedulePo.getPlayValue().toString()));
+                            nextCommand = new NextCommand(deviceId, NextType.NEXT_IVR, vdnSchedulePo.getPlayValue().toString());
                             break;
                         case 4:
-                            deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_VDN, vdnSchedulePo.getPlayValue().toString()));
+                            nextCommand = new NextCommand(deviceId, NextType.NEXT_VDN, vdnSchedulePo.getPlayValue().toString());
                             break;
                         case 5:
-                            deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_HANGUP, vdnSchedulePo.getPlayValue().toString()));
+                            nextCommand = new NextCommand(deviceId, NextType.NEXT_HANGUP, vdnSchedulePo.getPlayValue().toString());
                             break;
                         default:
                             break;
                     }
                     playback(callInfo.getMedia(), deviceId, playback.getPlayback());
-                    doNextCommand(callInfo, deviceInfo);
+                    doNextCommand(callInfo, deviceInfo, nextCommand);
                     return;
                 }
 

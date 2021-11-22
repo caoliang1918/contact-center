@@ -22,11 +22,4 @@ public interface AgentStateLogMapper extends BaseMapper<AgentStateLog> {
      */
     void createNewTable(@Param("month") String month);
 
-
-    /**
-     * 删除数据
-     *
-     * @param month
-     */
-    void clearTable(@Param("month") String month);
 }

@@ -7,29 +7,36 @@ import org.cti.cc.enums.NextType;
  */
 public class NextCommand {
 
-    private Long callId;
+    /**
+     * 记录执行设备
+     */
+    private String deviceId;
 
+    /**
+     * 下一步执行命令
+     */
     private NextType nextType;
 
+    /**
+     * 执行参数
+     */
     private String nextValue;
 
-    public NextCommand(NextType nextType) {
-        this.nextType = nextType;
-    }
 
-    public NextCommand(NextType nextType, String nextValue) {
+
+    public NextCommand(String deviceId, NextType nextType, String nextValue) {
+        this.deviceId = deviceId;
         this.nextType = nextType;
         this.nextValue = nextValue;
     }
 
-    public Long getCallId() {
-        return callId;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setCallId(Long callId) {
-        this.callId = callId;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
-
 
     public NextType getNextType() {
         return nextType;

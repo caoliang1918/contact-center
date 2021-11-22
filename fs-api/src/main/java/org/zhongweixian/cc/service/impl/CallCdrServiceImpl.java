@@ -8,10 +8,7 @@ import org.cti.cc.entity.*;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.enums.NextType;
-import org.cti.cc.mapper.CallDetailMapper;
-import org.cti.cc.mapper.CallDeviceMapper;
-import org.cti.cc.mapper.CallLogMapper;
-import org.cti.cc.mapper.PushFailLogMapper;
+import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.*;
 import org.cti.cc.util.DateTimeUtil;
@@ -49,6 +46,12 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     private CallDeviceMapper callDeviceMapper;
 
     @Autowired
+    private CallDtmfMapper callDtmfMapper;
+
+    @Autowired
+    private AgentStateLogMapper agentStateLogMapper;
+
+    @Autowired
     private PushFailLogMapper pushFailLogMapper;
 
     @Autowired
@@ -79,12 +82,28 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     }
 
     @Override
+    public void subTable(String month) {
+        // cc_call_log
+        callLogMapper.createNewTable(month);
+        //cc_call_device
+        callDeviceMapper.createNewTable(month);
+        //cc_call_detail
+        callDetailMapper.createNewTable(month);
+        //cc_call_dtmf
+        callDtmfMapper.createNewTable(month);
+        //cc_agent_state_log
+        agentStateLogMapper.createNewTable(month);
+    }
+
+    @Override
     public int saveCallDevice(CallDevice callDevice) {
-        if (callCdrPressure == 1) {
-            kafkaTemplate.send(Constants.CALL_DEVICE, JSON.toJSONString(callDevice));
-            return 0;
+        if (callCdrPressure == 0) {
+            callDeviceMapper.insertSelective(callDevice);
+            callDevice.setMonth(DateTimeUtil.getNowMonth());
+            return callDeviceMapper.insertMonthSelective(callDevice);
         }
-        return callDeviceMapper.insertSelective(callDevice);
+        kafkaTemplate.send(Constants.CALL_DEVICE, JSON.toJSONString(callDevice));
+        return 1;
     }
 
     @Override
@@ -92,8 +111,15 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         if (CollectionUtils.isEmpty(callDetails)) {
             return 0;
         }
+        String month = DateTimeUtil.getNowMonth();
         callDetails.forEach(callDetail -> {
-            kafkaTemplate.send(Constants.CALL_DETAIL, JSON.toJSONString(callDetail));
+            callDetail.setMonth(month);
+            if (callCdrPressure == 1) {
+                kafkaTemplate.send(Constants.CALL_DETAIL, JSON.toJSONString(callDetail));
+            } else {
+                callDetailMapper.insertSelective(callDetail);
+                callDetailMapper.insertMonthSelective(callDetail);
+            }
         });
         return 1;
     }
@@ -107,6 +133,9 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         if (callCdrPressure == 1) {
             kafkaTemplate.send(Constants.CALL_LOG, JSON.toJSONString(callLog));
             return 0;
+        }
+        if (callLog.getEndTime() != null) {
+            callLogMapper.insertMonthSelective(callLog);
         }
 
         if (callLog.getAnswerTime() != null && callLog.getEndTime() == null) {
@@ -177,13 +206,13 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 .withCdrType(2)
                 .withDeviceType(1)
                 .withAgentKey(agentInfo.getAgentKey())
-                .withNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER))
                 .build();
 
 
         callInfo.setHiddenCustomer(agentInfo.getHiddenCustomer());
         callInfo.setCdrNotifyUrl(agentInfo.getCdrNotifyUrl());
         callInfo.getDeviceList().add(deviceId);
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
 
         switch (makeCallVo.getCallType()) {
             case OUTBOUNT_CALL:

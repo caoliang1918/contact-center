@@ -94,12 +94,11 @@ public class WsTransferHandler extends WsBaseHandler<WsTransferEvent> {
         deviceInfo.setCdrType(4);
         deviceInfo.setDeviceType(1);
         deviceInfo.setAgentKey(transferAgent.getAgentKey());
-        //传入客户侧id
-        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_CALL, agentInfo.getDeviceId()));
 
 
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_TRANSFER_CALL, agentInfo.getDeviceId()));
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callInfo.getCallId());
 

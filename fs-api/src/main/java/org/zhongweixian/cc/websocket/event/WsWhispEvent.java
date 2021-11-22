@@ -3,14 +3,20 @@ package org.zhongweixian.cc.websocket.event;
 import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 
 /**
- * Create by caoliang on 2020/11/9
+ * Created by caoliang on 2021/11/19
  * <p>
- * 强拆
+ * 班长耳语
  */
-public class WsBreakEvent extends WsBaseEvent {
+public class WsWhispEvent extends WsBaseEvent {
 
+    /**
+     *
+     */
     private Long callId;
 
+    /**
+     *
+     */
     private String agent;
 
     public Long getCallId() {

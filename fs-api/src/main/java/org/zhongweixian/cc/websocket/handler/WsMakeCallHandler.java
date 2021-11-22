@@ -187,7 +187,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         deviceInfo.setDeviceType(1);
         deviceInfo.setCdrType(3);
         deviceInfo.setAgentKey(agentInfo.getAgentKey());
-        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER));
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
 
 
         callInfo.getDeviceList().add(deviceId);
@@ -260,7 +260,6 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         deviceInfo.setCdrType(2);
         deviceInfo.setDeviceType(1);
         deviceInfo.setAgentKey(agentInfo.getAgentKey());
-        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER));
 
         if (StringUtils.isNoneBlank(event.getUuid1())) {
             callInfo.setUuid1(event.getUuid1());
@@ -273,6 +272,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         callInfo.setHiddenCustomer(agentInfo.getHiddenCustomer());
         callInfo.setCdrNotifyUrl(agentInfo.getCdrNotifyUrl());
 
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callInfo.getCallId());
 

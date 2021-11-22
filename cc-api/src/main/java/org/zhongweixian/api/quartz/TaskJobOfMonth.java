@@ -38,11 +38,11 @@ public class TaskJobOfMonth implements Job {
     /**
      * 按月分表
      *
-     * @param start
-     * @param end
+     * @param start 上个月开始时间
+     * @param end   上个月结束时间
      */
     private void subTable(Long start, Long end) {
-        String month = DateTimeUtil.getBeforeMonth();
-        callLogService.subTable(start, end, month);
+        String month = DateTimeUtil.getNowMonth();
+        callLogService.subTable(month);
     }
 }

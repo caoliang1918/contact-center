@@ -1,5 +1,7 @@
 package org.cti.cc.mapper.base;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +42,14 @@ public interface BaseMapper<T> {
      * @return
      */
     int insertSelective(T record);
+
+    /**
+     * 插入当前月表数据
+     *
+     * @param record
+     * @return
+     */
+    int insertMonthSelective(T record);
 
     /**
      * @param id

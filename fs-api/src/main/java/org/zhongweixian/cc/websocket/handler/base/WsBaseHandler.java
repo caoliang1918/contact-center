@@ -149,6 +149,17 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
         fsListen.hold(media, deviceId);
     }
 
+    /**
+     * 强插
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    protected void insert(String media, Long callId, String deviceId) {
+        fsListen.insert(media, deviceId);
+    }
+
 
     /**
      * 桥接电话

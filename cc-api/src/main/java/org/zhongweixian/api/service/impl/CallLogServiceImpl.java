@@ -66,28 +66,26 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
     }
 
     @Override
-    public void subTable(Long start, Long end, String month) {
+    public void subTable(String month) {
         // cc_call_log
-        callLogMapper.createNewTable(start, end, month);
-        callLogMapper.clearTable(start, end);
-        callLogMapper.updateTableMonth(month);
+        callLogMapper.createNewTable(month);
+        //callLogMapper.clearTable(start, end);
 
         //cc_call_device
-        callDeviceMapper.createNewTable(start, end, month);
-        callDeviceMapper.clearTable(start, end);
+        callDeviceMapper.createNewTable(month);
+        //callDeviceMapper.clearTable(start, end);
 
         //cc_call_detail
-        callDetailMapper.createNewTable(start, end, month);
-        callDetailMapper.clearTable(start, end);
+        callDetailMapper.createNewTable(month);
+        //callDetailMapper.clearTable(start, end);
 
         //cc_call_dtmf
-        callDtmfMapper.createNewTable(start, end, month);
-        callDtmfMapper.clearTable(start, end);
+        callDtmfMapper.createNewTable(month);
+        //callDtmfMapper.clearTable(start, end);
 
-        //cc_agent_state_log 每个月创建新表
-        String nowMonth = "_" + DateTimeUtil.getNowMonth();
-        agentStateLogMapper.createNewTable(nowMonth);
-        agentStateLogMapper.clearTable(nowMonth);
+        //cc_agent_state_log
+        agentStateLogMapper.createNewTable(month);
+        //agentStateLogMapper.clearTable(nowMonth);
     }
 
     @Override
@@ -166,6 +164,23 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
         ServletOutputStream out = response.getOutputStream();
         workbook.write(out);
         out.flush();
+    }
+
+    @Override
+    public int clearCallLog(Long time) {
+        int result = 0;
+        // cc_call_log
+        result += callLogMapper.clearTable(time);
+
+        //cc_call_device
+        result += callDeviceMapper.clearTable(time);
+
+        //cc_call_detail
+        result += callDetailMapper.clearTable(time);
+
+        //cc_call_dtmf
+        result += callDtmfMapper.clearTable(time);
+        return result;
     }
 
 

@@ -1,6 +1,7 @@
 package org.zhongweixian.cc.cache;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.Playback;
@@ -131,7 +132,7 @@ public class CacheService {
     public void addCallInfo(CallInfo callInfo) {
         callInfoMap.put(callInfo.getCallId(), callInfo);
         try {
-            redisTemplate.opsForValue().set("callInfo:" + callInfo.getCallId(), JSON.toJSONString(callInfo));
+            redisTemplate.opsForValue().set("callInfo:" + callInfo.getCallId(), JSONObject.toJSONString(callInfo));
         } catch (Exception e) {
             logger.error("cache callInfo error, callId:{}", callInfo.getCallId());
         }

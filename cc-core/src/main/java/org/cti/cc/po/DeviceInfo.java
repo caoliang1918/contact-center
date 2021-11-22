@@ -126,11 +126,6 @@ public class DeviceInfo {
     private Long recordTime;
 
     /**
-     * 记录当前设备下一步action
-     */
-    private NextCommand nextCommand;
-
-    /**
      * 当前设备状态
      */
     private String state;
@@ -312,14 +307,6 @@ public class DeviceInfo {
         this.sipStatus = sipStatus;
     }
 
-    public NextCommand getNextCommand() {
-        return nextCommand;
-    }
-
-    public void setNextCommand(NextCommand nextCommand) {
-        this.nextCommand = nextCommand;
-    }
-
     public String getState() {
         return state;
     }
@@ -360,7 +347,6 @@ public class DeviceInfo {
         private Long ringEndTime;
         private Long answerTime;
         private Long endTime;
-        private NextCommand nextCommand;
 
         private DeviceInfoBuilder() {
         }
@@ -443,12 +429,6 @@ public class DeviceInfo {
             return this;
         }
 
-        public DeviceInfoBuilder withNextCommand(NextCommand nextCommand) {
-            this.nextCommand = nextCommand;
-            return this;
-        }
-
-
         public DeviceInfo build() {
             DeviceInfo deviceInfo = new DeviceInfo();
             deviceInfo.deviceType = this.deviceType;
@@ -466,7 +446,6 @@ public class DeviceInfo {
             deviceInfo.display = this.display;
             deviceInfo.ringStartTime = this.ringStartTime;
             deviceInfo.caller = this.caller;
-            deviceInfo.nextCommand = this.nextCommand;
             return deviceInfo;
         }
     }
@@ -496,7 +475,9 @@ public class DeviceInfo {
                 ", hangupCause='" + hangupCause + '\'' +
                 ", ringCause='" + ringCause + '\'' +
                 ", sipStatus='" + sipStatus + '\'' +
-                ", nextCommand=" + nextCommand +
+                ", record='" + record + '\'' +
+                ", recordTime=" + recordTime +
+                ", state='" + state + '\'' +
                 '}';
     }
 }

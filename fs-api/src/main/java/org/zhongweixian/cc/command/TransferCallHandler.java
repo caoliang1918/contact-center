@@ -52,7 +52,6 @@ public class TransferCallHandler extends BaseHandler {
                 .withCallId(callInfo.getCallId())
                 .withCallTime(Instant.now().toEpochMilli())
                 .withDisplay(callInfo.getCaller())
-                .withNextCommand(new NextCommand(NextType.NEXT_CALL_BRIDGE, deviceId))
                 .build();
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, device);
@@ -63,6 +62,7 @@ public class TransferCallHandler extends BaseHandler {
         transferCall.setDetailIndex(callInfo.getCallDetails().size() + 1);
         transferCall.setTransferType(5);
         callInfo.getCallDetails().add(transferCall);
+        callInfo.getNextCommands().add(new NextCommand(thisDeviceId, NextType.NEXT_CALL_BRIDGE, deviceId));
         fsListen.makeCall(routeGetway, callInfo.getCaller(), callInfo.getCalled(), deviceId);
 
     }

@@ -41,8 +41,9 @@
     delete from cc_agent_state_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.cti.cc.entity.AgentStateLog">
-    insert into cc_agent_state_log${month}
+
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.AgentStateLog">
+    insert into cc_agent_state_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -186,9 +187,8 @@
       </if>
     </trim>
   </insert>
-
-  <insert id="insertSelective" parameterType="org.cti.cc.entity.AgentStateLog">
-    insert into cc_agent_state_log
+  <insert id="insertMonthSelective" parameterType="org.cti.cc.entity.AgentStateLog">
+    insert into cc_agent_state_log${month}
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -452,14 +452,13 @@
   </delete>
 
   <!-- 每个月创建新表 -->
-  <update id="createNewTable" >
-    CREATE  TABLE IF NOT EXISTS cc_agent_state_log${month} SELECT * FROM cc_agent_state_log
+  <update id="createNewTable" databaseId="mysql">
+     create table if not exists cc_agent_state_log${month} (like cc_agent_state_log)
   </update>
 
-  <delete id="clearTable" >
-    delete from cc_agent_state_log${month}
-  </delete>
-
+  <update id="createNewTable" databaseId="oracle">
+    create table cc_agent_state_log${month} like cc_agent_state_log
+  </update>
 
 
 </mapper>

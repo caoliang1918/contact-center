@@ -9,6 +9,7 @@ import org.cti.cc.entity.CallLog;
 import org.cti.cc.mapper.CallDetailMapper;
 import org.cti.cc.mapper.CallDeviceMapper;
 import org.cti.cc.mapper.CallLogMapper;
+import org.cti.cc.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,14 @@ public class CallCdrListen {
 
 
     /**
+     * call_device落单
+     *
      * @param record
      */
     @KafkaListener(topics = Constants.CALL_DEVICE, groupId = "${spring.application.name}")
     public void listenCallDevice(ConsumerRecord<String, String> record) {
         CallDevice callDevice = JSONObject.parseObject(record.value(), CallDevice.class);
+        record.timestamp();
         if (callDevice != null) {
             callDeviceMapper.insertSelective(callDevice);
         }
@@ -78,6 +82,10 @@ public class CallCdrListen {
         int result = callLogMapper.updateByCallId(callLog);
         if (result == 0) {
             callLogMapper.insertSelective(callLog);
+        }
+
+        if (callLog.getEndTime() != null) {
+            callLogMapper.insertMonthSelective(callLog);
         }
     }
 }

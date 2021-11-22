@@ -570,4 +570,15 @@ public class FsListen {
         fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
     }
 
+    /**
+     * bgapi uuid_transfer  sswitch-1-61979250-679-22 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
+     * @param media
+     * @param deviceId
+     *
+     */
+    public void insert(String media, String deviceId) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(deviceId).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
+        fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
+    }
 }

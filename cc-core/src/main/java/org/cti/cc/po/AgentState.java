@@ -106,6 +106,11 @@ public enum AgentState {
     AUDIO_READY_MUTE,
 
     /**
+     * 强插中
+     */
+    INSERT,
+
+    /**
      * 保持中
      */
     HOLD;

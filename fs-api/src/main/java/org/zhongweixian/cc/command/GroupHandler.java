@@ -135,8 +135,7 @@ public class GroupHandler extends BaseHandler {
                  * 放音
                  */
                 fsListen.playback(callInfo.getMedia(), deviceId, "sounds/queue.wav");
-                DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(deviceId);
-                deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_QUEUE_PLAY));
+                callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_QUEUE_PLAY, null));
                 break;
 
             case 2:
@@ -411,18 +410,19 @@ public class GroupHandler extends BaseHandler {
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.deviceId);
         GroupOverflowPo groupOverflowPo = callQueue.getGroupOverflowPo();
         logger.info("callId:{} queueTimeout, busyTimeoutType:{}", callQueue.getCallId(), groupOverflowPo.getBusyTimeoutType());
+        NextCommand nextCommand = null;
         switch (groupOverflowPo.getBusyTimeoutType()) {
             case 1:
                 //排队超时走溢出策略,1:group,2:ivr,3:vdn
                 switch (groupOverflowPo.getOverflowType()) {
                     case 1:
-                        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_QUEUE_OVERFLOW_GROUP, groupOverflowPo.getOverflowValue().toString()));
+                        nextCommand = new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_QUEUE_OVERFLOW_GROUP, groupOverflowPo.getOverflowValue().toString());
                         break;
                     case 2:
-                        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_QUEUE_OVERFLOW_IVR, groupOverflowPo.getOverflowValue().toString()));
+                        nextCommand = new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_QUEUE_OVERFLOW_IVR, groupOverflowPo.getOverflowValue().toString());
                         break;
                     case 3:
-                        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_QUEUE_OVERFLOW_VDN, groupOverflowPo.getOverflowValue().toString()));
+                        nextCommand = new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_QUEUE_OVERFLOW_VDN, groupOverflowPo.getOverflowValue().toString());
                         break;
 
                     default:
@@ -434,7 +434,7 @@ public class GroupHandler extends BaseHandler {
                 callInfo.setHangupDir(3);
                 callInfo.setHangupCode(CauseEnums.QUEUE_TIMEOUT.getHuangupCode());
                 callInfo.setQueueEndTime(Instant.now().toEpochMilli());
-                deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_HANGUP, groupOverflowPo.getOverflowValue().toString()));
+                nextCommand = new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_HANGUP, groupOverflowPo.getOverflowValue().toString());
                 break;
 
             default:
@@ -449,7 +449,7 @@ public class GroupHandler extends BaseHandler {
             }
         }
         fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
-        doNextCommand(callInfo, deviceInfo);
+        doNextCommand(callInfo, deviceInfo, nextCommand);
     }
 
     /**
@@ -481,9 +481,6 @@ public class GroupHandler extends BaseHandler {
                         continue;
                     }
                     DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.getDeviceId());
-                    if (deviceInfo != null) {
-                        deviceInfo.setNextCommand(null);
-                    }
                     callAgentService.execute(() -> {
                         fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
                         this.callAgent(agentInfo, callInfo, callQueue.getDeviceId());

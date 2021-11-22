@@ -174,6 +174,8 @@ public class CallDevice implements Serializable {
      */
     private Integer status;
 
+    private String month;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -422,6 +424,14 @@ public class CallDevice implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
     }
 
     @Override

@@ -322,135 +322,265 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallLog">
-    update cc_call_log
-    <set>
+  <insert id="insertMonthSelective" parameterType="org.cti.cc.entity.CallLog">
+    insert into cc_call_log${monthTime}
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
       <if test="cts != null">
-        cts = #{cts,jdbcType=BIGINT},
+        cts,
       </if>
       <if test="uts != null">
-        uts = #{uts,jdbcType=BIGINT},
+        uts,
       </if>
       <if test="companyId != null">
-        company_id = #{companyId,jdbcType=BIGINT},
+        company_id,
       </if>
       <if test="callId != null">
-        call_id = #{callId,jdbcType=BIGINT},
+        call_id,
       </if>
       <if test="callerDisplay != null">
-        caller_display = #{callerDisplay,jdbcType=VARCHAR},
+        caller_display,
       </if>
       <if test="caller != null">
-        caller = #{caller,jdbcType=VARCHAR},
+        caller,
       </if>
       <if test="calledDisplay != null">
-        called_display = #{calledDisplay,jdbcType=VARCHAR},
+        called_display,
       </if>
       <if test="called != null">
-        called = #{called,jdbcType=VARCHAR},
+        called,
       </if>
       <if test="agentKey != null">
-        agent_key = #{agentKey,jdbcType=VARCHAR},
+        agent_key,
       </if>
       <if test="groupId != null">
-        group_id = #{groupId,jdbcType=BIGINT},
+        group_id,
       </if>
       <if test="loginType != null">
-        login_type = #{loginType,jdbcType=INTEGER},
+        login_type,
       </if>
       <if test="taskId != null">
-        task_id = #{taskId,jdbcType=BIGINT},
+        task_id,
       </if>
       <if test="ivrId != null">
-        ivr_id = #{ivrId,jdbcType=BIGINT},
+        ivr_id,
       </if>
       <if test="botId != null">
-        bot_id = #{botId,jdbcType=BIGINT},
+        bot_id,
       </if>
       <if test="callTime != null">
-        call_time = #{callTime,jdbcType=BIGINT},
+        call_time,
       </if>
       <if test="answerTime != null">
-        answer_time = #{answerTime,jdbcType=BIGINT},
+        answer_time,
       </if>
       <if test="endTime != null">
-        end_time = #{endTime,jdbcType=BIGINT},
+        end_time,
       </if>
       <if test="callType != null">
-        call_type = #{callType,jdbcType=VARCHAR},
+        call_type,
       </if>
       <if test="direction != null">
-        direction = #{direction,jdbcType=VARCHAR},
+        direction,
       </if>
       <if test="answerFlag != null">
-        answer_flag = #{answerFlag,jdbcType=INTEGER},
+        answer_flag,
       </if>
       <if test="waitTime != null">
-        wait_time = #{waitTime,jdbcType=BIGINT},
+        wait_time,
       </if>
       <if test="answerCount != null">
-        answer_count = #{answerCount,jdbcType=INTEGER},
+        answer_count,
       </if>
       <if test="hangupDir != null">
-        hangup_dir = #{hangupDir,jdbcType=INTEGER},
+        hangup_dir,
       </if>
       <if test="hangupCode != null">
-        hangup_code = #{hangupCode,jdbcType=INTEGER},
+        hangup_code,
       </if>
       <if test="media != null">
-        media = #{media,jdbcType=VARCHAR},
+        media,
       </if>
       <if test="host != null">
-        host = #{host,jdbcType=VARCHAR},
+        host,
       </if>
       <if test="record != null">
-        record = #{record,jdbcType=VARCHAR},
+        record,
       </if>
       <if test="record2 != null">
-        record2 = #{record2,jdbcType=VARCHAR},
+        record2,
       </if>
       <if test="recordTime != null">
-        record_time = #{recordTime,jdbcType=BIGINT},
+        record_time,
       </if>
       <if test="talkTime != null">
-        talk_time = #{talkTime,jdbcType=BIGINT},
+        talk_time,
       </if>
       <if test="fristQueueTime != null">
-        frist_queue_time = #{fristQueueTime,jdbcType=BIGINT},
+        frist_queue_time,
       </if>
       <if test="queueStartTime != null">
-        queue_start_time = #{queueStartTime,jdbcType=BIGINT},
+        queue_start_time,
       </if>
       <if test="queueEndTime != null">
-        queue_end_time = #{queueEndTime,jdbcType=BIGINT},
+        queue_end_time,
       </if>
       <if test="monthTime != null">
-        month_time = #{monthTime,jdbcType=VARCHAR},
+        month_time,
       </if>
       <if test="followData != null">
-        follow_data = #{followData,jdbcType=VARCHAR},
+        follow_data,
       </if>
       <if test="uuid1 != null">
-        uuid1 = #{uuid1,jdbcType=VARCHAR},
+        uuid1,
       </if>
       <if test="uuid2 != null">
-        uuid2 = #{uuid2,jdbcType=VARCHAR},
+        uuid2,
       </if>
       <if test="ext1 != null">
-        ext1 = #{ext1,jdbcType=VARCHAR},
+        ext1,
       </if>
       <if test="ext2 != null">
-        ext2 = #{ext2,jdbcType=VARCHAR},
+        ext2,
       </if>
       <if test="ext3 != null">
-        ext3 = #{ext3,jdbcType=VARCHAR},
+        ext3,
       </if>
       <if test="status != null">
-        status = #{status,jdbcType=INTEGER},
+        status,
       </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null">
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="callerDisplay != null">
+        #{callerDisplay,jdbcType=VARCHAR},
+      </if>
+      <if test="caller != null">
+        #{caller,jdbcType=VARCHAR},
+      </if>
+      <if test="calledDisplay != null">
+        #{calledDisplay,jdbcType=VARCHAR},
+      </if>
+      <if test="called != null">
+        #{called,jdbcType=VARCHAR},
+      </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="loginType != null">
+        #{loginType,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="ivrId != null">
+        #{ivrId,jdbcType=BIGINT},
+      </if>
+      <if test="botId != null">
+        #{botId,jdbcType=BIGINT},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerTime != null">
+        #{answerTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="callType != null">
+        #{callType,jdbcType=VARCHAR},
+      </if>
+      <if test="direction != null">
+        #{direction,jdbcType=VARCHAR},
+      </if>
+      <if test="answerFlag != null">
+        #{answerFlag,jdbcType=INTEGER},
+      </if>
+      <if test="waitTime != null">
+        #{waitTime,jdbcType=BIGINT},
+      </if>
+      <if test="answerCount != null">
+        #{answerCount,jdbcType=INTEGER},
+      </if>
+      <if test="hangupDir != null">
+        #{hangupDir,jdbcType=INTEGER},
+      </if>
+      <if test="hangupCode != null">
+        #{hangupCode,jdbcType=INTEGER},
+      </if>
+      <if test="media != null">
+        #{media,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null">
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null">
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="record2 != null">
+        #{record2,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null">
+        #{recordTime,jdbcType=BIGINT},
+      </if>
+      <if test="talkTime != null">
+        #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="fristQueueTime != null">
+        #{fristQueueTime,jdbcType=BIGINT},
+      </if>
+      <if test="queueStartTime != null">
+        #{queueStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="queueEndTime != null">
+        #{queueEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="monthTime != null">
+        #{monthTime,jdbcType=VARCHAR},
+      </if>
+      <if test="followData != null">
+        #{followData,jdbcType=VARCHAR},
+      </if>
+      <if test="uuid1 != null">
+        #{uuid1,jdbcType=VARCHAR},
+      </if>
+      <if test="uuid2 != null">
+        #{uuid2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null">
+        #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
 
 
   <resultMap id="BaseResultMapPo" type="org.cti.cc.po.CallLogPo" >
@@ -655,16 +785,16 @@
      select <include refid="Base_Column_List" />  from cc_call_log   <include refid="Base_Where"/> order by call_time desc
   </select>
 
+  <!-- 每个月创建新表 -->
+  <update id="createNewTable" databaseId="mysql">
+    create table if not exists cc_call_log${month} (like cc_call_log)
+  </update>
 
-  <update id="createNewTable" >
-    CREATE  TABLE IF NOT EXISTS cc_call_log${month} SELECT * FROM cc_call_log where call_time > #{start} and  call_time &lt; #{end}
+  <update id="createNewTable" databaseId="oracle">
+    create table cc_call_log${month} like cc_call_log
   </update>
 
   <delete id="clearTable" >
-     delete from cc_call_log where call_time > #{start} and call_time &lt; #{end}
+     delete from cc_call_log where  call_time &lt; #{end}
   </delete>
-
-  <update id="updateTableMonth"  parameterType="String">
-      update cc_call_log${month} set month_time = #{month}
-  </update>
 </mapper>
