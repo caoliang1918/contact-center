@@ -14,6 +14,7 @@ import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentSipPo;
+import org.cti.cc.po.CompanyInfo;
 import org.cti.cc.vo.AgentBindSkill;
 import org.cti.cc.vo.AgentSipVo;
 import org.cti.cc.vo.AgentVo;
@@ -133,7 +134,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             agent.setPasswd(BcryptUtil.encrypt(addAgentVo.getPasswd()));
             agent.setAgentKey(agent.getAgentId() + "@" + company.getCompanyCode());
             agent.setAgentName(agent.getAgentId());
-            agent.setAgentType(2);
+            agent.setAgentType(1);
             agent.setCts(Instant.now().getEpochSecond());
             agent.setStatus(1);
             agents.add(agent);
@@ -146,6 +147,8 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             sipMap.put("agentKey", agent.getAgentKey());
             sipMap.put("sipPwd", RandomStringUtils.randomNumeric(16));
             agentSips.add(sipMap);
+
+            result = result + 1;
         }
         agentMapper.batchInsert(agents);
         agentSipMapper.batchInsert(agentSips);
@@ -280,7 +283,46 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         if (CollectionUtils.isEmpty(agentList)) {
             return 0;
         }
-        return 0;
+        CompanyInfo companyInfo = companyMapper.selectById(companyId);
+        if (companyInfo.getAgentSize() + agentList.size() > companyInfo.getAgentLimit()) {
+            throw new BusinessException(ErrorCode.AGENT_OVER_LIMIT);
+        }
+
+        Integer result = 0;
+        for (AgentImportExcel agentImportExcel : agentList) {
+            if (StringUtils.isBlank(agentImportExcel.getAgentKey())) {
+                continue;
+            }
+            Agent existAgent = agentMapper.selectAgent(agentImportExcel.getAgentKey() + "@" + companyInfo.getCompanyCode());
+            AgentSip existSip = agentSipMapper.selectBySip(agentImportExcel.getSip());
+            if (existAgent != null || existSip != null) {
+                continue;
+            }
+            Agent agent = new Agent();
+            agent.setCompanyId(companyId);
+            agent.setAgentKey(agentImportExcel.getAgentKey() + "@" + companyInfo.getCompanyCode());
+            agent.setCts(Instant.now().getEpochSecond());
+            agent.setAgentId(agentImportExcel.getAgentKey());
+            agent.setAgentName(agentImportExcel.getAgentName());
+            agent.setSipPhone(agentImportExcel.getSipPhone());
+            agent.setPasswd(StringUtils.isBlank(agentImportExcel.getPasswd()) ?
+                    BcryptUtil.encrypt(agentImportExcel.getAgentKey()) :
+                    BcryptUtil.encrypt(agentImportExcel.getPasswd()));
+            agent.setAgentType(1);
+            agentMapper.addAgent(agent);
+            result = result + 1;
+
+            if (StringUtils.isBlank(agentImportExcel.getSip())) {
+                continue;
+            }
+            AgentSip agentSip = new AgentSip();
+            agentSip.setSip(agentImportExcel.getSip());
+            agentSip.setAgentId(agent.getId());
+            agentSip.setCts(Instant.now().getEpochSecond());
+            agentSip.setCompanyId(companyId);
+            agentSipMapper.insertSelective(agentSip);
+        }
+        return result;
     }
 
     @Override

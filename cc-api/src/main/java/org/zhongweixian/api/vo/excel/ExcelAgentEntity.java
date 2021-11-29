@@ -19,7 +19,7 @@ public class ExcelAgentEntity extends Agent {
     /**
      *
      */
-    @Excel(name = "创建时间", width = 20, exportFormat="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", width = 20, exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date cts;
 
 
@@ -48,9 +48,9 @@ public class ExcelAgentEntity extends Agent {
     private String agentCode;
 
     /**
-     * 座席类型：2:普通座席；1：班长
+     * 座席类型：1:普通座席；2：班长
      */
-    @Excel(name = "坐席类型", width = 15, replace = {"班长_1", "普通坐席_2"})
+    @Excel(name = "坐席类型", width = 15, replace = {"普通坐席_1", "班长_2"})
     private Integer agentType;
 
     /**

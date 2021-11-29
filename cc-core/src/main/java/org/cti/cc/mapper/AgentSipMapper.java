@@ -42,4 +42,11 @@ public interface AgentSipMapper extends BaseMapper<AgentSip> {
      * @return
      */
     AgentSip selectById(@Param("companyId") Long companyId, @Param("id") Long id);
+
+    /**
+     *
+     * @param sip
+     * @return
+     */
+    AgentSip selectBySip(String sip);
 }

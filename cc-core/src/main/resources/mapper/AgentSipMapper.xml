@@ -161,4 +161,14 @@
     where
         company_id = #{companyId} and id = #{id} and status = 1
   </select>
+
+  <select id="selectBySip" parameterType="String" resultMap="BaseResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_agent_sip
+    where
+        sip = #{sip} and status = 1
+  </select>
+
 </mapper>

@@ -50,7 +50,7 @@ public class Agent implements Serializable {
     private String agentCode;
 
     /**
-     * 座席类型：2:普通座席；1：班长
+     * 座席类型：1:普通座席；2：班长
      */
     private Integer agentType;
 
