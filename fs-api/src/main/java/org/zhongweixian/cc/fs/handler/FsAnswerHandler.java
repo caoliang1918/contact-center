@@ -1,12 +1,14 @@
 package org.zhongweixian.cc.fs.handler;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
+import org.cti.cc.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
@@ -33,7 +35,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         }
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(event.getDeviceId());
         NextCommand nextCommand = callInfo.getEaryCommand();
-        logger.info("channel answer callId:{}, device:{}", callInfo.getCallId(), event.getDeviceId());
+        logger.info("channel answer callId:{}, deviceId:{}, deviceType:{}", callInfo.getCallId(), event.getDeviceId(), deviceInfo.getDeviceType());
 
         //接听时间也是振铃结束时间
         deviceInfo.setAnswerTime(event.getTimestamp() / 1000);
@@ -108,8 +110,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
         if (groupInfo != null && groupInfo.getRecordType() == 1) {
             //振铃录音
-            String record = recordPath +
-                    DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + "." + recordFile;
+            String record = recordPath + DateTimeUtil.format() + Constants.SK + callInfo.getCallId() + Constants.UNDER_LINE + deviceInfo.getDeviceId() + Constants.UNDER_LINE + Instant.now().getEpochSecond() + Constants.POINT + recordFile;
             super.record(callInfo.getMedia(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
             deviceInfo.setRecord(record);
         }

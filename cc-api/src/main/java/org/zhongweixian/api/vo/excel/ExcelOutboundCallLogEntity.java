@@ -65,19 +65,19 @@ public class ExcelOutboundCallLogEntity {
     /**
      * 任务ID
      */
-    @Excel(name = "任务id", width = 10)
+    @Excel(name = "taskId", width = 10)
     private Long taskId;
 
     /**
      * ivr
      */
-    @Excel(name = "ivr", width = 10)
+    @Excel(name = "ivrId", width = 10)
     private Long ivrId;
 
     /**
      * 机器人id
      */
-    @Excel(name = "机器人", width = 10)
+    @Excel(name = "botId", width = 10)
     private Long botId;
 
     /**
@@ -137,7 +137,7 @@ public class ExcelOutboundCallLogEntity {
     /**
      * 录音地址
      */
-    @Excel(name = "录音地址", width = 15)
+    @Excel(name = "录音地址", width = 40)
     private String record;
 
     /**
@@ -155,7 +155,7 @@ public class ExcelOutboundCallLogEntity {
     /**
      * 通话随路数据(2048)
      */
-    @Excel(name = "随路数据", width = 15)
+    @Excel(name = "随路数据", width = 25)
     private String followData;
 
     /**

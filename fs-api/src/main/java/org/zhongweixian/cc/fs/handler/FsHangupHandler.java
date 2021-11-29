@@ -64,7 +64,6 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         }
         Integer count = callInfo.getDeviceList().size();
         String cause = event.getHangupCause();
-        logger.info("callId:{}, deviceId:{}, called:{} hangup sipStatus:{} hangupCause:{}", callInfo.getCallId(), event.getDeviceId(), event.getCalled(), event.getSipStatus(), event.getHangupCause());
 
         /**
          * 挂机原因
@@ -74,17 +73,18 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             logger.warn("device:{} is null", event.getDeviceId());
             return;
         }
+        logger.info("callId:{}, deviceId:{}, deviceType:{} called:{} hangup sipStatus:{} hangupCause:{}", callInfo.getCallId(), event.getDeviceId(), deviceInfo.getDeviceType(), event.getCalled(), event.getSipStatus(), event.getHangupCause());
         /**
          * 上传录音
          */
         if (StringUtils.isNotBlank(deviceInfo.getRecord())) {
             try {
                 String day = DateFormatUtils.format(new Date(), YYYYMMDDHH);
-                String fileName = day.substring(0, 8) + "/" + day.substring(8, 10) + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + "." + recordFile;
+                String fileName = day.substring(0, 8) + Constants.SK + day.substring(8, 10) + Constants.SK + callInfo.getCallId() + Constants.UNDER_LINE + deviceInfo.getDeviceId() + Constants.POINT + recordFile;
                 ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
                 logger.info("get record file:{}", deviceInfo.getRecord());
                 ObjectWriteResponse writeResponse = minioClient.putObject(PutObjectArgs.builder().stream(new ByteArrayInputStream(responseEntity.getBody()), responseEntity.getBody().length, -1).object(fileName).bucket(bucket).build());
-                logger.info("callId:{}, record fileName:{}", deviceInfo.getCallId(), fileName);
+                logger.info("callId:{}, record fileName:{}, minioTag:{}", deviceInfo.getCallId(), fileName, writeResponse.etag());
                 deviceInfo.setRecord(fileName);
                 if (StringUtils.isBlank(callInfo.getRecord())) {
                     callInfo.setRecord(fileName);
@@ -372,6 +372,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
          */
         switch (nextCommand.getNextType()) {
             case NEXT_CALL_BRIDGE:
+                //桥接
                 CauseEnums causeEnums = CauseEnums.valueOf(cause);
                 if (causeEnums != null && causeEnums != CauseEnums.NORMAL_CLEARING) {
                     //重新进入技能组
@@ -381,6 +382,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                 }
                 break;
             case NEXT_TRANSFER_SUCCESS:
+                //完成转接
                 logger.info("callId:{}, deviceId:{} NEXT_TRANSFER_SUCCESS", callInfo.getCallId(), deviceInfo.getDeviceId());
                 String[] values = nextCommand.getNextValue().split(":");
                 if (values == null || values.length != 2) {
@@ -388,11 +390,10 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                 }
                 callBridge(callInfo.getMedia(), values[0], values[1]);
                 break;
-
             case NEXT_TRANSFER_BRIDGE:
+                //转接后桥接
                 logger.info("callId:{}, deviceId:{} NEXT_TRANSFER_BRIDGE", callInfo.getCallId(), deviceInfo.getDeviceId());
                 break;
-
             default:
                 break;
         }

@@ -55,4 +55,12 @@ public interface AgentMapper extends BaseMapper<Agent> {
     Agent selectAgentBySip(String sip);
 
     List<Agent> selectAgentOnline(Map<String, Object> params);
+
+    /**
+     * 企业坐席数
+     *
+     * @param companyId
+     * @return
+     */
+    Integer agentSize(Long companyId);
 }

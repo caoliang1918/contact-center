@@ -12,8 +12,9 @@ import java.util.*;
 public class DateTimeUtil {
 
     public static final String YYYYMMDD_HHMMSS = "yyyy-MM-dd HH:mm:ss";
-    public static final String YYYYMMDD = "yyyy-MM-dd";
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
     public static final String YYYYMM = "yyyyMM";
+    public static final String YYYYMMDD = "yyyyMMdd";
 
 
     public static Long addday(Date date, int day) {
@@ -36,7 +37,7 @@ public class DateTimeUtil {
      * @return
      */
     public static Long getDayStartTime(String day) {
-        SimpleDateFormat format = new SimpleDateFormat(YYYYMMDD);
+        SimpleDateFormat format = new SimpleDateFormat(YYYY_MM_DD);
         try {
             Date date = format.parse(day);
             return date.getTime();
@@ -213,6 +214,16 @@ public class DateTimeUtil {
         todayEnd.set(Calendar.SECOND, 59);
         todayEnd.set(Calendar.MILLISECOND, 999);
         return todayEnd.getTime().getTime();
+    }
+
+    /**
+     * 获取当天时间 格式: 20201212
+     *
+     * @return
+     */
+    public static String format() {
+        SimpleDateFormat sdf = new SimpleDateFormat(YYYYMMDD);
+        return sdf.format(new Date());
     }
 
     public static String format(Long timestame) {

@@ -1,6 +1,8 @@
 package org.zhongweixian.api.web;
 
 
+import cn.afterturn.easypoi.excel.ExcelImportUtil;
+import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.github.pagehelper.PageInfo;
 import org.cti.cc.entity.*;
 import org.cti.cc.enums.ErrorCode;
@@ -11,10 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.zhongweixian.api.vo.excel.AgentImportExcel;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -677,6 +682,20 @@ public class CompanyController extends BaseController {
         Map<String, Object> params = parseMap(adminAccountInfo, null, query);
         agentService.agentExport(response, params);
     }
+
+    /**
+     * 1.8.8 坐席导入
+     *
+     * @param adminAccountInfo
+     * @throws IOException
+     */
+    @PostMapping("agent/import")
+    public CommonResponse agentImport(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @RequestParam("file") MultipartFile multipartFile) throws Exception {
+        ImportParams importParams = new ImportParams();
+        List<AgentImportExcel> agentImportExcels = ExcelImportUtil.importExcel(multipartFile.getInputStream(), AgentImportExcel.class, importParams);
+        return new CommonResponse(agentService.agentImport(agentImportExcels, adminAccountInfo.getBindCompanyId()));
+    }
+
 
     /**
      * 1.7.1 技能列表

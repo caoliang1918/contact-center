@@ -58,10 +58,10 @@ public class AgentVo {
     private Integer workType;
 
     /**
-     * 座席密码
+     * 座席密码,前端传过来已经是sha256加密过的。
      */
     @NotNull(message = "坐席密码不能为空")
-    @Size(min = 8, max = 32, message = "密码长度不对")
+    @Size(min = 64, message = "密码长度不对")
     private String passwd;
 
     /**

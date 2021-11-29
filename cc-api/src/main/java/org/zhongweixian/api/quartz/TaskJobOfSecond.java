@@ -40,7 +40,7 @@ public class TaskJobOfSecond implements Job {
         if (date.after(jobExecutionContext.getNextFireTime())) {
             return;
         }
-        logger.info("Second job frist :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
+        logger.info("second job start :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
         ServiceInstance serviceInstance = loadBalancerClient.choose("fs-api");
         if (serviceInstance == null) {
             return;

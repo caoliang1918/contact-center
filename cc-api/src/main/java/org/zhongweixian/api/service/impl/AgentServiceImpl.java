@@ -26,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.AgentService;
 import org.zhongweixian.api.util.BcryptUtil;
+import org.zhongweixian.api.vo.excel.AgentImportExcel;
 import org.zhongweixian.api.vo.excel.ExcelAgentEntity;
 
 import javax.servlet.ServletOutputStream;
@@ -272,6 +273,14 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         ServletOutputStream out = response.getOutputStream();
         workbook.write(out);
         out.flush();
+    }
+
+    @Override
+    public int agentImport(List<AgentImportExcel> agentList, Long companyId) {
+        if (CollectionUtils.isEmpty(agentList)) {
+            return 0;
+        }
+        return 0;
     }
 
     @Override

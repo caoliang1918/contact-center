@@ -51,6 +51,7 @@
         <commons-io.version>2.11.0</commons-io.version>
         <commons-codec.version>1.15</commons-codec.version>
         <kafka.version>2.7.8</kafka.version>
+        <logstash-encoder.version>6.6</logstash-encoder.version>
 
         <docker.repostory>192.168.180.37:5000</docker.repostory>
         <docker.registry.name>caoliang</docker.registry.name>
@@ -97,6 +98,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash-encoder.version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>

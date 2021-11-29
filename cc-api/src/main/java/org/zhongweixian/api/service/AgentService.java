@@ -8,6 +8,7 @@ import org.cti.cc.vo.AgentVo;
 import org.cti.cc.vo.AgentBindSkill;
 import org.cti.cc.vo.AgentSipVo;
 import org.cti.cc.vo.BatchAddAgentVo;
+import org.zhongweixian.api.vo.excel.AgentImportExcel;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -96,6 +97,15 @@ public interface AgentService extends BaseService<Agent> {
      * @param params
      */
     void agentExport(HttpServletResponse response, Map<String, Object> params) throws IOException;
+
+    /**
+     * 批量上传坐席
+     *
+     * @param agentList
+     * @param companyId
+     * @return
+     */
+    int agentImport(List<AgentImportExcel> agentList, Long companyId);
 
     /**
      * 坐席绑定技能

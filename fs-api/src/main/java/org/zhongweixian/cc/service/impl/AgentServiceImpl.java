@@ -134,9 +134,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-
         saveAgentLog(agentInfo);
-
     }
 
     @Override

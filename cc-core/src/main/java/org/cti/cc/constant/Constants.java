@@ -11,6 +11,9 @@ public class Constants {
     public static final String CR = "\r";
     public static final String AT = "@";
     public static final String CO = ":";
+    public static final String UNDER_LINE = "_";
+    public static final String POINT = ".";
+    public static final String SK = "/";
 
 
     public static final String HTTP = "http://";

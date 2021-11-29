@@ -384,4 +384,8 @@
     select id, agent_key, agent_name, (select state from cc_agent_state_log where cc_agent_state_log.agent_key = cc_agent.agent_key and rownum = 1 ) as ext1  from cc_agent  where exists (select agent_id from  cc_agent_state_log  where cc_agent_state_log.agent_id = cc_agent.id and cc_agent_state_log.state_time > #{start} ) and company_id = #{companyId} and state = 1
   </select>
 
+  <select id="agentSize" parameterType="java.lang.Long" resultType="java.lang.Integer">
+     select count(id) from cc_agent where company_id = #{companyId} and status = 1
+  </select>
+
  </mapper>
