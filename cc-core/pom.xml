@@ -13,7 +13,7 @@
         <groupId>org.zhongweixian</groupId>
         <artifactId>callcenter</artifactId>
         <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath/>
     </parent>
 
     <dependencies>

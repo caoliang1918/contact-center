@@ -32,9 +32,15 @@ public class TaskJobOfDay implements Job {
     @Value("${agent.state.work.retain:1}")
     private Integer agentStateWorkRetain;
 
+    /**
+     * 话单保留1天
+     */
     @Value("${call.retain:1}")
     private Integer callRetain;
 
+    /**
+     * 话单推送保留5天
+     */
     @Value("${push.log.retain:5}")
     private Integer pushLogRetain;
 
@@ -78,7 +84,7 @@ public class TaskJobOfDay implements Job {
 
     public void deleteCallLog() {
         //获取前N天的时间
-        Long time = DateTimeUtil.getBeforeDay(agentStateWorkRetain);
+        Long time = DateTimeUtil.getBeforeDay(callRetain);
         callLogService.clearCallLog(time);
     }
 

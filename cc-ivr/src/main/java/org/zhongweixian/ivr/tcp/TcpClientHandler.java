@@ -10,7 +10,7 @@ import org.zhongweixian.listener.ConnectionListener;
 /**
  * Created by caoliang on 2021/8/7
  */
-@Component
+//@Component
 public class TcpClientHandler implements ConnectionListener {
     private Logger logger = LoggerFactory.getLogger(TcpClientHandler.class);
 

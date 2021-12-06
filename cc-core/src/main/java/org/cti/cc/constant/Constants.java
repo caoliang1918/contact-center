@@ -51,25 +51,33 @@ public class Constants {
     /**
      * 坐席状态相关
      */
-    public final static String AGENT_STATE = "agent.state";
+    public final static String AGENT_STATE_KEY = "STATE";
+    public final static String AGENT_LOG_KEY = "STATE";
     public final static String DEFAULT_KEY = "";
+    public final static String DEVOCE_KEY = "DEVICE";
+    public final static String DETAIL_KEY = "DETAIL";
+    public final static String CALLLOG_KEY = "CALLLOG";
+
+    public final static String AGENT_STATE_EXCHANGE = "AGENT-STATE-EXCHANGE";
+    public final static String CALL_LOG_EXCHANGE = "CALL-LOG-EXCHANGE";
 
     /**
      * 话单相关
      */
-    public final static String CALL_CDR_ROUTING = "callCdr";
-    public final static String CALL_DEVICE = "call.device";
-    public final static String CALL_LOG = "call.log";
-    public final static String CALL_DETAIL = "call.detail";
+    public final static String CALL_DEVICE_QUEUE = "CALL-DEVICE";
+    public final static String CALL_LOG_QUEUE = "CALL-LOG-QUEUE";
+    public final static String CALL_DETAIL_QUEUE = "CALL-DETAIL-QUEUE";
 
 
-    public final static String AGENT_STATE_LOG = "agent.state.log";
+    public final static String AGENT_STATE_QUEUE = "AGENT-STATE-QUEUE";
+    public final static String AGENT_LOG_QUEUE = "AGENT-LOG-QUEUE";
 
 
     /**
      * 配置变更相关
      */
-    public final static String CC_CONFIG = "cc.config";
+    public final static String CC_CONFIG_EXCHANGE = "CC-CONFIG-EXCHANGE";
+    public final static String CC_CONFIG_QUEUE = "CC-CONFIG-EXCHANGE";
 
 
 }

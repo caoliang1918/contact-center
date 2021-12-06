@@ -36,6 +36,11 @@ public class WsLoginEvnet extends WsBaseEvent {
      */
     private String sip;
 
+    /**
+     * 通话中断开重连时，携带callId
+     */
+    private Long callId;
+
 
     public String getToken() {
         return token;
@@ -77,6 +82,13 @@ public class WsLoginEvnet extends WsBaseEvent {
         this.sip = sip;
     }
 
+    public Long getCallId() {
+        return callId;
+    }
+
+    public void setCallId(Long callId) {
+        this.callId = callId;
+    }
 
     @Override
     public String toString() {

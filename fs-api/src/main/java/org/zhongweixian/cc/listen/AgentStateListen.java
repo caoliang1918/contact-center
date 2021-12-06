@@ -2,8 +2,6 @@ package org.zhongweixian.cc.listen;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.AgentStateLog;
 import org.cti.cc.mapper.AgentStateLogMapper;
@@ -12,11 +10,15 @@ import org.cti.cc.po.AgentState;
 import org.cti.cc.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
@@ -58,18 +60,11 @@ public class AgentStateListen {
 
     /**
      * 同步坐席状态
-     *
-     * @param record
-     * @param ack
      */
-    @KafkaListener(topics = {Constants.AGENT_STATE}, groupId = "${spring.application.name}")
-    public void listenAgentState(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        logger.debug("receive agent state payload  {} ", record.value());
-        if (StringUtils.isBlank(record.value())) {
-            return;
-        }
-        ack.acknowledge();
-        String payload = record.value();
+    /*@KafkaListener(topics = {Constants.AGENT_STATE}, groupId = "${spring.application.name}")*/
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constants.AGENT_STATE_KEY, value = @Queue(value = Constants.AGENT_STATE_QUEUE + "${spring.instance.id}", autoDelete = "true"))})
+    public void listenAgentState(@Payload String payload) {
+        logger.debug("receive agent state payload  {} ", payload);
         JSONObject json = JSON.parseObject(payload);
         if (appId.equals(json.getString("appId"))) {
             return;
@@ -141,10 +136,14 @@ public class AgentStateListen {
     }
 
 
-    @KafkaListener(topics = Constants.AGENT_STATE_LOG, groupId = "${spring.application.name}")
-    public void listenAgentStateLog(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        AgentStateLog agentStateLog = JSONObject.parseObject(record.value(), AgentStateLog.class);
-        ack.acknowledge();
+    /**
+     * 坐席状态数据
+     *
+     * @param payload
+     */
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constants.AGENT_LOG_KEY, value = @Queue(Constants.AGENT_LOG_QUEUE))})
+    public void listenAgentStateLog(@Payload String payload) {
+        AgentStateLog agentStateLog = JSONObject.parseObject(payload, AgentStateLog.class);
         if (agentStateLog == null || pressure == 1) {
             return;
         }

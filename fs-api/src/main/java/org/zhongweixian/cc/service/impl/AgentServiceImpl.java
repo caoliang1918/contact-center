@@ -1,6 +1,5 @@
 package org.zhongweixian.cc.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.Agent;
@@ -12,10 +11,10 @@ import org.cti.cc.mapper.AgentStateLogMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
@@ -49,7 +48,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     protected GroupHandler groupHandler;
 
     @Autowired
-    protected KafkaTemplate kafkaTemplate;
+    protected RabbitTemplate rabbitTemplate;
 
     @Value("${spring.application.group}" + "${spring.instance.id}")
     private String appId;
@@ -130,7 +129,9 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setAppId(appId);
 
             logger.info("send kafka agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
-            kafkaTemplate.send(Constants.AGENT_STATE, JSON.toJSONString(response));
+            /*kafkaTemplate.send(Constants.AGENT_STATE, JSON.toJSONString(response));*/
+            rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.AGENT_STATE_KEY, response);
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -167,6 +168,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agentStateLog.setRemoteAddress(agentInfo.getRemoteAddress());
         //持续时长
         agentStateLog.setDuration(agentInfo.getBeforeTime() == 0 ? 0 : (int) (agentInfo.getStateTime() - agentInfo.getBeforeTime()));
-        kafkaTemplate.send(Constants.AGENT_STATE_LOG, JSON.toJSONString(agentStateLog));
+        /*kafkaTemplate.send(Constants.AGENT_STATE_LOG, JSON.toJSONString(agentStateLog));*/
+        rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.AGENT_LOG_KEY, agentStateLog);
     }
 }

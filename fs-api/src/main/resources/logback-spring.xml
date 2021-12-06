@@ -25,11 +25,10 @@
         </rollingPolicy>
     </appender>
 
-    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <!--<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>192.168.31.1:4560</destination>
         <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder" />
-
-    </appender>
+    </appender>-->
 
     <!-- 开发测试环境 -->
     <springProfile name="dev">

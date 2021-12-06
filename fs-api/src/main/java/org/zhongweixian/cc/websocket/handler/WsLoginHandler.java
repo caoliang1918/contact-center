@@ -8,6 +8,7 @@ import org.cti.cc.entity.Agent;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
+import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.CompanyInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -162,18 +163,35 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
      * @param event
      */
     private void agentLogin(AgentInfo agentInfo, WsLoginEvnet event) {
+        //记录坐席所在服务器
+        InetSocketAddress address = (InetSocketAddress) event.getChannel().localAddress();
+        agentInfo.setHost(address.getHostName() + ":" + port);
+
+        AgentState before = AgentState.LOGOUT;
+        AgentState now = AgentState.LOGIN;
+        if (event.getCallId() != null) {
+            //通话中重连
+            CallInfo callInfo = cacheService.getCallInfo(event.getCallId());
+            if (callInfo != null) {
+                before = AgentState.READY;
+                now = AgentState.TALKING;
+                callInfo.setHost(agentInfo.getHost());
+                cacheService.addCallInfo(callInfo);
+                callInfo.getDeviceInfoMap().forEach((k, v) -> {
+                    cacheService.addDevice(k, event.getCallId());
+                });
+            }
+        }
+
         agentInfo.setBeforeTime(agentInfo.getLogoutTime());
-        agentInfo.setBeforeState(AgentState.LOGOUT);
+        agentInfo.setBeforeState(before);
         agentInfo.setLoginTime(Instant.now().toEpochMilli());
         agentInfo.setStateTime(agentInfo.getLoginTime());
-        agentInfo.setAgentState(AgentState.LOGIN);
+        agentInfo.setAgentState(now);
         agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
         agentInfo.setLoginType(event.getLoginType());
         agentInfo.setWorkType(event.getWorkType());
         agentInfo.setRemoteAddress(event.getChannel().remoteAddress().toString().substring(1));
-        //记录坐席所在服务器
-        InetSocketAddress address = (InetSocketAddress) event.getChannel().localAddress();
-        agentInfo.setHost(address.getHostName() + ":" + port);
         cacheService.addAgentInfo(agentInfo);
 
 

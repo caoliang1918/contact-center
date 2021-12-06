@@ -10,7 +10,6 @@ import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.Station;
-import org.cti.cc.enums.StationType;
 import org.cti.cc.mapper.StationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +29,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * Created by caoliang on 2021/8/7
  */
-@Component
+//@Component
 public class TcpClientManager {
     private Logger logger = LoggerFactory.getLogger(TcpClientManager.class);
 
     @Value("${spring.cloud.nacos.server-addr}")
     private String serverAddr;
-
-    @Autowired
-    private Station station;
 
     @Autowired
     private StationMapper stationMapper;
@@ -64,34 +60,13 @@ public class TcpClientManager {
         payload.put("stationType", 3);
         payload.put("domain", Constants.HTTP + station.getHost());
         authorizationToken.setPayload(payload.toJSONString());
-        NettyClient nettyClient = new NettyClient(station.getApplicationHost(),  7250, authorizationToken, tcpClientHandler);
+        NettyClient nettyClient = new NettyClient(station.getApplicationHost(), 7250, authorizationToken, tcpClientHandler);
         nettyClient.setMaxReConnect(2);
         nettyClientMap.put(station.getHost(), nettyClient);
     }
 
     public void start() {
-        NamingService namingService = null;
-        try {
-            namingService = NamingFactory.createNamingService(serverAddr);
-            List<Instance> instances = namingService.getAllInstances("fs-api");
-            if (!CollectionUtils.isEmpty(instances)) {
-                for (Instance instance : instances) {
-                    Station fsApi = stationMapper.selectByAppId(Integer.valueOf(instance.getMetadata().get("appId")));
-                    if (fsApi != null && fsApi.getApplicationGroup().equals(station.getApplicationGroup())) {
-                        connect(fsApi);
-                    }
-                }
-            }
-            namingService.subscribe("fs-api", new EventListener() {
-                @Override
-                public void onEvent(Event event) {
-                    logger.info(" ============== {}", ((NamingEvent) event).getServiceName());
-                    logger.info("============== = {}", ((NamingEvent) event).getInstances());
-                }
-            });
-        } catch (NacosException e) {
-            logger.error(e.getMessage(), e);
-        }
+
     }
 
     /**

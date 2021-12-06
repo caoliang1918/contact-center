@@ -16,6 +16,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <description>project for cc-api</description>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -38,9 +40,13 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <!--<dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -52,16 +58,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.zhongweixian</groupId>
-            <artifactId>websocket-api</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba</groupId>
-                    <artifactId>fastjson</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

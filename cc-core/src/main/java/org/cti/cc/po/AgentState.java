@@ -67,11 +67,6 @@ public enum AgentState {
     TRANSFER_CALL_RING,
 
     /**
-     * 外呼通话中
-     */
-    OUT_CALLING,
-
-    /**
      * 内呼
      */
     INNER_CALL,
@@ -81,10 +76,6 @@ public enum AgentState {
      */
     IN_CALL_RING,
 
-    /**
-     * 呼入通话中
-     */
-    IN_CALLING,
     /**
      * 转接来电
      */

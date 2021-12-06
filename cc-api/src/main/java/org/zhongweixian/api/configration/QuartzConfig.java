@@ -75,8 +75,12 @@ public class QuartzConfig {
      * 删除Job
      * {@link org.quartz.Scheduler#deleteJob(JobKey)}
      */
-    public void deleteJob(JobKey jobKey) throws SchedulerException {
-        scheduler.deleteJob(jobKey);
+    public void deleteJob(JobKey jobKey) {
+        try {
+            scheduler.deleteJob(jobKey);
+        } catch (Exception e) {
+
+        }
     }
 
 
