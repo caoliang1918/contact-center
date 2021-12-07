@@ -14,6 +14,7 @@ public class Constants {
     public static final String UNDER_LINE = "_";
     public static final String POINT = ".";
     public static final String SK = "/";
+    public static final String LINE = "-";
 
 
     public static final String HTTP = "http://";
@@ -48,12 +49,13 @@ public class Constants {
     public static final String SEREVICE_TIMES = "serviceTimes";
 
 
+    public final static String DEFAULT_KEY = "";
+
     /**
      * 坐席状态相关
      */
     public final static String AGENT_STATE_KEY = "STATE";
-    public final static String AGENT_LOG_KEY = "STATE";
-    public final static String DEFAULT_KEY = "";
+    public final static String AGENT_LOG_KEY = "LOG";
     public final static String DEVOCE_KEY = "DEVICE";
     public final static String DETAIL_KEY = "DETAIL";
     public final static String CALLLOG_KEY = "CALLLOG";
@@ -64,7 +66,7 @@ public class Constants {
     /**
      * 话单相关
      */
-    public final static String CALL_DEVICE_QUEUE = "CALL-DEVICE";
+    public final static String CALL_DEVICE_QUEUE = "CALL-DEVICE-QUEUE";
     public final static String CALL_LOG_QUEUE = "CALL-LOG-QUEUE";
     public final static String CALL_DETAIL_QUEUE = "CALL-DETAIL-QUEUE";
 
@@ -77,7 +79,7 @@ public class Constants {
      * 配置变更相关
      */
     public final static String CC_CONFIG_EXCHANGE = "CC-CONFIG-EXCHANGE";
-    public final static String CC_CONFIG_QUEUE = "CC-CONFIG-EXCHANGE";
+    public final static String CC_CONFIG_QUEUE = "CC-CONFIG-QUEUE";
 
 
 }

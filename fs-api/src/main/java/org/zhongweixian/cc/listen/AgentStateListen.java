@@ -62,7 +62,7 @@ public class AgentStateListen {
      * 同步坐席状态
      */
     /*@KafkaListener(topics = {Constants.AGENT_STATE}, groupId = "${spring.application.name}")*/
-    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constants.AGENT_STATE_KEY, value = @Queue(value = Constants.AGENT_STATE_QUEUE + "${spring.instance.id}", autoDelete = "true"))})
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constants.AGENT_STATE_KEY, value = @Queue(value = Constants.AGENT_STATE_QUEUE +Constants.LINE+ "${spring.instance.id}", autoDelete = "true"))})
     public void listenAgentState(@Payload String payload) {
         logger.debug("receive agent state payload  {} ", payload);
         JSONObject json = JSON.parseObject(payload);
@@ -149,12 +149,11 @@ public class AgentStateListen {
         }
         agentStateLog.setCts(Instant.now().getEpochSecond());
         agentStateLog.setUts(agentStateLog.getCts());
-        agentStateLogMapper.insertSelective(agentStateLog);
-
 
         String time = DateTimeUtil.getNowMonth();
         agentStateLog.setMonth(time);
         try {
+            agentStateLogMapper.insertSelective(agentStateLog);
             //当前月份表
             agentStateLogMapper.insertMonthSelective(agentStateLog);
         } catch (Exception e) {

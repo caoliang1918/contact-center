@@ -1,5 +1,6 @@
 package org.zhongweixian.cc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constants;
@@ -101,7 +102,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             callDevice.setMonth(DateTimeUtil.getNowMonth());
             return callDeviceMapper.insertMonthSelective(callDevice);
         }
-        rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.DEVOCE_KEY, callDevice);
+        rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.DEVOCE_KEY, JSON.toJSONString(callDevice));
         /*kafkaTemplate.send(Constants.CALL_DEVICE, JSON.toJSONString(callDevice));*/
         return 1;
     }
@@ -116,7 +117,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             callDetail.setMonth(month);
             if (callCdrPressure == 1) {
                 /*kafkaTemplate.send(Constants.CALL_DETAIL, JSON.toJSONString(callDetail));*/
-                rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.DETAIL_KEY, callDetail);
+                rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.DETAIL_KEY, JSON.toJSONString(callDetail));
             } else {
                 callDetailMapper.insertSelective(callDetail);
                 callDetailMapper.insertMonthSelective(callDetail);
@@ -133,7 +134,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         logger.info("callId:{}, answerTime:{}, endTime:{}", callLog.getCallId(), callLog.getAnswerTime(), callLog.getEndTime());
         if (callCdrPressure == 1) {
             /*kafkaTemplate.send(Constants.CALL_LOG, JSON.toJSONString(callLog));*/
-            rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALLLOG_KEY, callLog);
+            rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALLLOG_KEY, JSON.toJSONString(callLog));
             return 0;
         }
         if (callLog.getEndTime() != null) {

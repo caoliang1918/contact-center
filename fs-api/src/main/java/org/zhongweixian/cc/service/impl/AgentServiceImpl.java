@@ -1,5 +1,6 @@
 package org.zhongweixian.cc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constants;
 import org.cti.cc.entity.Agent;
@@ -128,9 +129,9 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setTotalAfterTime(agentInfo.getTotalAfterTime());
             response.setAppId(appId);
 
-            logger.info("send kafka agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
+            logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
             /*kafkaTemplate.send(Constants.AGENT_STATE, JSON.toJSONString(response));*/
-            rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.AGENT_STATE_KEY, response);
+            rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.AGENT_STATE_KEY, JSON.toJSONString(response));
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -169,6 +170,6 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         //持续时长
         agentStateLog.setDuration(agentInfo.getBeforeTime() == 0 ? 0 : (int) (agentInfo.getStateTime() - agentInfo.getBeforeTime()));
         /*kafkaTemplate.send(Constants.AGENT_STATE_LOG, JSON.toJSONString(agentStateLog));*/
-        rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.AGENT_LOG_KEY, agentStateLog);
+        rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.AGENT_LOG_KEY, JSON.toJSONString(agentStateLog));
     }
 }

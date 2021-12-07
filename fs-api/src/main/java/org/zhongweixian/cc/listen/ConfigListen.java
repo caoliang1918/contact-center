@@ -23,7 +23,7 @@ public class ConfigListen {
      *
      * @param payload
      */
-    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constants.CC_CONFIG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constants.DEFAULT_KEY , value =  @Queue( Constants.CC_CONFIG_QUEUE))})
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constants.CC_CONFIG_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constants.DEFAULT_KEY, value = @Queue(value = Constants.CC_CONFIG_QUEUE + Constants.LINE + "${spring.instance.id}", autoDelete = "true"))})
     public void listenAgentState(@Payload String payload) {
         logger.info("receive config message:{}", payload);
     }

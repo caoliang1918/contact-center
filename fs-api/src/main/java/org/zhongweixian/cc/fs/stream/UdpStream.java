@@ -92,7 +92,7 @@ public class UdpStream {
 
                     @Override
                     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-                        logger.info("callId:{} port:{} close");
+                        logger.info("callId:{} port:{} close", callId, port);
                         stream.close();
                     }
                 });
