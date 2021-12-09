@@ -9,7 +9,6 @@ import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.util.RandomUtil;
 import org.zhongweixian.cc.websocket.event.WsMakeCallEvent;
@@ -148,21 +147,10 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         if (StringUtils.isNoneBlank(event.getDisplay())) {
             return event.getDisplay();
         }
-        //技能组控制
-        if (groupInfo.getControlFlag() == 1) {
-            if (CollectionUtils.isEmpty(groupInfo.getCalledDisplays())) {
-                return agentInfo.getAgentId();
-            }
-            calledDisplay = RandomUtil.getRandom(groupInfo.getCalledDisplays());
-        } else if (StringUtils.isBlank(agentInfo.getDiaplay())) {
-            //坐席控制
-            if (!StringUtils.isBlank(agentInfo.getDiaplay())) {
-                calledDisplay = agentInfo.getDiaplay();
-            } else {
-                return agentInfo.getAgentId();
-            }
+        if (!StringUtils.isBlank(agentInfo.getDiaplay())) {
+            return agentInfo.getDiaplay();
         }
-        return calledDisplay;
+        return RandomUtil.getRandom(groupInfo.getCalledDisplays());
     }
 
     /**
