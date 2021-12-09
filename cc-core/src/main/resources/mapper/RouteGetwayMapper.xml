@@ -202,6 +202,6 @@
     select
         <include refid="Base_Column_List" />
     from
-        cc_route_getway where id in (select getway_id from cc_route_getway_group where route_group_id = {id}) and status = 1
+        cc_route_getway where id in (select getway_id from cc_route_getway_group where route_group_id = #{id}) and status = 1
   </select>
 </mapper>

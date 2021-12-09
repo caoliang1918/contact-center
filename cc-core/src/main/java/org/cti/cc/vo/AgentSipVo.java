@@ -29,7 +29,7 @@ public class AgentSipVo {
      *
      */
     @NotNull(message = "sip号码不能为空")
-    @Size(min = 6,max = 16,message = "sip号码必须是6,16字符")
+    @Size(min = 5, max = 16, message = "sip号码必须是5,16字符")
     private String sip;
 
     /**
@@ -41,7 +41,7 @@ public class AgentSipVo {
      *
      */
     @NotNull(message = "sip密码不能为空")
-    @Size(min = 8,max = 16,message = "sip密码必须是8,16字符")
+    @Size(min = 8, max = 16, message = "sip密码必须是8,16字符")
     private String sipPwd;
 
     public Long getId() {

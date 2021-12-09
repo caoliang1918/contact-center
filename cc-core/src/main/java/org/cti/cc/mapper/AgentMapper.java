@@ -1,5 +1,6 @@
 package org.cti.cc.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentInfo;
@@ -63,4 +64,12 @@ public interface AgentMapper extends BaseMapper<Agent> {
      * @return
      */
     Integer agentSize(Long companyId);
+
+    /**
+     *
+     * @param companyId
+     * @param ids
+     * @return
+     */
+    List<Agent> selectByIds(@Param("companyId") Long companyId , @Param("ids") List<Long> ids);
 }

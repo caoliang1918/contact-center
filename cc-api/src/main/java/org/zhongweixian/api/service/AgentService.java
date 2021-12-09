@@ -4,9 +4,8 @@ import com.github.pagehelper.PageInfo;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentSipPo;
-import org.cti.cc.vo.AgentVo;
-import org.cti.cc.vo.AgentBindSkill;
 import org.cti.cc.vo.AgentSipVo;
+import org.cti.cc.vo.AgentVo;
 import org.cti.cc.vo.BatchAddAgentVo;
 import org.zhongweixian.api.vo.excel.AgentImportExcel;
 
@@ -43,17 +42,6 @@ public interface AgentService extends BaseService<Agent> {
      * @return
      */
     AgentInfo getAgentInfo(Long companyId, Long id);
-
-    /**
-     * 技能中添加坐席
-     *
-     * @param companyId
-     * @param skillId   技能ID
-     * @param ids       坐席ID
-     * @param rank      技能等级
-     * @return
-     */
-    int agentBindSkill(Long companyId, Long skillId, List<Long> ids, Integer rank);
 
     /**
      * 删除坐席
@@ -106,12 +94,4 @@ public interface AgentService extends BaseService<Agent> {
      * @return
      */
     int agentImport(List<AgentImportExcel> agentList, Long companyId);
-
-    /**
-     * 坐席绑定技能
-     *
-     * @param agentBindSkill
-     * @return
-     */
-    int agentBindSkill(AgentBindSkill agentBindSkill);
 }

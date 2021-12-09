@@ -16,12 +16,14 @@
             <pattern>${PATTERN}</pattern>
         </encoder>
         <file>${LOG_HOME}/${LOG_NAME}.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <cleanHistoryOnStart>${LOG_FILE_CLEAN_HISTORY_ON_START:-false}</cleanHistoryOnStart>
-            <fileNamePattern>${LOG_HOME}/${ROLLING_FILE_NAME_PATTERN:-${LOG_NAME}.%d{yyyy-MM-dd}.%i.gz}</fileNamePattern>
-            <maxFileSize>${LOG_FILE_MAX_SIZE:-100MB}</maxFileSize>
-            <maxHistory>${LOG_FILE_MAX_HISTORY:-10}</maxHistory>
-            <totalSizeCap>${LOG_FILE_TOTAL_SIZE_CAP:-0}</totalSizeCap>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}.%d{yyyy-MM-dd}.%i.gz}</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <!-- 日志总保存量为10GB -->
+            <totalSizeCap>10GB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>256MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
 

@@ -51,9 +51,11 @@
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
-    <include refid="Base_Column_List" />
-    from cc_vdn_schedule
-    where id = #{id,jdbcType=BIGINT}
+        <include refid="Base_Column_List" />
+    from
+        cc_vdn_schedule
+    where
+        id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectByVdn" parameterType="Long" resultMap="BaseResultMapPo">
@@ -256,4 +258,16 @@
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_vdn_schedule
+    <where>
+      <if test="companyId!=null"> company_id = #{companyId}</if>
+      <if test="routeValue!=null"> and route_value = #{routeValue,jdbcType=VARCHAR} </if>
+      <if test="routeType!=null"> and route_type = #{routeType,jdbcType=INTEGER} </if>
+    </where>
+  </select>
 </mapper>

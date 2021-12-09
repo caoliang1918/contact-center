@@ -5,17 +5,17 @@ import javax.validation.constraints.NotNull;
 public class GroupOverFlowVo {
 
     @NotNull(message = "排队策略不能为空")
-    private Long id;
+    private Long overFlowId;
 
     @NotNull(message = "策略等级不能为空")
     private Integer levelValue;
 
-    public Long getId() {
-        return id;
+    public Long getOverFlowId() {
+        return overFlowId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOverFlowId(Long overFlowId) {
+        this.overFlowId = overFlowId;
     }
 
     public Integer getLevelValue() {

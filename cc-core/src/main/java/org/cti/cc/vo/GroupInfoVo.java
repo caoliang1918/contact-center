@@ -21,16 +21,9 @@ public class GroupInfoVo {
     /**
      * 技能组名称
      */
-    @NotNull
-    @Size(min = 2, max = 16, message = "技能组名称必须在2,16字符")
+    @NotNull(message = "技能组名称不能为空")
+    @Size(min = 2, max = 16, message = "技能组名称必须在2-16字符")
     private String name;
-
-    /**
-     * 技能组控制(1:技能组,2:坐席)
-     */
-    @NotNull
-    @Range(min = 1, max = 2, message = "技能组控制设置错误")
-    private Integer controlFlag;
 
     /**
      * 话后自动空闲时长
@@ -147,14 +140,6 @@ public class GroupInfoVo {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getControlFlag() {
-        return controlFlag;
-    }
-
-    public void setControlFlag(Integer controlFlag) {
-        this.controlFlag = controlFlag;
     }
 
     public Integer getAfterInterval() {

@@ -46,7 +46,7 @@
   <resultMap id="AgentInfoResultMap" extends="BaseResultMap" type="org.cti.cc.po.AgentInfo">
       <collection property="groupIds" select="org.cti.cc.mapper.AgentGroupMapper.selectByAgent" column="id"/>
       <collection property="sips" select="org.cti.cc.mapper.AgentSipMapper.selectByAgent" column="id"/>
-      <collection property="skillAgents" select="org.cti.cc.mapper.SkillAgentMapper.selectByAgent" column="id"/>
+      <collection property="skillAgents" select="org.cti.cc.mapper.SkillAgentMapper.selectByAgent" column="{companyId=company_id,id=id}"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type,
@@ -336,7 +336,7 @@
      update cc_agent  set uts = #{cts}, agent_id = #{agentId}, agent_key = #{agentKey}, status = #{status}  where id = #{id}
   </delete>
 
-  <select id="selectCountByMap"  parameterType="java.util.Map" resultType="Long" >
+  <select id="selectCountByMap"  parameterType="java.util.Map" resultType="java.lang.Integer" >
     select
         count(id)
     from
@@ -386,6 +386,14 @@
 
   <select id="agentSize" parameterType="java.lang.Long" resultType="java.lang.Integer">
      select count(id) from cc_agent where company_id = #{companyId} and status = 1
+  </select>
+
+  <select id="selectByIds"  resultMap="SimpleResultMap">
+    select
+      id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, diaplay, group_id, state
+    from
+      cc_agent
+      where company_id = #{companyId} and id  in <foreach collection ="ids" item="id" separator ="," open="(" close=")"> #{id} </foreach>
   </select>
 
  </mapper>

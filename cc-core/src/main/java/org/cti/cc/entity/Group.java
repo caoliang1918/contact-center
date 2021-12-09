@@ -35,11 +35,6 @@ public class Group implements Serializable {
     private String name;
 
     /**
-     * 控制开关 1:技能组,2:坐席
-     */
-    private Integer controlFlag;
-
-    /**
      * 话后自动空闲时长
      */
     private Integer afterInterval;
@@ -184,14 +179,6 @@ public class Group implements Serializable {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
-    }
-
-    public Integer getControlFlag() {
-        return controlFlag;
-    }
-
-    public void setControlFlag(Integer controlFlag) {
-        this.controlFlag = controlFlag;
     }
 
     public Integer getAfterInterval() {
@@ -373,7 +360,6 @@ public class Group implements Serializable {
         sb.append(", uts=").append(uts);
         sb.append(", companyId=").append(companyId);
         sb.append(", name=").append(name);
-        sb.append(", controlFlag=").append(controlFlag);
         sb.append(", afterInterval=").append(afterInterval);
         sb.append(", callerDisplayId=").append(callerDisplayId);
         sb.append(", calledDisplayId=").append(calledDisplayId);
@@ -417,7 +403,6 @@ public class Group implements Serializable {
             && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
             && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-            && (this.getControlFlag() == null ? other.getControlFlag() == null : this.getControlFlag().equals(other.getControlFlag()))
             && (this.getAfterInterval() == null ? other.getAfterInterval() == null : this.getAfterInterval().equals(other.getAfterInterval()))
             && (this.getCallerDisplayId() == null ? other.getCallerDisplayId() == null : this.getCallerDisplayId().equals(other.getCallerDisplayId()))
             && (this.getCalledDisplayId() == null ? other.getCalledDisplayId() == null : this.getCalledDisplayId().equals(other.getCalledDisplayId()))
@@ -450,7 +435,6 @@ public class Group implements Serializable {
         result = prime * result + ((getUts() == null) ? 0 : getUts().hashCode());
         result = prime * result + ((getCompanyId() == null) ? 0 : getCompanyId().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getControlFlag() == null) ? 0 : getControlFlag().hashCode());
         result = prime * result + ((getAfterInterval() == null) ? 0 : getAfterInterval().hashCode());
         result = prime * result + ((getCallerDisplayId() == null) ? 0 : getCallerDisplayId().hashCode());
         result = prime * result + ((getCalledDisplayId() == null) ? 0 : getCalledDisplayId().hashCode());

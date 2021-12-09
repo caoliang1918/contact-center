@@ -25,5 +25,6 @@ public interface CompanyDisplayMapper extends BaseMapper<CompanyDisplay> {
      * @param id
      * @return
      */
+    @Override
     CompanyDisplay selectById(@Param("companyId") Long companyId, @Param("id") Long id);
 }

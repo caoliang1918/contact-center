@@ -582,6 +582,129 @@ public class CompanyController extends BaseController {
         return new CommonResponse(groupService.deleteGroup(adminAccountInfo.getBindCompanyId(), id));
     }
 
+
+    /**
+     * 1.7.1 技能列表
+     *
+     * @param adminAccountInfo
+     * @param pageInfo
+     * @param query
+     * @return
+     */
+    @GetMapping("skill")
+    public CommonResponse<PageInfo<Skill>> skillList(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, PageInfo pageInfo, String query) {
+        Map<String, Object> params = parseMap(adminAccountInfo, pageInfo, query);
+        return new CommonResponse(skillService.findByPageParams(params));
+    }
+
+    /**
+     * 1.7.2 技能详情
+     *
+     * @param adminAccountInfo
+     * @param id
+     * @return
+     */
+    @GetMapping("skill/{id}")
+    public CommonResponse<SkillInfo> skill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id) {
+        return new CommonResponse<>(skillService.skillInfo(adminAccountInfo.getCompanyId(), id));
+    }
+
+
+    /**
+     * 1.7.3 新增技能
+     *
+     * @param adminAccountInfo
+     * @param skillVo
+     * @return
+     */
+    @PostMapping("skill")
+    public CommonResponse addSkill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
+                                   @Validated @RequestBody SkillVo skillVo) {
+        skillVo.setCompanyId(adminAccountInfo.getBindCompanyId());
+        return new CommonResponse<>(skillService.saveOrUpdateSkill(skillVo));
+    }
+
+
+    /**
+     * 1.7.4 技能新增坐席
+     *
+     * @param adminAccountInfo
+     * @param id
+     * @param skillAgentsVo
+     * @return
+     */
+    @PostMapping("skill/agent/{id}")
+    public CommonResponse addSkillAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
+                                        @PathVariable Long id, @Validated @RequestBody SkillAgentsVo skillAgentsVo) {
+        skillAgentsVo.setCompanyId(adminAccountInfo.getCompanyId());
+        skillAgentsVo.setSkillId(id);
+        return new CommonResponse(skillService.addSkillAgent(skillAgentsVo));
+    }
+
+    /**
+     * 1.7.5 技能删除坐席
+     *
+     * @param adminAccountInfo
+     * @param id
+     * @param skillAgentsVo
+     * @return
+     */
+    @DeleteMapping("skill/agent/{id}")
+    public CommonResponse deleteSkillAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
+                                           @PathVariable Long id, @Validated @RequestBody SkillAgentsVo skillAgentsVo) {
+        skillAgentsVo.setCompanyId(adminAccountInfo.getCompanyId());
+        skillAgentsVo.setSkillId(id);
+        return new CommonResponse(skillService.deleteSkippAgent(skillAgentsVo));
+    }
+
+
+    /**
+     * 1.7.6 技能修改坐席
+     *
+     * @param adminAccountInfo
+     * @param id
+     * @param skillAgentVo
+     * @return
+     */
+    @PutMapping("skill/agent/{id}")
+    public CommonResponse updateSkillAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
+                                           @PathVariable Long id, @Validated @RequestBody SkillAgentVo skillAgentVo) {
+        skillAgentVo.setId(id);
+        skillAgentVo.setCompanyId(adminAccountInfo.getCompanyId());
+        return new CommonResponse(skillService.updateSkillAgent(skillAgentVo));
+    }
+
+    /**
+     * 1.7.7 修改技能
+     *
+     * @param adminAccountInfo
+     * @param id
+     * @return
+     */
+    @PutMapping("skill/{id}")
+    public CommonResponse updateSkill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
+                                      @PathVariable Long id, @Validated @RequestBody SkillVo skillVo) {
+        skillVo.setId(id);
+        skillVo.setCompanyId(adminAccountInfo.getBindCompanyId());
+        return new CommonResponse<>(skillService.saveOrUpdateSkill(skillVo));
+    }
+
+    /**
+     * 1.7.8 删除技能
+     *
+     * @param adminAccountInfo
+     * @param id
+     * @return
+     */
+    @DeleteMapping("skill/{id}")
+    public CommonResponse deleteSkill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
+                                      @PathVariable Long id) {
+        Skill skill = new Skill();
+        skill.setCompanyId(adminAccountInfo.getBindCompanyId());
+        skill.setId(id);
+        return new CommonResponse<>(skillService.deleteSkill(skill));
+    }
+
     /**
      * 1.8.1 坐席列表
      *
@@ -619,8 +742,7 @@ public class CompanyController extends BaseController {
     public CommonResponse addAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @Validated @RequestBody AgentVo agentVo) {
         agentVo.setCompanyId(adminAccountInfo.getBindCompanyId());
         agentVo.setId(null);
-        agentService.saveOrUpdate(agentVo);
-        return new CommonResponse<>();
+        return new CommonResponse<>(agentService.saveOrUpdate(agentVo));
     }
 
     /**
@@ -634,8 +756,7 @@ public class CompanyController extends BaseController {
     public CommonResponse updateAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id, @Validated @RequestBody AgentVo agentVo) {
         agentVo.setCompanyId(adminAccountInfo.getBindCompanyId());
         agentVo.setId(id);
-        agentService.saveOrUpdate(agentVo);
-        return new CommonResponse<>();
+        return new CommonResponse<>(agentService.saveOrUpdate(agentVo));
     }
 
     /**
@@ -647,8 +768,7 @@ public class CompanyController extends BaseController {
      */
     @DeleteMapping("agent/{id}")
     public CommonResponse deleteAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id) {
-        agentService.deleteAgent(adminAccountInfo.getBindCompanyId(), id);
-        return new CommonResponse();
+        return new CommonResponse(agentService.deleteAgent(adminAccountInfo.getBindCompanyId(), id));
     }
 
 
@@ -663,8 +783,7 @@ public class CompanyController extends BaseController {
     public CommonResponse batchAddAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
                                         @Validated @RequestBody BatchAddAgentVo addAgentVo) {
         addAgentVo.setCompanyId(adminAccountInfo.getBindCompanyId());
-        Integer result = agentService.batchAddAgent(addAgentVo);
-        return new CommonResponse<>(result);
+        return new CommonResponse<>(agentService.batchAddAgent(addAgentVo));
     }
 
     /**
@@ -694,48 +813,6 @@ public class CompanyController extends BaseController {
         ImportParams importParams = new ImportParams();
         List<AgentImportExcel> agentImportExcels = ExcelImportUtil.importExcel(multipartFile.getInputStream(), AgentImportExcel.class, importParams);
         return new CommonResponse(agentService.agentImport(agentImportExcels, adminAccountInfo.getBindCompanyId()));
-    }
-
-
-    /**
-     * 1.7.1 技能列表
-     *
-     * @param adminAccountInfo
-     * @param pageInfo
-     * @param query
-     * @return
-     */
-    @GetMapping("skill")
-    public CommonResponse<PageInfo<Skill>> skillList(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, PageInfo pageInfo, String query) {
-        Map<String, Object> params = parseMap(adminAccountInfo, pageInfo, query);
-        return new CommonResponse(skillService.findByPageParams(params));
-    }
-
-    /**
-     * 1.7.2 技能详情
-     *
-     * @param adminAccountInfo
-     * @param id
-     * @return
-     */
-    @GetMapping("skill/{id}")
-    public CommonResponse<SkillInfo> skill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id) {
-        return new CommonResponse<>(skillService.skillInfo(adminAccountInfo.getCompanyId(), id));
-    }
-
-    /**
-     * 坐席绑定技能
-     *
-     * @param adminAccountInfo
-     * @param agentBindSkill
-     * @return
-     */
-    @PostMapping("agent/bindskill")
-    public CommonResponse agentSindSkill(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
-                                         @Validated @RequestBody AgentBindSkill agentBindSkill) {
-        agentBindSkill.setCompanyId(adminAccountInfo.getCompanyId());
-        agentService.agentBindSkill(agentBindSkill);
-        return new CommonResponse();
     }
 
 

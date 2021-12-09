@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 public class CompanyVo {
 
     @NotNull(message = "企业名称不能为空")
-    @Size(min = 2, max = 16, message = "企业名称必须在2,16字符")
+    @Size(min = 2, max = 16, message = "企业名称必须在2,6字符")
     private String name;
 
     /**
@@ -28,7 +28,7 @@ public class CompanyVo {
      * 简称
      */
     @NotNull(message = "企业缩写不能为空")
-    @Size(min = 2, max = 16, message = "企业缩写必须在2,16字符")
+    @Size(min = 2, max = 8, message = "企业缩写必须在2,8字符")
     private String companyCode;
 
     /**

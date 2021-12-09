@@ -42,8 +42,8 @@ public class RouteGetwayVo {
     /**
      * 媒体拨号计划文件
      */
-    @NotNull
-    @Size(min = 4, max = 32, message = "profile规则不能为空")
+    @NotNull(message = "profile规则不能为空")
+    @Size(min = 4, max = 32, message = "profile长度必须在4-32位")
     private String profile;
 
     /**

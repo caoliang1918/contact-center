@@ -4,10 +4,12 @@ package org.zhongweixian.api.service.impl;
 import org.cti.cc.entity.Company;
 import org.cti.cc.entity.Group;
 import org.cti.cc.entity.SkillGroup;
+import org.cti.cc.entity.VdnSchedule;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.mapper.CompanyMapper;
 import org.cti.cc.mapper.GroupMapper;
 import org.cti.cc.mapper.SkillGroupMapper;
+import org.cti.cc.mapper.VdnScheduleMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.GroupInfo;
 import org.cti.cc.vo.GroupInfoVo;
@@ -37,6 +39,9 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
     @Autowired
     private CompanyMapper companyMapper;
 
+    @Autowired
+    private VdnScheduleMapper vdnScheduleMapper;
+
     @Override
     BaseMapper<Group> baseMapper() {
         return groupMapper;
@@ -55,12 +60,12 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
     public int saveOrUpdateGroup(GroupInfoVo groupInfoVo) {
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", groupInfoVo.getCompanyId());
-        params.put("name" , groupInfoVo.getName());
+        params.put("name", groupInfoVo.getName());
         List<Group> groups = groupMapper.selectListByMap(params);
         //判断是否重复
         if (!CollectionUtils.isEmpty(groups)) {
             if (groupInfoVo.getId() == null || !groupInfoVo.getId().equals(groups.get(0).getId())) {
-                throw new BusinessException(ErrorCode.DUPLICATE_EXCEPTION);
+                throw new BusinessException(ErrorCode.DUPLICATE_EXCEPTION, "技能组名称已存在");
             }
         }
 
@@ -76,12 +81,14 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
             //判断技能组是否超过限制
             Company company = companyMapper.selectByPrimaryKey(groupInfoVo.getCompanyId());
             params.remove("name");
-            Long count = groupMapper.selectCountByMap(params);
+            Integer count = groupMapper.selectCountByMap(params);
             if (count > company.getGroupLimit()) {
                 throw new BusinessException(ErrorCode.GROUP_OVER_LIMIT);
             }
             group.setCts(Instant.now().getEpochSecond());
             groupMapper.insertSelective(group);
+            Long id = groupMapper.selectByName(groupInfoVo.getCompanyId(), groupInfoVo.getName());
+            group.setId(id);
             //技能组技能关联
             List<SkillGroup> skillGroupList = new ArrayList<>();
             for (SkillGroupVo skillGroupVo : groupInfoVo.getSkillList()) {
@@ -90,6 +97,7 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
                 skillGroup.setGroupId(group.getId());
                 skillGroup.setCompanyId(groupInfoVo.getCompanyId());
                 skillGroup.setCts(Instant.now().getEpochSecond());
+                skillGroup.setStatus(1);
                 skillGroupList.add(skillGroup);
             }
             skillGroupMapper.batchInsert(skillGroupList);
@@ -117,6 +125,29 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
 
     @Override
     public int deleteGroup(Long companyId, Long id) {
-        return 0;
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("id", id);
+        List<Group> groups = groupMapper.selectListByMap(params);
+        //是否存在
+        if (CollectionUtils.isEmpty(groups)) {
+            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
+        }
+        /**
+         * 技能组绑定了不能删
+         */
+        params.put("routeType", 1);
+        params.put("routeValue", id);
+        List<VdnSchedule> vdnSchedules = vdnScheduleMapper.selectListByMap(params);
+        if (!CollectionUtils.isEmpty(vdnSchedules)) {
+            throw new BusinessException(ErrorCode.DATA_NOT_EXIST, "技能组已经被vdn引用");
+        }
+
+        Group group = new Group();
+        group.setId(groups.get(0).getId());
+        group.setStatus(0);
+        group.setUts(Instant.now().getEpochSecond());
+        group.setName(groups.get(0).getName() + randomDelete());
+        return groupMapper.updateByPrimaryKeySelective(group);
     }
 }

@@ -7,7 +7,6 @@
     <result column="uts" jdbcType="BIGINT" property="uts" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="control_flag" jdbcType="INTEGER" property="controlFlag" />
     <result column="after_interval" jdbcType="INTEGER" property="afterInterval" />
     <result column="caller_display_id" jdbcType="BIGINT" property="callerDisplayId" />
     <result column="called_display_id" jdbcType="BIGINT" property="calledDisplayId" />
@@ -47,7 +46,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, cts, uts, company_id, name, control_flag, after_interval, caller_display_id,
+    id, cts, uts, company_id, name, after_interval, caller_display_id,
     called_display_id, record_type, level_value, tts_engine, play_content, evaluate,
     queue_play, transfer_play, group_type, notify_position, notify_rate, notify_content,
     call_memory, ext1, ext2, ext3, ext4, ext5, status
@@ -70,7 +69,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insertSelective" parameterType="org.cti.cc.entity.Group">
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.Group" >
     insert into cc_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -87,9 +86,6 @@
       </if>
       <if test="name != null">
         name,
-      </if>
-      <if test="controlFlag != null">
-        control_flag,
       </if>
       <if test="afterInterval != null">
         after_interval,
@@ -171,9 +167,6 @@
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="controlFlag != null">
-        #{controlFlag,jdbcType=INTEGER},
-      </if>
       <if test="afterInterval != null">
         #{afterInterval,jdbcType=INTEGER},
       </if>
@@ -253,9 +246,6 @@
       </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="controlFlag != null">
-        control_flag = #{controlFlag,jdbcType=INTEGER},
       </if>
       <if test="afterInterval != null">
         after_interval = #{afterInterval,jdbcType=INTEGER},
@@ -348,6 +338,19 @@
     </where>
   </select>
 
+  <select id="selectCountByMap"  parameterType="java.util.Map" resultType="java.lang.Integer" >
+    select
+      count(id)
+    from
+    cc_group
+    <where>
+      <if test="id!=null"> id = #{id}</if>
+      <if test="name!=null"> and name = #{name}</if>
+      <if test="companyId!=null"> and company_id = #{companyId}</if>
+      <if test="true" > and status = 1</if>
+    </where>
+  </select>
+
 
 
   <select id="selectGroupInfo"  parameterType="java.util.Map" resultMap="GroupInfoResultMap" >
@@ -361,5 +364,9 @@
       <if test="companyId!=null">and company_id = #{companyId}</if>
       <if test="true" > and status = 1 </if>
     </where>
+  </select>
+
+  <select id="selectByName" resultType="java.lang.Long">
+     select id from cc_group where company_id = #{companyId} and name = #{name} and status = 1
   </select>
 </mapper>

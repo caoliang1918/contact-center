@@ -109,7 +109,7 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public void calllogExport(HttpServletResponse response, Map<String, Object> params) throws IOException {
-        Long count = callLogMapper.selectCountByMap(params);
+        Integer count = callLogMapper.selectCountByMap(params);
         if (count == 0L) {
             new BusinessException(ErrorCode.EXPORT_EMPTY);
         }

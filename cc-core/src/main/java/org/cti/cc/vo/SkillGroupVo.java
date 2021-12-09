@@ -1,5 +1,7 @@
 package org.cti.cc.vo;
 
+import org.hibernate.validator.constraints.Range;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -13,28 +15,38 @@ public class SkillGroupVo {
     @NotNull(message = "技能id不能为空")
     private Long skillId;
 
+    @NotNull(message = "技能等级不能为空")
+    private Integer levelValue;
 
     /**
-     * 等级类型(1:全部,2:等于,3:>,4:<,5:介于)
+     * 等级
+     */
+    @Range(min = 1, max = 100)
+    private int rankValue;
+
+    /**
+     * 介于之间时，起始值
+     */
+    @Range(min = 1, max = 100)
+    private int rankValueStart;
+
+    /**
+     * 0:全部; 1:小于或等于; 2:等于; 3:大于或等于; 4:大于
      */
     @NotNull(message = "等级类型不能为空")
-    private Integer rankAbout;
+    @Range(min = 0, max = 4, message = "等级类型错误")
+    private Integer rankType;
 
     /**
-     * 介于的开始值
+     * 1:由低到高，2:由高到低
      */
-    private Integer rankValueStart;
+    @NotNull(message = "匹配类型不能为空")
+    @Range(min = 1, max = 2, message = "匹配策略错误")
+    private Integer matchType;
 
-    /**
-     * 等级值
-     */
-    private Integer rankValue;
-
-    /**
-     * 占用率
-     */
     @NotNull(message = "占用率不能为空")
-    private Integer rate;
+    @Range(min = 1, max = 100, message = "占用率在1-100之间")
+    private Integer shareValue;
 
 
     public Long getSkillId() {
@@ -45,35 +57,51 @@ public class SkillGroupVo {
         this.skillId = skillId;
     }
 
-    public Integer getRankAbout() {
-        return rankAbout;
+    public Integer getLevelValue() {
+        return levelValue;
     }
 
-    public void setRankAbout(Integer rankAbout) {
-        this.rankAbout = rankAbout;
+    public void setLevelValue(Integer levelValue) {
+        this.levelValue = levelValue;
     }
 
-    public Integer getRankValueStart() {
-        return rankValueStart;
-    }
-
-    public void setRankValueStart(Integer rankValueStart) {
-        this.rankValueStart = rankValueStart;
-    }
-
-    public Integer getRankValue() {
+    public int getRankValue() {
         return rankValue;
     }
 
-    public void setRankValue(Integer rankValue) {
+    public void setRankValue(int rankValue) {
         this.rankValue = rankValue;
     }
 
-    public Integer getRate() {
-        return rate;
+    public int getRankValueStart() {
+        return rankValueStart;
     }
 
-    public void setRate(Integer rate) {
-        this.rate = rate;
+    public void setRankValueStart(int rankValueStart) {
+        this.rankValueStart = rankValueStart;
+    }
+
+    public Integer getRankType() {
+        return rankType;
+    }
+
+    public void setRankType(Integer rankType) {
+        this.rankType = rankType;
+    }
+
+    public Integer getMatchType() {
+        return matchType;
+    }
+
+    public void setMatchType(Integer matchType) {
+        this.matchType = matchType;
+    }
+
+    public Integer getShareValue() {
+        return shareValue;
+    }
+
+    public void setShareValue(Integer shareValue) {
+        this.shareValue = shareValue;
     }
 }

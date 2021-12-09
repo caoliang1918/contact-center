@@ -8,14 +8,17 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.cti.cc.entity.*;
+import org.cti.cc.entity.Agent;
+import org.cti.cc.entity.AgentSip;
+import org.cti.cc.entity.Company;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.mapper.*;
+import org.cti.cc.mapper.AgentMapper;
+import org.cti.cc.mapper.AgentSipMapper;
+import org.cti.cc.mapper.CompanyMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentSipPo;
 import org.cti.cc.po.CompanyInfo;
-import org.cti.cc.vo.AgentBindSkill;
 import org.cti.cc.vo.AgentSipVo;
 import org.cti.cc.vo.AgentVo;
 import org.cti.cc.vo.BatchAddAgentVo;
@@ -44,7 +47,13 @@ import java.util.Map;
 public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentService {
 
     @Value("${sip.prefix:89}")
-    private Integer sipPrefix;
+    private String sipPrefix;
+
+    @Value("${sip.length:4}")
+    private Integer sipLength;
+
+    @Value("${sip.psswd.length:6}")
+    private Integer sipPasswdLength;
 
     @Autowired
     private AgentMapper agentMapper;
@@ -54,12 +63,6 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
 
     @Autowired
     private CompanyMapper companyMapper;
-
-    @Autowired
-    private SkillMapper skillMapper;
-
-    @Autowired
-    private SkillAgentMapper skillAgentMapper;
 
     @Override
     BaseMapper<Agent> baseMapper() {
@@ -86,7 +89,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
                 }
             }
             //查看当前企业坐席总数
-            Long agentCount = agentMapper.selectCountByMap(params);
+            Integer agentCount = agentMapper.selectCountByMap(params);
             if (agentCount >= company.getAgentLimit()) {
                 throw new BusinessException(ErrorCode.AGENT_OVER_LIMIT);
             }
@@ -116,7 +119,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         Company company = companyMapper.selectByPrimaryKey(addAgentVo.getCompanyId());
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", addAgentVo.getCompanyId());
-        Long agentCount = agentMapper.selectCountByMap(params);
+        Integer agentCount = agentMapper.selectCountByMap(params);
         if (agentCount >= company.getAgentLimit()) {
             throw new BusinessException(ErrorCode.AGENT_OVER_LIMIT);
         }
@@ -145,7 +148,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             sipMap.put("companyId", addAgentVo.getCompanyId());
             sipMap.put("sip", sipPrefix + "" + Instant.now().toEpochMilli());
             sipMap.put("agentKey", agent.getAgentKey());
-            sipMap.put("sipPwd", RandomStringUtils.randomNumeric(16));
+            sipMap.put("sipPwd", RandomStringUtils.randomAlphabetic(sipPasswdLength));
             agentSips.add(sipMap);
 
             result = result + 1;
@@ -165,29 +168,6 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
         }
         return agentInfo;
-    }
-
-    @Override
-    public int agentBindSkill(Long companyId, Long skillId, List<Long> ids, Integer rank) {
-        Skill skill = skillMapper.selectById(skillId, companyId);
-        if (skill == null) {
-            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
-        }
-        if (CollectionUtils.isEmpty(ids)) {
-            throw new BusinessException(ErrorCode.PARAMETER_ERROR);
-        }
-        List<SkillAgent> skillAgents = new ArrayList<>();
-        for (Long id : ids) {
-            SkillAgent skillAgent = new SkillAgent();
-            skillAgent.setAgentId(id);
-            skillAgent.setSkillId(skillId);
-            skillAgent.setCompanyId(companyId);
-            skillAgent.setRankValue(rank);
-            skillAgent.setStatus(1);
-            skillAgents.add(skillAgent);
-        }
-        skillAgentMapper.batchInsert(skillAgents);
-        return 0;
     }
 
     @Override
@@ -258,10 +238,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         if (agent != null) {
             throw new BusinessException(ErrorCode.DATA_IS_USED);
         }
-        agentSip.setUts(Instant.now().getEpochSecond());
-        agentSip.setStatus(0);
-        agentSip.setSip(agentSip.getSip() + randomDelete());
-        return agentSipMapper.updateByPrimaryKeySelective(agentSip);
+        return agentSipMapper.deleteByPrimaryKey(id);
     }
 
     @Override
@@ -288,16 +265,30 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             throw new BusinessException(ErrorCode.AGENT_OVER_LIMIT);
         }
 
+        //当前系统最大的sip号码
+        Integer maxSip = agentSipMapper.maxSip();
+        if (maxSip == null) {
+            maxSip = Integer.parseInt(sipPrefix + getMin(sipLength));
+        }
+
         Integer result = 0;
         for (AgentImportExcel agentImportExcel : agentList) {
             if (StringUtils.isBlank(agentImportExcel.getAgentKey())) {
                 continue;
             }
             Agent existAgent = agentMapper.selectAgent(agentImportExcel.getAgentKey() + "@" + companyInfo.getCompanyCode());
-            AgentSip existSip = agentSipMapper.selectBySip(agentImportExcel.getSip());
-            if (existAgent != null || existSip != null) {
+            if (existAgent != null) {
+                logger.warn("agentKey:{} exist", agentImportExcel.getAgentKey());
                 continue;
             }
+            if (agentImportExcel.getSip() != null) {
+                AgentSip existSip = agentSipMapper.selectBySip(agentImportExcel.getSip());
+                if (existSip != null) {
+                    logger.warn("agentKey:{} sip:{} exist", agentImportExcel.getAgentKey(), agentImportExcel.getSip());
+                    continue;
+                }
+            }
+
             Agent agent = new Agent();
             agent.setCompanyId(companyId);
             agent.setAgentKey(agentImportExcel.getAgentKey() + "@" + companyInfo.getCompanyCode());
@@ -312,11 +303,13 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             agentMapper.addAgent(agent);
             result = result + 1;
 
-            if (StringUtils.isBlank(agentImportExcel.getSip())) {
-                continue;
+            if (agentImportExcel.getSip() != null) {
+                maxSip = agentImportExcel.getSip();
+            } else {
+                maxSip = maxSip + 1;
             }
             AgentSip agentSip = new AgentSip();
-            agentSip.setSip(agentImportExcel.getSip());
+            agentSip.setSip(maxSip);
             agentSip.setAgentId(agent.getId());
             agentSip.setCts(Instant.now().getEpochSecond());
             agentSip.setCompanyId(companyId);
@@ -325,35 +318,19 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         return result;
     }
 
-    @Override
-    public int agentBindSkill(AgentBindSkill agentBindSkill) {
-        /**
-         * 先判断坐席
-         */
-        Skill skill = skillMapper.selectById(agentBindSkill.getCompanyId(), agentBindSkill.getSkillId());
-        if (skill == null) {
-            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
+    /**
+     * 最小值
+     *
+     * @param length
+     * @return
+     */
+    private String getMin(Integer length) {
+        StringBuilder str = new StringBuilder("");
+        for (int i = 0; i <= length; i++) {
+            str.append("0");
         }
-        Map<String, Object> params = new HashMap<>();
-        params.put("companyId", agentBindSkill.getCompanyId());
-        params.put("ids", agentBindSkill.getAgentIds());
-        List<Agent> agents = agentMapper.selectListByMap(params);
-        if (CollectionUtils.isEmpty(agents)) {
-            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
-        }
-        //删除已有数据
-        skillAgentMapper.deleteSkillAgent(agentBindSkill);
-
-        List<SkillAgent> skillAgents = new ArrayList<>();
-        for (Agent agent : agents) {
-            SkillAgent skillAgent = new SkillAgent();
-            skillAgent.setCompanyId(agentBindSkill.getCompanyId());
-            skillAgent.setAgentId(agent.getId());
-            skillAgent.setSkillId(agentBindSkill.getSkillId());
-            skillAgent.setRankValue(agentBindSkill.getRankValue());
-            skillAgents.add(skillAgent);
-        }
-        return skillAgentMapper.batchInsert(skillAgents);
+        return str.toString();
     }
+
 
 }

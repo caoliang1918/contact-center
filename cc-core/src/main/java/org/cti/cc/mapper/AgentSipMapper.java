@@ -34,19 +34,16 @@ public interface AgentSipMapper extends BaseMapper<AgentSip> {
      */
     List<AgentSipPo> selectAgentSip(Map<String, Object> params);
 
-    /**
-     * 查询sip号码
-     *
-     * @param companyId
-     * @param id
-     * @return
-     */
-    AgentSip selectById(@Param("companyId") Long companyId, @Param("id") Long id);
+
 
     /**
      *
      * @param sip
      * @return
      */
-    AgentSip selectBySip(String sip);
+    AgentSip selectBySip(Integer sip);
+
+    Integer maxSip();
+
+
 }

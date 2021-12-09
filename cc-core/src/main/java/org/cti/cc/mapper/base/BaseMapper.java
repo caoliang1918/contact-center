@@ -14,7 +14,7 @@ public interface BaseMapper<T> {
      * @param params
      * @return
      */
-    Long selectCountByMap(Map<String, Object> params);
+    Integer selectCountByMap(Map<String, Object> params);
 
     /**
      * 分页
@@ -57,6 +57,7 @@ public interface BaseMapper<T> {
      */
     T selectByPrimaryKey(Long id);
 
+
     /**
      * @param record
      * @return
@@ -69,4 +70,7 @@ public interface BaseMapper<T> {
      * @return
      */
     int updateByPrimaryKey(T record);
+
+
+    T selectById(@Param("companyId") Long companyId, @Param("id") Long id);
 }

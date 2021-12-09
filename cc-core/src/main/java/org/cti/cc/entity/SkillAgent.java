@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 坐席技能表
  *
  * @author caoliang
- * @date   2020/06/06
+ * @date 2020/06/06
  */
 public class SkillAgent implements Serializable {
     /**
@@ -48,6 +48,11 @@ public class SkillAgent implements Serializable {
      * 状态
      */
     private Integer status;
+
+    /**
+     * 坐席
+     */
+    private String agentKey;
 
     private static final long serialVersionUID = 1L;
 
@@ -115,6 +120,14 @@ public class SkillAgent implements Serializable {
         this.status = status;
     }
 
+    public String getAgentKey() {
+        return agentKey;
+    }
+
+    public void setAgentKey(String agentKey) {
+        this.agentKey = agentKey;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -147,13 +160,13 @@ public class SkillAgent implements Serializable {
         }
         SkillAgent other = (SkillAgent) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
-            && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
-            && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
-            && (this.getSkillId() == null ? other.getSkillId() == null : this.getSkillId().equals(other.getSkillId()))
-            && (this.getAgentId() == null ? other.getAgentId() == null : this.getAgentId().equals(other.getAgentId()))
-            && (this.getRankValue() == null ? other.getRankValue() == null : this.getRankValue().equals(other.getRankValue()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+                && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
+                && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
+                && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
+                && (this.getSkillId() == null ? other.getSkillId() == null : this.getSkillId().equals(other.getSkillId()))
+                && (this.getAgentId() == null ? other.getAgentId() == null : this.getAgentId().equals(other.getAgentId()))
+                && (this.getRankValue() == null ? other.getRankValue() == null : this.getRankValue().equals(other.getRankValue()))
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
     @Override

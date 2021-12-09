@@ -776,7 +776,7 @@
       <include refid="Base_Where"/> order by call_time desc
   </select>
 
-  <select id="selectCountByMap" parameterType="java.util.Map" resultType="Long">
+  <select id="selectCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
      select count(0) from cc_call_log   <include refid="Base_Where"/>
   </select>
 

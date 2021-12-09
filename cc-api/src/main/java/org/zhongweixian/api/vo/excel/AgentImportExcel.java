@@ -22,8 +22,8 @@ public class AgentImportExcel {
     /**
      * 坐席sip号码
      */
-    @Excel(name = "坐席sip号码", isImportField = "true_st")
-    private String sip;
+    @Excel(name = "坐席sip号码")
+    private Integer sip;
 
     /**
      * 坐席密码(明文)
@@ -53,11 +53,11 @@ public class AgentImportExcel {
         this.agentName = agentName;
     }
 
-    public String getSip() {
+    public Integer getSip() {
         return sip;
     }
 
-    public void setSip(String sip) {
+    public void setSip(Integer sip) {
         this.sip = sip;
     }
 
