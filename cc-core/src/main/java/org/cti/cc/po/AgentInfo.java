@@ -1,7 +1,6 @@
 package org.cti.cc.po;
 
 import org.cti.cc.entity.Agent;
-import org.cti.cc.entity.Skill;
 import org.cti.cc.entity.SkillAgent;
 import org.cti.cc.vo.AgentPreset;
 
@@ -155,6 +154,11 @@ public class AgentInfo extends Agent {
      */
     private String cdrNotifyUrl;
 
+    /**
+     * 坐席token,可以用于websocket和http请求
+     */
+    private String token;
+
     public String getRemoteAddress() {
         return remoteAddress;
     }
@@ -211,14 +215,6 @@ public class AgentInfo extends Agent {
         this.loginTime = loginTime;
     }
 
-    public AgentState getAgentState() {
-        return agentState;
-    }
-
-    public void setAgentState(AgentState agentState) {
-        this.agentState = agentState;
-    }
-
     public Integer getLoginType() {
         return loginType;
     }
@@ -235,6 +231,14 @@ public class AgentInfo extends Agent {
         this.workType = workType;
     }
 
+    public AgentState getAgentState() {
+        return agentState;
+    }
+
+    public void setAgentState(AgentState agentState) {
+        this.agentState = agentState;
+    }
+
     public Long getStateTime() {
         return stateTime;
     }
@@ -243,16 +247,16 @@ public class AgentInfo extends Agent {
         this.stateTime = stateTime;
     }
 
-    public AgentState getBeforeState() {
-        return beforeState;
-    }
-
     public AgentPreset getAgentPreset() {
         return agentPreset;
     }
 
     public void setAgentPreset(AgentPreset agentPreset) {
         this.agentPreset = agentPreset;
+    }
+
+    public AgentState getBeforeState() {
+        return beforeState;
     }
 
     public void setBeforeState(AgentState beforeState) {
@@ -275,6 +279,14 @@ public class AgentInfo extends Agent {
         this.logoutTime = logoutTime;
     }
 
+    public Long getServiceTime() {
+        return serviceTime;
+    }
+
+    public void setServiceTime(Long serviceTime) {
+        this.serviceTime = serviceTime;
+    }
+
     public Long getMaxReadyTime() {
         return maxReadyTime == null ? 0L : maxReadyTime;
     }
@@ -289,6 +301,30 @@ public class AgentInfo extends Agent {
 
     public void setTotalReadyTime(Long totalReadyTime) {
         this.totalReadyTime = totalReadyTime;
+    }
+
+    public Long getReadyTimes() {
+        return readyTimes;
+    }
+
+    public void setReadyTimes(Long readyTimes) {
+        this.readyTimes = readyTimes;
+    }
+
+    public Long getNotReadyTimes() {
+        return notReadyTimes;
+    }
+
+    public void setNotReadyTimes(Long notReadyTimes) {
+        this.notReadyTimes = notReadyTimes;
+    }
+
+    public Long getTotalAfterTime() {
+        return totalAfterTime;
+    }
+
+    public void setTotalAfterTime(Long totalAfterTime) {
+        this.totalAfterTime = totalAfterTime;
     }
 
     public Long getMaxTalkTime() {
@@ -339,36 +375,12 @@ public class AgentInfo extends Agent {
         this.cdrNotifyUrl = cdrNotifyUrl;
     }
 
-    public Long getReadyTimes() {
-        return readyTimes;
+    public String getToken() {
+        return token;
     }
 
-    public void setReadyTimes(Long readyTimes) {
-        this.readyTimes = readyTimes;
-    }
-
-    public Long getNotReadyTimes() {
-        return notReadyTimes;
-    }
-
-    public void setNotReadyTimes(Long notReadyTimes) {
-        this.notReadyTimes = notReadyTimes;
-    }
-
-    public Long getTotalAfterTime() {
-        return totalAfterTime;
-    }
-
-    public void setTotalAfterTime(Long totalAfterTime) {
-        this.totalAfterTime = totalAfterTime;
-    }
-
-    public Long getServiceTime() {
-        return serviceTime;
-    }
-
-    public void setServiceTime(Long serviceTime) {
-        this.serviceTime = serviceTime;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     /**

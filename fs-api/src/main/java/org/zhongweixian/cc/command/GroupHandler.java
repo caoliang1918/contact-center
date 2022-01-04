@@ -1,7 +1,7 @@
 package org.zhongweixian.cc.command;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.GroupMemory;
 import org.cti.cc.entity.GroupMemoryConfig;
@@ -10,6 +10,7 @@ import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.cti.cc.strategy.AgentStrategy;
 import org.cti.cc.util.DateTimeUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.command.base.BaseHandler;
@@ -28,6 +29,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class GroupHandler extends BaseHandler {
+
+    @Value("${queue.timeout:3600000}")
+    private Long timeout;
 
     /**
      * 排队电话
@@ -134,7 +138,7 @@ public class GroupHandler extends BaseHandler {
                 /**
                  * 放音
                  */
-                fsListen.playback(callInfo.getMedia(), deviceId, "sounds/queue.wav");
+                fsListen.playback(callInfo.getMedia(), deviceId, "sounds/xhy2_0.wav");
                 callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_QUEUE_PLAY, null));
                 break;
 
@@ -173,11 +177,11 @@ public class GroupHandler extends BaseHandler {
      * @return
      */
     private boolean desiganteAgent(CallInfo callInfo, GroupInfo groupInfo, String deviceId) {
-        if (!callInfo.getProcessData().containsKey(Constants.DESIGNATE_AGENT)) {
+        if (!callInfo.getProcessData().containsKey(Constant.DESIGNATE_AGENT)) {
             return false;
         }
         GroupMemoryConfig groupMemoryConfig = groupInfo.getGroupMemoryConfig();
-        AgentInfo agentInfo = cacheService.getAgentInfo(callInfo.getProcessData().get(Constants.DESIGNATE_AGENT).toString());
+        AgentInfo agentInfo = cacheService.getAgentInfo(callInfo.getProcessData().get(Constant.DESIGNATE_AGENT).toString());
         if (agentInfo != null && agentInfo.getAgentState() == AgentState.READY) {
             logger.info("callId:{} get desiganteAgent:{} on group:{}", callInfo.getCallId(), agentInfo.getAgentKey(), callInfo.getGroupId());
             //呼叫坐席
@@ -468,6 +472,11 @@ public class GroupHandler extends BaseHandler {
                     callAgentService.execute(() -> {
                         queueTimeout(callQueue);
                     });
+                    iterator.remove();
+                    continue;
+                }
+                if (now - callQueue.getStartTime() >= timeout) {
+                    logger.info("callId:{} queueTimeout, timeout:{}", callQueue.getCallId(), timeout);
                     iterator.remove();
                     continue;
                 }

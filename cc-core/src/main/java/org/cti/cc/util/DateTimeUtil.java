@@ -136,7 +136,7 @@ public class DateTimeUtil {
         return calendar;
     }
 
-   /* public static String getBeforeMonth() {
+    public static String getBeforeMonth() {
         SimpleDateFormat format = new SimpleDateFormat(YYYYMM);
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -145,7 +145,7 @@ public class DateTimeUtil {
         date = calendar.getTime();
         String accDate = format.format(date);
         return accDate;
-    }*/
+    }
 
     /**
      * 此方法用于按月分表查询月份，如果是当前月份的时间，则返回空的字符串

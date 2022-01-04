@@ -13,16 +13,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.cc.cache.CacheService;
@@ -30,8 +26,6 @@ import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.tcp.TcpServer;
 import org.zhongweixian.cc.websocket.WebSocketManager;
-
-import java.io.Serializable;
 
 
 @EnableDiscoveryClient
@@ -61,9 +55,6 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
 
     @Value("${spring.cloud.nacos.server-addr}")
     private String nacosAddr;
-
-    @Autowired
-    private LoadBalancerClient loadBalancerClient;
 
 
     @Bean

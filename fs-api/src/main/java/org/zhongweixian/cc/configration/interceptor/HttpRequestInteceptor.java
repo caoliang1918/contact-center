@@ -1,8 +1,9 @@
 package org.zhongweixian.cc.configration.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.codec.binary.Base64;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.crypto.AesEncryptUtils;
 import org.cti.cc.entity.AdminAccount;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
@@ -10,13 +11,14 @@ import org.cti.cc.po.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.service.AgentService;
-import org.zhongweixian.cc.util.BcryptUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,12 +35,9 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
     private ApplicationContext applicationContext;
 
 
-    private AgentService agentService;
-
     private CacheService cacheService;
 
-    public HttpRequestInteceptor(AgentService agentService, CacheService cacheService, ApplicationContext applicationContext) {
-        this.agentService = agentService;
+    public HttpRequestInteceptor(CacheService cacheService, ApplicationContext applicationContext) {
         this.cacheService = cacheService;
         this.applicationContext = applicationContext;
     }
@@ -49,21 +48,22 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
         String path = request.getServletPath();
         String method = request.getMethod();
         logger.info("request path:{}, method:{}", path, method);
-        String auth = request.getHeader("Authorization");
+        String adminToken = request.getHeader("adminToken");
         String token = request.getHeader("token");
-        if (StringUtils.isEmpty(auth) && StringUtils.isEmpty(token)) {
-            response.setStatus(401);
-            response.setHeader("WWW-Authenticate", "Basic realm=\"input username and password\"");
-            logger.warn("response for 401 status");
-            return result;
-        }
 
-        if (checkAuth(auth, request, response)) {
+        if (checkAdminToken(adminToken)) {
             return true;
         }
-        if (checkToken(token, request, response)) {
+        if (checkToken(token)) {
             return true;
         }
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setHeader("Content-Type", "application/json;charset=UTF-8");
+        logger.warn("response for 401 status");
+        PrintWriter writer = response.getWriter();
+        writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_NOT_LOGIN)));
+        writer.flush();
+        writer.close();
         return result;
     }
 
@@ -74,46 +74,23 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
 
 
     /**
-     * @param auth
-     * @param request
-     * @param response
+     * @param token
      * @return
      * @throws IOException
      */
-    private Boolean checkAuth(String auth, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (StringUtils.isBlank(auth)) {
+    private Boolean checkToken(String token) throws IOException {
+        if (StringUtils.isBlank(token)) {
             return false;
         }
-        String[] userAndPass = new String(Base64.decodeBase64(auth.split(" ")[1])).split(":");
-        if (userAndPass.length < 2) {
-            response.setStatus(401);
-            response.setHeader("WWW-Authenticate", "Basic realm=\"input username and password\"");
-            logger.warn("response for 401 status");
-            return true;
+        Object agentKey = cacheService.getAgentKey(token);
+        if (agentKey == null) {
+            return false;
         }
-
-        logger.debug("username:{} , password:{}", userAndPass[0], userAndPass[1]);
-        AgentInfo agentInfo = cacheService.getAgentInfo(userAndPass[0]);
+        AgentInfo agentInfo = cacheService.getAgentInfo(String.valueOf(agentKey));
         if (agentInfo == null) {
-            response.setStatus(401);
-            response.setHeader("Content-Type", "application/json;charset=UTF-8");
-            logger.warn("response for 401 status");
-            PrintWriter writer = response.getWriter();
-            writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_NOT_LOGIN)));
-            writer.flush();
-            writer.close();
             return false;
         }
-        if (agentInfo.getStatus() == 0 || !BcryptUtil.checkPwd(userAndPass[1], agentInfo.getPasswd())) {
-            response.setStatus(401);
-            response.setHeader("Content-Type", "application/json;charset=UTF-8");
-            logger.warn("response for 401 status");
-            PrintWriter writer = response.getWriter();
-            writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_ERROR)));
-            writer.flush();
-            writer.close();
-            return false;
-        }
+        cacheService.refleshAgentToken(agentInfo.getAgentKey(), token);
         PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(agentInfo, agentInfo.getPasswd(), null);
         authenticationToken.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -122,13 +99,11 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
 
 
     /**
-     * @param token
-     * @param request
-     * @param response
+     * @param adminToken
      * @return
      */
-    private Boolean checkToken(String token, HttpServletRequest request, HttpServletResponse response) {
-        if (StringUtils.isBlank(token)) {
+    private Boolean checkAdminToken(String adminToken) {
+        if (StringUtils.isBlank(adminToken)) {
             return false;
         }
         AdminAccount adminAccount = new AdminAccount();

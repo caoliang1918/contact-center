@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.Playback;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
@@ -27,9 +28,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -70,19 +71,9 @@ public class CacheService {
     private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("nacos=service-check").build());
 
     /**
-     * callInfo
-     */
-    protected Map<Long, CallInfo> callInfoMap = new ConcurrentHashMap<>();
-
-    /**
      * callId 与device 映射
      */
     private Map<String, Long> deviceCall = new HashMap<>();
-
-    /**
-     * AgentInfo
-     */
-    private Map<String, AgentInfo> agentInfoMap = new HashMap<>();
 
     /**
      * Company
@@ -114,28 +105,54 @@ public class CacheService {
     /**
      * 获取本地缓存坐席
      *
-     * @param agentkey
+     * @param agentKey
      * @return
      */
-    public AgentInfo getAgentInfo(String agentkey) {
-        if (StringUtils.isBlank(agentkey)) {
+    public AgentInfo getAgentInfo(String agentKey) {
+        if (StringUtils.isBlank(agentKey)) {
             return null;
         }
-        return agentInfoMap.get(agentkey);
-    }
-
-    public void addAgentInfo(AgentInfo agentInfo) {
-        agentInfoMap.put(agentInfo.getAgentKey(), agentInfo);
-    }
-
-
-    public void addCallInfo(CallInfo callInfo) {
-        callInfoMap.put(callInfo.getCallId(), callInfo);
-        try {
-            redisTemplate.opsForValue().set("callInfo:" + callInfo.getCallId(), JSONObject.toJSONString(callInfo));
-        } catch (Exception e) {
-            logger.error("cache callInfo error, callId:{}", callInfo.getCallId());
+        Object payload = redisTemplate.opsForValue().get(Constant.AGENT_INFO + agentKey);
+        if (payload == null) {
+            logger.warn("get agentKey:{} is null", agentKey);
+            return null;
         }
+        AgentInfo agentInfo = JSON.parseObject(payload.toString(), AgentInfo.class);
+        if (agentInfo == null) {
+            return null;
+        }
+        return agentInfo;
+    }
+
+    public void refleshAgentToken(String agentKey, String token) {
+        redisTemplate.opsForValue().set(Constant.AGENT_TOKEN + token, agentKey, 48, TimeUnit.HOURS);
+    }
+
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
+    }
+
+    public Object getAgentKey(String token) {
+        return redisTemplate.opsForValue().get(Constant.AGENT_TOKEN + token);
+    }
+
+    /**
+     * 缓存坐席
+     *
+     * @param agentInfo
+     */
+    public void addAgentInfo(AgentInfo agentInfo) {
+        redisTemplate.opsForValue().set(Constant.AGENT_INFO + agentInfo.getAgentKey(), JSON.toJSONString(agentInfo), 48L, TimeUnit.HOURS);
+    }
+
+
+    /**
+     * 缓存CALL_INFO
+     *
+     * @param callInfo
+     */
+    public void addCallInfo(CallInfo callInfo) {
+        redisTemplate.opsForValue().set(Constant.CALL_INFO + callInfo.getCallId(), JSONObject.toJSONString(callInfo));
     }
 
     public CallInfo getCallInfo(String deviceId) {
@@ -143,7 +160,7 @@ public class CacheService {
         if (callId == null) {
             return null;
         }
-        return callInfoMap.get(callId);
+        return getCallInfo(callId);
     }
 
     /**
@@ -156,33 +173,25 @@ public class CacheService {
         if (callId == null) {
             return null;
         }
-        CallInfo callInfo = callInfoMap.get(callId);
-        if (callInfo != null) {
-            return callInfo;
-        }
-        Object obj = redisTemplate.opsForValue().get(callId);
+        Object obj = redisTemplate.opsForValue().get(Constant.CALL_INFO + callId);
         if (obj == null) {
             return null;
         }
-        callInfo = JSON.parseObject(obj.toString(), CallInfo.class);
-        return callInfo;
+        return JSON.parseObject(obj.toString(), CallInfo.class);
     }
 
 
     public void removeCallInfo(Long callId) {
-        CallInfo callInfo = callInfoMap.remove(callId);
+        CallInfo callInfo = getCallInfo(callId);
         if (callInfo != null) {
             logger.info("remove callInfo:{}", callId);
             callInfo.getDeviceInfoMap().forEach((k, v) -> {
                 deviceCall.remove(k);
             });
+            groupHandler.removeCall(callInfo.getGroupId(), callId);
         }
-        groupHandler.removeCall(callInfo.getGroupId(), callId);
-        try {
-            redisTemplate.delete("callInfo:" + callId);
-        } catch (Exception e) {
+        redisTemplate.delete(Constant.CALL_INFO + callId);
 
-        }
     }
 
 
@@ -191,6 +200,9 @@ public class CacheService {
     }
 
     public GroupInfo getGroupInfo(Long groupId) {
+        if (groupId == null) {
+            return null;
+        }
         return groupMap.get(groupId);
     }
 

@@ -14,6 +14,9 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.api.configration.QuartzConfig;
@@ -53,6 +56,15 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
         simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
         simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
         return new RestTemplate(simpleClientHttpRequestFactory);
+    }
+
+    @Bean
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<Object, Object> template = new RedisTemplate<Object, Object>();
+        template.setConnectionFactory(redisConnectionFactory);
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        template.setDefaultSerializer(serializer);
+        return template;
     }
 }
 

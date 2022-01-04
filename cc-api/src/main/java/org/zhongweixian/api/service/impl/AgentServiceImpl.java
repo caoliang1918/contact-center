@@ -8,10 +8,12 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.AgentSip;
 import org.cti.cc.entity.Company;
 import org.cti.cc.enums.ErrorCode;
+import org.cti.cc.mapper.AgentGroupMapper;
 import org.cti.cc.mapper.AgentMapper;
 import org.cti.cc.mapper.AgentSipMapper;
 import org.cti.cc.mapper.CompanyMapper;
@@ -37,6 +39,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +66,9 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
 
     @Autowired
     private CompanyMapper companyMapper;
+
+    @Autowired
+    private AgentGroupMapper agentGroupMapper;
 
     @Override
     BaseMapper<Agent> baseMapper() {
@@ -117,7 +123,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     @Override
     public Integer batchAddAgent(BatchAddAgentVo addAgentVo) {
         Company company = companyMapper.selectByPrimaryKey(addAgentVo.getCompanyId());
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(4);
         params.put("companyId", addAgentVo.getCompanyId());
         Integer agentCount = agentMapper.selectCountByMap(params);
         if (agentCount >= company.getAgentLimit()) {
@@ -128,7 +134,6 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         List<Map<String, Object>> agentSips = new ArrayList<>();
         Integer result = 0;
         Agent agent = null;
-        AgentSip agentSip = null;
         Map<String, Object> sipMap = null;
         for (Integer i = 0; i < addAgentVo.getCount(); i++) {
             agent = new Agent();
@@ -143,7 +148,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             agents.add(agent);
 
             //添加sip号
-            sipMap = new HashMap<>();
+            sipMap = new HashMap<>(4);
             sipMap.put("cts", agent.getCts());
             sipMap.put("companyId", addAgentVo.getCompanyId());
             sipMap.put("sip", sipPrefix + "" + Instant.now().toEpochMilli());
@@ -179,6 +184,11 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agent.setAgentKey(agent.getAgentKey() + randomDelete());
         agent.setUts(Instant.now().getEpochSecond());
         agent.setStatus(0);
+        agentGroupMapper.deleteByAgent(id);
+
+        //删除坐席
+        redisTemplate.delete(Constant.AGENT_TOKEN + agent.getAgentKey());
+        redisTemplate.delete(Constant.AGENT_INFO + agent.getAgentKey());
         return agentMapper.deleteAgent(agent);
     }
 
@@ -247,7 +257,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
 //        agentList.forEach(agent->agent.setCts(FormatDateUtil.stampToTime(Long.parseLong(e.getUpdateTime()))));
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(
                 null, "坐席列表", ExcelType.XSSF), ExcelAgentEntity.class, agentList);
-        String filename = URLEncoder.encode("坐席列表.xlsx", "UTF8");
+        String filename = URLEncoder.encode("坐席列表.xlsx", StandardCharsets.UTF_8);
         response.setHeader("content-disposition", "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();
@@ -271,7 +281,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             maxSip = Integer.parseInt(sipPrefix + getMin(sipLength));
         }
 
-        Integer result = 0;
+        int result = 0;
         for (AgentImportExcel agentImportExcel : agentList) {
             if (StringUtils.isBlank(agentImportExcel.getAgentKey())) {
                 continue;

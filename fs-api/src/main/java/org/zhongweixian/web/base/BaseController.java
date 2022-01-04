@@ -3,6 +3,7 @@ package org.zhongweixian.web.base;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.fs.FsListen;
@@ -41,6 +42,9 @@ public class BaseController {
 
     @Autowired
     protected FsListen fsListen;
+
+    @Value("${agent.token.key:ToIV23TaievkWwZl}")
+    protected String tokenKey;
 
 
 }

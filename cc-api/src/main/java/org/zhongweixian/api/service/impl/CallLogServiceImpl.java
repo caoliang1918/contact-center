@@ -7,7 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
@@ -156,7 +156,7 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
             workbook = ExcelExportUtil.exportExcel(new ExportParams(
                     null, direction, ExcelType.XSSF), ExcelInboundCallLogEntity.class, entityList);
         }
-        String filename = URLEncoder.encode(direction + Constants.UNDER_LINE + params.getOrDefault("companyId", 0) + Constants.UNDER_LINE + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", "UTF8");
+        String filename = URLEncoder.encode(direction + Constant.UNDER_LINE + params.getOrDefault("companyId", 0) + Constant.UNDER_LINE + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", "UTF8");
         response.setHeader("content-disposition", "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();

@@ -560,12 +560,6 @@ public class CallInfo implements Serializable {
         this.nextCommands = nextCommands;
     }
 
-    public NextCommand getEaryCommand() {
-        if (nextCommands.size() == 0) {
-            return null;
-        }
-        return nextCommands.get(0);
-    }
 
     public static final class CallInfoBuilder {
         private String coreUuid;
@@ -596,6 +590,7 @@ public class CallInfo implements Serializable {
         private List<String> deviceList = new ArrayList<>();
         private Map<String, DeviceInfo> deviceInfoMap = new HashMap<>();
         private Map<String, Object> followData = new HashMap<>();
+        private List<NextCommand> nextCommands = new ArrayList<>();
 
         private CallInfoBuilder() {
         }
@@ -744,6 +739,7 @@ public class CallInfo implements Serializable {
             return this;
         }
 
+
         public CallInfo build() {
             CallInfo callInfo = new CallInfo();
             callInfo.followData = this.followData;
@@ -770,8 +766,11 @@ public class CallInfo implements Serializable {
             callInfo.companyId = this.companyId;
             callInfo.caller = this.caller;
             callInfo.talkTime = this.talkTime;
+            callInfo.uuid1 = this.uuid1;
+            callInfo.uuid2 = this.uuid2;
             callInfo.answerCount = this.answerCount;
             callInfo.deviceInfoMap = this.deviceInfoMap;
+            callInfo.nextCommands = this.nextCommands;
             return callInfo;
         }
     }

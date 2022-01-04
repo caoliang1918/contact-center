@@ -2,10 +2,12 @@ package org.cti.cc.po;
 
 import org.cti.cc.enums.NextType;
 
+import java.io.Serializable;
+
 /**
  * Created by caoliang on 2020/12/21
  */
-public class NextCommand {
+public class NextCommand implements Serializable {
 
     /**
      * 记录执行设备

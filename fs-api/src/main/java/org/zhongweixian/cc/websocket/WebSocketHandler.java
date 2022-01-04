@@ -8,13 +8,12 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.po.AgentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.cc.EventType;
@@ -83,20 +82,17 @@ public class WebSocketHandler implements ConnectionListener {
     private ScheduledExecutorService checkThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("check-ws-login-pool-%d").build());
 
     /**
-     *
+     * channelId - agentKey
      */
     private Map<ChannelId, ChannelEntity> channelIds = new ConcurrentHashMap<>();
 
     /**
-     *
+     * agentKey-Channel
      */
     private Map<String, Channel> agentChannel = new ConcurrentHashMap<>();
 
     /**
      * 构造函数中初始化 restTemplate
-     *
-     * @param connectTimeout
-     * @param readTimeout
      */
     public WebSocketHandler(@Value("${ws.thread.num:32}") Integer threadNum) {
         for (int i = 0; i < threadNum; i++) {
@@ -152,6 +148,7 @@ public class WebSocketHandler implements ConnectionListener {
             return;
         }
 
+
         ExecutorService executorService = executorMap.get(RandomUtil.getNum(event.getAgentKey(), threadNum));
         executorService.execute(() -> {
             try {
@@ -190,8 +187,8 @@ public class WebSocketHandler implements ConnectionListener {
             }
             WsBaseEvent event = (WsBaseEvent) JSON.toJavaObject(jsonObject, clzss);
             event.setChannel(channel);
+            event.setAgentKey(channelIds.get(channel.id()).getClient());
             if (event instanceof WsLoginEvnet == false) {
-                event.setAgentKey(channelIds.get(channel.id()).getClient());
                 if (cacheService.getAgentInfo(event.getAgentKey()) == null) {
                     return null;
                 }
@@ -297,7 +294,7 @@ public class WebSocketHandler implements ConnectionListener {
             channel.writeAndFlush(new TextWebSocketFrame(payload));
             return;
         }
-        if (!StringUtils.isBlank(agentInfo.getRemoteAddress()) && agentInfo.getRemoteAddress().startsWith(Constants.HTTP)) {
+        if (!StringUtils.isBlank(agentInfo.getRemoteAddress()) && agentInfo.getRemoteAddress().startsWith(Constant.HTTP)) {
             logger.info("send agent:{} http message:{}", agentInfo.getAgentKey(), payload);
             try {
                 String response = restTemplate.postForEntity(agentInfo.getRemoteAddress(), payload, String.class).getBody();

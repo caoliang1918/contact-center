@@ -1,27 +1,18 @@
 package org.zhongweixian.ivr.tcp;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingFactory;
-import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.listener.Event;
-import com.alibaba.nacos.api.naming.listener.EventListener;
-import com.alibaba.nacos.api.naming.listener.NamingEvent;
-import com.alibaba.nacos.api.naming.pojo.Instance;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.Station;
 import org.cti.cc.mapper.StationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.client.AuthorizationToken;
 import org.zhongweixian.client.tcp.NettyClient;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -58,7 +49,7 @@ public class TcpClientManager {
         JSONObject payload = new JSONObject();
         payload.put("cmd", "login");
         payload.put("stationType", 3);
-        payload.put("domain", Constants.HTTP + station.getHost());
+        payload.put("domain", Constant.HTTP + station.getHost());
         authorizationToken.setPayload(payload.toJSONString());
         NettyClient nettyClient = new NettyClient(station.getApplicationHost(), 7250, authorizationToken, tcpClientHandler);
         nettyClient.setMaxReConnect(2);

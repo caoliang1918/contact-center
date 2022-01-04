@@ -245,7 +245,7 @@ public class QuartzConfig {
             if (!jobNames.contains("TaskJobOfDay")) {
                 createDayJob();
             }
-            if (!jobNames.contains("TaskJobOfMonth")) {
+            if (jobNames.contains("TaskJobOfMonth")) {
                 createMonthJob();
             }
         } catch (Exception e) {

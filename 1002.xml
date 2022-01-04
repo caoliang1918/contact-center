@@ -1,0 +1,37 @@
+<scxml name="basicStates" version="1.0"
+       xmlns="http://www.w3.org/2005/07/scxml"
+       initial="main-state">
+    <datamodel>
+        <data id="salute" expr="'hello world'" />
+        <data id="user" expr="null" />
+    </datamodel>
+    <state id="main-state" initial="disconnected">
+        <state id="connected-state">
+            <onentry>
+                <assign location="salute" expr="'connected'" />
+                <send type="console" eventexpr="salute+' '+user" />
+            </onentry>
+            <transition event="disconnect" target="disconnected-state">
+            </transition>
+        </state>
+        <state id="disconnected-state">
+            <onentry>
+                <assign location="salute" expr="'disconnected'" />
+            </onentry>
+            <transition event="connect" target="connected-state">
+                <assign location="user" expr="_event.data" />
+            </transition>
+        </state>
+        <state id="disconnected">
+            <onentry>
+                <assign location="salute" expr="'disconnected'" />
+            </onentry>
+            <transition event="connect" target="connected-state">
+                <assign location="user" expr="_event.data" />
+            </transition>
+        </state>
+        <transition event="exit" target="off-state" />
+    </state>
+    <final id="off-state">
+    </final>
+</scxml>

@@ -1,7 +1,7 @@
 package org.zhongweixian.cc.fs.handler;
 
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.Direction;
@@ -70,11 +70,11 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
              * 呼入: 在此录音
              */
             if (callInfo.getCallType() == CallType.OUTBOUNT_CALL && groupInfo.getRecordType() == 2) {
-                String record = recordPath + DateTimeUtil.format() + Constants.SK + callInfo.getCallId() + Constants.UNDER_LINE + callInfo.getDeviceList().get(0) + Constants.UNDER_LINE + Instant.now().getEpochSecond() + Constants.POINT + recordFile;
+                String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + callInfo.getDeviceList().get(0) + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
                 super.record(event.getRemoteAddress(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
                 deviceInfo1.setRecord(record);
             } else if (callInfo.getCallType() == CallType.INBOUND_CALL) {
-                String record = recordPath + DateTimeUtil.format() + Constants.SK + callInfo.getCallId() + Constants.UNDER_LINE + event.getDeviceId() + Constants.UNDER_LINE + Instant.now().getEpochSecond() + Constants.POINT + recordFile;
+                String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + event.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
                 super.record(event.getRemoteAddress(), callInfo.getCallId(), event.getDeviceId(), record);
                 deviceInfo1.setRecord(record);
             }

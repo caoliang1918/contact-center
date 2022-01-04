@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
@@ -242,7 +242,6 @@ public class FsListen {
                         logger.debug("event:{}, hander:{}", event.getEventName(), event.getEventHeaders().toString());
                         return;
                 }
-                logger.debug("receive media:{} event:{}", event.getEventHeaders().get("ClpMS-IPv4"), event.getEventName());
 
                 FsBaseEvent formatEvent = formatEvent(ctx, event, eventName);
                 if (formatEvent == null) {
@@ -268,7 +267,7 @@ public class FsListen {
                 executorService.execute(() -> {
                     try {
                         if (logger.isDebugEnabled()) {
-                            logger.debug("ctx:{}, event:{}", ctx, event);
+                            logger.info("ctx:{}, event:{}", ctx, event);
                         }
                         Handler handler = handlerContext.getInstance(formatEvent.getEventName());
                         if (handler != null) {
@@ -384,7 +383,7 @@ public class FsListen {
      * @param sipHeaders
      */
     public void makeCall(String media, RouteGetway routeGetway, String display, String called, String deviceId, String... sipHeaders) {
-        called = called + Constants.AT + routeGetway.getMediaHost() + Constants.CO + routeGetway.getMediaPort();
+        called = called + Constant.AT + routeGetway.getMediaHost() + Constant.CO + routeGetway.getMediaPort();
         if (StringUtils.isNotBlank(routeGetway.getCallerPrefix())) {
             display = routeGetway.getCallerPrefix() + display;
         }
@@ -572,9 +571,9 @@ public class FsListen {
 
     /**
      * bgapi uuid_transfer  sswitch-1-61979250-679-22 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
+     *
      * @param media
      * @param deviceId
-     *
      */
     public void insert(String media, String deviceId) {
         StringBuilder builder = new StringBuilder();

@@ -6,7 +6,7 @@ import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.PushFailLog;
@@ -63,6 +63,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             return;
         }
         Integer count = callInfo.getDeviceList().size();
+        callInfo.getDeviceList().remove(event.getDeviceId());
         String cause = event.getHangupCause();
 
         /**
@@ -80,8 +81,8 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         if (StringUtils.isNotBlank(deviceInfo.getRecord())) {
             try {
                 String day = DateFormatUtils.format(new Date(), YYYYMMDDHH);
-                String fileName = day.substring(0, 8) + Constants.SK + day.substring(8, 10) + Constants.SK + callInfo.getCallId() + Constants.UNDER_LINE + deviceInfo.getDeviceId() + Constants.POINT + recordFile;
-                ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
+                String fileName = day.substring(0, 8) + Constant.SK + day.substring(8, 10) + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.POINT + recordFile;
+                ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constant.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
                 logger.info("get record file:{}", deviceInfo.getRecord());
                 ObjectWriteResponse writeResponse = minioClient.putObject(PutObjectArgs.builder().stream(new ByteArrayInputStream(responseEntity.getBody()), responseEntity.getBody().length, -1).object(fileName).bucket(bucket).build());
                 logger.info("callId:{}, record fileName:{}, minioTag:{}", deviceInfo.getCallId(), fileName, writeResponse.etag());
@@ -106,7 +107,6 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         if (deviceInfo.getAgentKey() == null) {
             deviceInfo.setAgentKey(callInfo.getAgentKey());
         }
-        callInfo.getDeviceList().remove(event.getDeviceId());
         CallDevice callDevice = new CallDevice();
         BeanUtils.copyProperties(deviceInfo, callDevice);
         callDevice.setCts(deviceInfo.getCallTime() / 1000);
@@ -131,7 +131,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             //同步坐席状态
             agentState(deviceInfo, callInfo, cause);
         }
-        NextCommand nextCommand = callInfo.getEaryCommand();
+        NextCommand nextCommand = callInfo.getNextCommands().size() == 0 ? null : callInfo.getNextCommands().get(0);
         if (!CauseEnums.NORMAL_CLEARING.name().equals(cause)) {
             //非正常挂机处理
             hangupDir(callInfo, deviceInfo, cause);
@@ -308,6 +308,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                 callInfo.setHangupDir(2);
             }
         }
+        cacheService.addCallInfo(callInfo);
         logger.info("callId:{} direction:{} hangupDir:{}, cause:{}", callInfo.getCallId(), callInfo.getDirection(), callInfo.getHangupDir(), cause);
     }
 
@@ -398,6 +399,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                 break;
         }
         callInfo.getNextCommands().remove(nextCommand);
+        cacheService.addCallInfo(callInfo);
         return;
     }
 }

@@ -6,10 +6,7 @@ import org.cti.cc.entity.Group;
 import org.cti.cc.entity.SkillGroup;
 import org.cti.cc.entity.VdnSchedule;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.mapper.CompanyMapper;
-import org.cti.cc.mapper.GroupMapper;
-import org.cti.cc.mapper.SkillGroupMapper;
-import org.cti.cc.mapper.VdnScheduleMapper;
+import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.GroupInfo;
 import org.cti.cc.vo.GroupInfoVo;
@@ -32,6 +29,9 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
 
     @Autowired
     private GroupMapper groupMapper;
+
+    @Autowired
+    private AgentGroupMapper agentGroupMapper;
 
     @Autowired
     private SkillGroupMapper skillGroupMapper;
@@ -58,7 +58,7 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
 
     @Override
     public int saveOrUpdateGroup(GroupInfoVo groupInfoVo) {
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(4);
         params.put("companyId", groupInfoVo.getCompanyId());
         params.put("name", groupInfoVo.getName());
         List<Group> groups = groupMapper.selectListByMap(params);
@@ -69,9 +69,7 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
             }
         }
 
-        /**
-         * 技能组技能不能超过10个
-         */
+        //技能组技能不能超过10个
         if (groupInfoVo.getSkillList().size() > 10) {
             throw new BusinessException(ErrorCode.GROUP_SKILL_OVER_LIMIT);
         }
@@ -125,7 +123,7 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
 
     @Override
     public int deleteGroup(Long companyId, Long id) {
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(4);
         params.put("companyId", companyId);
         params.put("id", id);
         List<Group> groups = groupMapper.selectListByMap(params);
@@ -133,15 +131,16 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
         if (CollectionUtils.isEmpty(groups)) {
             throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
         }
-        /**
-         * 技能组绑定了不能删
-         */
+        //技能组绑定了不能删
         params.put("routeType", 1);
         params.put("routeValue", id);
         List<VdnSchedule> vdnSchedules = vdnScheduleMapper.selectListByMap(params);
         if (!CollectionUtils.isEmpty(vdnSchedules)) {
             throw new BusinessException(ErrorCode.DATA_NOT_EXIST, "技能组已经被vdn引用");
         }
+
+        //删除当前技能组与坐席关系
+        agentGroupMapper.deleteByGroup(id);
 
         Group group = new Group();
         group.setId(groups.get(0).getId());

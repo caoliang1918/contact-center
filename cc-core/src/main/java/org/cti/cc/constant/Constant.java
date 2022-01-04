@@ -3,7 +3,7 @@ package org.cti.cc.constant;
 /**
  * Created by caoliang on 2020/10/21
  */
-public class Constants {
+public class Constant {
 
     public static final String SPACE = " ";
     public static final String EMPTY = "";
@@ -60,6 +60,7 @@ public class Constants {
     public final static String DETAIL_KEY = "DETAIL";
     public final static String CALLLOG_KEY = "CALLLOG";
 
+
     public final static String AGENT_STATE_EXCHANGE = "AGENT-STATE-EXCHANGE";
     public final static String CALL_LOG_EXCHANGE = "CALL-LOG-EXCHANGE";
 
@@ -82,4 +83,9 @@ public class Constants {
     public final static String CC_CONFIG_QUEUE = "CC-CONFIG-QUEUE";
 
 
+    public final static String AGENT_TOKEN = "AGENT_TOKEN:";
+    public final static String AGENT_INFO = "AGENT_INFO:";
+
+
+    public final static String CALL_INFO = "CALL_INFO:";
 }

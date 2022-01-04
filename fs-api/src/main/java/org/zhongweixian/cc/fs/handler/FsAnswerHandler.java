@@ -1,7 +1,7 @@
 package org.zhongweixian.cc.fs.handler;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.cti.cc.constant.Constants;
+import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.VdnPhone;
@@ -16,7 +16,6 @@ import org.zhongweixian.cc.fs.event.FsAnswerEvent;
 import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 
 import java.time.Instant;
-import java.util.Date;
 
 /**
  * Created by caoliang on 2020/8/23
@@ -34,7 +33,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             return;
         }
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(event.getDeviceId());
-        NextCommand nextCommand = callInfo.getEaryCommand();
+        NextCommand nextCommand = callInfo.getNextCommands().size() == 0 ? null : callInfo.getNextCommands().get(0);
         logger.info("channel answer callId:{}, deviceId:{}, deviceType:{}", callInfo.getCallId(), event.getDeviceId(), deviceInfo.getDeviceType());
 
         //接听时间也是振铃结束时间
@@ -46,6 +45,10 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             return;
         }
         callInfo.getNextCommands().remove(nextCommand);
+        if (StringUtils.isBlank(callInfo.getMedia())) {
+            callInfo.setMedia(event.getRemoteAddress());
+        }
+        cacheService.addCallInfo(callInfo);
         switch (nextCommand.getNextType()) {
             case NEXT_VDN:
                 matchVdnCode(event, callInfo, deviceInfo);
@@ -110,7 +113,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
         if (groupInfo != null && groupInfo.getRecordType() == 1) {
             //振铃录音
-            String record = recordPath + DateTimeUtil.format() + Constants.SK + callInfo.getCallId() + Constants.UNDER_LINE + deviceInfo.getDeviceId() + Constants.UNDER_LINE + Instant.now().getEpochSecond() + Constants.POINT + recordFile;
+            String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
             super.record(callInfo.getMedia(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
             deviceInfo.setRecord(record);
         }

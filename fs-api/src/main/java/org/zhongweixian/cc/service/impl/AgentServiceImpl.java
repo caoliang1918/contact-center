@@ -2,7 +2,7 @@ package org.zhongweixian.cc.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.AgentStateLog;
 import org.cti.cc.mapper.AgentGroupMapper;
@@ -54,6 +54,10 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     @Value("${spring.application.group}" + "${spring.instance.id}")
     private String appId;
 
+    @Value("${agent.token.key:ToIV23TaievkWwZl}")
+    private String tokenKey;
+
+
     @Override
     BaseMapper<Agent> baseMapper() {
         return agentMapper;
@@ -91,6 +95,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             if (StringUtils.isBlank(agentInfo.getHost())) {
                 return;
             }
+            cacheService.addAgentInfo(agentInfo);
             if (agentInfo.getAgentState() == AgentState.READY) {
                 groupHandler.agentFree(agentInfo);
             }
@@ -131,7 +136,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
 
             logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
             /*kafkaTemplate.send(Constants.AGENT_STATE, JSON.toJSONString(response));*/
-            rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.AGENT_STATE_KEY, JSON.toJSONString(response));
+            rabbitTemplate.convertAndSend(Constant.AGENT_STATE_EXCHANGE, Constant.AGENT_STATE_KEY, JSON.toJSONString(response));
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -170,6 +175,11 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         //持续时长
         agentStateLog.setDuration(agentInfo.getBeforeTime() == 0 ? 0 : (int) (agentInfo.getStateTime() - agentInfo.getBeforeTime()));
         /*kafkaTemplate.send(Constants.AGENT_STATE_LOG, JSON.toJSONString(agentStateLog));*/
-        rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.AGENT_LOG_KEY, JSON.toJSONString(agentStateLog));
+        rabbitTemplate.convertAndSend(Constant.AGENT_STATE_EXCHANGE, Constant.AGENT_LOG_KEY, JSON.toJSONString(agentStateLog));
+    }
+
+    @Override
+    public String getTokenKey() {
+        return tokenKey;
     }
 }

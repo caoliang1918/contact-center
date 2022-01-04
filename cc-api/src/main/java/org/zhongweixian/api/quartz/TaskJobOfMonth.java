@@ -22,15 +22,15 @@ public class TaskJobOfMonth implements Job {
     private CallLogService callLogService;
 
     /**
-     * 每月月初凌晨1点执行
+     * 每月月初凌晨执行，初始化创建表结构
      */
-    public final static String CRON = "0 0 1 1 * ?";
+    public final static String CRON = "0 0 0 1 * ?";
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        logger.info("month job execute :{}", jobExecutionContext.getFireTime());
         Long start = DateTimeUtil.getLastMonthStartTime();
         Long end = DateTimeUtil.getLastMonthEndTime();
+        logger.info("month job execute start:{} end:{}", start, end);
         subTable(start, end);
     }
 

@@ -38,6 +38,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
 
     @Override
     public void handleEvent(FsParkEvent event) {
+        logger.info("channel park:{}", event.toString());
         CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
         if (callInfo == null && Direction.INBOUND.name().equals(event.getDirection().toUpperCase()) && a == 1) {
             if (StringUtils.isNotBlank(event.getSipPort()) && FsConstant.INTERNAL.equals(outboundProfile)) {

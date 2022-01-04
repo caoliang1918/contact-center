@@ -6,7 +6,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.zhongweixian.api.service.BaseService;
 
@@ -24,6 +26,9 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 
     @Value("${range.size:500}")
     protected Integer range;
+
+    @Autowired
+    protected RedisTemplate redisTemplate;
 
     @Override
     public int add(T record) {

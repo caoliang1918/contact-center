@@ -10,7 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.apache.commons.io.IOUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.StreamEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +56,8 @@ public class UdpStream {
 
         Integer port1 = SocketUtils.findAvailableUdpPort(minPort, maxPort);
         Integer port2 = SocketUtils.findAvailableUdpPort(minPort, maxPort);
-        entity.setCallerAddress(streamAddress + Constants.CO + port1);
-        entity.setCalledAddress(streamAddress + Constants.CO + port2);
+        entity.setCallerAddress(streamAddress + Constant.CO + port1);
+        entity.setCalledAddress(streamAddress + Constant.CO + port2);
         entity.setCallId(callId);
         streamEntityMap.put(callId, entity);
 

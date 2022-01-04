@@ -18,9 +18,6 @@ public class FsExecuteHandler extends BaseEventHandler<FsExecuteEvent> {
 
     @Override
     public void handleEvent(FsExecuteEvent event) {
-        CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
-        if (callInfo == null) {
-            return;
-        }
+
     }
 }

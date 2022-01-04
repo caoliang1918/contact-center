@@ -1,7 +1,7 @@
 package org.zhongweixian.cc.listen;
 
 import com.alibaba.fastjson.JSONObject;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
@@ -41,7 +41,7 @@ public class CallCdrListen {
      *
      * @param payload
      */
-    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constants.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constants.DEVOCE_KEY , value =  @Queue( Constants.CALL_DEVICE_QUEUE))})
+    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constant.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constant.DEVOCE_KEY , value =  @Queue( Constant.CALL_DEVICE_QUEUE))})
     public void listenCallDevice(@Payload String payload) {
         try {
             CallDevice callDevice = JSONObject.parseObject(payload, CallDevice.class);
@@ -56,7 +56,7 @@ public class CallCdrListen {
     /**
      * @param payload
      */
-    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constants.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constants.DETAIL_KEY , value =  @Queue( Constants.CALL_DETAIL_QUEUE))})
+    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constant.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constant.DETAIL_KEY , value =  @Queue( Constant.CALL_DETAIL_QUEUE))})
     public void listenCallDetailQueue(@Payload String payload) {
         try {
             CallDetail callDetail = JSONObject.parseObject(payload, CallDetail.class);
@@ -73,7 +73,7 @@ public class CallCdrListen {
      *
      * @param payload
      */
-    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constants.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constants.CALLLOG_KEY , value =  @Queue( Constants.CALL_LOG_QUEUE))})
+    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constant.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constant.CALLLOG_KEY , value =  @Queue( Constant.CALL_LOG_QUEUE))})
     public void listenCallLog(@Payload String payload) {
         logger.info("callLog:{}", payload);
         try {

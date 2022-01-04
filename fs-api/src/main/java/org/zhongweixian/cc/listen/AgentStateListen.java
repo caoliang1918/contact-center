@@ -2,7 +2,7 @@ package org.zhongweixian.cc.listen;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.AgentStateLog;
 import org.cti.cc.mapper.AgentStateLogMapper;
 import org.cti.cc.po.AgentInfo;
@@ -62,7 +62,7 @@ public class AgentStateListen {
      * 同步坐席状态
      */
     /*@KafkaListener(topics = {Constants.AGENT_STATE}, groupId = "${spring.application.name}")*/
-    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constants.AGENT_STATE_KEY, value = @Queue(value = Constants.AGENT_STATE_QUEUE +Constants.LINE+ "${spring.instance.id}", autoDelete = "true"))})
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constant.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constant.AGENT_STATE_KEY, value = @Queue(value = Constant.AGENT_STATE_QUEUE + Constant.LINE+ "${spring.instance.id}", autoDelete = "true"))})
     public void listenAgentState(@Payload String payload) {
         logger.debug("receive agent state payload  {} ", payload);
         JSONObject json = JSON.parseObject(payload);
@@ -141,7 +141,7 @@ public class AgentStateListen {
      *
      * @param payload
      */
-    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constants.AGENT_LOG_KEY, value = @Queue(Constants.AGENT_LOG_QUEUE))})
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constant.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constant.AGENT_LOG_KEY, value = @Queue(Constant.AGENT_LOG_QUEUE))})
     public void listenAgentStateLog(@Payload String payload) {
         AgentStateLog agentStateLog = JSONObject.parseObject(payload, AgentStateLog.class);
         if (agentStateLog == null || pressure == 1) {

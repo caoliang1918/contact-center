@@ -15,11 +15,6 @@ public class WsLoginEvnet extends WsBaseEvent {
     private String token;
 
     /**
-     * 密码模式
-     */
-    private String passwd;
-
-    /**
      * 1：坐席sip号
      * 2：webrtc
      * 3：坐席手机号
@@ -48,14 +43,6 @@ public class WsLoginEvnet extends WsBaseEvent {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getPasswd() {
-        return passwd;
-    }
-
-    public void setPasswd(String passwd) {
-        this.passwd = passwd;
     }
 
     public Integer getLoginType() {
@@ -94,7 +81,6 @@ public class WsLoginEvnet extends WsBaseEvent {
     public String toString() {
         return "WsLoginEvnet{" +
                 "token='" + token + '\'' +
-                ", passwd='" + passwd + '\'' +
                 ", loginType='" + loginType + '\'' +
                 ", workType='" + workType + '\'' +
                 ", sip='" + sip + '\'' +

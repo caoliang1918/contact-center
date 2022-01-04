@@ -1,7 +1,7 @@
 package org.zhongweixian.cc.acd.assign;
 
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.strategy.AgentStrategy;
 import org.slf4j.Logger;
@@ -36,9 +36,9 @@ public class AgentCustomAssign implements AgentStrategy {
             context.setVariable("skill_" + skill.getSkillId(), skill.getRankValue());
         });
         //时间变量
-        context.setVariable(Constants.LONG_READY, -agentInfo.getStateTime());
-        context.setVariable(Constants.READY_TIMES, agentInfo.getReadyTimes());
-        context.setVariable(Constants.SEREVICE_TIMES, agentInfo.getServiceTime());
+        context.setVariable(Constant.LONG_READY, -agentInfo.getStateTime());
+        context.setVariable(Constant.READY_TIMES, agentInfo.getReadyTimes());
+        context.setVariable(Constant.SEREVICE_TIMES, agentInfo.getServiceTime());
         return calculate(customExpression, context);
     }
 

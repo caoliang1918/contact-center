@@ -21,7 +21,7 @@ import java.util.List;
  * 需要企业账号访问
  */
 @RestController
-@RequestMapping("v1/cti/admin")
+@RequestMapping("/v1/cti/admin")
 public class AdminController extends BaseController {
     private Logger logger = LoggerFactory.getLogger(AdminController.class);
 

@@ -73,14 +73,19 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
             default:
                 break;
         }
-        /**
-         * 坐席所在的主技能组
-         */
-        GroupInfo groupInfo = getGroup(agentInfo.getGroupId());
         if (StringUtils.isNoneBlank(event.getDisplay())) {
             callerDisplay = event.getDisplay();
         } else {
             callerDisplay = agentInfo.getAgentId();
+        }
+
+        /**
+         * 坐席所在的主技能组
+         */
+        GroupInfo groupInfo = getGroup(agentInfo.getGroupId());
+        if (groupInfo == null || groupInfo.getStatus() == 0) {
+            sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_GROUP_NULL, AgentState.OUT_CALL.name(), event.getAgentKey()));
+            return;
         }
 
         /**
