@@ -92,6 +92,7 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
         webSocketManager.start();
         tcpServer.start();
         fsListen.start();
+        groupHandler.start();
     }
 
 

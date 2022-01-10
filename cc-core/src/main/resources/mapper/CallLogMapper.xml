@@ -12,6 +12,7 @@
     <result column="called_display" jdbcType="VARCHAR" property="calledDisplay" />
     <result column="called" jdbcType="VARCHAR" property="called" />
     <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="login_type" jdbcType="INTEGER" property="loginType" />
     <result column="task_id" jdbcType="BIGINT" property="taskId" />
@@ -47,7 +48,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, cts, uts, company_id, call_id, caller_display, caller, called_display, called, 
-    agent_key, group_id, login_type, task_id, ivr_id, bot_id, call_time, answer_time, 
+    agent_key, agent_name, group_id, login_type, task_id, ivr_id, bot_id, call_time, answer_time,
     end_time, call_type, direction, answer_flag, wait_time, answer_count, hangup_dir, 
     hangup_code, media, host, record, record2, record_time, talk_time, frist_queue_time, queue_start_time,
     queue_end_time, month_time, follow_data, uuid1, uuid2, ext1, ext2, ext3, status
@@ -95,6 +96,9 @@
       </if>
       <if test="agentKey != null">
         agent_key,
+      </if>
+      <if test="agentName != null">
+        agent_name,
       </if>
       <if test="groupId != null">
         group_id,
@@ -223,6 +227,9 @@
       </if>
       <if test="agentKey != null">
         #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="agentName != null">
+        #{agentName,jdbcType=VARCHAR},
       </if>
       <if test="groupId != null">
         #{groupId,jdbcType=BIGINT},
@@ -355,6 +362,9 @@
       <if test="agentKey != null">
         agent_key,
       </if>
+      <if test="agentName != null">
+        agent_name,
+      </if>
       <if test="groupId != null">
         group_id,
       </if>
@@ -483,6 +493,9 @@
       <if test="agentKey != null">
         #{agentKey,jdbcType=VARCHAR},
       </if>
+      <if test="agentName != null">
+        #{agentName,jdbcType=VARCHAR},
+      </if>
       <if test="groupId != null">
         #{groupId,jdbcType=BIGINT},
       </if>
@@ -592,6 +605,7 @@
     <result column="called_display" jdbcType="VARCHAR" property="calledDisplay" />
     <result column="called" jdbcType="VARCHAR" property="called" />
     <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="login_type" jdbcType="INTEGER" property="loginType" />
     <result column="task_id" jdbcType="BIGINT" property="taskId" />
@@ -659,6 +673,9 @@
       </if>
       <if test="agentKey != null">
         agent_key = #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="agentName != null">
+        agent_key = #{agentName,jdbcType=VARCHAR},
       </if>
       <if test="groupId != null">
         group_id = #{groupId,jdbcType=BIGINT},

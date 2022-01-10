@@ -237,7 +237,7 @@ public class QuartzConfig {
             List<BaseTask> list = getJobList();
             List<String> jobNames = list.stream().map(BaseTask::getName).collect(Collectors.toList());
             if (!jobNames.contains("TaskJobOfSecond")) {
-                createSecondJob();
+               // createSecondJob();
             }
             if (!jobNames.contains("TaskJobOfHour")) {
                 createHourJob();

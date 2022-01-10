@@ -39,7 +39,7 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
 
     @Override
     public void run(String... args) throws Exception {
-        quartzConfig.initJob();
+        //quartzConfig.initJob();
     }
 
 

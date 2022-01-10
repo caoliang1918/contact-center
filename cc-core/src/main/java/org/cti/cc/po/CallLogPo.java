@@ -52,6 +52,11 @@ public class CallLogPo implements Serializable {
     private String agentKey;
 
     /**
+     * 坐席名称
+     */
+    private String agentName;
+
+    /**
      * 技能组
      */
     @JSONField(defaultValue = "0")
@@ -289,6 +294,14 @@ public class CallLogPo implements Serializable {
 
     public void setAgentKey(String agentKey) {
         this.agentKey = agentKey;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Long getGroupId() {

@@ -45,6 +45,6 @@ public class TaskJobOfSecond implements Job {
         if (serviceInstance == null) {
             return;
         }
-        restTemplate.getForEntity("http://" + serviceInstance.getServiceId() + ":" + serviceInstance.getPort() + "/fs-api/index/acd", String.class);
+        //restTemplate.getForEntity("http://" + serviceInstance.getServiceId() + ":" + serviceInstance.getPort() + "/fs-api/index/acd", String.class);
     }
 }

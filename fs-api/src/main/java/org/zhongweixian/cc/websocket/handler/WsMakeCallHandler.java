@@ -98,6 +98,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         CallInfo callInfo = CallInfo.CallInfoBuilder.builder()
                 .withCallId(callId)
                 .withAgentKey(agentInfo.getAgentKey())
+                .withAgentName(agentInfo.getAgentName())
                 .withLoginType(agentInfo.getLoginType())
                 .withCompanyId(agentInfo.getCompanyId())
                 .withGroupId(agentInfo.getGroupId())
@@ -180,6 +181,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         deviceInfo.setDeviceType(1);
         deviceInfo.setCdrType(3);
         deviceInfo.setAgentKey(agentInfo.getAgentKey());
+        deviceInfo.setAgentName(agentInfo.getAgentName());
         callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
 
 
@@ -253,6 +255,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         deviceInfo.setCdrType(2);
         deviceInfo.setDeviceType(1);
         deviceInfo.setAgentKey(agentInfo.getAgentKey());
+        deviceInfo.setAgentName(agentInfo.getAgentName());
 
         if (StringUtils.isNoneBlank(event.getUuid1())) {
             callInfo.setUuid1(event.getUuid1());

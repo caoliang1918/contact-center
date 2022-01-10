@@ -17,10 +17,7 @@ import org.zhongweixian.cc.command.base.BaseHandler;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Create by caoliang on 2020/8/23
@@ -30,7 +27,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class GroupHandler extends BaseHandler {
 
-    @Value("${queue.timeout:3600000}")
+    /**
+     * 每通电话最大排队超时时间，1小时
+     */
+    @Value("${queue.max.timeout:3600000}")
     private Long timeout;
 
     /**
@@ -49,6 +49,12 @@ public class GroupHandler extends BaseHandler {
      */
     private ThreadPoolExecutor callAgentService = new ThreadPoolExecutor(4, 4, 0L,
             TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryBuilder().setNameFormat("call-agent-pool-%d").build());
+
+    /**
+     * 定时线程组
+     */
+    private ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("acd-pool-%d").build());
+
 
     /**
      * 电话进入技能组,呼入电话有可能多次经过这
@@ -459,7 +465,7 @@ public class GroupHandler extends BaseHandler {
     /**
      * 进入到队列的电话，需要定时找空闲坐席
      */
-    public void acd() {
+    private void acd() {
         Long now = Instant.now().getEpochSecond();
         for (Map.Entry<Long, PriorityQueue<CallQueue>> entry : callInfoMap.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
@@ -502,6 +508,13 @@ public class GroupHandler extends BaseHandler {
 
     public void stop() {
         callAgentService.shutdown();
+        scheduledExecutorService.shutdown();
+    }
+
+    public void start() {
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
+            acd();
+        }, 1000, 500, TimeUnit.MILLISECONDS);
     }
 
 

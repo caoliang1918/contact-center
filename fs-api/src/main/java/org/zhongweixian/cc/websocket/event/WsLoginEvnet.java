@@ -2,6 +2,8 @@ package org.zhongweixian.cc.websocket.event;
 
 import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 
+import java.util.List;
+
 /**
  * Create by caoliang on 2020/10/26
  * <p>
@@ -13,6 +15,11 @@ public class WsLoginEvnet extends WsBaseEvent {
      * token 模式
      */
     private String token;
+
+    /**
+     * 坐席名称
+     */
+    private String agentName;
 
     /**
      * 1：坐席sip号
@@ -36,6 +43,11 @@ public class WsLoginEvnet extends WsBaseEvent {
      */
     private Long callId;
 
+    /**
+     * 坐席签入技能组
+     */
+    private List<Long> groupIds;
+
 
     public String getToken() {
         return token;
@@ -43,6 +55,14 @@ public class WsLoginEvnet extends WsBaseEvent {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Integer getLoginType() {
@@ -75,6 +95,14 @@ public class WsLoginEvnet extends WsBaseEvent {
 
     public void setCallId(Long callId) {
         this.callId = callId;
+    }
+
+    public List<Long> getGroupIds() {
+        return groupIds;
+    }
+
+    public void setGroupIds(List<Long> groupIds) {
+        this.groupIds = groupIds;
     }
 
     @Override

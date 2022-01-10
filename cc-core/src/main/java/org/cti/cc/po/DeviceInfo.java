@@ -21,6 +21,11 @@ public class DeviceInfo {
     private String agentKey;
 
     /**
+     * 坐席
+     */
+    private String agentName;
+
+    /**
      * 1:坐席,2:客户,3:外线
      */
     private Integer deviceType;
@@ -153,6 +158,14 @@ public class DeviceInfo {
 
     public void setAgentKey(String agentKey) {
         this.agentKey = agentKey;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Integer getDeviceType() {
@@ -337,6 +350,7 @@ public class DeviceInfo {
         private Integer deviceType;
         private Integer cdrType;
         private String agentKey;
+        private String agentName;
         private String caller;
         private String calledLocation;
         private String callerLocation;
@@ -365,13 +379,18 @@ public class DeviceInfo {
             return this;
         }
 
-        public DeviceInfoBuilder withCdrType(Integer cdrType){
-             this.cdrType = cdrType;
-             return this;
+        public DeviceInfoBuilder withCdrType(Integer cdrType) {
+            this.cdrType = cdrType;
+            return this;
         }
 
-        public DeviceInfoBuilder withAgentKey(String agentKey){
+        public DeviceInfoBuilder withAgentKey(String agentKey) {
             this.agentKey = agentKey;
+            return this;
+        }
+
+        public DeviceInfoBuilder withAgentName(String agentName) {
+            this.agentName = agentName;
             return this;
         }
 
@@ -389,6 +408,7 @@ public class DeviceInfo {
             this.callerLocation = callerLocation;
             return this;
         }
+
         public DeviceInfoBuilder withCalledLocation(String calledLocation) {
             this.calledLocation = calledLocation;
             return this;
@@ -437,6 +457,7 @@ public class DeviceInfo {
             deviceInfo.endTime = this.endTime;
             deviceInfo.cdrType = this.cdrType;
             deviceInfo.agentKey = this.agentKey;
+            deviceInfo.agentName = this.agentName;
             deviceInfo.deviceId = this.deviceId;
             deviceInfo.called = this.called;
             deviceInfo.callTime = this.callTime;
@@ -456,6 +477,7 @@ public class DeviceInfo {
                 "callId=" + callId +
                 ", deviceId='" + deviceId + '\'' +
                 ", agentKey='" + agentKey + '\'' +
+                ", agentName='" + agentName + '\'' +
                 ", deviceType=" + deviceType +
                 ", cdrType=" + cdrType +
                 ", caller='" + caller + '\'' +

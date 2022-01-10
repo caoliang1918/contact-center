@@ -96,9 +96,6 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
             return;
         }
 
-        agentInfo.setLoginType(event.getLoginType());
-        agentInfo.setWorkType(event.getWorkType());
-
         //通话中不允许挤掉老的连接
         AgentState state = agentInfo.getAgentState();
         if (state != null && (state.name().contains("CALL") || AgentState.TALKING == state)) {
@@ -137,6 +134,7 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
             event.getChannel().close();
             return;
         }
+
         switch (agentInfo.getLoginType()) {
             case 1:
             case 2:
@@ -169,6 +167,16 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
      * @param event
      */
     private void agentLogin(AgentInfo agentInfo, WsLoginEvnet event) {
+        agentInfo.setLoginType(event.getLoginType());
+        agentInfo.setWorkType(event.getWorkType());
+        if (StringUtils.isNotBlank(event.getAgentName())) {
+            agentInfo.setAgentName(event.getAgentName());
+        }
+        //登录时，签入指定技能组
+        if (!CollectionUtils.isEmpty(event.getGroupIds())) {
+            agentInfo.setGroupIds(event.getGroupIds());
+        }
+
         //记录坐席所在服务器
         InetSocketAddress address = (InetSocketAddress) event.getChannel().localAddress();
         agentInfo.setHost(address.getHostName() + ":" + port);

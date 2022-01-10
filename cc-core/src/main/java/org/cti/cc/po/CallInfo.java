@@ -63,6 +63,11 @@ public class CallInfo implements Serializable {
     private String agentKey;
 
     /**
+     * 坐席名称
+     */
+    private String agentName;
+
+    /**
      * 坐席登录类型
      */
     private Integer loginType;
@@ -302,6 +307,14 @@ public class CallInfo implements Serializable {
 
     public void setAgentKey(String agentKey) {
         this.agentKey = agentKey;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Integer getLoginType() {
@@ -572,6 +585,7 @@ public class CallInfo implements Serializable {
         private String calledDisplay;
         private String called;
         private String agentKey;
+        private String agentName;
         private Integer loginType;
         private Long ivrId;
         private String media;
@@ -646,6 +660,11 @@ public class CallInfo implements Serializable {
 
         public CallInfoBuilder withAgentKey(String agentKey) {
             this.agentKey = agentKey;
+            return this;
+        }
+
+        public CallInfoBuilder withAgentName(String agentName) {
+            this.agentName = agentName;
             return this;
         }
 

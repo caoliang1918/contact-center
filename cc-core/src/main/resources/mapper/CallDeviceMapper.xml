@@ -8,6 +8,7 @@
     <result column="call_id" jdbcType="BIGINT" property="callId" />
     <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
     <result column="device_type" jdbcType="INTEGER" property="deviceType" />
     <result column="cdr_type" jdbcType="INTEGER" property="cdrType" />
     <result column="caller" jdbcType="VARCHAR" property="caller" />
@@ -35,7 +36,7 @@
     <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, cts, uts, call_id, device_id, agent_key, device_type, cdr_type, caller, called, 
+    id, cts, uts, call_id, device_id, agent_key, agent_name, device_type, cdr_type, caller, called,
     display, called_location, caller_location, call_time, ring_start_time, ring_end_time, 
     answer_time, bridge_time, end_time, talk_time, sip_protocol, record, record2, record_time,
     channel_name, hangup_cause, ring_cause, sip_status, ext1, ext2, status
@@ -71,6 +72,9 @@
       </if>
       <if test="agentKey != null">
         agent_key,
+      </if>
+      <if test="agentName != null">
+        agent_name,
       </if>
       <if test="deviceType != null">
         device_type,
@@ -166,6 +170,9 @@
       </if>
       <if test="agentKey != null">
         #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="agentName != null">
+        #{agentName,jdbcType=VARCHAR},
       </if>
       <if test="deviceType != null">
         #{deviceType,jdbcType=INTEGER},
@@ -265,6 +272,9 @@
       <if test="agentKey != null">
         agent_key,
       </if>
+      <if test="agentName != null">
+        agent_name,
+      </if>
       <if test="deviceType != null">
         device_type,
       </if>
@@ -357,8 +367,8 @@
       <if test="deviceId != null">
         #{deviceId,jdbcType=VARCHAR},
       </if>
-      <if test="agentKey != null">
-        #{agentKey,jdbcType=VARCHAR},
+      <if test="agentName != null">
+        #{agentName,jdbcType=VARCHAR},
       </if>
       <if test="deviceType != null">
         #{deviceType,jdbcType=INTEGER},
@@ -455,6 +465,9 @@
       </if>
       <if test="agentKey != null">
         agent_key = #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="agentName != null">
+        agent_key = #{agentName,jdbcType=VARCHAR},
       </if>
       <if test="deviceType != null">
         device_type = #{deviceType,jdbcType=INTEGER},

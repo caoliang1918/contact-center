@@ -63,12 +63,6 @@ public class IndexController {
         return new CommonResponse(encrypt.decrypt(text));
     }
 
-    @GetMapping("/acd")
-    public CommonResponse acd() {
-        groupHandler.acd();
-        return new CommonResponse();
-    }
-
     /**
      * 测试
      *
