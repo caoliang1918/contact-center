@@ -367,6 +367,9 @@
       <if test="deviceId != null">
         #{deviceId,jdbcType=VARCHAR},
       </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
       <if test="agentName != null">
         #{agentName,jdbcType=VARCHAR},
       </if>
@@ -467,7 +470,7 @@
         agent_key = #{agentKey,jdbcType=VARCHAR},
       </if>
       <if test="agentName != null">
-        agent_key = #{agentName,jdbcType=VARCHAR},
+        agent_name = #{agentName,jdbcType=VARCHAR},
       </if>
       <if test="deviceType != null">
         device_type = #{deviceType,jdbcType=INTEGER},

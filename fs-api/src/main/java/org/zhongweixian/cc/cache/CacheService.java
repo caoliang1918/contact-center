@@ -125,6 +125,7 @@ public class CacheService {
     }
 
     public void refleshAgentToken(String agentKey, String token) {
+        logger.info("agent:{}, create token:{}", agentKey, token);
         redisTemplate.opsForValue().set(Constant.AGENT_TOKEN + token, agentKey, 48, TimeUnit.HOURS);
     }
 
@@ -133,6 +134,9 @@ public class CacheService {
     }
 
     public Object getAgentKey(String token) {
+        if (token == null) {
+            return null;
+        }
         return redisTemplate.opsForValue().get(Constant.AGENT_TOKEN + token);
     }
 

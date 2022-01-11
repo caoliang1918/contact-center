@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.service.AgentService;
+import org.zhongweixian.cc.util.BcryptUtil;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.cc.websocket.event.WsLoginEvnet;
 import org.zhongweixian.cc.websocket.event.base.ChannelEntity;
@@ -55,28 +56,49 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
     @Override
     public void handleEvent(WsLoginEvnet event) {
         logger.info("{}", event.toString());
-        String token = event.getToken();
-        if (StringUtils.isBlank(token)) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.ACCOUNT_ERROR, event.getCmd(), event.getAgentKey()));
-            event.getChannel().close();
-            return;
-        }
-        Object agentKey = cacheService.getAgentKey(token);
-        if (agentKey == null) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.ACCOUNT_ERROR, event.getCmd(), event.getAgentKey()));
-            event.getChannel().close();
-            return;
+        AgentInfo agentInfo = null;
+        /**
+         * 授权通过
+         */
+        ChannelEntity entity = webSocketHandler.getChanel(event.getChannel().id());
+        if (!entity.isAuthorization()) {
+            if (StringUtils.isBlank(event.getPasswd()) || StringUtils.isBlank(event.getAgentKey())) {
+                logger.info("agent:{} not exist ", event.getAgentKey());
+                sendMessgae(event, new WsResponseEntity<String>(ErrorCode.ACCOUNT_ERROR, event.getCmd(), event.getAgentKey()));
+                event.getChannel().close();
+                return;
+            }
+
+            //走密码模式
+            agentInfo = cacheService.getAgentInfo(event.getAgentKey());
+            if (agentInfo == null) {
+                logger.info("agent:{} not exist ", event.getAgentKey());
+                sendMessgae(event, new WsResponseEntity<String>(ErrorCode.ACCOUNT_ERROR, event.getCmd(), event.getAgentKey()));
+                event.getChannel().close();
+                return;
+            }
+
+            if (!BcryptUtil.checkPwd(event.getPasswd(), agentInfo.getPasswd())) {
+                logger.error("agent:{}  password {} is error", event.getAgentKey(), event.getPasswd());
+                sendMessgae(event, new WsResponseEntity<>(ErrorCode.ACCOUNT_ERROR, event.getCmd(), event.getAgentKey()));
+                event.getChannel().close();
+                return;
+            }
+            entity.setClient(agentInfo.getAgentKey());
+            entity.setAuthorization(true);
+            webSocketHandler.addAgentChannel(agentInfo.getAgentKey(), entity.getChannel());
         }
 
-        Channel channel = webSocketHandler.getChannel(String.valueOf(agentKey));
+
+        Channel channel = webSocketHandler.getChannel(entity.getClient());
         if (channel != null && channel.isOpen() && channel.id().equals(event.getChannel().id())) {
             //重复登录成功
             logger.warn("{}:坐席重复登录 ", event.getAgentKey());
             sendMessgae(event, new WsResponseEntity<String>(ErrorCode.AGENT_REPEAT_LOGIN, event.getCmd(), event.getAgentKey()));
             return;
         }
-        event.setAgentKey(String.valueOf(agentKey));
-        AgentInfo agentInfo = agentService.getAgentInfo(event.getAgentKey());
+        event.setAgentKey(entity.getClient());
+        agentInfo = agentService.getAgentInfo(event.getAgentKey());
         if (agentInfo == null) {
             logger.info("agent:{} not exist ", event.getAgentKey());
             sendMessgae(event, new WsResponseEntity<String>(ErrorCode.ACCOUNT_ERROR, event.getCmd(), event.getAgentKey()));
@@ -113,7 +135,7 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
                     /**
                      * 授权通过
                      */
-                    ChannelEntity entity = webSocketHandler.getChanel(event.getChannel().id());
+                    entity = webSocketHandler.getChanel(event.getChannel().id());
                     entity.setAuthorization(true);
                     entity.setClient(event.getAgentKey());
                     webSocketHandler.addAgentChannel(agentInfo.getAgentKey(), entity.getChannel());
@@ -207,19 +229,6 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
         agentInfo.setWorkType(event.getWorkType());
         agentInfo.setRemoteAddress(event.getChannel().remoteAddress().toString().substring(1));
         cacheService.addAgentInfo(agentInfo);
-
-
-        /**
-         * 授权通过
-         */
-        ChannelEntity entity = webSocketHandler.getChanel(event.getChannel().id());
-        if (entity == null) {
-            logger.warn("agent:{} login authorization error", event.getAgentKey());
-            return;
-        }
-        entity.setAuthorization(true);
-        entity.setClient(event.getAgentKey());
-        webSocketHandler.addAgentChannel(agentInfo.getAgentKey(), entity.getChannel());
 
 
         CompanyInfo companyInfo = cacheService.getCompany(agentInfo.getCompanyId());

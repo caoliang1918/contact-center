@@ -4,14 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
     <name>cc-api</name>
 
-    <groupId>org.zhongweixian</groupId>
     <artifactId>cc-api</artifactId>
-    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.zhongweixian</groupId>
-        <artifactId>callcenter</artifactId>
+        <artifactId>contact-center</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

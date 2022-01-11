@@ -36,11 +36,11 @@
     </style>
     <script type="application/javascript">
 
-        var ws = null;
+        var socket = null;
 
         function init() {
             var obj = document.getElementById('ws');
-            obj.value = "ws://" + window.location.hostname + ":7260/ws";
+            obj.value = "ws://" + window.location.hostname + ":7260/ws?token=5d63f6ec8ed20b14857f720c7cd5f639268723435eafccd7fc68101e91215f87";
         }
 
         function setConnected(connected) {
@@ -54,10 +54,36 @@
 
         function connect() {
             var target = document.getElementById('ws').value;
+            log('websocket url:' + target);
             if (target == '') {
                 alert('Please select server side connection implementation.');
                 return;
             }
+
+            if(window.WebSocket){
+                socket = new WebSocket(target);
+                socket.onmessage = function(event){
+                    log('Received: ' + event.data);
+                };
+                var timer;
+                socket.onopen = function(event){
+                    log('Info: WebSocket connection opened.');
+                    var pingTime = 10 * 1000;
+                    setConnected(true);
+                    timer = window.setInterval(function () {
+                        var ping = "{'cmd':'ping' , 'sequence': " + new Date().getTime() + " }";
+                        socket.send(ping);
+                    }, pingTime);
+                };
+                socket.onclose = function(event){
+                    setConnected(false);
+                    clearInterval(timer);
+                    log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
+                };
+            }else{
+                alert("您的浏览器不支持WebSocket协议！");
+            }
+            /*
             if ('WebSocket' in window) {
                 ws = new WebSocket(target);
             } else if ('MozWebSocket' in window) {
@@ -66,7 +92,6 @@
                 alert('WebSocket is not supported by this browser.');
                 return;
             }
-            var timer;
             ws.onopen = function () {
                 log('Info: WebSocket connection opened.');
                 var pingTime = 10 * 1000;
@@ -83,21 +108,21 @@
                 setConnected(false);
                 clearInterval(timer);
                 log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
-            };
+            };*/
         }
 
         function disconnect() {
-            if (ws != null) {
-                ws.close();
-                ws = null;
+            if (socket != null) {
+                socket.close();
+                socket = null;
             }
             setConnected(false);
         }
 
         function echo(message) {
-            if (ws != null) {
+            if (socket != null) {
                 log('Sent: ' + message);
-                ws.send(message);
+                socket.send(message);
             } else {
                 alert('WebSocket connection not established, please connect.');
             }
@@ -145,14 +170,14 @@
     <div id="connect-container">
 
         <div>
-            <input id="ws" value="ws://127.0.0.1:6800/ws" type="text" size="40" style="width: 350px"/>
+            <input id="ws" value="" type="text" size="40" style="width: 350px"/>
         </div>
         <div>
             <button id="connect" onclick="connect();">Connect</button>
             <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
         </div>
         <div>
-            <textarea id="loginText" style="width: 350px;height: 30px">{"cmd":"LOGIN","loginType":"1","workType":"1","agentKey":"1001@test","token":"e49fd2d0375b95cd9e04b2a9e548d38a59a5a4738fff63668ed012933cdecd1c","time":"123456789"}</textarea>
+            <textarea id="loginText" style="width: 350px;height: 30px">{"cmd":"LOGIN","loginType":"1","workType":"1","agentKey":"1001@test","time":"123456789"}</textarea>
         </div>
 
         <div>

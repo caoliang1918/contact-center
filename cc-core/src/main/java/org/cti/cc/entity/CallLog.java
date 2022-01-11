@@ -60,6 +60,11 @@ public class CallLog implements Serializable {
     private String agentKey;
 
     /**
+     * 坐席名称
+     */
+    private String agentName;
+
+    /**
      * 技能组
      */
     private Long groupId;
@@ -180,7 +185,7 @@ public class CallLog implements Serializable {
     private Long queueEndTime;
 
     /**
-     *  月份
+     * 月份
      */
     private String monthTime;
 
@@ -299,6 +304,14 @@ public class CallLog implements Serializable {
 
     public void setAgentKey(String agentKey) {
         this.agentKey = agentKey == null ? null : agentKey.trim();
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Long getGroupId() {

@@ -217,7 +217,6 @@ public class AgentController extends BaseController {
         params.put("agentKey", agentKey);
         params.put("id", id);
         params.put("time", time);
-        params.put("time", time);
         return new HmacUtils(HmacAlgorithms.HMAC_SHA_256, secretKey).hmacHex(JSON.toJSONString(params));
     }
 

@@ -17,6 +17,11 @@ public class WsLoginEvnet extends WsBaseEvent {
     private String token;
 
     /**
+     * 密码模式
+     */
+    private String passwd;
+
+    /**
      * 坐席名称
      */
     private String agentName;
@@ -103,6 +108,14 @@ public class WsLoginEvnet extends WsBaseEvent {
 
     public void setGroupIds(List<Long> groupIds) {
         this.groupIds = groupIds;
+    }
+
+    public String getPasswd() {
+        return passwd;
+    }
+
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
     }
 
     @Override

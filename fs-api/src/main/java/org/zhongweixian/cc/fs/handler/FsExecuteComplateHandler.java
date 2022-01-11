@@ -45,7 +45,6 @@ public class FsExecuteComplateHandler extends BaseEventHandler<FsExecuteComplate
             default:
                 break;
         }
-
-        logger.info("execute:{} data:{} resposne:{}", event.getApplication(), event.getApplicationData(), event.getResponse());
+        logger.debug("execute:{} data:{} resposne:{}", event.getApplication(), event.getApplicationData(), event.getResponse());
     }
 }

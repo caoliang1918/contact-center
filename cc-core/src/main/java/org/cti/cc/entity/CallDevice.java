@@ -42,6 +42,11 @@ public class CallDevice implements Serializable {
     private String agentKey;
 
     /**
+     * 坐席名称
+     */
+    private String agentName;
+
+    /**
      * 1:坐席,2:客户,3:外线
      */
     private Integer deviceType;
@@ -224,6 +229,14 @@ public class CallDevice implements Serializable {
 
     public void setAgentKey(String agentKey) {
         this.agentKey = agentKey == null ? null : agentKey.trim();
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Integer getDeviceType() {

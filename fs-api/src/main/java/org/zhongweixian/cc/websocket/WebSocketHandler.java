@@ -179,6 +179,34 @@ public class WebSocketHandler implements ConnectionListener {
         channelIds.put(channel.id(), entity);
     }
 
+    @Override
+    public void connect(Channel channel, Map<String, Object> map) throws Exception {
+        logger.info("channel:{} connect success, params:{}", channel, JSON.toJSONString(map));
+        if (!map.containsKey("token")) {
+            return;
+        }
+        String token = (String) map.get("token");
+        Object agentKey = cacheService.getAgentKey(token);
+
+
+        if (agentKey == null) {
+            channel.close();
+            return;
+        }
+        AgentInfo agentInfo = cacheService.getAgentInfo(String.valueOf(agentKey));
+        if (agentInfo == null) {
+            channel.close();
+            return;
+        }
+        ChannelEntity entity = new ChannelEntity();
+        entity.setClient(agentInfo.getAgentKey());
+        entity.setChannel(channel);
+        entity.setAuthorization(true);
+        entity.setCts(Instant.now().getEpochSecond());
+        channelIds.put(channel.id(), entity);
+        logger.info("agent:{}  auth success", agentInfo.getAgentKey());
+    }
+
     private WsBaseEvent formatEvent(JSONObject jsonObject, Channel channel, String cmd) {
         try {
             Class clzss = EventType.getClassByCmd(cmd);

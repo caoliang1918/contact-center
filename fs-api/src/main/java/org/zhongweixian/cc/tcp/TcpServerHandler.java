@@ -121,6 +121,11 @@ public class TcpServerHandler implements ConnectionListener {
         channelIds.put(channel.id(), entity);
     }
 
+    @Override
+    public void connect(Channel channel, Map<String, Object> map) throws Exception {
+        logger.info("channel:{} connect success, params:{}", JSON.toJSONString(map));
+    }
+
     private SubBaseEvent formatEvent(JSONObject jsonObject, Channel channel, String cmd) {
         try {
             Class clzss = EventType.getClassByCmd(cmd);

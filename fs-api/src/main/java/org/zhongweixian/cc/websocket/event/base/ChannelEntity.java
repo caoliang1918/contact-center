@@ -6,8 +6,15 @@ import io.netty.channel.Channel;
  * Created by caoliang on 2020/11/5
  */
 public class ChannelEntity {
+
+    /**
+     * 坐席绑定的channel
+     */
     private Channel channel;
 
+    /**
+     * 坐席标识
+     */
     private String client;
 
     private boolean authorization;
