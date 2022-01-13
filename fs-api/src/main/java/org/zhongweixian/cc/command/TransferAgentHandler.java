@@ -48,12 +48,12 @@ public class TransferAgentHandler extends BaseHandler {
         deviceInfo.setCallId(callInfo.getCallId());
         deviceInfo.setDeviceId(deviceId);
         deviceInfo.setDeviceType(1);
-        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_CALL_BRIDGE, thisDeviceId));
         deviceInfo.setAgentKey(agentInfo.getAgentKey());
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
         callInfo.setAgentKey(agentInfo.getAgentKey());
         callInfo.setCalled(agentInfo.getCalled());
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_BRIDGE, thisDeviceId));
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callInfo.getCallId());
 

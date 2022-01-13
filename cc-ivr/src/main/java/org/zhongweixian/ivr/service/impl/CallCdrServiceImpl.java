@@ -10,6 +10,8 @@ import org.cti.cc.mapper.CallLogMapper;
 import org.cti.cc.mapper.PushFailLogMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.CallLogPo;
+import org.cti.cc.util.DateTimeUtil;
+import org.cti.cc.util.SnowflakeIdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,7 +39,6 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     private PushFailLogMapper pushFailLogMapper;
 
 
-
     @Value("${call.cdr.mq:0}")
     private Integer callCdrMq;
 
@@ -62,7 +63,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return 0;
         }
         callDetails.forEach(callDetail -> {
-           // rabbitTemplate.convertAndSend(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
+            // rabbitTemplate.convertAndSend(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
         });
         return 1;
     }
@@ -74,7 +75,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         }
         logger.info("callId:{} , answerTime:{}", callLog.getCallId(), callLog.getAnswerTime());
         if (callCdrMq == 1) {
-           // rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
+            // rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
             return 0;
         }
 
@@ -95,7 +96,13 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public CallLogPo getCall(Long companyId, Long callId) {
-        return callLogMapper.getCall(companyId, callId);
+        /**
+         * 解析callId产生的时间
+         */
+        String binaryString = Long.toBinaryString(callId);
+        Long time = Long.parseLong(binaryString.substring(0, 36), 2) + SnowflakeIdWorker.WORK_START;
+        logger.info("callId:{} callTime:{} ", callId, DateTimeUtil.format(time));
+        return callLogMapper.getCall(companyId, callId, DateTimeUtil.getMonth(time));
     }
 
     @Override

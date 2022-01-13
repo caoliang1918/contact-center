@@ -21,7 +21,6 @@ public class WsHoldHandler extends WsBaseHandler<WsHoldEvent> {
     public void handleEvent(WsHoldEvent event) {
         AgentInfo agentInfo = getAgent(event);
         if (agentInfo == null || agentInfo.getCallId() == null) {
-
             return;
         }
         String deviceId = agentInfo.getDeviceId();

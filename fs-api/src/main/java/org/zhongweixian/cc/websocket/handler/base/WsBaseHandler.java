@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.configration.Handler;
@@ -51,9 +50,6 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
 
     @Autowired
     protected CallCdrService callCdrService;
-
-    @Value("${spring.application.id}")
-    protected String appId;
 
     /**
      * @param agentInfo
@@ -150,6 +146,17 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
      */
     protected void hold(String media, Long callId, String deviceId) {
         fsListen.hold(media, deviceId);
+    }
+
+    /**
+     * 强插
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    protected void insert(String media, Long callId, String deviceId) {
+        fsListen.insert(media, deviceId);
     }
 
 

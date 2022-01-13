@@ -74,7 +74,6 @@ public class FsHangupCompleteEvent extends FsBaseEvent {
                 ", eventName='" + eventName + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", timestamp=" + timestamp +
-                ", hostname='" + hostname + '\'' +
                 '}';
     }
 }

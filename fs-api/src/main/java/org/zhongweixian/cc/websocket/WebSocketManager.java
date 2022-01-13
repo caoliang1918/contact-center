@@ -31,12 +31,12 @@ public class WebSocketManager {
         webSocketHandler.check();
     }
 
-
     public void stop() {
-        if (webSocketServer != null) {
-            logger.info("websocket server:{} stop", port);
-            webSocketHandler.stop();
-            webSocketServer.close();
+        if (webSocketServer == null) {
+            return;
         }
+        logger.info("websocket server:{} stop", port);
+        webSocketHandler.stop();
+        webSocketServer.close();
     }
 }

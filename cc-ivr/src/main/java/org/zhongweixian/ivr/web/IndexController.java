@@ -18,16 +18,21 @@ public class IndexController {
     @Autowired
     private SimpleIvrMachine ivrMachine;
 
+    /**
+     * @param callId
+     * @param ivrId
+     * @return
+     */
     @GetMapping("index")
-    public String index() {
-        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(100L).build();
-        ivrMachine.runIvr(callInfo, 1L);
+    public String index(Long callId, Long ivrId) {
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(callId).build();
+        ivrMachine.runIvr(callInfo, ivrId);
         return "is ok";
     }
 
     @GetMapping("index2")
-    public String index2() {
-        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(100L).build();
+    public String index2(Long callId) {
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(callId).build();
         ivrMachine.executeNext(callInfo.getCallId());
         return "is ok";
     }

@@ -1,5 +1,6 @@
 package org.cti.cc.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.cti.cc.entity.Group;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.GroupInfo;
@@ -28,5 +29,7 @@ public interface GroupMapper extends BaseMapper<Group> {
      * @return
      */
     List<Long> selectGroupIds(Long companyId);
+
+    Long selectByName(@Param("companyId") Long companyId , @Param("name")String name);
 
 }

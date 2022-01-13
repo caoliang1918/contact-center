@@ -2,7 +2,7 @@ package org.zhongweixian.cc.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.entity.AgentStateLog;
 import org.cti.cc.mapper.AgentGroupMapper;
@@ -51,13 +51,17 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     @Autowired
     protected RabbitTemplate rabbitTemplate;
 
+    @Value("${spring.application.group}" + "${spring.instance.id}")
+    private String appId;
+
+    @Value("${agent.token.key:ToIV23TaievkWwZl}")
+    private String tokenKey;
+
+
     @Override
     BaseMapper<Agent> baseMapper() {
         return agentMapper;
     }
-
-    @Value("${spring.application.id:}")
-    private Integer appId;
 
     @Override
     public AgentInfo getAgentInfo(String agentKey) {
@@ -91,6 +95,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             if (StringUtils.isBlank(agentInfo.getHost())) {
                 return;
             }
+            cacheService.addAgentInfo(agentInfo);
             if (agentInfo.getAgentState() == AgentState.READY) {
                 groupHandler.agentFree(agentInfo);
             }
@@ -130,13 +135,13 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             response.setAppId(appId);
 
             logger.info("send mq agent:{} state:{}", agentInfo.getAgentKey(), agentInfo.getAgentState());
-            rabbitTemplate.convertAndSend(Constants.AGENT_STATE_EXCHANGE, Constants.DEFAULT_KEY, JSON.toJSONString(response));
+            /*kafkaTemplate.send(Constants.AGENT_STATE, JSON.toJSONString(response));*/
+            rabbitTemplate.convertAndSend(Constant.AGENT_STATE_EXCHANGE, Constant.AGENT_STATE_KEY, JSON.toJSONString(response));
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-
         saveAgentLog(agentInfo);
-
     }
 
     @Override
@@ -156,6 +161,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agentStateLog.setAgentId(agentInfo.getId());
         agentStateLog.setCallId(agentInfo.getCallId());
         agentStateLog.setAgentKey(agentInfo.getAgentKey());
+        agentStateLog.setAgentName(agentInfo.getAgentName());
         agentStateLog.setBeforeTime(agentInfo.getBeforeTime());
         agentStateLog.setBeforeState(agentInfo.getBeforeState().name());
         agentStateLog.setState(agentInfo.getAgentState().name());
@@ -163,13 +169,17 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agentStateLog.setHost(agentInfo.getHost());
         agentStateLog.setCompanyId(agentInfo.getCompanyId());
         agentStateLog.setGroupId(agentInfo.getGroupId());
-        agentStateLog.setCts(agentInfo.getStateTime() / 1000);
-        agentStateLog.setUts(agentInfo.getStateTime() / 1000);
         agentStateLog.setLoginType(agentInfo.getLoginType());
         agentStateLog.setWorkType(agentInfo.getWorkType());
         agentStateLog.setRemoteAddress(agentInfo.getRemoteAddress());
         //持续时长
         agentStateLog.setDuration(agentInfo.getBeforeTime() == 0 ? 0 : (int) (agentInfo.getStateTime() - agentInfo.getBeforeTime()));
-        rabbitTemplate.convertAndSend(Constants.AGENT_STATE_LOG_EXCHANGE, Constants.DEFAULT_KEY, JSON.toJSONString(agentStateLog));
+        /*kafkaTemplate.send(Constants.AGENT_STATE_LOG, JSON.toJSONString(agentStateLog));*/
+        rabbitTemplate.convertAndSend(Constant.AGENT_STATE_EXCHANGE, Constant.AGENT_LOG_KEY, JSON.toJSONString(agentStateLog));
+    }
+
+    @Override
+    public String getTokenKey() {
+        return tokenKey;
     }
 }

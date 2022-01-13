@@ -9,7 +9,6 @@ import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.util.RandomUtil;
 import org.zhongweixian.cc.websocket.event.WsMakeCallEvent;
@@ -74,14 +73,19 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
             default:
                 break;
         }
-        /**
-         * 坐席所在的主技能组
-         */
-        GroupInfo groupInfo = getGroup(agentInfo.getGroupId());
         if (StringUtils.isNoneBlank(event.getDisplay())) {
             callerDisplay = event.getDisplay();
         } else {
             callerDisplay = agentInfo.getAgentId();
+        }
+
+        /**
+         * 坐席所在的主技能组
+         */
+        GroupInfo groupInfo = getGroup(agentInfo.getGroupId());
+        if (groupInfo == null || groupInfo.getStatus() == 0) {
+            sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_GROUP_NULL, AgentState.OUT_CALL.name(), event.getAgentKey()));
+            return;
         }
 
         /**
@@ -94,6 +98,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         CallInfo callInfo = CallInfo.CallInfoBuilder.builder()
                 .withCallId(callId)
                 .withAgentKey(agentInfo.getAgentKey())
+                .withAgentName(agentInfo.getAgentName())
                 .withLoginType(agentInfo.getLoginType())
                 .withCompanyId(agentInfo.getCompanyId())
                 .withGroupId(agentInfo.getGroupId())
@@ -104,7 +109,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
                 .withDirection(Direction.OUTBOUND)
                 .withCallType(event.getCallType())
                 .withCallTime(now)
-                .withAppId(appId)
+                .withHost(agentInfo.getHost())
                 .withFollowData(event.getFollowData())
                 .build();
 
@@ -148,21 +153,10 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         if (StringUtils.isNoneBlank(event.getDisplay())) {
             return event.getDisplay();
         }
-        //技能组控制
-        if (groupInfo.getControlFlag() == 1) {
-            if (CollectionUtils.isEmpty(groupInfo.getCalledDisplays())) {
-                return agentInfo.getAgentId();
-            }
-            calledDisplay = RandomUtil.getRandom(groupInfo.getCalledDisplays());
-        } else if (StringUtils.isBlank(agentInfo.getDiaplay())) {
-            //坐席控制
-            if (!StringUtils.isBlank(agentInfo.getDiaplay())) {
-                calledDisplay = agentInfo.getDiaplay();
-            } else {
-                return agentInfo.getAgentId();
-            }
+        if (!StringUtils.isBlank(agentInfo.getDiaplay())) {
+            return agentInfo.getDiaplay();
         }
-        return calledDisplay;
+        return RandomUtil.getRandom(groupInfo.getCalledDisplays());
     }
 
     /**
@@ -187,7 +181,8 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         deviceInfo.setDeviceType(1);
         deviceInfo.setCdrType(3);
         deviceInfo.setAgentKey(agentInfo.getAgentKey());
-        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER));
+        deviceInfo.setAgentName(agentInfo.getAgentName());
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
 
 
         callInfo.getDeviceList().add(deviceId);
@@ -260,7 +255,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         deviceInfo.setCdrType(2);
         deviceInfo.setDeviceType(1);
         deviceInfo.setAgentKey(agentInfo.getAgentKey());
-        deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER));
+        deviceInfo.setAgentName(agentInfo.getAgentName());
 
         if (StringUtils.isNoneBlank(event.getUuid1())) {
             callInfo.setUuid1(event.getUuid1());
@@ -273,6 +268,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         callInfo.setHiddenCustomer(agentInfo.getHiddenCustomer());
         callInfo.setCdrNotifyUrl(agentInfo.getCdrNotifyUrl());
 
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callInfo.getCallId());
 

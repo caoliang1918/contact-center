@@ -158,6 +158,10 @@ public class Client implements IModEslApi {
         log.info("Authenticated");
     }
 
+    public Channel getChannel() {
+        return channel;
+    }
+
     /**
      * Sends a FreeSWITCH API command to the server and blocks, waiting for an immediate response from the
      * server.

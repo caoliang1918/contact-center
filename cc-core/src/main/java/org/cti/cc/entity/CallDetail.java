@@ -54,6 +54,8 @@ public class CallDetail implements Serializable {
      */
     private String reason;
 
+    private String month;
+
     /**
      * 扩展字段1
      */
@@ -165,6 +167,14 @@ public class CallDetail implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
     }
 
     @Override

@@ -1,11 +1,12 @@
 package org.zhongweixian.cc.fs.handler;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.po.*;
+import org.cti.cc.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -17,7 +18,6 @@ import org.zhongweixian.cc.websocket.response.WsCallEntity;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 import java.time.Instant;
-import java.util.Date;
 
 /**
  * Created by caoliang on 2020/8/23
@@ -70,14 +70,12 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
              * 呼入: 在此录音
              */
             if (callInfo.getCallType() == CallType.OUTBOUNT_CALL && groupInfo.getRecordType() == 2) {
-                String record = recordPath +
-                        DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + "." + recordFile;
-                super.record(event.getHostname(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
+                String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + callInfo.getDeviceList().get(0) + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
+                super.record(event.getRemoteAddress(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
                 deviceInfo1.setRecord(record);
             } else if (callInfo.getCallType() == CallType.INBOUND_CALL) {
-                String record = recordPath +
-                        DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + callInfo.getCaller() + "_" + callInfo.getCalled() + "." + recordFile;
-                super.record(event.getHostname(), callInfo.getCallId(), event.getDeviceId(), record);
+                String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + event.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
+                super.record(event.getRemoteAddress(), callInfo.getCallId(), event.getDeviceId(), record);
                 deviceInfo1.setRecord(record);
             }
         }

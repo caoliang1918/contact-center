@@ -19,6 +19,5 @@ public class WsMonitorCancelHandler extends WsBaseHandler<WsMonitorCancelEvent> 
     @Override
     public void handleEvent(WsMonitorCancelEvent event) {
         logger.info("agent cancel monitor", event.getAgentKey());
-        monitorHandler.monitorCancel(event.getAgentKey());
     }
 }

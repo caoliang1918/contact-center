@@ -34,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HttpRequestInteceptor(agentService, cacheService, applicationContext))
+        registry.addInterceptor(new HttpRequestInteceptor(cacheService, applicationContext))
                 .addPathPatterns("/v1/cti/call/**")
                 .addPathPatterns("/v1/cti/agent/**")
                 .addPathPatterns("/v1/cti/admin/**")

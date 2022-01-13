@@ -1,6 +1,6 @@
 package org.zhongweixian.cc.listen;
 
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -19,12 +19,11 @@ public class ConfigListen {
     private Logger logger = LoggerFactory.getLogger(ConfigListen.class);
 
     /**
-     * 生成临时queue
+     * 接受配置
      *
      * @param payload
      */
-    @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.config-" + "${spring.application.id}" , autoDelete = "true"),
-            key = Constants.DEFAULT_KEY, exchange = @Exchange(value = Constants.CONFIG_EXCHANGE, type = ExchangeTypes.TOPIC))})
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constant.CC_CONFIG_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constant.DEFAULT_KEY, value = @Queue(value = Constant.CC_CONFIG_QUEUE + Constant.LINE + "${spring.instance.id}", autoDelete = "true"))})
     public void listenAgentState(@Payload String payload) {
         logger.info("receive config message:{}", payload);
     }

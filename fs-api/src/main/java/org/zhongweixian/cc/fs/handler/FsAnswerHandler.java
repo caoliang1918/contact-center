@@ -1,12 +1,14 @@
 package org.zhongweixian.cc.fs.handler;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
+import org.cti.cc.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
@@ -14,7 +16,6 @@ import org.zhongweixian.cc.fs.event.FsAnswerEvent;
 import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
 
 import java.time.Instant;
-import java.util.Date;
 
 /**
  * Created by caoliang on 2020/8/23
@@ -32,8 +33,8 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             return;
         }
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(event.getDeviceId());
-        NextCommand nextCommand = deviceInfo.getNextCommand();
-        logger.info("channel answer callId:{}, device:{}, nextCommand:{}", callInfo.getCallId(), event.getDeviceId(), nextCommand.getNextType());
+        NextCommand nextCommand = callInfo.getNextCommands().size() == 0 ? null : callInfo.getNextCommands().get(0);
+        logger.info("channel answer callId:{}, deviceId:{}, deviceType:{}", callInfo.getCallId(), event.getDeviceId(), deviceInfo.getDeviceType());
 
         //接听时间也是振铃结束时间
         deviceInfo.setAnswerTime(event.getTimestamp() / 1000);
@@ -43,7 +44,11 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         if (nextCommand == null) {
             return;
         }
-        deviceInfo.setNextCommand(null);
+        callInfo.getNextCommands().remove(nextCommand);
+        if (StringUtils.isBlank(callInfo.getMedia())) {
+            callInfo.setMedia(event.getRemoteAddress());
+        }
+        cacheService.addCallInfo(callInfo);
         switch (nextCommand.getNextType()) {
             case NEXT_VDN:
                 matchVdnCode(event, callInfo, deviceInfo);
@@ -58,7 +63,8 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
                 String fromDeviceId = nextCommand.getNextValue();
                 // deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_BRIDGE, callInfo.getDeviceList().get(1)));
                 DeviceInfo fromDevice = callInfo.getDeviceInfoMap().get(fromDeviceId);
-                fromDevice.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_SUCCESS, event.getDeviceId() + ":" + callInfo.getDeviceList().get(1)));
+                callInfo.getNextCommands().add(new NextCommand(event.getDeviceId(), NextType.NEXT_TRANSFER_SUCCESS, event.getDeviceId() + ":" + callInfo.getDeviceList().get(1)));
+                // fromDevice.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_SUCCESS, event.getDeviceId() + ":" + callInfo.getDeviceList().get(1)));
                 logger.info("转接电话中 callId:{} from:{} to:{} ", callInfo.getCallId(), fromDeviceId, event.getDeviceId());
                 try {
                     transferCall(callInfo.getMedia(), callInfo.getDeviceList().get(1), event.getDeviceId());
@@ -70,7 +76,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
                 break;
             case NEXT_CALL_BRIDGE:
                 logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled(), nextCommand.getNextValue(), event.getDeviceId());
-                callBridge(event.getHostname(), event.getDeviceId(), nextCommand.getNextValue());
+                callBridge(event.getRemoteAddress(), event.getDeviceId(), nextCommand.getNextValue());
                 /**
                  * 呼入电话，坐席接听后，需要桥接
                  */
@@ -107,8 +113,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
         if (groupInfo != null && groupInfo.getRecordType() == 1) {
             //振铃录音
-            String record = recordPath +
-                    DateFormatUtils.format(new Date(), "yyyyMMdd") + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + "." + recordFile;
+            String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
             super.record(callInfo.getMedia(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
             deviceInfo.setRecord(record);
         }
@@ -143,7 +148,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         deviceInfo1.setDeviceId(deviceId);
         deviceInfo1.setCallTime(Instant.now().toEpochMilli());
         deviceInfo1.setAgentKey(callInfo.getAgentKey());
-        deviceInfo1.setNextCommand(new NextCommand(NextType.NEXT_CALL_BRIDGE, deviceInfo.getDeviceId()));
+        callInfo.getNextCommands().add(new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_CALL_BRIDGE, deviceInfo.getDeviceId()));
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo1);
         cacheService.addDevice(deviceId, callInfo.getCallId());
         cacheService.addCallInfo(callInfo);

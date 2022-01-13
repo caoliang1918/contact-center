@@ -1,31 +1,31 @@
 package org.zhongweixian.web.call;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.codec.digest.HmacAlgorithms;
+import org.apache.commons.codec.digest.HmacUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.Agent;
-import org.cti.cc.entity.Station;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.po.AgentInfo;
-import org.cti.cc.po.AgentState;
-import org.cti.cc.po.CommonResponse;
+import org.cti.cc.po.*;
 import org.cti.cc.vo.AgentPreset;
 import org.cti.cc.vo.AgentVo;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.cc.exception.BusinessException;
-import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.util.BcryptUtil;
 import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.WsNotReadyEvent;
 import org.zhongweixian.cc.websocket.event.WsReadyEvent;
-import org.zhongweixian.cc.websocket.handler.WsLogoutHandler;
-import org.zhongweixian.cc.websocket.handler.WsNotReadyHandler;
-import org.zhongweixian.cc.websocket.handler.WsReadyHandler;
 import org.zhongweixian.web.base.BaseController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by caoliang on 2020/12/17
@@ -60,29 +60,41 @@ public class AgentController extends BaseController {
      * @return
      */
     @PostMapping("login")
-    public CommonResponse<AgentInfo> login(@RequestBody @Validated AgentVo agentVo) {
-        AgentInfo agentInfo = cacheService.getAgentInfo(agentVo.getAgentKey());
-        if (agentInfo == null) {
-            agentInfo = agentService.getAgentInfo(agentVo.getAgentKey());
-        }
+    public CommonResponse<AgentInfo> login(HttpServletRequest request, @RequestBody @Validated AgentVo agentVo) {
+        AgentInfo agentInfo = agentService.getAgentInfo(agentVo.getAgentKey());
         if (agentInfo == null || agentInfo.getStatus() != 1) {
             logger.warn("agentKey:{} is not exist", agentVo.getAgentKey());
             throw new BusinessException(ErrorCode.ACCOUNT_ERROR);
+        }
+        //坐席所在的主技能组
+        GroupInfo groupInfo = cacheService.getGroupInfo(agentInfo.getGroupId());
+        if (groupInfo == null || groupInfo.getStatus() == 0) {
+            logger.warn("agentKey:{} group is null", agentInfo.getAgentKey());
+            return new CommonResponse<>(ErrorCode.AGENT_GROUP_NULL);
         }
         if (!BcryptUtil.checkPwd(agentVo.getPasswd(), agentInfo.getPasswd())) {
             logger.error("agent:{}  password {} is error", agentVo.getAgentKey(), agentVo.getPasswd());
             return new CommonResponse<>(ErrorCode.ACCOUNT_ERROR);
         }
+        //删除旧的token
+        if (!StringUtils.isBlank(agentInfo.getToken())) {
+            cacheService.deleteKey(Constant.AGENT_TOKEN + agentInfo.getToken());
+        }
+
+        CompanyInfo companyInfo = cacheService.getCompany(agentInfo.getCompanyId());
+        String token = createToken(agentInfo.getAgentKey(), agentInfo.getId(), companyInfo.getSecretKey());
         agentInfo.setBeforeState(AgentState.LOGOUT);
         agentInfo.setBeforeTime(agentInfo.getLogoutTime());
         agentInfo.setStateTime(agentInfo.getLoginTime());
         agentInfo.setLoginTime(Instant.now().toEpochMilli());
         agentInfo.setAgentState(AgentState.LOGIN);
-        agentInfo.setHost(station.getHost());
+        agentInfo.setHost(request.getLocalAddr());
         agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
         agentInfo.setLoginType(agentVo.getLoginType());
         agentInfo.setWorkType(agentVo.getWorkType());
         agentInfo.setRemoteAddress(agentVo.getCallBackUrl());
+        agentInfo.setToken(token);
+        cacheService.refleshAgentToken(agentInfo.getAgentKey(), token);
         cacheService.addAgentInfo(agentInfo);
         AgentInfo agentInfo1 = new AgentInfo();
         BeanUtils.copyProperties(agentInfo, agentInfo1);
@@ -101,7 +113,7 @@ public class AgentController extends BaseController {
         agent.setId(agentInfo.getId());
         agent.setCompanyId(agentInfo.getCompanyId());
         agent.setState(1);
-        agent.setHost(station.getHost());
+        agent.setHost(request.getRemoteAddr());
         agentService.editById(agent);
         return new CommonResponse<AgentInfo>(agentInfo1);
     }
@@ -190,4 +202,23 @@ public class AgentController extends BaseController {
             throw new BusinessException(ErrorCode.AGENT_CALLING);
         }
     }
+
+    /**
+     * 生产token
+     *
+     * @param agentKey
+     * @param id
+     * @param secretKey
+     * @return
+     */
+    public String createToken(String agentKey, Long id, String secretKey) {
+        Long time = Instant.now().getEpochSecond();
+        Map<String, Object> params = new HashMap<>(4);
+        params.put("agentKey", agentKey);
+        params.put("id", id);
+        params.put("time", time);
+        return new HmacUtils(HmacAlgorithms.HMAC_SHA_256, secretKey).hmacHex(JSON.toJSONString(params));
+    }
+
+
 }

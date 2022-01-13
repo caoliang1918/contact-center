@@ -63,6 +63,11 @@ public class CallInfo implements Serializable {
     private String agentKey;
 
     /**
+     * 坐席名称
+     */
+    private String agentName;
+
+    /**
      * 坐席登录类型
      */
     private Integer loginType;
@@ -83,9 +88,9 @@ public class CallInfo implements Serializable {
     private String media;
 
     /**
-     * 应用id
+     * 服务地址
      */
-    private String appId;
+    private String host;
 
     /**
      * 录音地址
@@ -194,8 +199,14 @@ public class CallInfo implements Serializable {
     private Long queueLevel;
 
 
+    /**
+     * 当前通话的设备
+     */
     private List<String> deviceList = new ArrayList<>();
 
+    /**
+     * K-V
+     */
     private Map<String, DeviceInfo> deviceInfoMap = new HashMap<>();
 
     /**
@@ -207,6 +218,11 @@ public class CallInfo implements Serializable {
      * 模块流程间数据
      */
     private Map<String, Object> processData = new HashMap<>();
+
+    /**
+     * 执行下一步命令
+     */
+    private List<NextCommand> nextCommands = new ArrayList<>();
 
     /**
      * 电话流程
@@ -293,6 +309,14 @@ public class CallInfo implements Serializable {
         this.agentKey = agentKey;
     }
 
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
+    }
+
     public Integer getLoginType() {
         return loginType;
     }
@@ -325,12 +349,12 @@ public class CallInfo implements Serializable {
         this.media = media;
     }
 
-    public String getAppId() {
-        return appId;
+    public String getHost() {
+        return host;
     }
 
-    public void setAppId(String appId) {
-        this.appId = appId;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public String getRecord() {
@@ -541,6 +565,15 @@ public class CallInfo implements Serializable {
         this.queueLevel = queueLevel;
     }
 
+    public List<NextCommand> getNextCommands() {
+        return nextCommands;
+    }
+
+    public void setNextCommands(List<NextCommand> nextCommands) {
+        this.nextCommands = nextCommands;
+    }
+
+
     public static final class CallInfoBuilder {
         private String coreUuid;
         private Long callId;
@@ -552,10 +585,11 @@ public class CallInfo implements Serializable {
         private String calledDisplay;
         private String called;
         private String agentKey;
+        private String agentName;
         private Integer loginType;
         private Long ivrId;
         private String media;
-        private String appId;
+        private String host;
         private String record;
         private Long callTime;
         private CallType callType;
@@ -570,6 +604,7 @@ public class CallInfo implements Serializable {
         private List<String> deviceList = new ArrayList<>();
         private Map<String, DeviceInfo> deviceInfoMap = new HashMap<>();
         private Map<String, Object> followData = new HashMap<>();
+        private List<NextCommand> nextCommands = new ArrayList<>();
 
         private CallInfoBuilder() {
         }
@@ -628,6 +663,11 @@ public class CallInfo implements Serializable {
             return this;
         }
 
+        public CallInfoBuilder withAgentName(String agentName) {
+            this.agentName = agentName;
+            return this;
+        }
+
         public CallInfoBuilder withLoginType(Integer loginType) {
             this.loginType = loginType;
             return this;
@@ -643,8 +683,8 @@ public class CallInfo implements Serializable {
             return this;
         }
 
-        public CallInfoBuilder withAppId(String appId) {
-            this.appId = appId;
+        public CallInfoBuilder withHost(String host) {
+            this.host = host;
             return this;
         }
 
@@ -718,6 +758,7 @@ public class CallInfo implements Serializable {
             return this;
         }
 
+
         public CallInfo build() {
             CallInfo callInfo = new CallInfo();
             callInfo.followData = this.followData;
@@ -728,7 +769,7 @@ public class CallInfo implements Serializable {
             callInfo.callType = this.callType;
             callInfo.coreUuid = this.coreUuid;
             callInfo.media = this.media;
-            callInfo.appId = this.appId;
+            callInfo.host = this.host;
             callInfo.answerTime = this.answerTime;
             callInfo.record = this.record;
             callInfo.calledDisplay = this.calledDisplay;
@@ -744,8 +785,11 @@ public class CallInfo implements Serializable {
             callInfo.companyId = this.companyId;
             callInfo.caller = this.caller;
             callInfo.talkTime = this.talkTime;
+            callInfo.uuid1 = this.uuid1;
+            callInfo.uuid2 = this.uuid2;
             callInfo.answerCount = this.answerCount;
             callInfo.deviceInfoMap = this.deviceInfoMap;
+            callInfo.nextCommands = this.nextCommands;
             return callInfo;
         }
     }
@@ -767,7 +811,7 @@ public class CallInfo implements Serializable {
                 ", ivrId=" + ivrId +
                 ", taskId=" + taskId +
                 ", media='" + media + '\'' +
-                ", appId='" + appId + '\'' +
+                ", host='" + host + '\'' +
                 ", record='" + record + '\'' +
                 ", callTime=" + callTime +
                 ", callType=" + callType +

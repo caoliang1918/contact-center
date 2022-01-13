@@ -41,6 +41,11 @@ public class CompanyInfo extends Company {
      */
     private List<CompanyStat> companyStats;
 
+    /**
+     * 企业坐席数量
+     */
+    private Integer agentSize;
+
 
     public List<Long> getGroupIds() {
         return groupIds;
@@ -80,5 +85,13 @@ public class CompanyInfo extends Company {
 
     public void setCompanyStats(List<CompanyStat> companyStats) {
         this.companyStats = companyStats;
+    }
+
+    public Integer getAgentSize() {
+        return agentSize;
+    }
+
+    public void setAgentSize(Integer agentSize) {
+        this.agentSize = agentSize;
     }
 }

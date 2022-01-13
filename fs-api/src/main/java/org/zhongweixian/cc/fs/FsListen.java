@@ -4,25 +4,25 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
+import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.enums.StationType;
 import org.cti.cc.mapper.StationMapper;
 import org.cti.cc.po.CallInfo;
-import org.cti.cc.po.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.EventType;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.configration.HandlerContext;
+import org.zhongweixian.cc.exception.BusinessException;
 import org.zhongweixian.cc.fs.event.FsHangupEvent;
 import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
 import org.zhongweixian.cc.util.RandomUtil;
@@ -30,7 +30,6 @@ import org.zhongweixian.esl.inbound.Client;
 import org.zhongweixian.esl.inbound.IEslEventListener;
 import org.zhongweixian.esl.internal.Context;
 import org.zhongweixian.esl.internal.IModEslApi;
-import org.zhongweixian.esl.transport.CommandResponse;
 import org.zhongweixian.esl.transport.SendMsg;
 import org.zhongweixian.esl.transport.event.EslEvent;
 import org.zhongweixian.esl.transport.message.EslMessage;
@@ -48,13 +47,11 @@ import java.util.concurrent.*;
 public class FsListen {
     private Logger logger = LoggerFactory.getLogger(FsListen.class);
 
-    private Station station;
-
-    @Value("${spring.application.id}")
-    private Integer applicationId;
-
     @Value("${fs.thread.num:16}")
     private Integer threadNum;
+
+    @Value("${spring.application.group}")
+    private String group;
 
     @Autowired
     private StationMapper stationMapper;
@@ -63,6 +60,11 @@ public class FsListen {
     private String codecs;
 
     private static final String SPLIT = ",";
+
+    @Value("${server.port}")
+    private String localPort;
+
+    private String localAddress;
 
 
     private ScheduledExecutorService checkFsThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("check-freeswitch-pool-%d").build());
@@ -91,7 +93,6 @@ public class FsListen {
 
 
     public void start() {
-        station = stationMapper.selectByAppId(applicationId);
         for (int i = 0; i < threadNum; i++) {
             ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("fs-pool-" + i).build();
             ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory);
@@ -100,10 +101,11 @@ public class FsListen {
 
         Map<String, Object> params = new HashMap<>();
         params.put("applicationType", StationType.FS_MEDIA.getType());
-        params.put("applicationGroup", station.getApplicationGroup());
+        params.put("applicationGroup", group);
         List<Station> fsStations = stationMapper.selectListByMap(params);
 
         if (CollectionUtils.isEmpty(fsStations)) {
+            logger.warn("fsStations is empty");
             return;
         }
         for (Station station : fsStations) {
@@ -127,6 +129,11 @@ public class FsListen {
         try {
             fsClient.put(host + ":" + port, client);
             client.connect(new InetSocketAddress(host, port), password, 2);
+
+            if (localAddress == null) {
+                InetSocketAddress address = (InetSocketAddress) client.getChannel().localAddress();
+                localAddress = address.getHostName() + ":" + localPort;
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
@@ -235,13 +242,13 @@ public class FsListen {
                         logger.debug("event:{}, hander:{}", event.getEventName(), event.getEventHeaders().toString());
                         return;
                 }
-                logger.debug("receive media:{} event:{}", event.getEventHeaders().get("ClpMS-IPv4"), event.getEventName());
 
                 FsBaseEvent formatEvent = formatEvent(ctx, event, eventName);
                 if (formatEvent == null) {
                     return;
                 }
-                formatEvent.setHostname(host + ":" + port);
+                formatEvent.setRemoteAddress(host + ":" + port);
+                formatEvent.setLocalAddress(localAddress);
 
                 /**
                  * 一个callId挂机处理必须使用一个相同的线程
@@ -260,7 +267,7 @@ public class FsListen {
                 executorService.execute(() -> {
                     try {
                         if (logger.isDebugEnabled()) {
-                            logger.debug("ctx:{}, event:{}", ctx, event);
+                            logger.info("ctx:{}, event:{}", ctx, event);
                         }
                         Handler handler = handlerContext.getInstance(formatEvent.getEventName());
                         if (handler != null) {
@@ -310,7 +317,7 @@ public class FsListen {
     private void checkConnect() {
         Map<String, Object> params = new HashMap<>();
         params.put("applicationType", 4);
-        params.put("applicationGroup", station.getApplicationGroup());
+        params.put("applicationGroup", group);
         List<Station> fsStations = stationMapper.selectListByMap(params);
 
         for (Station station : fsStations) {
@@ -357,6 +364,9 @@ public class FsListen {
      */
     public void makeCall(RouteGetway routeGetway, String display, String called, String deviceId, String... sipHeaders) {
         String media = RandomUtil.getRandomKey(fsClient.keySet());
+        if (StringUtils.isBlank(media)) {
+            throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
+        }
         makeCall(media, routeGetway, display, called, deviceId, sipHeaders);
     }
 
@@ -373,7 +383,7 @@ public class FsListen {
      * @param sipHeaders
      */
     public void makeCall(String media, RouteGetway routeGetway, String display, String called, String deviceId, String... sipHeaders) {
-        called = called + Constants.AT + routeGetway.getMediaHost() + Constants.CO + routeGetway.getMediaPort();
+        called = called + Constant.AT + routeGetway.getMediaHost() + Constant.CO + routeGetway.getMediaPort();
         if (StringUtils.isNotBlank(routeGetway.getCallerPrefix())) {
             display = routeGetway.getCallerPrefix() + display;
         }
@@ -559,4 +569,15 @@ public class FsListen {
         fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
     }
 
+    /**
+     * bgapi uuid_transfer  sswitch-1-61979250-679-22 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
+     *
+     * @param media
+     * @param deviceId
+     */
+    public void insert(String media, String deviceId) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(deviceId).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
+        fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
+    }
 }

@@ -1,6 +1,7 @@
 package org.zhongweixian.ivr.scxml;
 
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.scxml.Evaluator;
 import org.apache.commons.scxml.SCXMLExecutor;
@@ -18,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.zhongweixian.ivr.action.InitAction;
+import org.zhongweixian.ivr.util.IvrConstant;
 
 import java.io.File;
 import java.net.URL;
@@ -53,25 +56,30 @@ public class SimpleIvrMachine {
         executor.addListener(scxml, new SCXMLListener() {
             @Override
             public void onEntry(TransitionTarget transitionTarget) {
+                logger.info("onEntry transitionTarget {}", transitionTarget.getId());
                 State state = getCurrentState(callInfo.getCallId());
-                logger.info("onEntry transitionTarget {},{}", transitionTarget.getId(), state);
                 if (state != null) {
                     List<Transition> transitionList = (List<Transition>) transitionTarget.getTransitionsList();
                     if (!CollectionUtils.isEmpty(transitionList)) {
-                        logger.info("state id: {}, event:{},  target:{} , isFinal:{} ", state.getId(), transitionList.get(0).getEvent(), transitionList.get(0).getTargets(), state.isFinal());
-                        fireEvent(callInfo.getCallId(), transitionList.get(0).getEvent());
+                        for (Transition transition : transitionList) {
+                            logger.info("state id: {}, event:{},  target:{} , isFinal:{} ", transitionTarget.getId(), transition.getEvent(), transition.getTargets(), state.isFinal());
+                            if ("end".equals(transition.getEvent())) {
+                                state.setFinal(true);
+                            }
+                        }
+                        //fireEvent(callInfo.getCallId(), transitionList.get(0).getEvent());
                     }
                 }
             }
 
             @Override
             public void onExit(TransitionTarget transitionTarget) {
-                logger.info("onExit transitionTarget {}", transitionTarget.getId());
+                logger.info("callId:{} exit:{} ", callInfo.getCallId(), transitionTarget.getId());
             }
 
             @Override
             public void onTransition(TransitionTarget from, TransitionTarget to, Transition transition) {
-                logger.info("{} , {} {} ", from.getId(), to.getId(), transition.getTargets());
+                logger.info("from:{}  to:{} transition:{} ", from.getId(), to.getId(), transition.getTargets());
             }
         });
 
@@ -94,7 +102,7 @@ public class SimpleIvrMachine {
         if (scxmlMap.containsKey(ivrId)) {
             return scxmlMap.get(ivrId);
         }
-        File file = new File(ivrId + ".xml");
+        File file = new File("./ivr/" + ivrId + ".xml");
         if (!file.exists()) {
             logger.info("create new {} file", ivrId);
         }
@@ -121,12 +129,16 @@ public class SimpleIvrMachine {
         if (StringUtils.isBlank(event)) {
             return false;
         }
+        SCXMLExecutor executor = executorMap.get(callId);
+        if (executor == null) {
+            return false;
+        }
         TriggerEvent[] evts = new TriggerEvent[]{new TriggerEvent(event, 3, (Object) null)};
         try {
-            this.executorMap.get(callId).triggerEvents(evts);
+            executor.triggerEvents(evts);
         } catch (ModelException var4) {
         }
-        return this.executorMap.get(callId).getCurrentStatus().isFinal();
+        return executor.getCurrentStatus().isFinal();
     }
 
     /**
@@ -150,7 +162,11 @@ public class SimpleIvrMachine {
     }
 
     private State getCurrentState(Long callId) {
-        Set<?> states = executorMap.get(callId).getCurrentStatus().getStates();
+        SCXMLExecutor scxmlExecutor = executorMap.get(callId);
+        if (scxmlExecutor == null) {
+            return null;
+        }
+        Set<?> states = scxmlExecutor.getCurrentStatus().getStates();
         if (CollectionUtils.isEmpty(states)) {
             return null;
         }
@@ -158,6 +174,7 @@ public class SimpleIvrMachine {
     }
 
     public boolean executeNext(Long callId) {
+        logger.info("===============");
         State state = getCurrentState(callId);
         if (state != null) {
             List<Transition> transitionList = (List<Transition>) state.getTransitionsList();
@@ -166,13 +183,19 @@ public class SimpleIvrMachine {
         return false;
     }
 
+    public void exist(Long callId) {
+        executorMap.remove(callId);
+
+    }
+
 
     /**
-     *
      * @return
      */
-    private List<CustomAction> initActions(){
+    private List<CustomAction> initActions() {
+        String namespaceURI = "http://www.yuntongxun.com";
         List<CustomAction> actions = new ArrayList<>();
+        actions.add(new CustomAction(namespaceURI, IvrConstant.INITION, InitAction.class));
 
         return actions;
     }

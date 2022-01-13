@@ -17,11 +17,9 @@ public interface CallLogService extends BaseService<CallLog> {
     /**
      * 按月分表
      *
-     * @param start 开始时间
-     * @param end   结束时间
-     * @param month 月份
+     * @param month 当前月份
      */
-    void subTable(Long start, Long end, String month);
+    void subTable(String month);
 
 
     /**
@@ -39,4 +37,12 @@ public interface CallLogService extends BaseService<CallLog> {
      * @param params
      */
     void calllogExport(HttpServletResponse response, Map<String, Object> params) throws IOException;
+
+    /**
+     * 删除历史数据
+     *
+     * @param time
+     * @return
+     */
+    int clearCallLog(Long time);
 }

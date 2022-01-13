@@ -15,6 +15,7 @@ public interface CompanyPhoneMapper extends BaseMapper<CompanyPhone> {
      * @param id
      * @return
      */
+    @Override
     CompanyPhone selectById(@Param("companyId") Long companyId, @Param("id") Long id);
 
     /**

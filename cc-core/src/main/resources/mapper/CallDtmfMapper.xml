@@ -114,4 +114,18 @@
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <!-- 每个月创建新表 -->
+  <update id="createNewTable" databaseId="mysql">
+    create table if not exists cc_call_dtmf${month} (like cc_call_dtmf)
+  </update>
+
+  <update id="createNewTable" databaseId="oracle">
+    create table cc_call_dtmf${month} like cc_call_dtmf
+  </update>
+
+
+  <delete id="clearTable" >
+    delete from cc_call_dtmf where  dtmf_time &lt; #{end}
+  </delete>
 </mapper>

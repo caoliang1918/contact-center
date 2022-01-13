@@ -1,5 +1,7 @@
 package org.cti.cc.mapper.base;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +14,7 @@ public interface BaseMapper<T> {
      * @param params
      * @return
      */
-    Long selectCountByMap(Map<String, Object> params);
+    Integer selectCountByMap(Map<String, Object> params);
 
     /**
      * 分页
@@ -42,10 +44,19 @@ public interface BaseMapper<T> {
     int insertSelective(T record);
 
     /**
+     * 插入当前月表数据
+     *
+     * @param record
+     * @return
+     */
+    int insertMonthSelective(T record);
+
+    /**
      * @param id
      * @return
      */
     T selectByPrimaryKey(Long id);
+
 
     /**
      * @param record
@@ -59,4 +70,7 @@ public interface BaseMapper<T> {
      * @return
      */
     int updateByPrimaryKey(T record);
+
+
+    T selectById(@Param("companyId") Long companyId, @Param("id") Long id);
 }

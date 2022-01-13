@@ -7,13 +7,11 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.mapper.CallDetailMapper;
-import org.cti.cc.mapper.CallDeviceMapper;
-import org.cti.cc.mapper.CallDtmfMapper;
-import org.cti.cc.mapper.CallLogMapper;
+import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.util.DateTimeUtil;
@@ -53,6 +51,9 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Autowired
     private CallDtmfMapper callDtmfMapper;
 
+    @Autowired
+    private AgentStateLogMapper agentStateLogMapper;
+
     /**
      * 最大50万下载
      */
@@ -65,16 +66,26 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
     }
 
     @Override
-    public void subTable(Long start, Long end, String month) {
+    public void subTable(String month) {
         // cc_call_log
-        callLogMapper.createNewTable(start, end, month);
-        callLogMapper.clearTable(start, end);
-
+        callLogMapper.createNewTable(month);
+        //callLogMapper.clearTable(start, end);
 
         //cc_call_device
-        callDeviceMapper.createNewTable(start, end, month);
-        callDeviceMapper.clearTable(start, end);
+        callDeviceMapper.createNewTable(month);
+        //callDeviceMapper.clearTable(start, end);
 
+        //cc_call_detail
+        callDetailMapper.createNewTable(month);
+        //callDetailMapper.clearTable(start, end);
+
+        //cc_call_dtmf
+        callDtmfMapper.createNewTable(month);
+        //callDtmfMapper.clearTable(start, end);
+
+        //cc_agent_state_log
+        agentStateLogMapper.createNewTable(month);
+        //agentStateLogMapper.clearTable(nowMonth);
     }
 
     @Override
@@ -83,11 +94,11 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
         Long end = (Long) params.get("end");
         if (start == null) {
             start = DateTimeUtil.getBeforeDay(0);
-            params.put("start" , start);
+            params.put("start", start);
         }
         if (end == null) {
             end = DateTimeUtil.getBeforeDay(-1);
-            params.put("end" , end);
+            params.put("end", end);
         }
         Integer pageNum = (Integer) params.get("pageNum");
         Integer pageSize = (Integer) params.get("pageSize");
@@ -98,7 +109,7 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public void calllogExport(HttpServletResponse response, Map<String, Object> params) throws IOException {
-        Long count = callLogMapper.selectCountByMap(params);
+        Integer count = callLogMapper.selectCountByMap(params);
         if (count == 0L) {
             new BusinessException(ErrorCode.EXPORT_EMPTY);
         }
@@ -109,8 +120,9 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
         String direction = (String) params.getOrDefault("direction", "OUTBOUND");
         params.put("direction", direction);
         List<CallLog> callLogs = callLogMapper.selectListByMap(params);
-        // 1:呼入；2:外呼
-        String sheetName = null;
+        /**
+         * 呼入和外呼分开，如果不传默认是外呼
+         */
         Workbook workbook = null;
         if (Direction.OUTBOUND.name().equals(direction)) {
             List<ExcelOutboundCallLogEntity> entityList = new ArrayList<>();
@@ -124,9 +136,8 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 entity.setRecordTime(DateTimeUtil.format(callLog.getRecordTime()));
                 entityList.add(entity);
             }
-            sheetName = "外呼详单";
             workbook = ExcelExportUtil.exportExcel(new ExportParams(
-                    null, sheetName, ExcelType.XSSF), ExcelOutboundCallLogEntity.class, entityList);
+                    null, direction, ExcelType.XSSF), ExcelOutboundCallLogEntity.class, entityList);
         } else if (Direction.INBOUND.name().equals(direction)) {
             List<ExcelInboundCallLogEntity> entityList = new ArrayList<>();
             ExcelInboundCallLogEntity entity = null;
@@ -142,17 +153,32 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 entity.setQueueEndTime(DateTimeUtil.format(callLog.getQueueEndTime()));
                 entityList.add(entity);
             }
-            sheetName = "呼入详单";
             workbook = ExcelExportUtil.exportExcel(new ExportParams(
-                    null, sheetName, ExcelType.XSSF), ExcelInboundCallLogEntity.class, entityList);
+                    null, direction, ExcelType.XSSF), ExcelInboundCallLogEntity.class, entityList);
         }
-
-        String filename = URLEncoder.encode(sheetName + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", "UTF8");
+        String filename = URLEncoder.encode(direction + Constant.UNDER_LINE + params.getOrDefault("companyId", 0) + Constant.UNDER_LINE + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", "UTF8");
         response.setHeader("content-disposition", "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();
         workbook.write(out);
         out.flush();
+    }
+
+    @Override
+    public int clearCallLog(Long time) {
+        int result = 0;
+        // cc_call_log
+        result += callLogMapper.clearTable(time);
+
+        //cc_call_device
+        result += callDeviceMapper.clearTable(time);
+
+        //cc_call_detail
+        result += callDetailMapper.clearTable(time);
+
+        //cc_call_dtmf
+        result += callDtmfMapper.clearTable(time);
+        return result;
     }
 
 

@@ -1,7 +1,7 @@
 package org.zhongweixian.cc.acd.lineup;
 
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.po.CallInfo;
 import org.cti.cc.strategy.LineupStrategy;
 import org.slf4j.Logger;
@@ -29,8 +29,8 @@ public class CustomLineupStrategy implements LineupStrategy {
     @Override
     public Long calculateLevel(CallInfo callInfo) {
         EvaluationContext context = new StandardEvaluationContext();
-        context.setVariable(Constants.START_TIME, callInfo.getCallTime());
-        context.setVariable(Constants.QUEUE_TIME, callInfo.getQueueStartTime());
+        context.setVariable(Constant.START_TIME, callInfo.getCallTime());
+        context.setVariable(Constant.QUEUE_TIME, callInfo.getQueueStartTime());
         if (callInfo.getProcessData().isEmpty()) {
             return this.calculate(expression, context);
         }

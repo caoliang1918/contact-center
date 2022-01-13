@@ -40,11 +40,11 @@ public class TaskJobOfSecond implements Job {
         if (date.after(jobExecutionContext.getNextFireTime())) {
             return;
         }
-        logger.info("Second job frist :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
+        logger.info("second job start :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
         ServiceInstance serviceInstance = loadBalancerClient.choose("fs-api");
         if (serviceInstance == null) {
             return;
         }
-        restTemplate.getForEntity("http://" + serviceInstance.getServiceId() + ":" + serviceInstance.getPort() + "/index/acd", String.class);
+        //restTemplate.getForEntity("http://" + serviceInstance.getServiceId() + ":" + serviceInstance.getPort() + "/fs-api/index/acd", String.class);
     }
 }

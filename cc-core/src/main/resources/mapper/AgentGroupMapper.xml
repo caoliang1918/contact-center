@@ -132,4 +132,11 @@
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <delete id="deleteByGroup" parameterType="java.lang.Long">
+    delete from cc_agent_group where group_id = #{groupId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByAgent" parameterType="java.lang.Long">
+    delete from cc_agent_group where agent_id = #{agentId,jdbcType=BIGINT}
+  </delete>
 </mapper>

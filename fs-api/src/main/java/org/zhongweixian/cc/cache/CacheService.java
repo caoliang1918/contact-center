@@ -1,11 +1,10 @@
 package org.zhongweixian.cc.cache;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.nacos.api.naming.NamingFactory;
-import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.Playback;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
@@ -17,7 +16,6 @@ import org.cti.cc.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -29,7 +27,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -61,40 +58,15 @@ public class CacheService {
     @Autowired
     private PlaybackMapper playbackMapper;
 
-    @Value("${spring.application.id}")
-    private String appId;
-
-    @Value("${spring.instance.id}")
-    private String instanceId;
-
-    @Value("${spring.cloud.nacos.server-addr}")
-    private String nacosAddr;
-
     @Autowired
     private RedisTemplate redisTemplate;
 
     private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("nacos=service-check").build());
 
-    private boolean master;
-
-    private NamingService namingService;
-
-    private String applicationName = "fs-api";
-
-    /**
-     * callInfo
-     */
-    protected Map<Long, CallInfo> callInfoMap = new ConcurrentHashMap<>();
-
     /**
      * callId 与device 映射
      */
     private Map<String, Long> deviceCall = new HashMap<>();
-
-    /**
-     * AgentInfo
-     */
-    private Map<String, AgentInfo> agentInfoMap = new HashMap<>();
 
     /**
      * Company
@@ -126,24 +98,58 @@ public class CacheService {
     /**
      * 获取本地缓存坐席
      *
-     * @param agentkey
+     * @param agentKey
      * @return
      */
-    public AgentInfo getAgentInfo(String agentkey) {
-        if (StringUtils.isBlank(agentkey)) {
+    public AgentInfo getAgentInfo(String agentKey) {
+        if (StringUtils.isBlank(agentKey)) {
             return null;
         }
-        return agentInfoMap.get(agentkey);
+        Object payload = redisTemplate.opsForValue().get(Constant.AGENT_INFO + agentKey);
+        if (payload == null) {
+            logger.warn("get agentKey:{} is null", agentKey);
+            return null;
+        }
+        AgentInfo agentInfo = JSON.parseObject(payload.toString(), AgentInfo.class);
+        if (agentInfo == null) {
+            return null;
+        }
+        return agentInfo;
     }
 
+    public void refleshAgentToken(String agentKey, String token) {
+        logger.info("agent:{}, create token:{}", agentKey, token);
+        redisTemplate.opsForValue().set(Constant.AGENT_TOKEN + token, agentKey, 48, TimeUnit.HOURS);
+    }
+
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
+    }
+
+    public Object getAgentKey(String token) {
+        if (token == null) {
+            return null;
+        }
+        return redisTemplate.opsForValue().get(Constant.AGENT_TOKEN + token);
+    }
+
+    /**
+     * 缓存坐席
+     *
+     * @param agentInfo
+     */
     public void addAgentInfo(AgentInfo agentInfo) {
-        agentInfoMap.put(agentInfo.getAgentKey(), agentInfo);
+        redisTemplate.opsForValue().set(Constant.AGENT_INFO + agentInfo.getAgentKey(), JSON.toJSONString(agentInfo), 48L, TimeUnit.HOURS);
     }
 
 
+    /**
+     * 缓存CALL_INFO
+     *
+     * @param callInfo
+     */
     public void addCallInfo(CallInfo callInfo) {
-        callInfoMap.put(callInfo.getCallId(), callInfo);
-        redisTemplate.opsForValue().set("callInfo:" + callInfo.getCallId(), JSON.toJSONString(callInfo));
+        redisTemplate.opsForValue().set(Constant.CALL_INFO + callInfo.getCallId(), JSONObject.toJSONString(callInfo));
     }
 
     public CallInfo getCallInfo(String deviceId) {
@@ -151,26 +157,38 @@ public class CacheService {
         if (callId == null) {
             return null;
         }
-        return callInfoMap.get(callId);
+        return getCallInfo(callId);
     }
 
+    /**
+     * 获取callInfo
+     *
+     * @param callId
+     * @return
+     */
     public CallInfo getCallInfo(Long callId) {
         if (callId == null) {
             return null;
         }
-        return callInfoMap.get(callId);
+        Object obj = redisTemplate.opsForValue().get(Constant.CALL_INFO + callId);
+        if (obj == null) {
+            return null;
+        }
+        return JSON.parseObject(obj.toString(), CallInfo.class);
     }
 
+
     public void removeCallInfo(Long callId) {
-        CallInfo callInfo = callInfoMap.remove(callId);
+        CallInfo callInfo = getCallInfo(callId);
         if (callInfo != null) {
             logger.info("remove callInfo:{}", callId);
             callInfo.getDeviceInfoMap().forEach((k, v) -> {
                 deviceCall.remove(k);
             });
+            groupHandler.removeCall(callInfo.getGroupId(), callId);
         }
-        redisTemplate.delete("callInfo:" + callId);
-        groupHandler.removeCall(callInfo.getGroupId(), callId);
+        redisTemplate.delete(Constant.CALL_INFO + callId);
+
     }
 
 
@@ -179,6 +197,9 @@ public class CacheService {
     }
 
     public GroupInfo getGroupInfo(Long groupId) {
+        if (groupId == null) {
+            return null;
+        }
         return groupMap.get(groupId);
     }
 
@@ -188,36 +209,6 @@ public class CacheService {
 
 
     public void initCompany() {
-        try {
-            namingService = NamingFactory.createNamingService(nacosAddr);
-            List<Instance> instances = namingService.getAllInstances(applicationName);
-            instances.forEach(instance -> {
-                if (appId.equals(instance.getMetadata().get("appId")) && !instanceId.equals(instance.getMetadata().get("random"))) {
-                    logger.error("spring.application.id:{} is exist", appId);
-                    System.exit(-1);
-                    return;
-                }
-            });
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        executorService.scheduleAtFixedRate(() -> {
-            try {
-                List<Instance> instances = namingService.getAllInstances(applicationName);
-                if (!CollectionUtils.isEmpty(instances)) {
-                    if (appId.equals(instances.get(0).getMetadata().get("appId"))) {
-                        setMaster(true);
-                    } else {
-                        setMaster(false);
-                    }
-                }
-            } catch (Exception e) {
-
-            }
-
-        }, 2, 2, TimeUnit.SECONDS);
-
-
         this.companyMap = companyService.initAll();
         if (companyMap.isEmpty()) {
             return;
@@ -290,14 +281,6 @@ public class CacheService {
 
     public Playback getPlayback(Long id) {
         return playbackMap.get(id);
-    }
-
-    public boolean isMaster() {
-        return master;
-    }
-
-    public void setMaster(boolean master) {
-        this.master = master;
     }
 
     public void stop() {

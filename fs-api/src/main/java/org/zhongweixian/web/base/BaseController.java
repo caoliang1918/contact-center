@@ -1,13 +1,9 @@
 package org.zhongweixian.web.base;
 
-import org.cti.cc.entity.Station;
-import org.cti.cc.po.AgentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.beans.factory.annotation.Value;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.fs.FsListen;
@@ -45,11 +41,10 @@ public class BaseController {
     protected WsLogoutHandler logoutHandler;
 
     @Autowired
-    protected Station station;
-
-    @Autowired
     protected FsListen fsListen;
 
+    @Value("${agent.token.key:ToIV23TaievkWwZl}")
+    protected String tokenKey;
 
 
 }

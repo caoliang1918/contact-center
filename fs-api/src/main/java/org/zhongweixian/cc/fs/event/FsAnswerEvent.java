@@ -63,7 +63,6 @@ public class FsAnswerEvent extends FsBaseEvent {
                 ", deviceId='" + deviceId + '\'' +
                 ", timestamp=" + timestamp +
                 ", channelName='" + channelName + '\'' +
-                ", hostname='" + hostname + '\'' +
                 ", map=" + map +
                 '}';
     }

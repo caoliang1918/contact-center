@@ -1,5 +1,6 @@
 package org.zhongweixian.cc.util;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class RandomUtil {
 
     public static Integer getNum(String coreUuid, Integer threadNum) {
         if (coreUuid == null) {
-            return threadNum - 1;
+            return RandomUtils.nextInt(0, threadNum);
         }
         int hash = coreUuid.hashCode();
         return Math.abs(hash % threadNum);

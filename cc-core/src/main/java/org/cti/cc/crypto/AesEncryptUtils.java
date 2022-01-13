@@ -3,13 +3,8 @@ package org.cti.cc.crypto;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by caoliang on 2020/11/2
@@ -31,7 +26,7 @@ public class AesEncryptUtils {
      * @param password 推荐使用16位
      * @return
      */
-    public static String encryptAES(String data, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    public static String encryptAES(String data, String password) throws Exception {
         if (StringUtils.isBlank(data)) {
             return null;
         }
@@ -49,7 +44,7 @@ public class AesEncryptUtils {
      * @param password
      * @return
      */
-    public static String decryptAES(String decryptCode, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    public static String decryptAES(String decryptCode, String password) throws Exception {
         if (StringUtils.isBlank(decryptCode)) {
             return null;
         }

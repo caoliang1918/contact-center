@@ -1,20 +1,21 @@
 package org.zhongweixian.cc.listen;
 
 import com.alibaba.fastjson.JSONObject;
-import org.cti.cc.constant.Constants;
-import org.cti.cc.entity.AgentStateLog;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
-import org.cti.cc.mapper.AgentStateLogMapper;
 import org.cti.cc.mapper.CallDetailMapper;
 import org.cti.cc.mapper.CallDeviceMapper;
 import org.cti.cc.mapper.CallLogMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +26,6 @@ import org.springframework.stereotype.Component;
 public class CallCdrListen {
     private Logger logger = LoggerFactory.getLogger(CallCdrListen.class);
 
-    @Value("${cc.pressure:0}")
-    private Integer pressure;
-
     @Autowired
     private CallLogMapper callLogMapper;
 
@@ -37,36 +35,36 @@ public class CallCdrListen {
     @Autowired
     private CallDeviceMapper callDeviceMapper;
 
-    @Autowired
-    private AgentStateLogMapper agentStateLogMapper;
-
-    @RabbitListener(queues = Constants.AGENT_STATE_LOG_QUEUE)
-    public void listenAgentStateLog(@Payload String payload) {
-        AgentStateLog agentStateLog = JSONObject.parseObject(payload, AgentStateLog.class);
-        if (agentStateLog != null && pressure == 0) {
-            agentStateLogMapper.insertSelective(agentStateLog);
-        }
-    }
 
     /**
-     * 话单
+     * call_device落单
      *
      * @param payload
      */
-    @RabbitListener(queues = Constants.CALL_DEVICE_QUEUE)
+    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constant.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constant.DEVOCE_KEY , value =  @Queue( Constant.CALL_DEVICE_QUEUE))})
     public void listenCallDevice(@Payload String payload) {
-        CallDevice callDevice = JSONObject.parseObject(payload, CallDevice.class);
-        if (callDevice != null) {
-            callDeviceMapper.insertSelective(callDevice);
+        try {
+            CallDevice callDevice = JSONObject.parseObject(payload, CallDevice.class);
+            if (callDevice != null) {
+                callDeviceMapper.insertSelective(callDevice);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
-    @RabbitListener(queues = Constants.CALL_DETAIL_QUEUE)
+    /**
+     * @param payload
+     */
+    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constant.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constant.DETAIL_KEY , value =  @Queue( Constant.CALL_DETAIL_QUEUE))})
     public void listenCallDetailQueue(@Payload String payload) {
-        CallDetail callDetail = JSONObject.parseObject(payload, CallDetail.class);
-        logger.info("{}", payload);
-        if (callDetail != null) {
-            callDetailMapper.insertSelective(callDetail);
+        try {
+            CallDetail callDetail = JSONObject.parseObject(payload, CallDetail.class);
+            if (callDetail != null) {
+                callDetailMapper.insertSelective(callDetail);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -75,24 +73,32 @@ public class CallCdrListen {
      *
      * @param payload
      */
-    @RabbitListener(queues = Constants.CALL_LOG_QUEUE)
+    @RabbitListener(bindings = {@QueueBinding(exchange=@Exchange(value = Constant.CALL_LOG_EXCHANGE, type = ExchangeTypes.TOPIC),key = Constant.CALLLOG_KEY , value =  @Queue( Constant.CALL_LOG_QUEUE))})
     public void listenCallLog(@Payload String payload) {
         logger.info("callLog:{}", payload);
-        CallLog callLog = JSONObject.parseObject(payload, CallLog.class);
-        logger.info("callId:{} , answerTime:{}", callLog.getCallId(), callLog.getAnswerTime());
-        if (callLog.getAnswerTime() != null && callLog.getEndTime() == null) {
-            //呼通
-            callLogMapper.insertSelective(callLog);
-            return;
-        }
-        if (callLog.getAnswerTime() == null && callLog.getEndTime() != null) {
-            //没有呼通
-            callLogMapper.insertSelective(callLog);
-            return;
-        }
-        int result = callLogMapper.updateByCallId(callLog);
-        if (result == 0) {
-            callLogMapper.insertSelective(callLog);
+        try {
+            CallLog callLog = JSONObject.parseObject(payload, CallLog.class);
+            logger.info("callId:{} , answerTime:{}", callLog.getCallId(), callLog.getAnswerTime());
+            if (callLog.getAnswerTime() != null && callLog.getEndTime() == null) {
+                //呼通
+                callLogMapper.insertSelective(callLog);
+                return;
+            }
+            if (callLog.getAnswerTime() == null && callLog.getEndTime() != null) {
+                //没有呼通
+                callLogMapper.insertSelective(callLog);
+                return;
+            }
+            int result = callLogMapper.updateByCallId(callLog);
+            if (result == 0) {
+                callLogMapper.insertSelective(callLog);
+            }
+
+            if (callLog.getEndTime() != null) {
+                callLogMapper.insertMonthSelective(callLog);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 }

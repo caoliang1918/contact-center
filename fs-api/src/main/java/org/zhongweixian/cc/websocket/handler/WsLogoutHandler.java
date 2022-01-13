@@ -44,11 +44,6 @@ public class WsLogoutHandler extends WsBaseHandler<WsLogoutEvent> {
         if (agentInfo == null || agentInfo.getAgentState() == AgentState.LOGOUT) {
             return;
         }
-        //班长坐席关闭班长监控
-        if (agentInfo.getAgentType() == 2) {
-            wsMonitorHandler.monitorCancel(event.getAgentKey());
-        }
-
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());
         agentInfo.setStateTime(Instant.now().toEpochMilli());

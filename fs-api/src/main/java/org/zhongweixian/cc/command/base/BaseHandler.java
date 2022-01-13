@@ -126,11 +126,11 @@ public class BaseHandler {
      * @param callInfo
      * @param deviceInfo
      */
-    protected void doNextCommand(CallInfo callInfo, DeviceInfo deviceInfo) {
-        if (deviceInfo == null || deviceInfo.getNextCommand() == null) {
+    protected void doNextCommand(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand) {
+        if (nextCommand == null) {
             return;
         }
-        NextCommand nextCommand = deviceInfo.getNextCommand();
+        callInfo.getNextCommands().remove(nextCommand);
         switch (nextCommand.getNextType()) {
             case NEXT_QUEUE_PLAY:
                 fsListen.playback(callInfo.getMedia(), deviceInfo.getDeviceId(), "/app/clpms/sounds/queue.wav");
@@ -163,7 +163,6 @@ public class BaseHandler {
             default:
                 break;
         }
-        deviceInfo.setNextCommand(null);
         callInfo.getDeviceInfoMap().put(deviceInfo.getDeviceId(), deviceInfo);
         cacheService.addCallInfo(callInfo);
     }

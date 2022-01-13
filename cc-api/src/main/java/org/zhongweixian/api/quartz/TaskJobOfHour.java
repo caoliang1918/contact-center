@@ -62,6 +62,9 @@ public class TaskJobOfHour implements Job {
         }
         logger.info("Hour job execute start:{} - end:{}", DateFormatUtils.format(start, DateTimeUtil.YYYYMMDD_HHMMSS), DateFormatUtils.format(end, DateTimeUtil.YYYYMMDD_HHMMSS));
 
+        /**
+         * 坐席状态统计
+         */
         agentHourStat(start, end, companyInfoList);
 
         pushFailLog(start, end);
@@ -97,8 +100,8 @@ public class TaskJobOfHour implements Job {
                     List<AgentStateLog> stateLogs = entry.getValue();
                     agentWork = new StatHourAgentWork();
                     agentWork.setCompanyId(companyInfo.getId());
-                    agentWork.setStateTime(start);
-                    agentWork.setCts(end);
+                    agentWork.setStateTime(start / 1000);
+                    agentWork.setCts(end / 1000);
                     agentWork.setStatus(1);
 
                     for (int i = 0; i < stateLogs.size(); i++) {
@@ -173,7 +176,7 @@ public class TaskJobOfHour implements Job {
                     agentWork.setCompanyId(companyInfo.getId());
                     agentWork.setAgentKey(agent.getAgentKey());
                     agentWork.setAgentName(agent.getAgentName());
-                    agentWork.setStateTime(start);
+                    agentWork.setStateTime(start / 1000);
                     agentWork.setCts(end / 1000);
                     agentWork.setStatus(1);
                     if (AgentState.READY.name().equals(agent.getExt1())) {

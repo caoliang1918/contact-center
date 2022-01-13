@@ -19,23 +19,24 @@ public class FsExecuteComplateHandler extends BaseEventHandler<FsExecuteComplate
         if (StringUtils.isBlank(event.getApplication())) {
             return;
         }
-        CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
-        if (callInfo == null) {
-            return;
-        }
+
         switch (event.getApplication()) {
             case "playback":
                 if ("FILE PLAYED".equals(event.getResponse())) {
-                    logger.info("callId:{}, deviceId:{}, playback:{} success", callInfo.getCallId(), event.getDeviceId(), event.getApplicationData());
+                    logger.info("deviceId:{}, playback:{} success", event.getDeviceId(), event.getApplicationData());
                 } else if ("FILE NOT FOUND".equals(event.getResponse())) {
-                    logger.error("callId:{}, deviceId:{}  file:{} not found", callInfo.getCallId(), event.getDeviceId(), event.getApplicationData());
-                    hangupCall(event.getHostname(), callInfo.getCallId(), event.getDeviceId());
+                    logger.error("deviceId:{}  file:{} not found", event.getDeviceId(), event.getApplicationData());
+                    CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
+                    if (callInfo == null) {
+                        return;
+                    }
+                    hangupCall(event.getRemoteAddress(), callInfo.getCallId(), event.getDeviceId());
                     return;
                 }
                 break;
 
             case "play_and_get_digits":
-                logger.info("callId:{}, deviceId:{}, get dtmf:{}", callInfo.getCallId(), event.getDeviceId(), event.getDtmf());
+                logger.info("deviceId:{}, get dtmf:{}", event.getDeviceId(), event.getDtmf());
                 break;
 
             case "break":
@@ -44,7 +45,6 @@ public class FsExecuteComplateHandler extends BaseEventHandler<FsExecuteComplate
             default:
                 break;
         }
-
-        logger.info("callId:{}  execute:{} data:{} resposne:{}", callInfo.getCallId(), event.getApplication(), event.getApplicationData(), event.getResponse());
+        logger.debug("execute:{} data:{} resposne:{}", event.getApplication(), event.getApplicationData(), event.getResponse());
     }
 }

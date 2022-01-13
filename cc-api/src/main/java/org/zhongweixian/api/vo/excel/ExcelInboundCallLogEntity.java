@@ -1,7 +1,6 @@
 package org.zhongweixian.api.vo.excel;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import org.cti.cc.entity.CallLog;
 
 /**
  * Created by caoliang on 2021/9/21

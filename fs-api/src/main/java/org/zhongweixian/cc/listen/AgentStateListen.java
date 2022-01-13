@@ -2,10 +2,12 @@ package org.zhongweixian.cc.listen;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.cti.cc.constant.Constants;
-import org.cti.cc.entity.Station;
+import org.cti.cc.constant.Constant;
+import org.cti.cc.entity.AgentStateLog;
+import org.cti.cc.mapper.AgentStateLogMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentState;
+import org.cti.cc.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -20,9 +22,12 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
+import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.cc.websocket.response.AgentStateResppnse;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
+
+import java.time.Instant;
 
 /**
  * Create by caoliang on 2020/11/1
@@ -42,21 +47,26 @@ public class AgentStateListen {
     private GroupHandler groupHandler;
 
     @Autowired
-    private Station station;
+    private AgentStateLogMapper agentStateLogMapper;
 
-    @Value("${spring.application.id:}")
+    @Autowired
+    private CallCdrService callCdrService;
+
+    @Value("${spring.application.group}" + "${spring.instance.id}")
     private String appId;
 
+    @Value("${agent.state.log.pressure:0}")
+    private Integer pressure;
 
     /**
-     * 指定监听，绑定队列队列的路由和路由
-     *
-     * @param payload
+     * 同步坐席状态
      */
-    @RabbitListener(bindings = {@QueueBinding(value = @Queue(value = "sync.agent-" + "${spring.application.id}", autoDelete = "true"), key = Constants.DEFAULT_KEY, exchange = @Exchange(value = Constants.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC))})
+    /*@KafkaListener(topics = {Constants.AGENT_STATE}, groupId = "${spring.application.name}")*/
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constant.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constant.AGENT_STATE_KEY, value = @Queue(value = Constant.AGENT_STATE_QUEUE + Constant.LINE+ "${spring.instance.id}", autoDelete = "true"))})
     public void listenAgentState(@Payload String payload) {
+        logger.debug("receive agent state payload  {} ", payload);
         JSONObject json = JSON.parseObject(payload);
-        if (station.getHost().equals(json.getString("host")) && appId.equals(json.getString("appId"))) {
+        if (appId.equals(json.getString("appId"))) {
             return;
         }
 
@@ -107,10 +117,10 @@ public class AgentStateListen {
         /**
          * 呼入转坐席，坐席和电话不在一个服务上
          */
-        if (station.getHost().equals(json.getString("host")) && !appId.equals(json.getString("appId"))) {
-            webSocketHandler.sentWsMessage(agentInfo, payload);
+        /*if (station.getHost().equals(json.getString("host")) && !appId.equals(json.getString("appId"))) {
+            webSocketHandler.sentWsMessage(agentInfo, record.value());
             return;
-        }
+        }*/
 
 
         if (state.equals(AgentState.LOGIN.name())) {
@@ -122,6 +132,39 @@ public class AgentStateListen {
             agentInfo.setHost(json.getString("host"));
             agentInfo.setAgentState(AgentState.LOGIN);
             return;
+        }
+    }
+
+
+    /**
+     * 坐席状态数据
+     *
+     * @param payload
+     */
+    @RabbitListener(bindings = {@QueueBinding(exchange = @Exchange(value = Constant.AGENT_STATE_EXCHANGE, type = ExchangeTypes.TOPIC), key = Constant.AGENT_LOG_KEY, value = @Queue(Constant.AGENT_LOG_QUEUE))})
+    public void listenAgentStateLog(@Payload String payload) {
+        AgentStateLog agentStateLog = JSONObject.parseObject(payload, AgentStateLog.class);
+        if (agentStateLog == null || pressure == 1) {
+            return;
+        }
+        agentStateLog.setCts(Instant.now().getEpochSecond());
+        agentStateLog.setUts(agentStateLog.getCts());
+
+        String time = DateTimeUtil.getNowMonth();
+        agentStateLog.setMonth(time);
+        try {
+            agentStateLogMapper.insertSelective(agentStateLog);
+            //当前月份表
+            agentStateLogMapper.insertMonthSelective(agentStateLog);
+        } catch (Exception e) {
+            if (e.getMessage().contains("doesn't exist")) {
+                /**
+                 * 初始化月表
+                 */
+                callCdrService.subTable(DateTimeUtil.getNowMonth());
+                return;
+            }
+            logger.error(e.getMessage(), e);
         }
     }
 }

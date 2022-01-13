@@ -9,21 +9,20 @@ import java.util.List;
 /**
  * Created by caoliang on 2021/5/10
  */
-public class AgentBindSkill {
+public class SkillAgentsVo {
 
     /**
      * 企业id
      */
     private Long companyId;
 
-    @NotNull(message = "技能id不能为空")
     private Long skillId;
 
-    @NotNull(message = "技能等级不能为空")
     @Range(min = 1, max = 100, message = "技能等级在0-100之间")
     private Integer rankValue;
 
     @NotNull(message = "坐席不能为空")
+    @Size(max = 500, message = "一次添加不能超过500个坐席")
     private List<Long> agentIds;
 
     public Long getCompanyId() {

@@ -173,12 +173,25 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <select id="selectByCallId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByCallId"   resultMap="BaseResultMap">
     select
         <include refid="Base_Column_List" />
     from
-        cc_call_detail
+        cc_call_detail${monthTime}
     where
         call_id = #{callId,jdbcType=BIGINT} order by start_time asc
   </select>
+
+  <!-- 每个月创建新表 -->
+  <update id="createNewTable" databaseId="mysql">
+    create table if not exists cc_call_detail${month} (like cc_call_detail)
+  </update>
+
+  <update id="createNewTable" databaseId="oracle">
+    create table cc_call_detail${month} like cc_call_detail
+  </update>
+
+  <delete id="clearTable" >
+    delete from cc_call_detail where  start_time &lt;  #{end}
+  </delete>
 </mapper>

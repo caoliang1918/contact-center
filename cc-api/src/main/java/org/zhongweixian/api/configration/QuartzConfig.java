@@ -75,8 +75,12 @@ public class QuartzConfig {
      * 删除Job
      * {@link org.quartz.Scheduler#deleteJob(JobKey)}
      */
-    public void deleteJob(JobKey jobKey) throws SchedulerException {
-        scheduler.deleteJob(jobKey);
+    public void deleteJob(JobKey jobKey) {
+        try {
+            scheduler.deleteJob(jobKey);
+        } catch (Exception e) {
+
+        }
     }
 
 
@@ -233,7 +237,7 @@ public class QuartzConfig {
             List<BaseTask> list = getJobList();
             List<String> jobNames = list.stream().map(BaseTask::getName).collect(Collectors.toList());
             if (!jobNames.contains("TaskJobOfSecond")) {
-                createSecondJob();
+               // createSecondJob();
             }
             if (!jobNames.contains("TaskJobOfHour")) {
                 createHourJob();
@@ -241,7 +245,7 @@ public class QuartzConfig {
             if (!jobNames.contains("TaskJobOfDay")) {
                 createDayJob();
             }
-            if (!jobNames.contains("TaskJobOfMonth")) {
+            if (jobNames.contains("TaskJobOfMonth")) {
                 createMonthJob();
             }
         } catch (Exception e) {

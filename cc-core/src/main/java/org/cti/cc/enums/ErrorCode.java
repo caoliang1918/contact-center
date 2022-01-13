@@ -13,6 +13,7 @@ public enum ErrorCode {
     PARAMETER_ERROR(1010, "%s参数异常"),
     DATA_IS_USED(1011, "数据被引用，请先删除引用数据"),
 
+    MEDIA_NOT_AVALIABLE(1100, "媒体不可用"),
     COMPANY_NOT_AVALIABLE(1101, "企业不可用"),
     ACCOUNT_ERROR(1102, "账号或密码错误"),
     ACCOUNT_DISABLED(1103, "账号被禁用"),
@@ -26,7 +27,7 @@ public enum ErrorCode {
     AGENT_OVER_LIMIT(1204, "企业坐席超过限制"),
     GROUP_OVER_LIMIT(1205, "企业技能组超过限制"),
     GROUP_AGENT_OVER_LIMIT(1206, "技能组中坐席超过限制"),
-    GROUP_SKILL_OVER_LIMIT(1207, "技能组中技能不能超过10个"),
+    GROUP_SKILL_OVER_LIMIT(1207, "技能组中技能超过限制"),
     AGENT_SKILL_OVER_LIMIT(1208, "坐席技能不能超过20个"),
     CALL_LOG_EXPORT_LIMIT(1209, "话单导出不能超时{0}"),
     EXPORT_EMPTY(1210, "导出数据为空"),

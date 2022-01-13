@@ -311,8 +311,9 @@
   </update>
 
   <resultMap id="CompanyInfoResultMap"  type="org.cti.cc.po.CompanyInfo"  extends="BaseResultMap">
-      <collection property="groupIds" column="id" select="org.cti.cc.mapper.GroupMapper.selectGroupIds"></collection>
-      <collection property="companyStats" column="id" select="org.cti.cc.mapper.CompanyStatMapper.selectByCompanyId"></collection>
+    <association property="agentSize" column="id" select="org.cti.cc.mapper.AgentMapper.agentSize" ></association>
+    <collection property="groupIds" column="id" select="org.cti.cc.mapper.GroupMapper.selectGroupIds"></collection>
+    <collection property="companyStats" column="id" select="org.cti.cc.mapper.CompanyStatMapper.selectByCompanyId"></collection>
   </resultMap>
 
 

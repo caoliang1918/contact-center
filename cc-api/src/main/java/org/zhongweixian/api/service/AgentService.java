@@ -4,9 +4,10 @@ import com.github.pagehelper.PageInfo;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentSipPo;
-import org.cti.cc.vo.AgentVo;
-import org.cti.cc.vo.AgentBindSkill;
 import org.cti.cc.vo.AgentSipVo;
+import org.cti.cc.vo.AgentVo;
+import org.cti.cc.vo.BatchAddAgentVo;
+import org.zhongweixian.api.vo.excel.AgentImportExcel;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -28,14 +29,10 @@ public interface AgentService extends BaseService<Agent> {
     /**
      * 批量添加坐席
      *
-     * @param companyId
-     * @param count
-     * @param prefix
-     * @param start
-     * @param pwd
+     * @param addAgentVo
      * @return
      */
-    Integer batchAddAgent(Long companyId, Integer count, String prefix, Long start, String pwd);
+    Integer batchAddAgent(BatchAddAgentVo addAgentVo);
 
     /**
      * 获取坐席详情
@@ -45,17 +42,6 @@ public interface AgentService extends BaseService<Agent> {
      * @return
      */
     AgentInfo getAgentInfo(Long companyId, Long id);
-
-    /**
-     * 技能中添加坐席
-     *
-     * @param companyId
-     * @param skillId   技能ID
-     * @param ids       坐席ID
-     * @param rank      技能等级
-     * @return
-     */
-    int agentBindSkill(Long companyId, Long skillId, List<Long> ids, Integer rank);
 
     /**
      * 删除坐席
@@ -101,10 +87,11 @@ public interface AgentService extends BaseService<Agent> {
     void agentExport(HttpServletResponse response, Map<String, Object> params) throws IOException;
 
     /**
-     * 坐席绑定技能
+     * 批量上传坐席
      *
-     * @param agentBindSkill
+     * @param agentList
+     * @param companyId
      * @return
      */
-    int agentBindSkill(AgentBindSkill agentBindSkill);
+    int agentImport(List<AgentImportExcel> agentList, Long companyId);
 }

@@ -8,13 +8,22 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.cti.cc.entity.*;
+import org.cti.cc.constant.Constant;
+import org.cti.cc.entity.Agent;
+import org.cti.cc.entity.AgentSip;
+import org.cti.cc.entity.Company;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.mapper.*;
+import org.cti.cc.mapper.AgentGroupMapper;
+import org.cti.cc.mapper.AgentMapper;
+import org.cti.cc.mapper.AgentSipMapper;
+import org.cti.cc.mapper.CompanyMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.AgentSipPo;
+import org.cti.cc.po.CompanyInfo;
+import org.cti.cc.vo.AgentSipVo;
 import org.cti.cc.vo.AgentVo;
+import org.cti.cc.vo.BatchAddAgentVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,14 +32,14 @@ import org.springframework.util.CollectionUtils;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.AgentService;
 import org.zhongweixian.api.util.BcryptUtil;
-import org.cti.cc.vo.AgentBindSkill;
-import org.cti.cc.vo.AgentSipVo;
+import org.zhongweixian.api.vo.excel.AgentImportExcel;
 import org.zhongweixian.api.vo.excel.ExcelAgentEntity;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +50,13 @@ import java.util.Map;
 public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentService {
 
     @Value("${sip.prefix:89}")
-    private Integer sipPrefix;
+    private String sipPrefix;
+
+    @Value("${sip.length:4}")
+    private Integer sipLength;
+
+    @Value("${sip.psswd.length:6}")
+    private Integer sipPasswdLength;
 
     @Autowired
     private AgentMapper agentMapper;
@@ -53,10 +68,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     private CompanyMapper companyMapper;
 
     @Autowired
-    private SkillMapper skillMapper;
-
-    @Autowired
-    private SkillAgentMapper skillAgentMapper;
+    private AgentGroupMapper agentGroupMapper;
 
     @Override
     BaseMapper<Agent> baseMapper() {
@@ -83,7 +95,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
                 }
             }
             //查看当前企业坐席总数
-            Long agentCount = agentMapper.selectCountByMap(params);
+            Integer agentCount = agentMapper.selectCountByMap(params);
             if (agentCount >= company.getAgentLimit()) {
                 throw new BusinessException(ErrorCode.AGENT_OVER_LIMIT);
             }
@@ -109,46 +121,42 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     }
 
     @Override
-    public Integer batchAddAgent(Long companyId, Integer count, String prefix, Long start, String pwd) {
-        Company company = companyMapper.selectByPrimaryKey(companyId);
-        Map<String, Object> params = new HashMap<>();
-        params.put("companyId", companyId);
-        Long agentCount = agentMapper.selectCountByMap(params);
+    public Integer batchAddAgent(BatchAddAgentVo addAgentVo) {
+        Company company = companyMapper.selectByPrimaryKey(addAgentVo.getCompanyId());
+        Map<String, Object> params = new HashMap<>(4);
+        params.put("companyId", addAgentVo.getCompanyId());
+        Integer agentCount = agentMapper.selectCountByMap(params);
         if (agentCount >= company.getAgentLimit()) {
             throw new BusinessException(ErrorCode.AGENT_OVER_LIMIT);
         }
-        if (prefix == null) {
-            prefix = StringUtils.EMPTY;
-        }
-        if ((prefix + start).length() > 10 || (prefix + start).length() < 2) {
-            new BusinessException(ErrorCode.AGENT_NAME_LENGTH_ERROR);
-        }
+
         List<Agent> agents = new ArrayList<>();
         List<Map<String, Object>> agentSips = new ArrayList<>();
         Integer result = 0;
         Agent agent = null;
-        AgentSip agentSip = null;
         Map<String, Object> sipMap = null;
-        for (Integer i = 0; i < count; i++) {
+        for (Integer i = 0; i < addAgentVo.getCount(); i++) {
             agent = new Agent();
-            agent.setCompanyId(companyId);
-            agent.setAgentId(prefix + (start + i));
-            agent.setPasswd(BcryptUtil.encrypt(pwd));
+            agent.setCompanyId(addAgentVo.getCompanyId());
+            agent.setAgentId(addAgentVo.getPrefix() + (addAgentVo.getStart() + i));
+            agent.setPasswd(BcryptUtil.encrypt(addAgentVo.getPasswd()));
             agent.setAgentKey(agent.getAgentId() + "@" + company.getCompanyCode());
             agent.setAgentName(agent.getAgentId());
-            agent.setAgentType(2);
+            agent.setAgentType(1);
             agent.setCts(Instant.now().getEpochSecond());
             agent.setStatus(1);
             agents.add(agent);
 
             //添加sip号
-            sipMap = new HashMap<>();
+            sipMap = new HashMap<>(4);
             sipMap.put("cts", agent.getCts());
-            sipMap.put("companyId", companyId);
+            sipMap.put("companyId", addAgentVo.getCompanyId());
             sipMap.put("sip", sipPrefix + "" + Instant.now().toEpochMilli());
             sipMap.put("agentKey", agent.getAgentKey());
-            sipMap.put("sipPwd", RandomStringUtils.randomNumeric(16));
+            sipMap.put("sipPwd", RandomStringUtils.randomAlphabetic(sipPasswdLength));
             agentSips.add(sipMap);
+
+            result = result + 1;
         }
         agentMapper.batchInsert(agents);
         agentSipMapper.batchInsert(agentSips);
@@ -168,29 +176,6 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     }
 
     @Override
-    public int agentBindSkill(Long companyId, Long skillId, List<Long> ids, Integer rank) {
-        Skill skill = skillMapper.selectById(skillId, companyId);
-        if (skill == null) {
-            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
-        }
-        if (CollectionUtils.isEmpty(ids)) {
-            throw new BusinessException(ErrorCode.PARAMETER_ERROR);
-        }
-        List<SkillAgent> skillAgents = new ArrayList<>();
-        for (Long id : ids) {
-            SkillAgent skillAgent = new SkillAgent();
-            skillAgent.setAgentId(id);
-            skillAgent.setSkillId(skillId);
-            skillAgent.setCompanyId(companyId);
-            skillAgent.setRankValue(rank);
-            skillAgent.setStatus(1);
-            skillAgents.add(skillAgent);
-        }
-        skillAgentMapper.batchInsert(skillAgents);
-        return 0;
-    }
-
-    @Override
     public int deleteAgent(Long companyId, Long id) {
         Agent agent = agentMapper.selectByPrimaryKey(id);
         if (agent == null || agent.getStatus() == 0 || !agent.getCompanyId().equals(companyId)) {
@@ -199,6 +184,11 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         agent.setAgentKey(agent.getAgentKey() + randomDelete());
         agent.setUts(Instant.now().getEpochSecond());
         agent.setStatus(0);
+        agentGroupMapper.deleteByAgent(id);
+
+        //删除坐席
+        redisTemplate.delete(Constant.AGENT_TOKEN + agent.getAgentKey());
+        redisTemplate.delete(Constant.AGENT_INFO + agent.getAgentKey());
         return agentMapper.deleteAgent(agent);
     }
 
@@ -258,10 +248,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         if (agent != null) {
             throw new BusinessException(ErrorCode.DATA_IS_USED);
         }
-        agentSip.setUts(Instant.now().getEpochSecond());
-        agentSip.setStatus(0);
-        agentSip.setSip(agentSip.getSip() + randomDelete());
-        return agentSipMapper.updateByPrimaryKeySelective(agentSip);
+        return agentSipMapper.deleteByPrimaryKey(id);
     }
 
     @Override
@@ -270,7 +257,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
 //        agentList.forEach(agent->agent.setCts(FormatDateUtil.stampToTime(Long.parseLong(e.getUpdateTime()))));
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(
                 null, "坐席列表", ExcelType.XSSF), ExcelAgentEntity.class, agentList);
-        String filename = URLEncoder.encode("坐席列表.xlsx", "UTF8");
+        String filename = URLEncoder.encode("坐席列表.xlsx", StandardCharsets.UTF_8);
         response.setHeader("content-disposition", "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();
@@ -279,34 +266,81 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     }
 
     @Override
-    public int agentBindSkill(AgentBindSkill agentBindSkill) {
-        /**
-         * 先判断坐席
-         */
-        Skill skill = skillMapper.selectById(agentBindSkill.getCompanyId(), agentBindSkill.getSkillId());
-        if (skill == null) {
-            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
+    public int agentImport(List<AgentImportExcel> agentList, Long companyId) {
+        if (CollectionUtils.isEmpty(agentList)) {
+            return 0;
         }
-        Map<String , Object> params = new HashMap<>();
-        params.put("companyId" , agentBindSkill.getCompanyId());
-        params.put("ids" , agentBindSkill.getAgentIds());
-        List<Agent> agents = agentMapper.selectListByMap(params);
-        if (CollectionUtils.isEmpty(agents)){
-            throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
+        CompanyInfo companyInfo = companyMapper.selectById(companyId);
+        if (companyInfo.getAgentSize() + agentList.size() > companyInfo.getAgentLimit()) {
+            throw new BusinessException(ErrorCode.AGENT_OVER_LIMIT);
         }
-        //删除已有数据
-        skillAgentMapper.deleteSkillAgent(agentBindSkill);
 
-        List<SkillAgent> skillAgents = new ArrayList<>();
-        for (Agent agent : agents){
-            SkillAgent skillAgent = new SkillAgent();
-            skillAgent.setCompanyId(agentBindSkill.getCompanyId());
-            skillAgent.setAgentId(agent.getId());
-            skillAgent.setSkillId(agentBindSkill.getSkillId());
-            skillAgent.setRankValue(agentBindSkill.getRankValue());
-            skillAgents.add(skillAgent);
+        //当前系统最大的sip号码
+        Integer maxSip = agentSipMapper.maxSip();
+        if (maxSip == null) {
+            maxSip = Integer.parseInt(sipPrefix + getMin(sipLength));
         }
-        return skillAgentMapper.batchInsert(skillAgents);
+
+        int result = 0;
+        for (AgentImportExcel agentImportExcel : agentList) {
+            if (StringUtils.isBlank(agentImportExcel.getAgentKey())) {
+                continue;
+            }
+            Agent existAgent = agentMapper.selectAgent(agentImportExcel.getAgentKey() + "@" + companyInfo.getCompanyCode());
+            if (existAgent != null) {
+                logger.warn("agentKey:{} exist", agentImportExcel.getAgentKey());
+                continue;
+            }
+            if (agentImportExcel.getSip() != null) {
+                AgentSip existSip = agentSipMapper.selectBySip(agentImportExcel.getSip());
+                if (existSip != null) {
+                    logger.warn("agentKey:{} sip:{} exist", agentImportExcel.getAgentKey(), agentImportExcel.getSip());
+                    continue;
+                }
+            }
+
+            Agent agent = new Agent();
+            agent.setCompanyId(companyId);
+            agent.setAgentKey(agentImportExcel.getAgentKey() + "@" + companyInfo.getCompanyCode());
+            agent.setCts(Instant.now().getEpochSecond());
+            agent.setAgentId(agentImportExcel.getAgentKey());
+            agent.setAgentName(agentImportExcel.getAgentName());
+            agent.setSipPhone(agentImportExcel.getSipPhone());
+            agent.setPasswd(StringUtils.isBlank(agentImportExcel.getPasswd()) ?
+                    BcryptUtil.encrypt(agentImportExcel.getAgentKey()) :
+                    BcryptUtil.encrypt(agentImportExcel.getPasswd()));
+            agent.setAgentType(1);
+            agentMapper.addAgent(agent);
+            result = result + 1;
+
+            if (agentImportExcel.getSip() != null) {
+                maxSip = agentImportExcel.getSip();
+            } else {
+                maxSip = maxSip + 1;
+            }
+            AgentSip agentSip = new AgentSip();
+            agentSip.setSip(maxSip);
+            agentSip.setAgentId(agent.getId());
+            agentSip.setCts(Instant.now().getEpochSecond());
+            agentSip.setCompanyId(companyId);
+            agentSipMapper.insertSelective(agentSip);
+        }
+        return result;
     }
+
+    /**
+     * 最小值
+     *
+     * @param length
+     * @return
+     */
+    private String getMin(Integer length) {
+        StringBuilder str = new StringBuilder("");
+        for (int i = 0; i <= length; i++) {
+            str.append("0");
+        }
+        return str.toString();
+    }
+
 
 }

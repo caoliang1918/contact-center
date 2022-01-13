@@ -10,6 +10,7 @@ import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
+import org.cti.cc.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +38,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
 
     @Override
     public void handleEvent(FsParkEvent event) {
+        logger.info("channel park:{}", event.toString());
         CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
         if (callInfo == null && Direction.INBOUND.name().equals(event.getDirection().toUpperCase()) && a == 1) {
             if (StringUtils.isNotBlank(event.getSipPort()) && FsConstant.INTERNAL.equals(outboundProfile)) {
@@ -62,7 +64,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         if (event.getHangup() != null) {
             return;
         }
-        callInfo.setMedia(event.getHostname());
+        callInfo.setMedia(event.getRemoteAddress());
         if (StringUtils.isBlank(callInfo.getAgentKey())) {
             return;
         }
@@ -134,7 +136,9 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 }
                 sendAgentStateMessage(cacheService.getAgentInfo(callInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.OUT_CALLED_RING.name(), callInfo.getAgentKey(), ringEntity));
             }
-        } else if (direction == Direction.INBOUND) {
+            return;
+        }
+        if (direction == Direction.INBOUND) {
             if (agentInfo == null) {
                 return;
             }
@@ -173,14 +177,15 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             callLog.setCaller(event.getCaller());
             callLog.setCalled(event.getCalled());
             callLog.setCallType(CallType.INBOUND_CALL.name());
-            callLog.setMedia(event.getHostname());
+            callLog.setMedia(event.getRemoteAddress());
             callLog.setAnswerCount(1);
             callLog.setAnswerFlag(3);
             callLog.setDirection(Direction.INBOUND.name());
             callLog.setHangupDir(3);
             callLog.setHangupCode(CauseEnums.VDN_ERROR.getHuangupCode());
+            callLog.setMonthTime(DateTimeUtil.getNowMonth());
             callCdrService.saveOrUpdateCallLog(callLog);
-            hangupCall(event.getHostname(), uuid, event.getDeviceId());
+            hangupCall(event.getRemoteAddress(), uuid, event.getDeviceId());
             return;
         }
 
@@ -189,13 +194,12 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallType(CallType.INBOUND_CALL)
                 .withDirection(Direction.INBOUND)
                 .withCallTime(Instant.now().toEpochMilli())
-                //用户号码
-                .withCaller(event.getCaller())
+                //.withCaller(event.getCaller())
                 //接入号码
                 .withCallerDisplay(event.getCalled())
                 .withCompanyId(vdnPhone.getCompanyId())
-                .withMedia(event.getHostname())
-                .withAppId(appId)
+                .withMedia(event.getRemoteAddress())
+                .withHost(event.getLocalAddress())
                 .build();
 
         DeviceInfo deviceInfo = DeviceInfo.DeviceInfoBuilder.builder()
@@ -206,7 +210,6 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallTime(callInfo.getCallTime())
                 .withDeviceType(2)
                 .withCdrType(1)
-                .withNextCommand(new NextCommand(NextType.NEXT_VDN))
                 .build();
 
         CompanyInfo companyInfo = cacheService.getCompany(vdnPhone.getCompanyId());
@@ -214,10 +217,11 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         callInfo.setCdrNotifyUrl(companyInfo.getNotifyUrl());
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
         callInfo.getDeviceList().add(deviceId);
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_VDN, null));
 
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callId);
-        super.answer(event.getHostname(), deviceId);
+        super.answer(event.getRemoteAddress(), deviceId);
     }
 
     /**
@@ -231,14 +235,14 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         Long callId = snowflakeIdWorker.nextId();
         if (agent == null || agent.getGroupId() == null) {
             logger.warn("sipOutbound callId:{}  sip:{} called:{}", callId, event.getCaller(), event.getCalled());
-            hangupCall(event.getHostname(), callId, event.getDeviceId());
+            hangupCall(event.getRemoteAddress(), callId, event.getDeviceId());
             return;
         }
         //获取显号
         GroupInfo groupInfo = cacheService.getGroupInfo(agent.getGroupId());
         if (groupInfo == null && CollectionUtils.isEmpty(groupInfo.getCalledDisplays())) {
             logger.warn("callId:{}, agent:{}, group is null", callId, agent.getAgentKey());
-            hangupCall(event.getHostname(), callId, event.getDeviceId());
+            hangupCall(event.getRemoteAddress(), callId, event.getDeviceId());
             return;
         }
         AgentInfo agentInfo = cacheService.getAgentInfo(agent.getAgentKey());
@@ -257,7 +261,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCaller(event.getCaller())
                 .withCalled(event.getCalled())
                 .withCompanyId(agent.getCompanyId())
-                .withMedia(event.getHostname())
+                .withMedia(event.getRemoteAddress())
                 .withCallerDisplay(agent.getAgentId())
                 .withCalledDisplay(calledDisplay)
                 .withGroupId(groupInfo.getId())
@@ -273,7 +277,6 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 .withCallTime(callInfo.getCallTime())
                 .withDeviceType(1)
                 .withCdrType(2)
-                .withNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER))
                 .build();
 
         CompanyInfo companyInfo = cacheService.getCompany(agent.getCompanyId());
@@ -282,9 +285,10 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
         callInfo.getDeviceInfoMap().put(event.getDeviceId(), deviceInfo);
         callInfo.getDeviceList().add(event.getDeviceId());
 
+        callInfo.getNextCommands().add(new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_CALL_OTHER, null));
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(event.getDeviceId(), callId);
-        super.answer(event.getHostname(), event.getDeviceId());
+        super.answer(event.getRemoteAddress(), event.getDeviceId());
 
     }
 }

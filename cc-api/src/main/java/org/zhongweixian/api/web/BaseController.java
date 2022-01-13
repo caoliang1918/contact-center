@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.AdminAccount;
+import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AdminAccountInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.*;
 
 import java.util.HashMap;
@@ -48,7 +50,7 @@ public class BaseController {
     public AdminAccount adminAccountInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
-            return null;
+            throw new BusinessException(ErrorCode.ACCOUNT_AUTH_ERROR);
         }
         logger.info("authentication:{}", authentication);
         return (AdminAccount) authentication.getPrincipal();

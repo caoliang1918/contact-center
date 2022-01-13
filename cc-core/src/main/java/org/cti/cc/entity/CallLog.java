@@ -60,6 +60,11 @@ public class CallLog implements Serializable {
     private String agentKey;
 
     /**
+     * 坐席名称
+     */
+    private String agentName;
+
+    /**
      * 技能组
      */
     private Long groupId;
@@ -140,6 +145,11 @@ public class CallLog implements Serializable {
     private String media;
 
     /**
+     * cti地址
+     */
+    private String host;
+
+    /**
      * 录音地址
      */
     private String record;
@@ -173,6 +183,11 @@ public class CallLog implements Serializable {
      * 出技能组时间
      */
     private Long queueEndTime;
+
+    /**
+     * 月份
+     */
+    private String monthTime;
 
     /**
      * 通话随路数据(2048)
@@ -289,6 +304,14 @@ public class CallLog implements Serializable {
 
     public void setAgentKey(String agentKey) {
         this.agentKey = agentKey == null ? null : agentKey.trim();
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Long getGroupId() {
@@ -419,6 +442,14 @@ public class CallLog implements Serializable {
         this.media = media == null ? null : media.trim();
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
     public String getRecord() {
         return record;
     }
@@ -473,6 +504,14 @@ public class CallLog implements Serializable {
 
     public void setQueueEndTime(Long queueEndTime) {
         this.queueEndTime = queueEndTime;
+    }
+
+    public String getMonthTime() {
+        return monthTime;
+    }
+
+    public void setMonthTime(String monthTime) {
+        this.monthTime = monthTime;
     }
 
     public String getFollowData() {

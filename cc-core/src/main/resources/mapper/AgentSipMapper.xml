@@ -6,7 +6,7 @@
     <result column="cts" jdbcType="BIGINT" property="cts" />
     <result column="uts" jdbcType="BIGINT" property="uts" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
-    <result column="sip" jdbcType="VARCHAR" property="sip" />
+    <result column="sip" jdbcType="INTEGER" property="sip" />
     <result column="agent_id" jdbcType="BIGINT" property="agentId" />
     <result column="sip_pwd" jdbcType="VARCHAR" property="sipPwd" />
     <result column="status" jdbcType="INTEGER" property="status" />
@@ -39,7 +39,7 @@
       sip, agent_id, sip_pwd, 
       status)
     values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
-      #{sip,jdbcType=VARCHAR}, #{agentId,jdbcType=BIGINT}, #{sipPwd,jdbcType=VARCHAR}, 
+      #{sip,jdbcType=INTEGER}, #{agentId,jdbcType=BIGINT}, #{sipPwd,jdbcType=VARCHAR},
       #{status,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="org.cti.cc.entity.AgentSip">
@@ -84,7 +84,7 @@
         #{companyId,jdbcType=BIGINT},
       </if>
       <if test="sip != null">
-        #{sip,jdbcType=VARCHAR},
+        #{sip,jdbcType=INTEGER},
       </if>
       <if test="agentId != null">
         #{agentId,jdbcType=BIGINT},
@@ -104,7 +104,7 @@
         uts = #{uts,jdbcType=BIGINT},
       </if>
       <if test="sip != null">
-        sip = #{sip,jdbcType=VARCHAR},
+        sip = #{sip,jdbcType=INTEGER},
       </if>
       <if test="agentId != null">
         agent_id = #{agentId,jdbcType=BIGINT},
@@ -123,7 +123,7 @@
     set cts = #{cts,jdbcType=BIGINT},
       uts = #{uts,jdbcType=BIGINT},
       company_id = #{companyId,jdbcType=BIGINT},
-      sip = #{sip,jdbcType=VARCHAR},
+      sip = #{sip,jdbcType=INTEGER},
       agent_id = #{agentId,jdbcType=BIGINT},
       sip_pwd = #{sipPwd,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER}
@@ -135,7 +135,7 @@
     <foreach collection ="list" item="sip" separator =",">
       (#{sip.cts}, #{sip.companyId},
       (select id from cc_agent where agent_key = #{sip.agentKey}),
-      #{sip.sip,jdbcType=VARCHAR},
+      #{sip.sip,jdbcType=INTEGER},
       #{sip.sipPwd,jdbcType=VARCHAR})
     </foreach>
   </insert>
@@ -161,4 +161,18 @@
     where
         company_id = #{companyId} and id = #{id} and status = 1
   </select>
+
+  <select id="selectBySip" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+    select
+        <include refid="Base_Column_List" />
+    from
+        cc_agent_sip
+    where
+        sip = #{sip} and status = 1
+  </select>
+
+  <select id="maxSip"  resultType="java.lang.Integer" >
+        selecct max(sip) from  cc_agent_sip where status = 1
+  </select>
+
 </mapper>

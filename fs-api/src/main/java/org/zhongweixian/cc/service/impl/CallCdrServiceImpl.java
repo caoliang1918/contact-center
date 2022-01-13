@@ -3,17 +3,15 @@ package org.zhongweixian.cc.service.impl;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.*;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.enums.NextType;
-import org.cti.cc.mapper.CallDetailMapper;
-import org.cti.cc.mapper.CallDeviceMapper;
-import org.cti.cc.mapper.CallLogMapper;
-import org.cti.cc.mapper.PushFailLogMapper;
+import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.*;
+import org.cti.cc.util.DateTimeUtil;
 import org.cti.cc.util.SnowflakeIdWorker;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +46,12 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     private CallDeviceMapper callDeviceMapper;
 
     @Autowired
+    private CallDtmfMapper callDtmfMapper;
+
+    @Autowired
+    private AgentStateLogMapper agentStateLogMapper;
+
+    @Autowired
     private PushFailLogMapper pushFailLogMapper;
 
     @Autowired
@@ -68,11 +72,8 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Autowired
     private AgentService agentService;
 
-    @Value("${call.cdr.mq:0}")
-    private Integer callCdrMq;
-
-    @Value("${spring.application.id}")
-    private String appId;
+    @Value("${call.cdr.pressure:0}")
+    private Integer callCdrPressure;
 
 
     @Override
@@ -81,12 +82,29 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     }
 
     @Override
+    public void subTable(String month) {
+        // cc_call_log
+        callLogMapper.createNewTable(month);
+        //cc_call_device
+        callDeviceMapper.createNewTable(month);
+        //cc_call_detail
+        callDetailMapper.createNewTable(month);
+        //cc_call_dtmf
+        callDtmfMapper.createNewTable(month);
+        //cc_agent_state_log
+        agentStateLogMapper.createNewTable(month);
+    }
+
+    @Override
     public int saveCallDevice(CallDevice callDevice) {
-        if (callCdrMq == 1) {
-            rabbitTemplate.convertAndSend(Constants.CALL_DEVICE_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDevice));
-            return 0;
+        if (callCdrPressure == 0) {
+            callDeviceMapper.insertSelective(callDevice);
+            callDevice.setMonth(DateTimeUtil.getNowMonth());
+            return callDeviceMapper.insertMonthSelective(callDevice);
         }
-        return callDeviceMapper.insertSelective(callDevice);
+        rabbitTemplate.convertAndSend(Constant.CALL_LOG_EXCHANGE, Constant.DEVOCE_KEY, JSON.toJSONString(callDevice));
+        /*kafkaTemplate.send(Constants.CALL_DEVICE, JSON.toJSONString(callDevice));*/
+        return 1;
     }
 
     @Override
@@ -94,8 +112,16 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         if (CollectionUtils.isEmpty(callDetails)) {
             return 0;
         }
+        String month = DateTimeUtil.getNowMonth();
         callDetails.forEach(callDetail -> {
-            rabbitTemplate.convertAndSend(Constants.CALL_DETAIL_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callDetail));
+            callDetail.setMonth(month);
+            if (callCdrPressure == 1) {
+                /*kafkaTemplate.send(Constants.CALL_DETAIL, JSON.toJSONString(callDetail));*/
+                rabbitTemplate.convertAndSend(Constant.CALL_LOG_EXCHANGE, Constant.DETAIL_KEY, JSON.toJSONString(callDetail));
+            } else {
+                callDetailMapper.insertSelective(callDetail);
+                callDetailMapper.insertMonthSelective(callDetail);
+            }
         });
         return 1;
     }
@@ -106,9 +132,13 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return 0;
         }
         logger.info("callId:{}, answerTime:{}, endTime:{}", callLog.getCallId(), callLog.getAnswerTime(), callLog.getEndTime());
-        if (callCdrMq == 1) {
-            rabbitTemplate.convertAndSend(Constants.CALL_LOG_EXCHANGE, Constants.CALL_CDR_ROUTING, JSON.toJSONString(callLog));
+        if (callCdrPressure == 1) {
+            /*kafkaTemplate.send(Constants.CALL_LOG, JSON.toJSONString(callLog));*/
+            rabbitTemplate.convertAndSend(Constant.CALL_LOG_EXCHANGE, Constant.CALLLOG_KEY, JSON.toJSONString(callLog));
             return 0;
+        }
+        if (callLog.getEndTime() != null) {
+            callLogMapper.insertMonthSelective(callLog);
         }
 
         if (callLog.getAnswerTime() != null && callLog.getEndTime() == null) {
@@ -128,8 +158,15 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public CallLogPo getCall(Long companyId, Long callId) {
-        return callLogMapper.getCall(companyId, callId);
+        /**
+         * 解析callId产生的时间
+         */
+        String binaryString = Long.toBinaryString(callId);
+        Long time = Long.parseLong(binaryString.substring(0, 36), 2) + SnowflakeIdWorker.WORK_START;
+        logger.info("callId:{} callTime:{} ", callId, DateTimeUtil.format(time));
+        return callLogMapper.getCall(companyId, callId, DateTimeUtil.getMonth(time));
     }
+
 
     @Override
     public int savePushFailLog(PushFailLog pushFailLog) {
@@ -149,7 +186,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 .withLoginType(agentInfo.getLoginType())
                 .withCompanyId(agentInfo.getCompanyId())
                 .withGroupId(agentInfo.getGroupId())
-                .withAppId(appId)
+                .withHost(agentInfo.getHost())
 //                .withCaller(caller)
                 .withCalled(makeCallVo.getCalled().strip())
 //                .withCallerDisplay(callerDisplay)
@@ -172,13 +209,13 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 .withCdrType(2)
                 .withDeviceType(1)
                 .withAgentKey(agentInfo.getAgentKey())
-                .withNextCommand(new NextCommand(NextType.NEXT_CALL_OTHER))
                 .build();
 
 
         callInfo.setHiddenCustomer(agentInfo.getHiddenCustomer());
         callInfo.setCdrNotifyUrl(agentInfo.getCdrNotifyUrl());
         callInfo.getDeviceList().add(deviceId);
+        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
 
         switch (makeCallVo.getCallType()) {
             case OUTBOUNT_CALL:

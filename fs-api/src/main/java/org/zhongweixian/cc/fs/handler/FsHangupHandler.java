@@ -6,7 +6,7 @@ import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.cti.cc.constant.Constants;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.entity.PushFailLog;
@@ -15,6 +15,7 @@ import org.cti.cc.enums.CauseEnums;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
+import org.cti.cc.util.DateTimeUtil;
 import org.cti.cc.vo.AgentPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +63,8 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             return;
         }
         Integer count = callInfo.getDeviceList().size();
+        callInfo.getDeviceList().remove(event.getDeviceId());
         String cause = event.getHangupCause();
-        logger.info("callId:{}, deviceId:{}, called:{} hangup sipStatus:{} hangupCause:{}", callInfo.getCallId(), event.getDeviceId(), event.getCalled(), event.getSipStatus(), event.getHangupCause());
 
         /**
          * 挂机原因
@@ -73,17 +74,18 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             logger.warn("device:{} is null", event.getDeviceId());
             return;
         }
+        logger.info("callId:{}, deviceId:{}, deviceType:{} called:{} hangup sipStatus:{} hangupCause:{}", callInfo.getCallId(), event.getDeviceId(), deviceInfo.getDeviceType(), event.getCalled(), event.getSipStatus(), event.getHangupCause());
         /**
          * 上传录音
          */
         if (StringUtils.isNotBlank(deviceInfo.getRecord())) {
             try {
                 String day = DateFormatUtils.format(new Date(), YYYYMMDDHH);
-                String fileName = day.substring(0, 8) + "/" + day.substring(8, 10) + "/" + callInfo.getCallId() + "_" + deviceInfo.getDeviceId() + "." + recordFile;
-                ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constants.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
+                String fileName = day.substring(0, 8) + Constant.SK + day.substring(8, 10) + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.POINT + recordFile;
+                ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(Constant.HTTP + event.getLocalMediaIp() + deviceInfo.getRecord(), byte[].class);
                 logger.info("get record file:{}", deviceInfo.getRecord());
                 ObjectWriteResponse writeResponse = minioClient.putObject(PutObjectArgs.builder().stream(new ByteArrayInputStream(responseEntity.getBody()), responseEntity.getBody().length, -1).object(fileName).bucket(bucket).build());
-                logger.info("callId:{}, record fileName:{}", deviceInfo.getCallId(), fileName);
+                logger.info("callId:{}, record fileName:{}, minioTag:{}", deviceInfo.getCallId(), fileName, writeResponse.etag());
                 deviceInfo.setRecord(fileName);
                 if (StringUtils.isBlank(callInfo.getRecord())) {
                     callInfo.setRecord(fileName);
@@ -105,7 +107,6 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         if (deviceInfo.getAgentKey() == null) {
             deviceInfo.setAgentKey(callInfo.getAgentKey());
         }
-        callInfo.getDeviceList().remove(event.getDeviceId());
         CallDevice callDevice = new CallDevice();
         BeanUtils.copyProperties(deviceInfo, callDevice);
         callDevice.setCts(deviceInfo.getCallTime() / 1000);
@@ -130,11 +131,12 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             //同步坐席状态
             agentState(deviceInfo, callInfo, cause);
         }
+        NextCommand nextCommand = callInfo.getNextCommands().size() == 0 ? null : callInfo.getNextCommands().get(0);
         if (!CauseEnums.NORMAL_CLEARING.name().equals(cause)) {
             //非正常挂机处理
             hangupDir(callInfo, deviceInfo, cause);
-            if (deviceInfo.getNextCommand() != null) {
-                NextCommand nextCommand = deviceInfo.getNextCommand();
+            if (nextCommand != null) {
+                callInfo.getNextCommands().remove(nextCommand);
                 //呼入电话转接坐席，坐席未接起需要重新进入技能组
                 if (nextCommand.getNextType() == NextType.NEXT_CALL_BRIDGE && deviceInfo.getDeviceType() == 1 && callInfo.getDirection() == Direction.INBOUND) {
                     //重新进入技能组
@@ -154,8 +156,8 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
             }
             return;
         }
-        if (deviceInfo.getNextCommand() != null) {
-            nextCmd(callInfo, deviceInfo, cause);
+        if (nextCommand != null) {
+            nextCmd(callInfo, deviceInfo, nextCommand, cause);
             return;
         }
         //判断挂机方向
@@ -194,6 +196,8 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
         callLog.setCts(callInfo.getCallTime() / 1000);
         callLog.setUts(callInfo.getEndTime() / 1000);
         callLog.setEndTime(callInfo.getEndTime());
+        callLog.setMonthTime(DateTimeUtil.getNowMonth());
+
         callLog.setCallType(callInfo.getCallType().name());
         callLog.setDirection(callInfo.getDirection().name());
         if (callInfo.getFollowData() != null) {
@@ -304,6 +308,7 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
                 callInfo.setHangupDir(2);
             }
         }
+        cacheService.addCallInfo(callInfo);
         logger.info("callId:{} direction:{} hangupDir:{}, cause:{}", callInfo.getCallId(), callInfo.getDirection(), callInfo.getHangupDir(), cause);
     }
 
@@ -362,39 +367,39 @@ public class FsHangupHandler extends BaseEventHandler<FsHangupEvent> {
      * @param deviceInfo
      * @param cause
      */
-    private void nextCmd(CallInfo callInfo, DeviceInfo deviceInfo, String cause) {
+    private void nextCmd(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, String cause) {
         /**
          * 呼入转到坐席，坐席拒接和坐席sip呼不通的时候，都需要再次转回来到技能组排队。
          */
-        if (deviceInfo.getNextCommand() != null && !CollectionUtils.isEmpty(callInfo.getDeviceList())) {
-            NextCommand nextCommand = deviceInfo.getNextCommand();
-            switch (nextCommand.getNextType()) {
-                case NEXT_CALL_BRIDGE:
-                    CauseEnums causeEnums = CauseEnums.valueOf(cause);
-                    if (causeEnums != null && causeEnums != CauseEnums.NORMAL_CLEARING) {
-                        //重新进入技能组
-                        String deviceId = nextCommand.getNextValue();
-                        GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
-                        groupHandler.hander(callInfo, groupInfo, deviceId);
-                    }
-                    break;
-                case NEXT_TRANSFER_SUCCESS:
-                    logger.info("callId:{}, deviceId:{} NEXT_TRANSFER_SUCCESS", callInfo.getCallId(), deviceInfo.getDeviceId());
-                    String[] values = nextCommand.getNextValue().split(":");
-                    if (values == null || values.length != 2) {
-                        return;
-                    }
-                    callBridge(callInfo.getMedia(), values[0], values[1]);
-                    break;
-
-                case NEXT_TRANSFER_BRIDGE:
-                    logger.info("callId:{}, deviceId:{} NEXT_TRANSFER_BRIDGE", callInfo.getCallId(), deviceInfo.getDeviceId());
-                    break;
-
-                default:
-                    break;
-            }
-            return;
+        switch (nextCommand.getNextType()) {
+            case NEXT_CALL_BRIDGE:
+                //桥接
+                CauseEnums causeEnums = CauseEnums.valueOf(cause);
+                if (causeEnums != null && causeEnums != CauseEnums.NORMAL_CLEARING) {
+                    //重新进入技能组
+                    String deviceId = nextCommand.getNextValue();
+                    GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
+                    groupHandler.hander(callInfo, groupInfo, deviceId);
+                }
+                break;
+            case NEXT_TRANSFER_SUCCESS:
+                //完成转接
+                logger.info("callId:{}, deviceId:{} NEXT_TRANSFER_SUCCESS", callInfo.getCallId(), deviceInfo.getDeviceId());
+                String[] values = nextCommand.getNextValue().split(":");
+                if (values == null || values.length != 2) {
+                    return;
+                }
+                callBridge(callInfo.getMedia(), values[0], values[1]);
+                break;
+            case NEXT_TRANSFER_BRIDGE:
+                //转接后桥接
+                logger.info("callId:{}, deviceId:{} NEXT_TRANSFER_BRIDGE", callInfo.getCallId(), deviceInfo.getDeviceId());
+                break;
+            default:
+                break;
         }
+        callInfo.getNextCommands().remove(nextCommand);
+        cacheService.addCallInfo(callInfo);
+        return;
     }
 }

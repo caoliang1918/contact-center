@@ -19,4 +19,18 @@ public interface AgentGroupMapper extends BaseMapper<AgentGroup> {
      */
     List<Long> selectByGroup(Long groupId);
 
+
+    /**
+     * 删除技能组与坐席关系
+     *
+     * @param groupId
+     */
+    void deleteByGroup(Long groupId);
+
+    /**
+     * 删除坐席与技能组关系
+     *
+     * @param agentId
+     */
+    void deleteByAgent(Long agentId);
 }

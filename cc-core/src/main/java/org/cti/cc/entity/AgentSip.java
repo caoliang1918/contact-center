@@ -32,7 +32,7 @@ public class AgentSip implements Serializable {
     /**
      * 
      */
-    private String sip;
+    private Integer sip;
 
     /**
      * 
@@ -83,12 +83,12 @@ public class AgentSip implements Serializable {
         this.companyId = companyId;
     }
 
-    public String getSip() {
+    public Integer getSip() {
         return sip;
     }
 
-    public void setSip(String sip) {
-        this.sip = sip == null ? null : sip.trim();
+    public void setSip(Integer sip) {
+        this.sip = sip;
     }
 
     public Long getAgentId() {

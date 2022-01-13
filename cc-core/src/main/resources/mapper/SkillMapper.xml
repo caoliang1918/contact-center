@@ -122,7 +122,7 @@
     from
         cc_skill
     where
-        id = #{id,jdbcType=BIGINT} and company_id = #{companyId,jdbcType=BIGINT} and status = 1
+        company_id = #{companyId,jdbcType=BIGINT} and id = #{id,jdbcType=BIGINT} and status = 1
   </select>
 
   <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
@@ -133,6 +133,8 @@
       <where>
         <if test="id!=null"> id = #{id}</if>
         <if test="companyId!=null">and company_id = #{companyId}</if>
+        <if test="name!=null">and name = #{name}</if>
+        <if test="true">and status = 1</if>
       </where>
   </select>
 </mapper>

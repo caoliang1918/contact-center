@@ -43,5 +43,10 @@ public interface AgentService extends BaseService<Agent> {
 
     void saveAgentLog(AgentInfo agentInfo);
 
+    /**
+     *
+     * @return
+     */
+    String getTokenKey();
 
 }

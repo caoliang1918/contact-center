@@ -25,6 +25,12 @@ public abstract class BaseAction extends Action {
     @Autowired
     protected CacheService cacheService;
 
+    /**
+     * 执行action
+     *
+     * @param scInstance
+     * @param callInfo
+     */
     public abstract void execute(SCInstance scInstance, CallInfo callInfo);
 
     @Override

@@ -11,12 +11,5 @@ import java.util.List;
 public interface SkillMapper extends BaseMapper<Skill> {
 
 
-    /**
-     * 查询技能
-     *
-     * @param companyId
-     * @param id
-     * @return
-     */
-    Skill selectById(@Param("id") Long id, @Param("companyId") Long companyId);
+
 }

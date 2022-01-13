@@ -10,24 +10,21 @@ public interface CallDeviceMapper extends BaseMapper<CallDevice> {
      * @param callId
      * @return
      */
-    CallDevice selectByCallId(Long callId);
+    CallDevice selectByCallId(Long callId , String month);
 
 
     /**
      * 迁移表
      *
-     * @param start
-     * @param end
      * @param month
      */
-    void createNewTable(@Param("start") Long start, @Param("end") Long end, @Param("month") String month);
+    void createNewTable( @Param("month") String month);
 
 
     /**
      * 删除数据
      *
-     * @param start
      * @param end
      */
-    void clearTable(@Param("start") Long start, @Param("end") Long end);
+    int clearTable( @Param("end") Long end);
 }
