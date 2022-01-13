@@ -121,6 +121,7 @@
 
         function echo(message) {
             if (socket != null) {
+
                 log('Sent: ' + message);
                 socket.send(message);
             } else {

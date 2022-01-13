@@ -3,18 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.zhongweixian</groupId>
     <artifactId>cc-core</artifactId>
-    <version>1.0.0</version>
-    <name>cc-core</name>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.zhongweixian</groupId>
         <artifactId>contact-center</artifactId>
         <version>1.0.0</version>
-        <relativePath/>
+        <relativePath>../pom.xml</relativePath>
     </parent>
+
+    <description>project for cc-core</description>
 
     <dependencies>
         <dependency>

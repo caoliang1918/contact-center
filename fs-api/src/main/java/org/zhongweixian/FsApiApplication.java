@@ -89,10 +89,10 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     @Override
     public void run(String... args) throws Exception {
         cacheService.initCompany();
-        webSocketManager.start();
+        /*webSocketManager.start();
         tcpServer.start();
         fsListen.start();
-        groupHandler.start();
+        groupHandler.start();*/
     }
 
 

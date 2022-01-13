@@ -52,7 +52,7 @@
         <commons-io.version>2.11.0</commons-io.version>
         <commons-codec.version>1.15</commons-codec.version>
         <kafka.version>2.7.8</kafka.version>
-        <ojdbc.version>19.11.0.0</ojdbc.version>
+        <ojdbc.version>12.1.0.1-atlassian-hosted</ojdbc.version>
         <logstash-encoder.version>7.0.1</logstash-encoder.version>
 
         <docker.repostory>192.168.180.37:5000</docker.repostory>
@@ -142,8 +142,8 @@
                 <version>${minio.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.oracle.database.jdbc</groupId>
-                <artifactId>ojdbc10</artifactId>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc6</artifactId>
                 <version>${ojdbc.version}</version>
             </dependency>
             <dependency>
