@@ -21,13 +21,14 @@ public class VdnHandler extends BaseHandler {
         String deviceId = deviceInfo.getDeviceId();
         VdnCodePo vdnCodePo = cacheService.getCompany(callInfo.getCompanyId()).getVdnCodeMap().get(vdnId);
         if (vdnCodePo == null || vdnCodePo.getStatus() == 0) {
-            hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+            hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
             return;
         }
         //查询有效日程
         VdnSchedulePo vdnSchedulePo = vdnCodePo.getEffectiveSchedule();
         if (vdnSchedulePo == null) {
-            hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+            logger.warn("callId:{} not match schedule, vdn:{}", callInfo.getCallId(), vdnCodePo.getName());
+            hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
             return;
         }
         //电话经过vdn
@@ -49,7 +50,7 @@ public class VdnHandler extends BaseHandler {
                 GroupInfo groupInfo = cacheService.getGroupInfo(Long.parseLong(vdnSchedulePo.getRouteValue()));
                 if (groupInfo == null) {
                     logger.warn("callId:{} join group is null", callInfo.getCallId());
-                    hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+                    hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
                     return;
                 }
                 logger.debug("callId:{} join groupId:{}, groupName:{}", callInfo.getCallId(), vdnSchedulePo.getRouteValue(), groupInfo.getName());
@@ -64,7 +65,7 @@ public class VdnHandler extends BaseHandler {
                 Playback playback = cacheService.getPlayback(Long.parseLong(vdnSchedulePo.getRouteValue()));
                 if (playback == null) {
                     logger.warn("playback is null, callId:{} , device:{}", callInfo.getCallId(), deviceId);
-                    hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+                    hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
                     return;
                 }
                 //放音类型(1:按键导航,2:技能组,3:ivr,4:路由字码,5:挂机)
@@ -87,7 +88,7 @@ public class VdnHandler extends BaseHandler {
                         default:
                             break;
                     }
-                    playback(callInfo.getMedia(), deviceId, playback.getPlayback());
+                    playback(callInfo.getMediaHost(), deviceId, playback.getPlayback());
                     doNextCommand(callInfo, deviceInfo, nextCommand);
                     return;
                 }
@@ -95,7 +96,7 @@ public class VdnHandler extends BaseHandler {
                 /**
                  * 播放按键导航音
                  */
-                receiveDtmf(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+                receiveDtmf(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
                 break;
 
             case 3:
@@ -111,7 +112,7 @@ public class VdnHandler extends BaseHandler {
                  */
                 AgentInfo agentInfo = cacheService.getAgentInfo(vdnSchedulePo.getRouteValue());
                 if (agentInfo == null || agentInfo.getAgentState() != AgentState.READY) {
-                    hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+                    hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
                     return;
                 }
                 transferAgentHandler.hanlder(callInfo, agentInfo, deviceId);

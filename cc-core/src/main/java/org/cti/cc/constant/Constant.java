@@ -15,10 +15,17 @@ public class Constant {
     public static final String POINT = ".";
     public static final String SK = "/";
     public static final String LINE = "-";
+    public static final String JSON = ".json";
+    public static final String XML = ".xml";
+
 
 
     public static final String HTTP = "http://";
     public static final String HTTPS = "https://";
+
+    public static final String RRCORD_BUCKET = "cc-record";
+    public static final String VOICE_BUCKET = "cc-voice";
+    public static final String IVR_BUCKET = "cc-ivr";
 
     /**
      * vip等级进线

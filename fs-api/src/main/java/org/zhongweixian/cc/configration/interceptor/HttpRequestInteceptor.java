@@ -1,24 +1,22 @@
 package org.zhongweixian.cc.configration.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.crypto.AesEncryptUtils;
-import org.cti.cc.entity.AdminAccount;
+import org.cti.cc.entity.AdminUser;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.zhongweixian.cc.cache.CacheService;
-import org.zhongweixian.cc.service.AgentService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,19 +49,20 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
         String adminToken = request.getHeader("adminToken");
         String token = request.getHeader("token");
 
+        if (path.startsWith("/cti/admin")) {
+            if (StringUtils.isBlank(adminToken)) {
+                set403(response);
+                return false;
+            }
+        }
+
         if (checkAdminToken(adminToken)) {
             return true;
         }
         if (checkToken(token)) {
             return true;
         }
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setHeader("Content-Type", "application/json;charset=UTF-8");
-        logger.warn("response for 401 status");
-        PrintWriter writer = response.getWriter();
-        writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_NOT_LOGIN)));
-        writer.flush();
-        writer.close();
+        set403(response);
         return result;
     }
 
@@ -106,13 +105,22 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
         if (StringUtils.isBlank(adminToken)) {
             return false;
         }
-        AdminAccount adminAccount = new AdminAccount();
-        adminAccount.setCompanyId(1L);
-        adminAccount.setCode("test");
-        PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(adminAccount, adminAccount.getPasswd(), null);
+        AdminUser adminUser = new AdminUser();
+        adminUser.setCompanyId(1L);
+        adminUser.setCode("test");
+        PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(adminUser, adminUser.getPasswd(), null);
         authenticationToken.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         return true;
     }
 
+    private void set403(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        logger.warn("response for 401 status");
+        PrintWriter writer = response.getWriter();
+        writer.write(JSON.toJSONString(new CommonResponse(ErrorCode.ACCOUNT_NOT_LOGIN)));
+        writer.flush();
+        writer.close();
+    }
 }

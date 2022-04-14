@@ -60,6 +60,16 @@ public class AdminMenu implements Serializable {
     private Integer menuOrder;
 
     /**
+     * 图标
+     */
+    private String icon;
+
+    /**
+     * 子节点数
+     */
+    private Integer childNum;
+
+    /**
      * 创建时添加权限(1:是,0:否)
      */
     private Integer createDefault;
@@ -164,6 +174,22 @@ public class AdminMenu implements Serializable {
 
     public void setMenuOrder(Integer menuOrder) {
         this.menuOrder = menuOrder;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public Integer getChildNum() {
+        return childNum;
+    }
+
+    public void setChildNum(Integer childNum) {
+        this.childNum = childNum;
     }
 
     public Integer getCreateDefault() {

@@ -9,23 +9,16 @@ import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
  */
 public class WsBreakEvent extends WsBaseEvent {
 
-    private Long callId;
+    /**
+     * 被监听坐席
+     */
+    private String monitorAgent;
 
-    private String agent;
-
-    public Long getCallId() {
-        return callId;
+    public String getMonitorAgent() {
+        return monitorAgent;
     }
 
-    public void setCallId(Long callId) {
-        this.callId = callId;
-    }
-
-    public String getAgent() {
-        return agent;
-    }
-
-    public void setAgent(String agent) {
-        this.agent = agent;
+    public void setMonitorAgent(String monitorAgent) {
+        this.monitorAgent = monitorAgent;
     }
 }

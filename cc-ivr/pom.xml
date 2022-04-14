@@ -16,7 +16,7 @@
     <description>project for cc-ivr</description>
 
     <properties>
-        <commons-scxml.version>2.0-SNAPSHOT</commons-scxml.version>
+        <commons-scxml2.version>2.0-SNAPSHOT</commons-scxml2.version>
         <commons-jexl2.version>2.1.1</commons-jexl2.version>
         <commons-jexl3.version>3.1</commons-jexl3.version>
     </properties>
@@ -54,6 +54,18 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
@@ -66,6 +78,10 @@
             <artifactId>ojdbc8</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.zhongweixian</groupId>
             <artifactId>cc-core</artifactId>
         </dependency>
@@ -74,14 +90,9 @@
             <artifactId>websocket-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-jexl</groupId>
-            <artifactId>commons-jexl</artifactId>
-            <version>1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-scxml</groupId>
-            <artifactId>commons-scxml</artifactId>
-            <version>0.9</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-scxml2</artifactId>
+            <version>${commons-scxml2.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
@@ -90,7 +101,6 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

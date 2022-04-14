@@ -51,6 +51,7 @@ public enum ErrorCode {
     CALL_ROUTE_ERROR(3002, "路由错误"),
     CALLER_DISPLAY_ERROR(3003, "主叫显号错误"),
     CALLED_DISPLAY_ERROR(3004, "被叫显号错误"),
+    CONSULT_ERROR(3004, "被叫显号错误"),
     CALL_RUNTIME_ERROR(3500, "呼叫中异常");
 
 

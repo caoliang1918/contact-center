@@ -6,4 +6,5 @@ package org.zhongweixian.ivr.util;
 public class IvrConstant {
 
     public static final String INITION = "init";
+    public static final String PLAY = "play";
 }

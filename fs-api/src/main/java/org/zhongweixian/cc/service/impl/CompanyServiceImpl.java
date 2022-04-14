@@ -36,7 +36,7 @@ public class CompanyServiceImpl extends BaseServiceImpl<Company> implements Comp
     private VdnCodeMapper vdnCodeMapper;
 
     @Autowired
-    private VdnScheduleMapper vdnScheduleMapper;
+    private VdnConfigMapper vdnScheduleMapper;
 
     @Override
     public Map<Long, CompanyInfo> initAll() {

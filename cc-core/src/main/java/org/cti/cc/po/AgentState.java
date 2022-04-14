@@ -62,11 +62,6 @@ public enum AgentState {
     OUT_CALLED_RING,
 
     /**
-     * 转接振铃
-     */
-    TRANSFER_CALL_RING,
-
-    /**
      * 内呼
      */
     INNER_CALL,
@@ -77,14 +72,44 @@ public enum AgentState {
     IN_CALL_RING,
 
     /**
+     * 咨询
+     */
+    CONSULT,
+
+    /**
+     * 咨询振铃
+     */
+    CONSULT_CALL_RING,
+
+    /**
+     * 被咨询通话
+     */
+    CONSULTED_TALKING,
+
+    /**
+     * 咨询通话
+     */
+    CONSULT_TALKING,
+
+    /**
+     * 会议中
+     */
+    CONFERENCE_TALKING,
+
+    /**
+     * 转接
+     */
+    TRANSFER,
+
+    /**
+     * 转接振铃
+     */
+    TRANSFER_CALL_RING,
+
+    /**
      * 转接来电
      */
     TRANSFER_CALL,
-
-    /**
-     * 咨询来电
-     */
-    CONSULT_CALL,
 
     /**
      * 通话中
@@ -97,9 +122,25 @@ public enum AgentState {
     AUDIO_READY_MUTE,
 
     /**
+     * 班长监控中
+     */
+    MONITOR,
+
+    /**
      * 强插中
      */
     INSERT,
+
+    /**
+     * 监听中
+     */
+    LISTEN,
+
+    /**
+     * 耳语
+     */
+    WHISPER,
+
 
     /**
      * 保持中

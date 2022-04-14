@@ -23,6 +23,11 @@ public class CallInfo implements Serializable {
     private Long callId;
 
     /**
+     * 会议号
+     */
+    private String conference;
+
+    /**
      * 企业id
      */
     private Long companyId;
@@ -58,6 +63,11 @@ public class CallInfo implements Serializable {
     private String called;
 
     /**
+     * 号码归属地
+     */
+    private String numberLocation;
+
+    /**
      * 坐席
      */
     private String agentKey;
@@ -85,12 +95,17 @@ public class CallInfo implements Serializable {
     /**
      * 媒体
      */
-    private String media;
+    private String mediaHost;
 
     /**
      * 服务地址
      */
-    private String host;
+    private String ctiHost;
+
+    /**
+     *
+     */
+    private String clientHost;
 
     /**
      * 录音地址
@@ -136,6 +151,11 @@ public class CallInfo implements Serializable {
      * 1主叫挂机, 2:被叫挂机, 3:平台挂机
      */
     private Integer hangupDir;
+
+    /**
+     * sdk挂机
+     */
+    private int sdkHangup;
 
     /**
      * 挂机原因
@@ -245,6 +265,14 @@ public class CallInfo implements Serializable {
         this.callId = callId;
     }
 
+    public String getConference() {
+        return conference;
+    }
+
+    public void setConference(String conference) {
+        this.conference = conference;
+    }
+
     public Long getCompanyId() {
         return companyId;
     }
@@ -301,6 +329,14 @@ public class CallInfo implements Serializable {
         this.called = called;
     }
 
+    public String getNumberLocation() {
+        return numberLocation;
+    }
+
+    public void setNumberLocation(String numberLocation) {
+        this.numberLocation = numberLocation;
+    }
+
     public String getAgentKey() {
         return agentKey;
     }
@@ -341,20 +377,28 @@ public class CallInfo implements Serializable {
         this.taskId = taskId;
     }
 
-    public String getMedia() {
-        return media;
+    public String getMediaHost() {
+        return mediaHost;
     }
 
-    public void setMedia(String media) {
-        this.media = media;
+    public void setMediaHost(String mediaHost) {
+        this.mediaHost = mediaHost;
     }
 
-    public String getHost() {
-        return host;
+    public String getCtiHost() {
+        return ctiHost;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setCtiHost(String ctiHost) {
+        this.ctiHost = ctiHost;
+    }
+
+    public String getClientHost() {
+        return clientHost;
+    }
+
+    public void setClientHost(String clientHost) {
+        this.clientHost = clientHost;
     }
 
     public String getRecord() {
@@ -427,6 +471,14 @@ public class CallInfo implements Serializable {
 
     public void setHangupDir(Integer hangupDir) {
         this.hangupDir = hangupDir;
+    }
+
+    public int getSdkHangup() {
+        return sdkHangup;
+    }
+
+    public void setSdkHangup(int sdkHangup) {
+        this.sdkHangup = sdkHangup;
     }
 
     public Long getAnswerTime() {
@@ -584,17 +636,20 @@ public class CallInfo implements Serializable {
         private String caller;
         private String calledDisplay;
         private String called;
+        private String numberLocation;
         private String agentKey;
         private String agentName;
         private Integer loginType;
         private Long ivrId;
-        private String media;
-        private String host;
+        private String mediaHost;
+        private String ctiHost;
+        private String clientHost;
         private String record;
         private Long callTime;
         private CallType callType;
         private Direction direction;
         private Integer hangupDir;
+        private int sdkHangup;
         private Long answerTime;
         private int answerCount;
         private Long endTime;
@@ -663,6 +718,11 @@ public class CallInfo implements Serializable {
             return this;
         }
 
+        public CallInfoBuilder withNumberLocation(String numberLocation) {
+            this.numberLocation = numberLocation;
+            return this;
+        }
+
         public CallInfoBuilder withAgentName(String agentName) {
             this.agentName = agentName;
             return this;
@@ -678,13 +738,18 @@ public class CallInfo implements Serializable {
             return this;
         }
 
-        public CallInfoBuilder withMedia(String media) {
-            this.media = media;
+        public CallInfoBuilder withMediaHost(String mediaHost) {
+            this.mediaHost = mediaHost;
             return this;
         }
 
-        public CallInfoBuilder withHost(String host) {
-            this.host = host;
+        public CallInfoBuilder withCtiHost(String ctiHost) {
+            this.ctiHost = ctiHost;
+            return this;
+        }
+
+        public CallInfoBuilder withClientHost() {
+            this.clientHost = clientHost;
             return this;
         }
 
@@ -715,6 +780,11 @@ public class CallInfo implements Serializable {
 
         public CallInfoBuilder withHangupDir(Integer hangupDir) {
             this.hangupDir = hangupDir;
+            return this;
+        }
+
+        public CallInfoBuilder withSdkHangup(int sdkHangup) {
+            this.sdkHangup = sdkHangup;
             return this;
         }
 
@@ -763,13 +833,15 @@ public class CallInfo implements Serializable {
             CallInfo callInfo = new CallInfo();
             callInfo.followData = this.followData;
             callInfo.hangupDir = this.hangupDir;
+            callInfo.sdkHangup = this.sdkHangup;
             callInfo.groupId = this.groupId;
             callInfo.hiddenCustomer = this.hiddenCustomer;
             callInfo.callTime = this.callTime;
             callInfo.callType = this.callType;
             callInfo.coreUuid = this.coreUuid;
-            callInfo.media = this.media;
-            callInfo.host = this.host;
+            callInfo.mediaHost = this.mediaHost;
+            callInfo.ctiHost = this.ctiHost;
+            callInfo.clientHost = this.clientHost;
             callInfo.answerTime = this.answerTime;
             callInfo.record = this.record;
             callInfo.calledDisplay = this.calledDisplay;
@@ -780,7 +852,9 @@ public class CallInfo implements Serializable {
             callInfo.callerDisplay = this.callerDisplay;
             callInfo.deviceList = this.deviceList;
             callInfo.called = this.called;
+            callInfo.numberLocation = this.numberLocation;
             callInfo.agentKey = this.agentKey;
+            callInfo.agentName = this.agentName;
             callInfo.loginType = this.loginType;
             callInfo.companyId = this.companyId;
             callInfo.caller = this.caller;
@@ -807,11 +881,13 @@ public class CallInfo implements Serializable {
                 ", calledDisplay='" + calledDisplay + '\'' +
                 ", called='" + called + '\'' +
                 ", agentKey='" + agentKey + '\'' +
+                ", numberLocation='" + numberLocation + '\'' +
                 ", loginType=" + loginType +
                 ", ivrId=" + ivrId +
                 ", taskId=" + taskId +
-                ", media='" + media + '\'' +
-                ", host='" + host + '\'' +
+                ", mediaHost='" + mediaHost + '\'' +
+                ", ctiHost='" + ctiHost + '\'' +
+                ", clientHost='" + clientHost + '\'' +
                 ", record='" + record + '\'' +
                 ", callTime=" + callTime +
                 ", callType=" + callType +

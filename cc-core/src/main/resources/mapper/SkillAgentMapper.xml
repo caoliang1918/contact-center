@@ -1,74 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cti.cc.mapper.SkillAgentMapper">
-  <resultMap id="BaseResultMap" type="org.cti.cc.entity.SkillAgent">
-    <result column="id" jdbcType="BIGINT" property="id" />
-    <result column="cts" jdbcType="BIGINT" property="cts" />
-    <result column="uts" jdbcType="BIGINT" property="uts" />
-    <result column="company_id" jdbcType="BIGINT" property="companyId" />
-    <result column="skill_id" jdbcType="BIGINT" property="skillId" />
-    <result column="agent_id" jdbcType="BIGINT" property="agentId" />
-    <result column="rank_value" jdbcType="INTEGER" property="rankValue" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="org.cti.cc.entity.SkillAgent">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="cts" jdbcType="BIGINT" property="cts"/>
+        <result column="uts" jdbcType="BIGINT" property="uts"/>
+        <result column="company_id" jdbcType="BIGINT" property="companyId"/>
+        <result column="skill_id" jdbcType="BIGINT" property="skillId"/>
+        <result column="agent_id" jdbcType="BIGINT" property="agentId"/>
+        <result column="rank_value" jdbcType="INTEGER" property="rankValue"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="agent_key" jdbcType="VARCHAR" property="agentKey"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    id, cts, uts, company_id, skill_id, agent_id, rank_value, status
-  </sql>
+    <sql id="Base_Column_List">
+        id
+        , cts, uts, company_id, skill_id, agent_id, rank_value, status
+    </sql>
 
-  <insert id="insert" parameterType="org.cti.cc.entity.SkillAgent">
-    insert into cc_skill_agent (id, cts, uts, company_id, skill_id, agent_id, rank_value, status)
-    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
-      #{skillId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{rankValue,jdbcType=INTEGER},
-      #{status,jdbcType=INTEGER})
-  </insert>
+    <insert id="insert" parameterType="org.cti.cc.entity.SkillAgent">
+        insert into cc_skill_agent (id, cts, uts, company_id, skill_id, agent_id, rank_value, status)
+        values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
+                #{skillId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{rankValue,jdbcType=INTEGER},
+                #{status,jdbcType=INTEGER})
+    </insert>
 
 
-  <insert id="batchInsert" parameterType="List"  useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
-    insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank_value, status) values
-    <foreach collection ="list" item="item" separator =",">
-      (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT},#{item.skillId,jdbcType=BIGINT}, #{item.agentId} , #{item.rankValue,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
-    </foreach>
-  </insert>
+    <insert id="batchInsert" parameterType="List" >
+        insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank_value, status) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT},#{item.skillId,jdbcType=BIGINT},
+            #{item.agentId} , #{item.rankValue,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
+        </foreach>
+    </insert>
 
-  <insert id="batchInsert" parameterType="List"   databaseId="oracle">
-    BEGIN
-    insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank_value, status) values
-    <foreach collection ="list" item="item" separator =",">
-      (#{item.cts,jdbcType=BIGINT}, #{item.companyId,jdbcType=BIGINT},#{item.skillId,jdbcType=BIGINT},#{item.agentId} , #{item.rankValue,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
-    </foreach>
-    COMMIT;
-    END;
-  </insert>
+    <insert id="batchInsert" parameterType="List" databaseId="oracle">
+        BEGIN
+        insert into cc_skill_agent (cts, company_id, skill_id, agent_id, rank_value, status) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.cts,jdbcType=BIGINT},
+            #{item.companyId,jdbcType=BIGINT},#{item.skillId,jdbcType=BIGINT},#{item.agentId} ,
+            #{item.rankValue,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER})
+        </foreach>
+        COMMIT;
+        END;
+    </insert>
 
-  <update id="updateSkillAgent" parameterType="org.cti.cc.entity.SkillAgent">
-    update cc_skill_agent set uts = #{uts,jdbcType=BIGINT}, rank_value = #{rankValue,jdbcType=INTEGER}
-     where  skill_id = #{skillId,jdbcType=BIGINT} and  agent_id = #{agentId,jdbcType=BIGINT}
-   </update>
+    <update id="updateSkillAgent" parameterType="org.cti.cc.entity.SkillAgent">
+        update cc_skill_agent
+        set uts        = #{uts,jdbcType=BIGINT},
+            rank_value = #{rankValue,jdbcType=INTEGER}
+        where skill_id = #{skillId,jdbcType=BIGINT}
+          and agent_id = #{agentId,jdbcType=BIGINT}
+    </update>
 
-  <!-- 删除坐席技能 -->
-  <delete id="deleteSkillAgent" parameterType="org.cti.cc.vo.SkillAgentsVo" >
-     delete from cc_skill_agent where company_id = #{companyId} and skill_id = #{skillId} and agent_id in <foreach
-          collection="agentIds" separator="," open="(" close=")" item="id"> #{id} </foreach>
-  </delete>
+    <!-- 删除坐席技能 -->
+    <delete id="deleteSkillAgent" parameterType="org.cti.cc.vo.SkillAgentsVo">
+        delete from cc_skill_agent where company_id = #{companyId} and skill_id = #{skillId} and agent_id in
+        <foreach
+                collection="agentIds" separator="," open="(" close=")" item="id">#{id}
+        </foreach>
+    </delete>
 
-  <select id="selectBySkill" parameterType="Long" resultMap="BaseResultMap">
-    select
-      b.id, b.cts, b.uts, b.company_id, b.skill_id, b.agent_id, b.rank_value, b.status, c.agent_key
-    from
-      cc_skill a, cc_skill_agent b, cc_agent c
-    where
-      a.company_id = b.company_id and a.id = b.skill_id and a.company_id = #{companyId} and a.id = #{id} and b.agent_id = c.id and c.status = 1 and a.status = 1
-  </select>
+    <select id="selectBySkill" parameterType="Long" resultMap="BaseResultMap">
+        select b.id,
+               b.cts,
+               b.uts,
+               b.company_id,
+               b.skill_id,
+               b.agent_id,
+               b.rank_value,
+               b.status,
+               c.agent_key
+        from cc_skill a,
+             cc_skill_agent b,
+             cc_agent c
+        where a.company_id = b.company_id
+          and a.id = b.skill_id
+          and a.company_id = #{companyId}
+          and a.id = #{id}
+          and b.agent_id = c.id
+          and c.status = 1
+          and a.status = 1
+    </select>
 
-  <select id="selectByAgent"  resultMap="BaseResultMap">
-    select
-      b.id, b.cts, b.uts, b.company_id, b.skill_id, b.agent_id, b.rank_value, b.status, c.agent_key
-    from
-      cc_skill a, cc_skill_agent b, cc_agent c
-    where
-      a.company_id = b.company_id and a.id = b.skill_id and a.company_id = #{companyId} and c.id = #{id}  and b.agent_id = c.id and c.status = 1 and a.status = 1
-  </select>
+    <select id="selectByAgent" resultMap="BaseResultMap">
+        select b.id,
+               b.cts,
+               b.uts,
+               b.company_id,
+               b.skill_id,
+               b.agent_id,
+               b.rank_value,
+               b.status,
+               c.agent_key
+        from cc_skill a,
+             cc_skill_agent b,
+             cc_agent c
+        where a.company_id = b.company_id
+          and a.id = b.skill_id
+          and a.company_id = #{companyId}
+          and c.id = #{id}
+          and b.agent_id = c.id
+          and c.status = 1
+          and a.status = 1
+    </select>
 
 </mapper>

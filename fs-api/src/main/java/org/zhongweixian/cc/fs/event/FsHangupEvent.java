@@ -26,12 +26,6 @@ public class FsHangupEvent extends FsBaseEvent {
     @JSONField(name = "Hangup-Cause")
     private String hangupCause;
 
-    /**
-     * 接听标识
-     */
-    @JSONField(name = "Answer-State")
-    private String answerState;
-
 
     /**
      * sip信令协议
@@ -39,12 +33,8 @@ public class FsHangupEvent extends FsBaseEvent {
     @JSONField(name = "variable_sip_via_protocol")
     private String sipProtocol;
 
-
-    /**
-     * sip呼叫地址
-     */
-    @JSONField(name = "variable_channel_name")
-    private String channelName;
+    @JSONField(name = "variable_rtp_use_codec_name")
+    private String rtpUseCodec;
 
     /**
      * sip状态
@@ -85,15 +75,6 @@ public class FsHangupEvent extends FsBaseEvent {
         this.hangupCause = hangupCause;
     }
 
-    @Override
-    public String getAnswerState() {
-        return answerState;
-    }
-
-    @Override
-    public void setAnswerState(String answerState) {
-        this.answerState = answerState;
-    }
 
     public String getSipProtocol() {
         return sipProtocol;
@@ -103,14 +84,12 @@ public class FsHangupEvent extends FsBaseEvent {
         this.sipProtocol = sipProtocol;
     }
 
-    @Override
-    public String getChannelName() {
-        return channelName;
+    public String getRtpUseCodec() {
+        return rtpUseCodec;
     }
 
-    @Override
-    public void setChannelName(String channelName) {
-        this.channelName = channelName;
+    public void setRtpUseCodec(String rtpUseCodec) {
+        this.rtpUseCodec = rtpUseCodec;
     }
 
     public String getSipStatus() {
@@ -148,12 +127,15 @@ public class FsHangupEvent extends FsBaseEvent {
     @Override
     public String toString() {
         return "FsHangupEvent{" +
-                "hangupCause='" + hangupCause + '\'' +
-                ", answerState='" + answerState + '\'' +
+                "caller='" + caller + '\'' +
+                ", called='" + called + '\'' +
+                ", hangupCause='" + hangupCause + '\'' +
                 ", sipProtocol='" + sipProtocol + '\'' +
-                ", channelName='" + channelName + '\'' +
+                ", rtpUseCodec='" + rtpUseCodec + '\'' +
                 ", sipStatus='" + sipStatus + '\'' +
-                ", caller='" + caller + '\'' +
+                ", localMediaIp='" + localMediaIp + '\'' +
+                ", fromUri='" + fromUri + '\'' +
+                ", toUri='" + toUri + '\'' +
                 ", eventName='" + eventName + '\'' +
                 ", coreUuid='" + coreUuid + '\'' +
                 ", deviceId='" + deviceId + '\'' +

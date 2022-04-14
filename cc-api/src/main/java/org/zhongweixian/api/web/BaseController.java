@@ -3,7 +3,7 @@ package org.zhongweixian.api.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.entity.AdminAccount;
+import org.cti.cc.entity.AdminUser;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AdminAccountInfo;
 import org.slf4j.Logger;
@@ -42,18 +42,21 @@ public class BaseController {
     @Autowired
     protected CallLogService callLogService;
 
+    @Autowired
+    protected AdminService adminService;
+
 
     @Autowired
     protected SkillService skillService;
 
     @ModelAttribute("adminAccountInfo")
-    public AdminAccount adminAccountInfo() {
+    public AdminUser adminAccountInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             throw new BusinessException(ErrorCode.ACCOUNT_AUTH_ERROR);
         }
         logger.info("authentication:{}", authentication);
-        return (AdminAccount) authentication.getPrincipal();
+        return (AdminUser) authentication.getPrincipal();
     }
 
 
@@ -81,7 +84,7 @@ public class BaseController {
             params.put("companyId", adminAccountInfo.getBindCompanyId());
         }
         if (pageInfo != null) {
-            params.put("pageNum", pageInfo.getPageNum());
+            params.put("pageNum", pageInfo.getPageNum() == 0 ? 1 : pageInfo.getPageNum());
             params.put("pageSize", pageInfo.getPageSize() == 0 ? 20 : pageInfo.getPageSize());
         }
         return params;

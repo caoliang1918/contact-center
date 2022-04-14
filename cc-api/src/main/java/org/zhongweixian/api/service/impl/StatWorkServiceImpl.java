@@ -54,11 +54,6 @@ public class StatWorkServiceImpl extends BaseServiceImpl<StatHourAgentWork> impl
     }
 
     @Override
-    public int deleteAgentStateWork(Long time) {
-        return agentStateLogMapper.deleteAgentStateWork(time);
-    }
-
-    @Override
     public void deleteAgentHourStat(Long statTime) {
         stateHourAgentWorkMapper.deleteAgentHourStat(statTime);
     }

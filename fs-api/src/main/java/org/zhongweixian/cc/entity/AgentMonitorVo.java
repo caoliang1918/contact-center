@@ -2,6 +2,8 @@ package org.zhongweixian.cc.entity;
 
 import org.cti.cc.po.AgentState;
 
+import java.util.Set;
+
 /**
  * Created by caoliang on 2020/11/6
  */
@@ -26,6 +28,17 @@ public class AgentMonitorVo {
      * 当前通话id
      */
     private Long callId;
+
+    /**
+     * 坐席主技能组
+     */
+    private Long groupId;
+
+    /**
+     * 坐席所在的技能组
+     */
+    private Set<Long> groupIds;
+
 
     public String getAgentKey() {
         return agentKey;
@@ -57,5 +70,21 @@ public class AgentMonitorVo {
 
     public void setCallId(Long callId) {
         this.callId = callId;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public Set<Long> getGroupIds() {
+        return groupIds;
+    }
+
+    public void setGroupIds(Set<Long> groupIds) {
+        this.groupIds = groupIds;
     }
 }

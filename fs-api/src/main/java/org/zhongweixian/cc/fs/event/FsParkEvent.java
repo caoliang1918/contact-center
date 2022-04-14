@@ -45,8 +45,19 @@ public class FsParkEvent extends FsBaseEvent {
     @JSONField(name = "variable_sip_via_port")
     private String sipPort;
 
+    @JSONField(name = "variable_sip_contact_port")
+    private String sipContactPort;
+
+
+
     @JSONField(name = "variable_sip_contact_uri")
     private String contactUri;
+
+    /**
+     * sip信令协议
+     */
+    @JSONField(name = "variable_sip_via_protocol")
+    private String sipProtocol;
 
 
     public String getCalled() {
@@ -105,19 +116,37 @@ public class FsParkEvent extends FsBaseEvent {
         this.contactUri = contactUri;
     }
 
+    public String getSipProtocol() {
+        return sipProtocol;
+    }
+
+    public void setSipProtocol(String sipProtocol) {
+        this.sipProtocol = sipProtocol;
+    }
+
+    public String getSipContactPort() {
+        return sipContactPort;
+    }
+
+    public void setSipContactPort(String sipContactPort) {
+        this.sipContactPort = sipContactPort;
+    }
+
     @Override
     public String toString() {
         return "FsParkEvent{" +
-                "direction='" + direction + '\'' +
-                ", caller='" + caller + '\'' +
+                "caller='" + caller + '\'' +
                 ", called='" + called + '\'' +
+                ", hangup='" + hangup + '\'' +
                 ", state='" + state + '\'' +
+                ", lastBridgeTo='" + lastBridgeTo + '\'' +
+                ", sipPort='" + sipPort + '\'' +
+                ", sipContactPort='" + sipContactPort + '\'' +
+                ", contactUri='" + contactUri + '\'' +
+                ", sipProtocol='" + sipProtocol + '\'' +
                 ", eventName='" + eventName + '\'' +
-                ", context=" + context +
                 ", coreUuid='" + coreUuid + '\'' +
                 ", deviceId='" + deviceId + '\'' +
-                ", timestamp=" + timestamp +
-                ", channelName='" + channelName + '\'' +
                 '}';
     }
 }

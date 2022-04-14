@@ -1,7 +1,9 @@
 package org.zhongweixian.ivr.cache;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.scxml.model.SCXML;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.scxml2.model.SCXML;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.mapper.PlaybackMapper;
@@ -11,6 +13,7 @@ import org.cti.cc.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.ivr.service.CompanyService;
@@ -40,6 +43,9 @@ public class CacheService {
 
     @Autowired
     private PlaybackMapper playbackMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * callInfo
@@ -77,25 +83,12 @@ public class CacheService {
     private Map<String, VdnPhone> vdnPhoneMap = null;
 
     /**
-     * 获取本地缓存坐席
+     * 缓存CALL_INFO
      *
-     * @param agentkey
-     * @return
+     * @param callInfo
      */
-    public AgentInfo getAgentInfo(String agentkey) {
-        if (StringUtils.isBlank(agentkey)) {
-            return null;
-        }
-        return agentInfoMap.get(agentkey);
-    }
-
-    public void addAgentInfo(AgentInfo agentInfo) {
-        agentInfoMap.put(agentInfo.getAgentKey(), agentInfo);
-    }
-
-
     public void addCallInfo(CallInfo callInfo) {
-        callInfoMap.put(callInfo.getCallId(), callInfo);
+        redisTemplate.opsForValue().set(Constant.CALL_INFO + callInfo.getCallId(), JSONObject.toJSONString(callInfo));
     }
 
     public CallInfo getCallInfo(String deviceId) {
@@ -103,30 +96,43 @@ public class CacheService {
         if (callId == null) {
             return null;
         }
-        return callInfoMap.get(callId);
+        return getCallInfo(callId);
     }
 
+    /**
+     * 获取callInfo
+     *
+     * @param callId
+     * @return
+     */
     public CallInfo getCallInfo(Long callId) {
         if (callId == null) {
             return null;
         }
-        return callInfoMap.get(callId);
+        Object obj = redisTemplate.opsForValue().get(Constant.CALL_INFO + callId);
+        if (obj == null) {
+            return null;
+        }
+        return JSON.parseObject(obj.toString(), CallInfo.class);
     }
 
+
     public void removeCallInfo(Long callId) {
-        CallInfo callInfo = callInfoMap.remove(callId);
+        CallInfo callInfo = getCallInfo(callId);
         if (callInfo != null) {
             logger.info("remove callInfo:{}", callId);
             callInfo.getDeviceInfoMap().forEach((k, v) -> {
                 deviceCall.remove(k);
             });
         }
+        redisTemplate.delete(Constant.CALL_INFO + callId);
     }
 
 
     public void addDevice(String device, Long callId) {
         deviceCall.put(device, callId);
     }
+
 
     public CompanyInfo getCompany(Long companyId) {
         return companyMap.get(companyId);

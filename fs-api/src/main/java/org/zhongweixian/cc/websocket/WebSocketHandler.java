@@ -115,7 +115,10 @@ public class WebSocketHandler implements ConnectionListener {
         if (cha != null && !cha.id().equals(channel.id())) {
             return;
         }
-        agentChannel.remove(channelEntity.getClient());
+        Channel channel1 = agentChannel.remove(channelEntity.getClient());
+        if (channel1 == null) {
+            return;
+        }
         WsLogoutEvent evnet = new WsLogoutEvent();
         evnet.setAgentKey(channelEntity.getClient());
         wsLogoutHandler.handleEvent(evnet);
@@ -150,16 +153,11 @@ public class WebSocketHandler implements ConnectionListener {
 
 
         ExecutorService executorService = executorMap.get(RandomUtil.getNum(event.getAgentKey(), threadNum));
-        executorService.execute(() -> {
+         executorService.execute(() -> {
             try {
                 logger.info("websocket received channel:{} message:{}", channel.id(), text);
                 handler.handleEvent(event);
             } catch (Throwable e) {
-                JSONObject json = new JSONObject();
-                json.put("type", jsonObject.getString("cmd"));
-                json.put("code", 500);
-                json.put("message", "runtime time exception");
-                channel.writeAndFlush(new TextWebSocketFrame(json.toJSONString()));
                 logger.error(e.getMessage(), e);
             }
         });
@@ -172,11 +170,11 @@ public class WebSocketHandler implements ConnectionListener {
 
     @Override
     public void connect(Channel channel) throws Exception {
-        logger.info("channel:{} is connected", channel);
+       /* logger.info("channel:{} is connected", channel);
         ChannelEntity entity = new ChannelEntity();
         entity.setChannel(channel);
         entity.setCts(Instant.now().getEpochSecond());
-        channelIds.put(channel.id(), entity);
+        channelIds.put(channel.id(), entity);*/
     }
 
     @Override
@@ -187,14 +185,14 @@ public class WebSocketHandler implements ConnectionListener {
         }
         String token = (String) map.get("token");
         Object agentKey = cacheService.getAgentKey(token);
-
-
         if (agentKey == null) {
+            logger.error("channel:{} get agentKey is null", channel);
             channel.close();
             return;
         }
         AgentInfo agentInfo = cacheService.getAgentInfo(String.valueOf(agentKey));
         if (agentInfo == null) {
+            logger.error("channel:{} get agentInfo is null", channel);
             channel.close();
             return;
         }
@@ -250,7 +248,7 @@ public class WebSocketHandler implements ConnectionListener {
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-        }, 10, 2, TimeUnit.SECONDS);
+        }, 10, 5, TimeUnit.SECONDS);
     }
 
     /**
@@ -322,10 +320,10 @@ public class WebSocketHandler implements ConnectionListener {
             channel.writeAndFlush(new TextWebSocketFrame(payload));
             return;
         }
-        if (!StringUtils.isBlank(agentInfo.getRemoteAddress()) && agentInfo.getRemoteAddress().startsWith(Constant.HTTP)) {
+        if (!StringUtils.isBlank(agentInfo.getWebHook())) {
             logger.info("send agent:{} http message:{}", agentInfo.getAgentKey(), payload);
             try {
-                String response = restTemplate.postForEntity(agentInfo.getRemoteAddress(), payload, String.class).getBody();
+                String response = restTemplate.postForEntity(agentInfo.getWebHook(), payload, String.class).getBody();
                 logger.info("send agent:{} http message success, response:{}", agentInfo.getAgentKey(), response);
             } catch (Exception e) {
                 logger.error("send agent:{} http message", agentInfo.getAgentKey());

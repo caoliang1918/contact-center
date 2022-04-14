@@ -7,13 +7,13 @@ import io.netty.channel.Channel;
  */
 public class WsBaseEvent {
 
-    private String agentKey;
+    protected String agentKey;
 
-    private String cmd;
+    protected String cmd;
 
-    private Long time;
+    protected Long time;
 
-    private Channel channel;
+    protected Channel channel;
 
     public String getAgentKey() {
         return agentKey;

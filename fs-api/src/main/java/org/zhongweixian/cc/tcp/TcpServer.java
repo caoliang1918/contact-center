@@ -18,12 +18,11 @@ import java.util.concurrent.*;
 public class TcpServer {
     private Logger logger = LoggerFactory.getLogger(TcpServer.class);
 
-    @Value("${tcp.server.port:7250}")
+    @Value("${tcp.server.port:7260}")
     private Integer port;
 
 
-    private ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 0L,
-            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryBuilder().setNameFormat("tcp-client-pool-%d").build());
+    private ThreadPoolExecutor executor = null;
 
 
     @Autowired
@@ -33,6 +32,7 @@ public class TcpServer {
     private NettyServer nettyServer = null;
 
     public void start() {
+        executor = new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryBuilder().setNameFormat("tcp-client-pool-%d").build());
         nettyServer = new NettyServer(port, tcpServerHandler);
         nettyServer.start();
         tcpServerHandler.check();

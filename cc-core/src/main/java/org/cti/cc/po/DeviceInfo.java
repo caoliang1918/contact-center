@@ -11,6 +11,11 @@ public class DeviceInfo {
     private Long callId;
 
     /**
+     * 会议模式
+     */
+    private String conference;
+
+    /**
      * 设备id
      */
     private String deviceId;
@@ -31,7 +36,7 @@ public class DeviceInfo {
     private Integer deviceType;
 
     /**
-     * 1:呼入,2:外呼,3:内呼,4:转接,5:咨询,6:监听,7:强插
+     * 1:呼入,2:外呼,3:内呼,4:转接,5:咨询,6:监听,7:强插,8:耳语
      */
     private Integer cdrType;
 
@@ -126,9 +131,14 @@ public class DeviceInfo {
     private String record;
 
     /**
-     * 录音开始时间
+     * 录音时长
      */
     private Long recordTime;
+
+    /**
+     * 录音开始时间
+     */
+    private Long recordStartTime;
 
     /**
      * 当前设备状态
@@ -142,6 +152,14 @@ public class DeviceInfo {
 
     public void setCallId(Long callId) {
         this.callId = callId;
+    }
+
+    public String getConference() {
+        return conference;
+    }
+
+    public void setConference(String conference) {
+        this.conference = conference;
     }
 
     public String getDeviceId() {
@@ -342,6 +360,14 @@ public class DeviceInfo {
 
     public void setRecordTime(Long recordTime) {
         this.recordTime = recordTime;
+    }
+
+    public Long getRecordStartTime() {
+        return recordStartTime;
+    }
+
+    public void setRecordStartTime(Long recordStartTime) {
+        this.recordStartTime = recordStartTime;
     }
 
     public static final class DeviceInfoBuilder {

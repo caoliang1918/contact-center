@@ -47,6 +47,11 @@ public class CallLogPo implements Serializable {
     private String called;
 
     /**
+     * 号码归属地
+     */
+    private String numberLocation;
+
+    /**
      * 坐席
      */
     private String agentKey;
@@ -139,19 +144,34 @@ public class CallLogPo implements Serializable {
     private Integer hangupDir;
 
     /**
+     * sdk挂机(1:坐席sdk挂机)
+     */
+    private Integer sdkHangup;
+
+    /**
      * 挂机原因
      */
     private Integer hangupCode;
 
     /**
-     * 媒体服务器
+     * 录音文件下载地址
      */
-    private String media;
+    private String ossServer;
 
     /**
-     * cti地址
+     * 媒体地址
      */
-    private String host;
+    private String mediaHost;
+
+    /**
+     * 服务地址
+     */
+    private String ctiHost;
+
+    /**
+     * 客户端地址
+     */
+    private String clientHost;
 
     /**
      * 录音地址
@@ -162,6 +182,16 @@ public class CallLogPo implements Serializable {
      * 录音地址
      */
     private String record2;
+
+    /**
+     * 录音地址
+     */
+    private String record3;
+
+    /**
+     * 录音状态
+     */
+    private Integer recordType;
 
     /**
      * 录音开始时间
@@ -286,6 +316,14 @@ public class CallLogPo implements Serializable {
 
     public void setCalled(String called) {
         this.called = called;
+    }
+
+    public String getNumberLocation() {
+        return numberLocation;
+    }
+
+    public void setNumberLocation(String numberLocation) {
+        this.numberLocation = numberLocation;
     }
 
     public String getAgentKey() {
@@ -416,6 +454,14 @@ public class CallLogPo implements Serializable {
         this.hangupDir = hangupDir;
     }
 
+    public Integer getSdkHangup() {
+        return sdkHangup;
+    }
+
+    public void setSdkHangup(Integer sdkHangup) {
+        this.sdkHangup = sdkHangup;
+    }
+
     public Integer getHangupCode() {
         return hangupCode;
     }
@@ -424,20 +470,36 @@ public class CallLogPo implements Serializable {
         this.hangupCode = hangupCode;
     }
 
-    public String getMedia() {
-        return media;
+    public String getOssServer() {
+        return ossServer;
     }
 
-    public void setMedia(String media) {
-        this.media = media;
+    public void setOssServer(String ossServer) {
+        this.ossServer = ossServer;
     }
 
-    public String getHost() {
-        return host;
+    public String getMediaHost() {
+        return mediaHost;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setMediaHost(String mediaHost) {
+        this.mediaHost = mediaHost;
+    }
+
+    public String getCtiHost() {
+        return ctiHost;
+    }
+
+    public void setCtiHost(String ctiHost) {
+        this.ctiHost = ctiHost;
+    }
+
+    public String getClientHost() {
+        return clientHost;
+    }
+
+    public void setClientHost(String clientHost) {
+        this.clientHost = clientHost;
     }
 
     public String getRecord() {
@@ -454,6 +516,22 @@ public class CallLogPo implements Serializable {
 
     public void setRecord2(String record2) {
         this.record2 = record2;
+    }
+
+    public String getRecord3() {
+        return record3;
+    }
+
+    public void setRecord3(String record3) {
+        this.record3 = record3;
+    }
+
+    public Integer getRecordType() {
+        return recordType;
+    }
+
+    public void setRecordType(Integer recordType) {
+        this.recordType = recordType;
     }
 
     public Long getRecordTime() {
@@ -594,8 +672,9 @@ public class CallLogPo implements Serializable {
                 ", waitTime=" + waitTime +
                 ", answerCount=" + answerCount +
                 ", hangupDir=" + hangupDir +
+                ", sdkHangup=" + sdkHangup +
                 ", hangupCode=" + hangupCode +
-                ", media='" + media + '\'' +
+                ", mediaHost='" + mediaHost + '\'' +
                 ", record='" + record + '\'' +
                 ", recordTime=" + recordTime +
                 ", talkTime=" + talkTime +

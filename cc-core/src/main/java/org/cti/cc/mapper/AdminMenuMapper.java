@@ -1,34 +1,49 @@
 package org.cti.cc.mapper;
 
 import org.cti.cc.entity.AdminMenu;
+import org.cti.cc.mapper.base.BaseMapper;
 
 import java.util.List;
+import java.util.Map;
 
-public interface AdminMenuMapper {
-    int deleteByPrimaryKey(Long id);
-
-    int insert(AdminMenu record);
-
-    int insertSelective(AdminMenu record);
-
-    AdminMenu selectByPrimaryKey(Long id);
-
-    int updateByPrimaryKeySelective(AdminMenu record);
-
-    int updateByPrimaryKey(AdminMenu record);
+public interface AdminMenuMapper extends BaseMapper<AdminMenu> {
 
 
     /**
-     * 查询所有菜单
+     * 菜单列表
      *
+     * @param params
      * @return
      */
-    List<AdminMenu> selectAll();
+    List<AdminMenu> menusList(Map<String, Object> params);
 
     /**
      *
-     * @param uid
+     * @param menuId
      * @return
      */
-    List<AdminMenu> selectList(Long uid);
+    Integer selectChildMenus(String menuId);
+
+    /**
+     * @param params 获取用户权限菜单
+     * @return
+     */
+    List<AdminMenu> selectRoleMenus(Map<String, Object> params);
+
+    /**
+     * 登录时返回的菜单列表
+     *
+     * @param params
+     * @return
+     */
+    List<AdminMenu> selectUserMenus(Map<String, Object> params);
+
+
+    List<AdminMenu> selectByRoleId(Long roleId);
+
+
+    Integer deleteMenus(String menuId);
+
+
+    AdminMenu selectByMenuId(String menuId);
 }

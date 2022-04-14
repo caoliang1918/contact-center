@@ -27,6 +27,7 @@ import org.cti.cc.vo.BatchAddAgentVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.zhongweixian.api.exception.BusinessException;
@@ -91,7 +92,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
 
             if (!CollectionUtils.isEmpty(list)) {
                 if (agentVo.getId() == null || !agentVo.getId().equals(list.get(0).getId())) {
-                    throw new BusinessException(ErrorCode.DUPLICATE_EXCEPTION.getCode(), "数据已存在");
+                    throw new BusinessException(ErrorCode.DUPLICATE_EXCEPTION);
                 }
             }
             //查看当前企业坐席总数
@@ -255,10 +256,9 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
     public void agentExport(HttpServletResponse response, Map<String, Object> params) throws IOException {
         List<Agent> agentList = agentMapper.selectListByMap(params);
 //        agentList.forEach(agent->agent.setCts(FormatDateUtil.stampToTime(Long.parseLong(e.getUpdateTime()))));
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(
-                null, "坐席列表", ExcelType.XSSF), ExcelAgentEntity.class, agentList);
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(null, "坐席列表", ExcelType.XSSF), ExcelAgentEntity.class, agentList);
         String filename = URLEncoder.encode("坐席列表.xlsx", StandardCharsets.UTF_8);
-        response.setHeader("content-disposition", "attachment;Filename=" + filename);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();
         workbook.write(out);
@@ -306,9 +306,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             agent.setAgentId(agentImportExcel.getAgentKey());
             agent.setAgentName(agentImportExcel.getAgentName());
             agent.setSipPhone(agentImportExcel.getSipPhone());
-            agent.setPasswd(StringUtils.isBlank(agentImportExcel.getPasswd()) ?
-                    BcryptUtil.encrypt(agentImportExcel.getAgentKey()) :
-                    BcryptUtil.encrypt(agentImportExcel.getPasswd()));
+            agent.setPasswd(StringUtils.isBlank(agentImportExcel.getPasswd()) ? BcryptUtil.encrypt(agentImportExcel.getAgentKey()) : BcryptUtil.encrypt(agentImportExcel.getPasswd()));
             agent.setAgentType(1);
             agentMapper.addAgent(agent);
             result = result + 1;

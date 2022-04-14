@@ -13,6 +13,8 @@ import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by caoliang on 2020/11/6
@@ -28,6 +30,7 @@ public class WsTransferHandler extends WsBaseHandler<WsTransferEvent> {
         AgentInfo agentInfo = getAgent(event);
         Long callId = agentInfo.getCallId();
         if (callId == null) {
+            sendMessage(event, new WsResponseEntity<String>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
             logger.warn("agent:{} transfer not found callId", event.getAgentKey());
             return;
         }
@@ -78,7 +81,7 @@ public class WsTransferHandler extends WsBaseHandler<WsTransferEvent> {
         }
         //坐席不在READY、NOT_READY
         if (transferAgent.getAgentState() != AgentState.READY && transferAgent.getAgentState() != AgentState.NOT_READY) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_BUSY, AgentState.INNER_CALL.name(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.AGENT_BUSY, AgentState.INNER_CALL.name(), event.getAgentKey()));
             return;
         }
 
@@ -98,7 +101,9 @@ public class WsTransferHandler extends WsBaseHandler<WsTransferEvent> {
 
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
-        callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_TRANSFER_CALL, agentInfo.getDeviceId()));
+        List<String> list = new ArrayList<>(callInfo.getDeviceList());
+        list.remove(agentInfo.getDeviceId());
+        callInfo.getNextCommands().add(new NextCommand(agentInfo.getDeviceId(), NextType.NEXT_TRANSFER_CALL, list.get(0)));
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callInfo.getCallId());
 
@@ -108,16 +113,16 @@ public class WsTransferHandler extends WsBaseHandler<WsTransferEvent> {
             /**
              * 通知ws坐席请求外呼
              */
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_ROUTE_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALL_ROUTE_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
             return;
         }
         logger.info("agent:{} transfer call to {}, callId:{}", event.getAgentKey(), event.getTransferValue(), callInfo.getCallId());
-        fsListen.makeCall(routeGetway, agentInfo.getAgentId(), transferAgent.getCalled(), deviceId);
+        fsListen.makeCall(routeGetway, agentInfo.getAgentId(), transferAgent.getCalled(), callInfo.getCallId(), deviceId);
 
         /**
          * 通知ws坐席请求外呼
          */
-        sendMessgae(event, new WsResponseEntity<>(AgentState.TRANSFER_CALL.name(), event.getAgentKey()));
+        sendMessage(event, new WsResponseEntity<>(AgentState.TRANSFER_CALL.name(), event.getAgentKey()));
 
         /**
          * 坐席请求外呼中

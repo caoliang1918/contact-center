@@ -43,6 +43,11 @@ public class AgentInfo extends Agent {
     private String deviceId;
 
     /**
+     *  被咨询设备
+     */
+    private String consultDeviceId;
+
+    /**
      *
      */
     private Long loginTime = 0L;
@@ -150,9 +155,9 @@ public class AgentInfo extends Agent {
     private Integer hiddenCustomer;
 
     /**
-     * 话单通知地址
+     * 坐席状态回调地址
      */
-    private String cdrNotifyUrl;
+    private String webHook;
 
     /**
      * 坐席token,可以用于websocket和http请求
@@ -205,6 +210,14 @@ public class AgentInfo extends Agent {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getConsultDeviceId() {
+        return consultDeviceId;
+    }
+
+    public void setConsultDeviceId(String consultDeviceId) {
+        this.consultDeviceId = consultDeviceId;
     }
 
     public Long getLoginTime() {
@@ -367,20 +380,20 @@ public class AgentInfo extends Agent {
         this.hiddenCustomer = hiddenCustomer;
     }
 
-    public String getCdrNotifyUrl() {
-        return cdrNotifyUrl;
-    }
-
-    public void setCdrNotifyUrl(String cdrNotifyUrl) {
-        this.cdrNotifyUrl = cdrNotifyUrl;
-    }
-
     public String getToken() {
         return token;
     }
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getWebHook() {
+        return webHook;
+    }
+
+    public void setWebHook(String webHook) {
+        this.webHook = webHook;
     }
 
     /**
@@ -395,31 +408,14 @@ public class AgentInfo extends Agent {
         if (loginType == 3) {
             return this.getSipPhone();
         }
+        if (getSips() == null || getSips().size() == 0) {
+            return null;
+        }
         return getSips().get(0);
     }
 
     @Override
     public String toString() {
-        return "AgentInfo{" +
-                ", groupIds=" + groupIds +
-                ", sips=" + sips +
-                ", skillAgents=" + skillAgents +
-                ", callId=" + callId +
-                ", deviceId='" + deviceId + '\'' +
-                ", loginTime=" + loginTime +
-                ", agentState=" + agentState +
-                ", loginType=" + loginType +
-                ", workType=" + workType +
-                ", stateTime=" + stateTime +
-                ", beforeState=" + beforeState +
-                ", beforeTime=" + beforeTime +
-                ", logoutTime=" + logoutTime +
-                ", maxReadyTime=" + maxReadyTime +
-                ", totalReadyTime=" + totalReadyTime +
-                ", maxTalkTime=" + maxTalkTime +
-                ", totalTalkTime=" + totalTalkTime +
-                ", totalRingTimes=" + totalRingTimes +
-                ", totalAnswerTimes=" + totalAnswerTimes +
-                '}';
+        return "AgentInfo{" + ", groupIds=" + groupIds + ", sips=" + sips + ", skillAgents=" + skillAgents + ", callId=" + callId + ", deviceId='" + deviceId + '\'' + ", loginTime=" + loginTime + ", agentState=" + agentState + ", loginType=" + loginType + ", workType=" + workType + ", stateTime=" + stateTime + ", beforeState=" + beforeState + ", beforeTime=" + beforeTime + ", logoutTime=" + logoutTime + ", maxReadyTime=" + maxReadyTime + ", totalReadyTime=" + totalReadyTime + ", maxTalkTime=" + maxTalkTime + ", totalTalkTime=" + totalTalkTime + ", totalRingTimes=" + totalRingTimes + ", totalAnswerTimes=" + totalAnswerTimes + '}';
     }
 }

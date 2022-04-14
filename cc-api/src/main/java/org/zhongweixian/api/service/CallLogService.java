@@ -44,5 +44,5 @@ public interface CallLogService extends BaseService<CallLog> {
      * @param time
      * @return
      */
-    int clearCallLog(Long time);
+    int cleaDayOfData(Long time);
 }

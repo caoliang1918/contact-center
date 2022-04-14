@@ -14,6 +14,8 @@ import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.fs.event.FsAnswerEvent;
 import org.zhongweixian.cc.fs.handler.base.BaseEventHandler;
+import org.zhongweixian.cc.websocket.response.WsCallEntity;
+import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 import java.time.Instant;
 
@@ -45,61 +47,63 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             return;
         }
         callInfo.getNextCommands().remove(nextCommand);
-        if (StringUtils.isBlank(callInfo.getMedia())) {
-            callInfo.setMedia(event.getRemoteAddress());
+        if (StringUtils.isBlank(callInfo.getMediaHost())) {
+            callInfo.setMediaHost(event.getRemoteAddress());
         }
-        cacheService.addCallInfo(callInfo);
+
+        logger.info("callId:{}, deviceId:{}, nextCommand:{}", deviceInfo.getCallId(), deviceInfo.getDeviceId(), nextCommand);
         switch (nextCommand.getNextType()) {
             case NEXT_VDN:
+                //进vdn
                 matchVdnCode(event, callInfo, deviceInfo);
                 break;
+
             case NEXT_CALL_OTHER:
+                //呼叫另外一侧
                 callOther(callInfo, deviceInfo);
                 break;
-            case NEXT_TRANSFER_CALL:
-                /**
-                 * 转接电话 deviceInfo为被转接设备
-                 */
-                String fromDeviceId = nextCommand.getNextValue();
-                // deviceInfo.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_BRIDGE, callInfo.getDeviceList().get(1)));
-                DeviceInfo fromDevice = callInfo.getDeviceInfoMap().get(fromDeviceId);
-                callInfo.getNextCommands().add(new NextCommand(event.getDeviceId(), NextType.NEXT_TRANSFER_SUCCESS, event.getDeviceId() + ":" + callInfo.getDeviceList().get(1)));
-                // fromDevice.setNextCommand(new NextCommand(NextType.NEXT_TRANSFER_SUCCESS, event.getDeviceId() + ":" + callInfo.getDeviceList().get(1)));
-                logger.info("转接电话中 callId:{} from:{} to:{} ", callInfo.getCallId(), fromDeviceId, event.getDeviceId());
-                try {
-                    transferCall(callInfo.getMedia(), callInfo.getDeviceList().get(1), event.getDeviceId());
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
-                }
-                //挂掉原有的电话
-                hangupCall(callInfo.getMedia(), callInfo.getCallId(), fromDeviceId);
-                break;
-            case NEXT_CALL_BRIDGE:
-                logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled(), nextCommand.getNextValue(), event.getDeviceId());
-                callBridge(event.getRemoteAddress(), event.getDeviceId(), nextCommand.getNextValue());
-                /**
-                 * 呼入电话，坐席接听后，需要桥接
-                 */
-                if (callInfo.getCallType() == CallType.INBOUND_CALL) {
-                    if (callInfo.getQueueStartTime() != null && callInfo.getQueueEndTime() == null && deviceInfo.getDeviceType() == 1) {
-                        callInfo.setQueueEndTime(deviceInfo.getAnswerTime());
-                        if (!CollectionUtils.isEmpty(callInfo.getCallDetails())) {
-                            CallDetail callDetail = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
-                            if (callDetail != null) {
-                                callDetail.setEndTime(deviceInfo.getAnswerTime());
-                            }
-                        }
 
-                        //更新坐席应答次数
-                        AgentInfo agentInfo = cacheService.getAgentInfo(deviceInfo.getAgentKey());
-                        agentInfo.setTotalAnswerTimes(agentInfo.getTotalRingTimes() + 1);
-                    }
-                }
+            case NEXT_TRANSFER_CALL:
+                //转接电话
+                transferCall(callInfo, nextCommand, event);
                 break;
+
+            case NEXT_CALL_BRIDGE:
+                //桥接
+                callBridge(callInfo, deviceInfo, nextCommand, event);
+                break;
+
+            case NEXT_CONSULT_AGENT:
+                //咨询坐席
+                consultAgent(callInfo, deviceInfo, nextCommand, event);
+                break;
+
+            case NEXT_CONSULT_CALLOUT:
+                //咨询外线
+                consultCallout(callInfo, deviceInfo, nextCommand, event);
+                break;
+
+            case NEXT_INSERT_CALL:
+                //强插
+                callInfo.setConference(getDeviceId());
+                insertCall(callInfo, deviceInfo, nextCommand, event);
+                break;
+            case NEXT_LISTEN_CALL:
+                //班长监听
+                monitorListen(callInfo, deviceInfo, nextCommand, event);
+                break;
+
+            case NEXT_WHISPER_CALL:
+                //班长耳语
+                monitorWhisper(callInfo, deviceInfo, nextCommand, event);
+
+                break;
+
             default:
-                logger.warn("can not match :{}, callId:{}", nextCommand.getNextType(), callInfo.getCallId());
+                logger.warn("can not match command :{}, callId:{}", nextCommand.getNextType(), callInfo.getCallId());
                 break;
         }
+        cacheService.addCallInfo(callInfo);
     }
 
 
@@ -114,8 +118,9 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         if (groupInfo != null && groupInfo.getRecordType() == 1) {
             //振铃录音
             String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
-            super.record(callInfo.getMedia(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
+            super.record(callInfo.getMediaHost(), callInfo.getCallId(), callInfo.getDeviceList().get(0), record);
             deviceInfo.setRecord(record);
+            deviceInfo.setRecordStartTime(deviceInfo.getAnswerTime());
         }
         String deviceId = getDeviceId();
         logger.info("呼另外一侧电话: callId:{}  display:{}  called:{}  deviceId:{} ", callInfo.getCallId(), callInfo.getCalledDisplay(), callInfo.getCalled(), deviceId);
@@ -132,10 +137,10 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         RouteGetway routeGetway = cacheService.getRouteGetway(callInfo.getCompanyId(), called);
         if (routeGetway == null) {
             logger.warn("callId:{} origin error, called:{}", callInfo.getCallId(), callInfo.getCalled());
-            hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceInfo.getDeviceId());
+            hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId());
             return;
         }
-        fsListen.makeCall(callInfo.getMedia(), routeGetway, callInfo.getCalledDisplay(), called, deviceId);
+        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, callInfo.getCalledDisplay(), called, callInfo.getCallId(), deviceId);
         DeviceInfo deviceInfo1 = new DeviceInfo();
         //1:坐席,2:客户,3:外线
         deviceInfo1.setDeviceType(callInfo.getCallType() == CallType.INNER_CALL ? 1 : 2);
@@ -148,10 +153,9 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         deviceInfo1.setDeviceId(deviceId);
         deviceInfo1.setCallTime(Instant.now().toEpochMilli());
         deviceInfo1.setAgentKey(callInfo.getAgentKey());
-        callInfo.getNextCommands().add(new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_CALL_BRIDGE, deviceInfo.getDeviceId()));
+        callInfo.getNextCommands().add(new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_CALL_BRIDGE, deviceInfo1.getDeviceId()));
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo1);
         cacheService.addDevice(deviceId, callInfo.getCallId());
-        cacheService.addCallInfo(callInfo);
     }
 
 
@@ -167,11 +171,212 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         logger.info("inbount caller:{} called:{} for vdnId:{}", event.getCaller(), event.getCalled(), vdnPhone.getVdnId());
         CompanyInfo companyInfo = cacheService.getCompany(vdnPhone.getCompanyId());
         if (companyInfo == null || companyInfo.getStatus() == 0) {
-            hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceInfo.getDeviceId());
+            logger.info("vdnPhone is not match:{}  {} " , event.getCaller(), event.getCalled() );
+            hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId());
             return;
         }
         vdnHandler.hanlder(callInfo, deviceInfo, vdnPhone.getVdnId());
         return;
     }
 
+    /**
+     * 转接电话
+     *
+     * @param callInfo
+     * @param nextCommand
+     * @param event
+     */
+    private void transferCall(CallInfo callInfo, NextCommand nextCommand, FsAnswerEvent event) {
+        /**
+         * 转接电话 deviceInfo为被转接设备
+         */
+        String fromDeviceId = nextCommand.getDeviceId();
+        callInfo.getNextCommands().add(new NextCommand(event.getDeviceId(), NextType.NEXT_TRANSFER_SUCCESS, callInfo.getDeviceList().get(1)));
+        logger.info("转接电话中 callId:{} from:{} to:{} ", callInfo.getCallId(), fromDeviceId, event.getDeviceId());
+        try {
+            transferCall(callInfo.getMediaHost(), event.getDeviceId(), nextCommand.getNextValue());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        //挂掉原有的电话
+        hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), fromDeviceId);
+        callInfo.getNextCommands().add(new NextCommand(NextType.NORNAL));
+    }
+
+    /**
+     * 桥接电话
+     *
+     * @param callInfo
+     * @param deviceInfo
+     * @param nextCommand
+     * @param event
+     */
+    private void callBridge(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, FsAnswerEvent event) {
+        logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled(), nextCommand.getDeviceId(), nextCommand.getNextValue());
+        DeviceInfo deviceInfo1 = callInfo.getDeviceInfoMap().get(nextCommand.getDeviceId());
+        DeviceInfo deviceInfo2 = callInfo.getDeviceInfoMap().get(nextCommand.getNextValue());
+        if (deviceInfo1.getBridgeTime() == null) {
+            deviceInfo1.setBridgeTime(event.getTimestamp() / 1000);
+        }
+        if (deviceInfo2.getBridgeTime() == null) {
+            deviceInfo2.setBridgeTime(event.getTimestamp() / 1000);
+        }
+        bridgeCall(callInfo.getMediaHost(), callInfo.getCallId(), nextCommand.getDeviceId(), nextCommand.getNextValue());
+        /**
+         * 呼入电话，坐席接听后，需要桥接
+         */
+        if (callInfo.getCallType() == CallType.INBOUND_CALL) {
+            if (callInfo.getQueueStartTime() != null && callInfo.getQueueEndTime() == null && deviceInfo.getDeviceType() == 1) {
+                callInfo.setQueueEndTime(deviceInfo.getAnswerTime());
+                if (!CollectionUtils.isEmpty(callInfo.getCallDetails())) {
+                    CallDetail callDetail = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
+                    if (callDetail != null) {
+                        callDetail.setEndTime(deviceInfo.getAnswerTime());
+                    }
+                }
+                //更新坐席应答次数
+                AgentInfo agentInfo = cacheService.getAgentInfo(deviceInfo.getAgentKey());
+                agentInfo.setTotalAnswerTimes(agentInfo.getTotalRingTimes() + 1);
+            }
+        }
+    }
+
+    /**
+     * 咨询坐席
+     *
+     * @param callInfo
+     * @param deviceInfo
+     * @param nextCommand
+     * @param event
+     */
+    private void consultAgent(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, FsAnswerEvent event) {
+        /**
+         * 咨询坐席
+         */
+        GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
+        if (groupInfo != null && groupInfo.getRecordType() == 1) {
+            //振铃录音
+            String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
+            super.record(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId(), record);
+            deviceInfo.setRecord(record);
+            deviceInfo.setRecordTime(event.getTimestamp() / 1000);
+            callInfo.getDeviceInfoMap().put(deviceInfo.getDeviceId(), deviceInfo);
+        }
+
+        //发起咨询坐席先断开
+        bridgeBreak(callInfo.getMediaHost(), nextCommand.getDeviceId());
+
+        logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled(), nextCommand.getDeviceId(), event.getDeviceId());
+        bridgeCall(event.getRemoteAddress(), callInfo.getCallId(), nextCommand.getDeviceId(), event.getDeviceId());
+
+        if (StringUtils.isBlank(callInfo.getConference())) {
+            //客户保持音
+            holdPlay(callInfo.getMediaHost(), nextCommand.getNextValue(), "/app/clpms/sounds/hold.wav");
+            DeviceInfo consultDevice = callInfo.getDeviceInfoMap().get(nextCommand.getNextValue());
+            consultDevice.setState(AgentState.HOLD.name());
+        }
+    }
+
+    /**
+     * 咨询外线
+     *
+     * @param callInfo
+     * @param deviceInfo
+     * @param nextCommand
+     * @param event
+     */
+    private void consultCallout(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, FsAnswerEvent event) {
+        //发起咨询坐席先断开
+        bridgeBreak(callInfo.getMediaHost(), nextCommand.getDeviceId());
+        logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled(), nextCommand.getDeviceId(), event.getDeviceId());
+        bridgeCall(event.getRemoteAddress(), callInfo.getCallId(), nextCommand.getDeviceId(), event.getDeviceId());
+
+        if (StringUtils.isBlank(callInfo.getConference())) {
+            //客户保持音
+            holdPlay(callInfo.getMediaHost(), nextCommand.getNextValue(), "/app/clpms/sounds/hold.wav");
+            DeviceInfo consultDevice = callInfo.getDeviceInfoMap().get(nextCommand.getNextValue());
+            consultDevice.setState(AgentState.HOLD.name());
+        }
+    }
+
+    /**
+     * 强插
+     *
+     * @param callInfo
+     * @param deviceInfo1
+     * @param nextCommand
+     * @param event
+     */
+    private void insertCall(CallInfo callInfo, DeviceInfo deviceInfo1, NextCommand nextCommand, FsAnswerEvent event) {
+        /**
+         * 1、原坐席迁出
+         * 2、所有设备拉入会议
+         */
+        bridgeBreak(callInfo.getMediaHost(), nextCommand.getDeviceId());
+        callInfo.getDeviceList().forEach(deviceId -> {
+            DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(deviceId);
+            deviceInfo.setConference(callInfo.getConference());
+            joinConference(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId(), callInfo.getConference());
+        });
+        WsCallEntity callEntity = new WsCallEntity();
+        callEntity.setCallId(callInfo.getCallId());
+        callEntity.setAgentState(AgentState.INSERT);
+        sendWsMessage(cacheService.getAgentInfo(deviceInfo1.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), callInfo.getAgentKey(), callEntity));
+    }
+
+    /**
+     * 监听通话
+     *
+     * @param callInfo
+     * @param deviceInfo
+     * @param nextCommand
+     * @param event
+     */
+    private void monitorListen(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, FsAnswerEvent event) {
+        //班长监听
+        fsListen.listen(callInfo.getMediaHost(), event.getDeviceId(), nextCommand.getDeviceId());
+
+        //录音
+        GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
+        if (groupInfo != null && groupInfo.getRecordType() == 1) {
+            //振铃录音
+            String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
+            super.record(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId(), record);
+            deviceInfo.setRecord(record);
+            deviceInfo.setRecordTime(event.getTimestamp() / 1000);
+        }
+
+        WsCallEntity callEntity = new WsCallEntity();
+        callEntity.setAgentState(AgentState.LISTEN);
+        callEntity.setCallId(callInfo.getCallId());
+        sendWsMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), callInfo.getAgentKey(), callEntity));
+    }
+
+    /**
+     * 班长耳语
+     *
+     * @param callInfo
+     * @param deviceInfo
+     * @param nextCommand
+     * @param event
+     */
+    private void monitorWhisper(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, FsAnswerEvent event) {
+        //班长耳语
+        fsListen.whisper(callInfo.getMediaHost(), event.getDeviceId(), nextCommand.getDeviceId());
+
+        //录音
+        GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
+        if (groupInfo != null && groupInfo.getRecordType() == 1) {
+            //振铃录音
+            String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
+            super.record(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId(), record);
+            deviceInfo.setRecord(record);
+            deviceInfo.setRecordTime(event.getTimestamp() / 1000);
+        }
+
+        WsCallEntity callEntity = new WsCallEntity();
+        callEntity.setAgentState(AgentState.WHISPER);
+        callEntity.setCallId(callInfo.getCallId());
+        sendWsMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), callInfo.getAgentKey(), callEntity));
+    }
 }

@@ -67,6 +67,11 @@ public class GroupInfo extends Group {
      */
     private Integer callInAnswer = 0;
 
+    /**
+     * 呼入最后的分配时间
+     */
+    private Long lastServiceTime;
+
 
     public List<String> getOnlineAgents() {
         return onlineAgents;
@@ -154,5 +159,13 @@ public class GroupInfo extends Group {
 
     public void setCallInAnswer(Integer callInAnswer) {
         this.callInAnswer = callInAnswer;
+    }
+
+    public Long getLastServiceTime() {
+        return lastServiceTime;
+    }
+
+    public void setLastServiceTime(Long lastServiceTime) {
+        this.lastServiceTime = lastServiceTime;
     }
 }

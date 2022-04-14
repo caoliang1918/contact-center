@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.*;
 import org.zhongweixian.cc.fs.FsListen;
@@ -19,7 +20,7 @@ import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.service.GroupMemoryService;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
-import org.zhongweixian.esl.transport.SendMsg;
+import org.zhongweixian.cc.fs.esl.transport.SendMsg;
 
 /**
  * Created by caoliang on 2020/8/23
@@ -70,7 +71,10 @@ public class BaseHandler {
     protected SnowflakeIdWorker snowflakeIdWorker;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    protected RedisTemplate redisTemplate;
+
+    @Autowired
+    protected RestTemplate httpClient;
 
     /**
      * 被叫挂机时，需要把主叫挂机，主叫挂机时不需要单独挂被叫
@@ -90,7 +94,7 @@ public class BaseHandler {
      * @param playback
      */
     protected void playback(String media, String deviceId, String playback) {
-        fsListen.playback(media, deviceId, playback);
+        fsListen.playBack(media, deviceId, playback);
     }
 
     /**
@@ -133,7 +137,7 @@ public class BaseHandler {
         callInfo.getNextCommands().remove(nextCommand);
         switch (nextCommand.getNextType()) {
             case NEXT_QUEUE_PLAY:
-                fsListen.playback(callInfo.getMedia(), deviceInfo.getDeviceId(), "/app/clpms/sounds/queue.wav");
+                fsListen.playBack(callInfo.getMediaHost(), deviceInfo.getDeviceId(), "/app/clpms/sounds/queue.wav");
                 break;
 
             case NEXT_QUEUE_OVERFLOW_GROUP:
@@ -148,7 +152,7 @@ public class BaseHandler {
                 break;
 
             case NEXT_HANGUP:
-                fsListen.hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceInfo.getDeviceId());
+                fsListen.hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId());
                 break;
 
             case NEXT_VDN:

@@ -45,6 +45,11 @@ public class Company implements Serializable {
     private String companyCode;
 
     /**
+     * 时区概念(默认是GTM+8)
+     */
+    private Integer gmt;
+
+    /**
      * 联系人
      */
     private String contact;
@@ -140,7 +145,7 @@ public class Company implements Serializable {
     private String ext5;
 
     /**
-     * 状态(1:启用,0:未启用)
+     * 状态(0:禁用企业,1:免费企业;2:试用企业,3:付费企业)
      */
     private Integer status;
 
@@ -200,6 +205,14 @@ public class Company implements Serializable {
 
     public void setCompanyCode(String companyCode) {
         this.companyCode = companyCode == null ? null : companyCode.trim();
+    }
+
+    public Integer getGmt() {
+        return gmt;
+    }
+
+    public void setGmt(Integer gmt) {
+        this.gmt = gmt;
     }
 
     public String getContact() {

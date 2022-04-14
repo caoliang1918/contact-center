@@ -24,15 +24,14 @@ public class AgentVo {
      * 坐席账户
      */
     @NotNull(message = "坐席不能为空")
-    @Size(min = 4, max = 16, message = "坐席工号必须在4,16个字符")
+    @Size(min = 4, max = 16, message = "坐席工号必须在4-16个字符")
     private String agentKey;
 
     /**
      * rest 接口回调地址
      */
-    @NotNull(message = "回调地址不能为空")
-    @Size(min = 15, max = 150, message = "回调地址超过150字符限制")
-    private String callBackUrl;
+    @Size(min = 10, max = 100, message = "webHook地址必须在10-100字符")
+    private String webHook;
 
     /**
      * 坐席名称
@@ -75,6 +74,11 @@ public class AgentVo {
     private Integer afterInterval;
 
     /**
+     * 强制登录
+     */
+    private boolean forceLogin;
+
+    /**
      * 主叫显号
      */
     private String diaplay;
@@ -100,12 +104,12 @@ public class AgentVo {
      */
     private String ext3;
 
-    public String getCallBackUrl() {
-        return callBackUrl;
+    public String getWebHook() {
+        return webHook;
     }
 
-    public void setCallBackUrl(String callBackUrl) {
-        this.callBackUrl = callBackUrl;
+    public void setWebHook(String webHook) {
+        this.webHook = webHook;
     }
 
     public Long getId() {
@@ -196,6 +200,14 @@ public class AgentVo {
         this.afterInterval = afterInterval;
     }
 
+    public boolean isForceLogin() {
+        return forceLogin;
+    }
+
+    public void setForceLogin(boolean forceLogin) {
+        this.forceLogin = forceLogin;
+    }
+
     public String getDiaplay() {
         return diaplay;
     }
@@ -238,23 +250,6 @@ public class AgentVo {
 
     @Override
     public String toString() {
-        return "AgentVo{" +
-                "id=" + id +
-                ", companyId=" + companyId +
-                ", agentId=" + agentId +
-                ", agentKey='" + agentKey + '\'' +
-                ", agentName='" + agentName + '\'' +
-                ", agentCode='" + agentCode + '\'' +
-                ", loginType=" + loginType +
-                ", workType=" + workType +
-                ", passwd='" + passwd + '\'' +
-                ", sipPhone='" + sipPhone + '\'' +
-                ", afterInterval=" + afterInterval +
-                ", diaplay='" + diaplay + '\'' +
-                ", ringTime=" + ringTime +
-                ", ext1='" + ext1 + '\'' +
-                ", ext2='" + ext2 + '\'' +
-                ", ext3='" + ext3 + '\'' +
-                '}';
+        return "AgentVo{" + "id=" + id + ", companyId=" + companyId + ", agentId=" + agentId + ", agentKey='" + agentKey + '\'' + ", agentName='" + agentName + '\'' + ", agentCode='" + agentCode + '\'' + ", loginType=" + loginType + ", workType=" + workType + ", passwd='" + passwd + '\'' + ", sipPhone='" + sipPhone + '\'' + ", afterInterval=" + afterInterval + ", diaplay='" + diaplay + '\'' + ", ringTime=" + ringTime + ", ext1='" + ext1 + '\'' + ", ext2='" + ext2 + '\'' + ", ext3='" + ext3 + '\'' + '}';
     }
 }

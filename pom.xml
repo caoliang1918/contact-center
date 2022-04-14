@@ -40,9 +40,11 @@
 
         <springboot.version>2.3.12.RELEASE</springboot.version>
         <minio.version>8.2.1</minio.version>
-        <pgsql.version>42.2.23</pgsql.version>
-        <mysql.version>8.0.25</mysql.version>
-        <websocket-api.version>2.1.0</websocket-api.version>
+        <mysql.version>8.0.27</mysql.version>
+        <pgsql.version>42.3.1</pgsql.version>
+        <ojdbc.version>21.4.0.0.1</ojdbc.version>
+        <sqlserver.version>10.2.0.jre17</sqlserver.version>
+        <websocket-api.version>2.1.1</websocket-api.version>
         <jasypt.version>3.0.4</jasypt.version>
         <springboot.mybatis.version>2.1.4</springboot.mybatis.version>
         <joda-time.version>2.10.13</joda-time.version>
@@ -52,7 +54,6 @@
         <commons-io.version>2.11.0</commons-io.version>
         <commons-codec.version>1.15</commons-codec.version>
         <kafka.version>2.7.8</kafka.version>
-        <ojdbc.version>21.4.0.0.1</ojdbc.version>
         <logstash-encoder.version>7.0.1</logstash-encoder.version>
 
         <docker.repostory>192.168.180.37:5000</docker.repostory>
@@ -102,6 +103,11 @@
                 <version>${springboot.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
                 <version>${logstash-encoder.version}</version>
@@ -132,6 +138,16 @@
                 <version>${pgsql.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>${ojdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${sqlserver.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.zhongweixian</groupId>
                 <artifactId>websocket-api</artifactId>
                 <version>${websocket-api.version}</version>
@@ -140,11 +156,6 @@
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.oracle.database.jdbc</groupId>
-                <artifactId>ojdbc8</artifactId>
-                <version>${ojdbc.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ulisesbocchio</groupId>

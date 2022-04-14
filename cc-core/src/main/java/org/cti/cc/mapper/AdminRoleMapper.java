@@ -1,17 +1,22 @@
 package org.cti.cc.mapper;
 
 import org.cti.cc.entity.AdminRole;
+import org.cti.cc.mapper.base.BaseMapper;
+import org.cti.cc.po.RolePo;
 
-public interface AdminRoleMapper {
-    int deleteByPrimaryKey(Long id);
+import java.util.List;
+import java.util.Map;
 
-    int insert(AdminRole record);
+public interface AdminRoleMapper extends BaseMapper<AdminRole> {
 
-    int insertSelective(AdminRole record);
+    /**
+     * 角色列表
+     * @param params
+     * @return
+     */
+    List<RolePo> selectRoleMenuList(Map<String, Object> params);
 
-    AdminRole selectByPrimaryKey(Long id);
+    List<AdminRole> selectList(Map<String, Object> params);
 
-    int updateByPrimaryKeySelective(AdminRole record);
 
-    int updateByPrimaryKey(AdminRole record);
 }

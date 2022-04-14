@@ -10,28 +10,15 @@ import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
 public class WsListenEvent extends WsBaseEvent {
 
     /**
-     *
-     */
-    private Long callId;
-
-    /**
      * 被监听坐席
      */
-    private String agent;
+    private String monitorAgent;
 
-    public Long getCallId() {
-        return callId;
+    public String getMonitorAgent() {
+        return monitorAgent;
     }
 
-    public void setCallId(Long callId) {
-        this.callId = callId;
-    }
-
-    public String getAgent() {
-        return agent;
-    }
-
-    public void setAgent(String agent) {
-        this.agent = agent;
+    public void setMonitorAgent(String monitorAgent) {
+        this.monitorAgent = monitorAgent;
     }
 }

@@ -30,16 +30,18 @@ public class WsReadyHandler extends WsBaseHandler<WsReadyEvent> {
         }
         if (agentInfo.getAgentState() == AgentState.READY) {
             logger.warn("agent:{} already READY, agent state:{}", event.getAgentKey(), agentInfo.getAgentState());
-            sendMessgae(event, new WsResponseEntity<String>(ErrorCode.AGENT_ALREADY_READY, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<String>(ErrorCode.AGENT_ALREADY_READY, event.getCmd(), event.getAgentKey()));
             return;
         }
-        if (agentInfo.getAgentState().name().contains("CALL") || agentInfo.getAgentState().name().contains("TALK")) {
+        if (agentInfo.getAgentState().name().contains("CALL") || agentInfo.getAgentState().name().contains("TALKING")) {
             logger.warn("agent:{} READY error, agent state:{}", event.getAgentKey(), agentInfo.getAgentState());
-            sendMessgae(event, new WsResponseEntity<String>(ErrorCode.AGENT_CALLING, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<String>(ErrorCode.AGENT_CALLING, event.getCmd(), event.getAgentKey()));
             return;
         }
+        //坐席空闲时刷新token时间
+        cacheService.refleshAgentToken(agentInfo.getAgentKey(), agentInfo.getToken());
 
-        sendMessgae(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
+        sendMessage(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());
         agentInfo.setAgentState(AgentState.READY);

@@ -19,17 +19,23 @@ public class FsExecuteComplateHandler extends BaseEventHandler<FsExecuteComplate
         if (StringUtils.isBlank(event.getApplication())) {
             return;
         }
+        CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
+        if (callInfo == null) {
+            return;
+        }
 
         switch (event.getApplication()) {
             case "playback":
                 if ("FILE PLAYED".equals(event.getResponse())) {
                     logger.info("deviceId:{}, playback:{} success", event.getDeviceId(), event.getApplicationData());
-                } else if ("FILE NOT FOUND".equals(event.getResponse())) {
-                    logger.error("deviceId:{}  file:{} not found", event.getDeviceId(), event.getApplicationData());
-                    CallInfo callInfo = cacheService.getCallInfo(event.getDeviceId());
-                    if (callInfo == null) {
+                    //正常排队放音在放完之后，需要循环放音
+                    if (callInfo.getQueueStartTime() != null && callInfo.getQueueEndTime() == null) {
+                        fsListen.playBack(callInfo.getMediaHost(), event.getDeviceId(), "/app/clpms/sounds/queue.wav");
                         return;
                     }
+
+                } else if ("FILE NOT FOUND".equals(event.getResponse())) {
+                    logger.error("deviceId:{}  file:{} not found", event.getDeviceId(), event.getApplicationData());
                     hangupCall(event.getRemoteAddress(), callInfo.getCallId(), event.getDeviceId());
                     return;
                 }

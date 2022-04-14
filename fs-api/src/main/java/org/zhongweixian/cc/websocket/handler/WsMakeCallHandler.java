@@ -1,5 +1,6 @@
 package org.zhongweixian.cc.websocket.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.entity.RouteGetway;
@@ -13,6 +14,7 @@ import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.util.RandomUtil;
 import org.zhongweixian.cc.websocket.event.WsMakeCallEvent;
 import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
+import org.zhongweixian.cc.websocket.response.WsCallEntity;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 import java.time.Instant;
@@ -29,7 +31,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
     @Override
     public void handleEvent(WsMakeCallEvent event) {
         if (StringUtils.isBlank(event.getCalled())) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_NUMBER_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALL_NUMBER_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
             return;
         }
         /**
@@ -37,19 +39,19 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
          */
         if (event.getCallType() == null) {
             logger.warn("agent:{} callType error", event.getAgentKey());
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALLTYPE_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALLTYPE_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
             event.getChannel().close();
             return;
         }
         if (event.getFollowData() != null) {
             if (JSONObject.toJSONString(event.getFollowData()).length() > 2048) {
-                sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALLTYPE_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
+                sendMessage(event, new WsResponseEntity<>(ErrorCode.CALLTYPE_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
                 return;
             }
         }
         AgentInfo agentInfo = getAgent(event);
         if (agentInfo.getAgentState().name().contains("CALL") || agentInfo.getAgentState() == AgentState.TALKING) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_CALLING, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.AGENT_CALLING, event.getCmd(), event.getAgentKey()));
             return;
         }
 
@@ -84,7 +86,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
          */
         GroupInfo groupInfo = getGroup(agentInfo.getGroupId());
         if (groupInfo == null || groupInfo.getStatus() == 0) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_GROUP_NULL, AgentState.OUT_CALL.name(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.AGENT_GROUP_NULL, AgentState.OUT_CALL.name(), event.getAgentKey()));
             return;
         }
 
@@ -95,34 +97,18 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
 
         Long callId = snowflakeIdWorker.nextId();
         Long now = Instant.now().toEpochMilli();
-        CallInfo callInfo = CallInfo.CallInfoBuilder.builder()
-                .withCallId(callId)
-                .withAgentKey(agentInfo.getAgentKey())
-                .withAgentName(agentInfo.getAgentName())
-                .withLoginType(agentInfo.getLoginType())
-                .withCompanyId(agentInfo.getCompanyId())
-                .withGroupId(agentInfo.getGroupId())
-                .withCaller(caller)
-                .withCalled(event.getCalled().strip())
-                .withCallerDisplay(callerDisplay)
-                .withCalledDisplay(calledDisplay)
-                .withDirection(Direction.OUTBOUND)
-                .withCallType(event.getCallType())
-                .withCallTime(now)
-                .withHost(agentInfo.getHost())
-                .withFollowData(event.getFollowData())
-                .build();
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(callId).withAgentKey(agentInfo.getAgentKey()).withAgentName(agentInfo.getAgentName()).withLoginType(agentInfo.getLoginType()).withCompanyId(agentInfo.getCompanyId()).withGroupId(agentInfo.getGroupId()).withCaller(caller).withCalled(event.getCalled()).withCallerDisplay(callerDisplay).withCalledDisplay(calledDisplay).withDirection(Direction.OUTBOUND).withCallType(event.getCallType()).withCallTime(now).withCtiHost(agentInfo.getHost()).withFollowData(event.getFollowData()).build();
 
         switch (event.getCallType()) {
             case INNER_CALL:
-                AgentInfo calledAgent = cacheService.getAgentInfo(event.getCalled().strip());
+                AgentInfo calledAgent = cacheService.getAgentInfo(event.getCalled());
                 if (calledAgent == null || calledAgent.getLogoutTime() > 0L) {
-                    sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_NOT_ONLINE, AgentState.INNER_CALL.name(), event.getAgentKey()));
+                    sendMessage(event, new WsResponseEntity<>(ErrorCode.AGENT_NOT_ONLINE, AgentState.INNER_CALL.name(), event.getAgentKey()));
                     return;
                 }
                 //坐席不在READY、NOT_READY
                 if (calledAgent.getAgentState() != AgentState.READY && calledAgent.getAgentState() != AgentState.NOT_READY) {
-                    sendMessgae(event, new WsResponseEntity<>(ErrorCode.AGENT_BUSY, AgentState.INNER_CALL.name(), event.getAgentKey()));
+                    sendMessage(event, new WsResponseEntity<>(ErrorCode.AGENT_BUSY, AgentState.INNER_CALL.name(), event.getAgentKey()));
                     return;
                 }
                 //内呼
@@ -184,10 +170,12 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         deviceInfo.setAgentName(agentInfo.getAgentName());
         callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
 
+        CompanyInfo companyInfo = cacheService.getCompany(agentInfo.getCompanyId());
+        callInfo.setHiddenCustomer(companyInfo.getHiddenCustomer());
+        callInfo.setCdrNotifyUrl(companyInfo.getNotifyUrl());
 
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
-        callInfo.setHiddenCustomer(0);
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceId, callInfo.getCallId());
 
@@ -204,17 +192,17 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
             /**
              * 通知ws坐席请求外呼
              */
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_ROUTE_ERROR, AgentState.INNER_CALL.name(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALL_ROUTE_ERROR, AgentState.INNER_CALL.name(), event.getAgentKey()));
             return;
         }
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", event.getAgentKey(), callInfo.getCallId(), callerDisplay, caller);
-        fsListen.makeCall(routeGetway, callerDisplay, caller, deviceId);
+        fsListen.makeCall(routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceId);
 
 
         /**
          * 通知ws坐席请求外呼
          */
-        sendMessgae(event, new WsResponseEntity<>(AgentState.INNER_CALL.name(), event.getAgentKey()));
+        sendMessage(event, new WsResponseEntity<>(AgentState.INNER_CALL.name(), event.getAgentKey()));
 
 
         /**
@@ -243,8 +231,8 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
      * @param event
      */
     private void outboundCall(AgentInfo agentInfo, CallInfo callInfo, String callerDisplay, String caller, WsMakeCallEvent event) {
-        callInfo.setCallType(CallType.OUTBOUNT_CALL);
         String deviceId = getDeviceId();
+        callInfo.setCallType(CallType.OUTBOUNT_CALL);
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setCaller(agentInfo.getAgentId());
         deviceInfo.setDisplay(callerDisplay);
@@ -266,7 +254,15 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo);
         callInfo.setHiddenCustomer(agentInfo.getHiddenCustomer());
-        callInfo.setCdrNotifyUrl(agentInfo.getCdrNotifyUrl());
+        callInfo.setAgentName(agentInfo.getAgentName());
+
+        //被叫号码归属地
+        callInfo.setNumberLocation("");
+
+        //话单推送地址
+        CompanyInfo companyInfo = cacheService.getCompany(agentInfo.getCompanyId());
+        callInfo.setHiddenCustomer(companyInfo.getHiddenCustomer());
+        callInfo.setCdrNotifyUrl(companyInfo.getNotifyUrl());
 
         callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
         cacheService.addCallInfo(callInfo);
@@ -285,16 +281,21 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
             /**
              * 通知ws坐席请求外呼
              */
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_ROUTE_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALL_ROUTE_ERROR, AgentState.OUT_CALL.name(), event.getAgentKey()));
             return;
         }
-        logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", event.getAgentKey(), callInfo.getCallId(), callerDisplay, caller);
-        fsListen.makeCall(routeGetway, callerDisplay, caller, deviceId);
+        logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", event.getAgentKey(), callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled());
+        fsListen.makeCall(event.getMedia(), routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceId);
 
         /**
          * 通知ws坐席请求外呼
          */
-        sendMessgae(event, new WsResponseEntity<>(AgentState.OUT_CALL.name(), event.getAgentKey()));
+        WsCallEntity entity = new WsCallEntity();
+        entity.setCallId(callInfo.getCallId());
+        entity.setCalled(callInfo.getCalled());
+        entity.setCallType(CallType.OUTBOUNT_CALL);
+        entity.setGroupId(callInfo.getGroupId());
+        sendMessage(event, new WsResponseEntity<>(AgentState.OUT_CALL.name(), event.getAgentKey(), JSON.toJSONString(entity)));
 
         /**
          * 坐席请求外呼中

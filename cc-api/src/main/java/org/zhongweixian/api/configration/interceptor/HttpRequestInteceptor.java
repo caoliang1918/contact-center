@@ -2,11 +2,13 @@ package org.zhongweixian.api.configration.interceptor;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.entity.AdminAccount;
-import org.cti.cc.mapper.AdminAccountMapper;
+import org.cti.cc.entity.AdminUser;
+import org.cti.cc.mapper.AdminUserMapper;
 import org.cti.cc.po.AdminAccountInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,10 +24,10 @@ import java.io.IOException;
 public class HttpRequestInteceptor implements HandlerInterceptor {
     private Logger logger = LoggerFactory.getLogger(HttpRequestInteceptor.class);
 
-    private AdminAccountMapper adminAccountMapper;
+    private AdminUserMapper adminUserMapper;
 
-    public HttpRequestInteceptor(AdminAccountMapper adminAccountMapper) {
-        this.adminAccountMapper = adminAccountMapper;
+    public HttpRequestInteceptor(AdminUserMapper adminUserMapper) {
+        this.adminUserMapper = adminUserMapper;
     }
 
 
@@ -51,15 +53,16 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
 
         if (StringUtils.isEmpty(auth) && StringUtils.isEmpty(token)) {
             response.setStatus(401);
-            response.setHeader("WWW-Authenticate", "Basic realm=\"input username and password\"");
+            response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"input username and password\"");
             logger.warn("response for 401 status");
             return result;
         }
-
-        if (checkAuth(auth, request, response)) {
+        //坐席账号
+        if (StringUtils.isNotBlank(auth) && checkAuth(auth, request, response)) {
             return true;
         }
-        if (checkToken(token, request, response)) {
+        //企业管理员
+        if (StringUtils.isNotBlank(token) && checkToken(token, request, response)) {
             return true;
         }
         return result;
@@ -78,18 +81,15 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
      * @throws IOException
      */
     private Boolean checkAuth(String auth, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (StringUtils.isBlank(auth)) {
-            return false;
-        }
         String[] userAndPass = new String(Base64.decodeBase64(auth.split(" ")[1])).split(":");
         if (userAndPass.length < 2) {
             response.setStatus(401);
-            response.setHeader("WWW-Authenticate", "Basic realm=\"input username and password\"");
+            response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"input username and password\"");
             logger.warn("response for 401 status");
             return true;
         }
         logger.info("username:{} , password:{}", userAndPass[0], userAndPass[1]);
-        AdminAccount adminAccount = adminAccountMapper.selectByPrimaryKey(1L);
+        AdminUser adminUser = adminUserMapper.selectByPrimaryKey(1L);
         /*if (agentInfo == null || agentInfo.getStatus() == 0 || !BcryptUtil.checkPwd(userAndPass[1], agentInfo.getPasswd())) {
             response.setStatus(401);
             response.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -105,7 +105,6 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
         authenticationToken.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);*/
         return true;
-
     }
 
 
@@ -120,9 +119,9 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
             return false;
         }
 
-        AdminAccount adminAccount = new AdminAccount();
-        adminAccount.setCompanyId(1L);
-        PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(adminAccount, adminAccount.getPasswd(), null);
+        AdminUser adminUser = new AdminUser();
+        adminUser.setCompanyId(1L);
+        PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(adminUser, adminUser.getPasswd(), null);
         authenticationToken.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         return true;

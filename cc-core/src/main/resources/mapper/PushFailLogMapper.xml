@@ -1,147 +1,157 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cti.cc.mapper.PushFailLogMapper">
-  <resultMap id="BaseResultMap" type="org.cti.cc.entity.PushFailLog">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="cts" jdbcType="BIGINT" property="cts" />
-    <result column="uts" jdbcType="BIGINT" property="uts" />
-    <result column="company_id" jdbcType="BIGINT" property="companyId" />
-    <result column="call_id" jdbcType="BIGINT" property="callId" />
-    <result column="cdr_notify_url" jdbcType="VARCHAR" property="cdrNotifyUrl" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
-    <result column="push_times" jdbcType="INTEGER" property="pushTimes" />
-    <result column="push_response" jdbcType="VARCHAR" property="pushResponse" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    id, cts, uts, company_id, call_id, cdr_notify_url, content, push_times, push_response, 
+    <resultMap id="BaseResultMap" type="org.cti.cc.entity.PushFailLog">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="cts" jdbcType="BIGINT" property="cts"/>
+        <result column="uts" jdbcType="BIGINT" property="uts"/>
+        <result column="company_id" jdbcType="BIGINT" property="companyId"/>
+        <result column="call_id" jdbcType="BIGINT" property="callId"/>
+        <result column="cdr_notify_url" jdbcType="VARCHAR" property="cdrNotifyUrl"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="push_times" jdbcType="INTEGER" property="pushTimes"/>
+        <result column="push_response" jdbcType="VARCHAR" property="pushResponse"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , cts, uts, company_id, call_id, cdr_notify_url, content, push_times, push_response,
     status
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from cc_push_fail_log
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from cc_push_fail_log
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="org.cti.cc.entity.PushFailLog">
-    insert into cc_push_fail_log (id, cts, uts, company_id, 
-      call_id, cdr_notify_url, content, 
-      push_times, push_response, status
-      )
-    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
-      #{callId,jdbcType=BIGINT}, #{cdrNotifyUrl,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
-      #{pushTimes,jdbcType=INTEGER}, #{pushResponse,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="org.cti.cc.entity.PushFailLog">
-    insert into cc_push_fail_log
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="cts != null">
-        cts,
-      </if>
-      <if test="uts != null">
-        uts,
-      </if>
-      <if test="companyId != null">
-        company_id,
-      </if>
-      <if test="callId != null">
-        call_id,
-      </if>
-      <if test="cdrNotifyUrl != null">
-        cdr_notify_url,
-      </if>
-      <if test="content != null">
-        content,
-      </if>
-      <if test="pushTimes != null">
-        push_times,
-      </if>
-      <if test="pushResponse != null">
-        push_response,
-      </if>
-      <if test="status != null">
-        status,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="cts != null">
-        #{cts,jdbcType=BIGINT},
-      </if>
-      <if test="uts != null">
-        #{uts,jdbcType=BIGINT},
-      </if>
-      <if test="companyId != null">
-        #{companyId,jdbcType=BIGINT},
-      </if>
-      <if test="callId != null">
-        #{callId,jdbcType=BIGINT},
-      </if>
-      <if test="cdrNotifyUrl != null">
-        #{cdrNotifyUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="content != null">
-        #{content,jdbcType=VARCHAR},
-      </if>
-      <if test="pushTimes != null">
-        #{pushTimes,jdbcType=INTEGER},
-      </if>
-      <if test="pushResponse != null">
-        #{pushResponse,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cc_push_fail_log
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from cc_push_fail_log
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="org.cti.cc.entity.PushFailLog">
+        insert into cc_push_fail_log (id, cts, uts, company_id,
+                                      call_id, cdr_notify_url, content,
+                                      push_times, push_response, status)
+        values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
+                #{callId,jdbcType=BIGINT}, #{cdrNotifyUrl,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+                #{pushTimes,jdbcType=INTEGER}, #{pushResponse,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="org.cti.cc.entity.PushFailLog">
+        insert into cc_push_fail_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="cts != null">
+                cts,
+            </if>
+            <if test="uts != null">
+                uts,
+            </if>
+            <if test="companyId != null">
+                company_id,
+            </if>
+            <if test="callId != null">
+                call_id,
+            </if>
+            <if test="cdrNotifyUrl != null">
+                cdr_notify_url,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="pushTimes != null">
+                push_times,
+            </if>
+            <if test="pushResponse != null">
+                push_response,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="cts != null">
+                #{cts,jdbcType=BIGINT},
+            </if>
+            <if test="uts != null">
+                #{uts,jdbcType=BIGINT},
+            </if>
+            <if test="companyId != null">
+                #{companyId,jdbcType=BIGINT},
+            </if>
+            <if test="callId != null">
+                #{callId,jdbcType=BIGINT},
+            </if>
+            <if test="cdrNotifyUrl != null">
+                #{cdrNotifyUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="pushTimes != null">
+                #{pushTimes,jdbcType=INTEGER},
+            </if>
+            <if test="pushResponse != null">
+                #{pushResponse,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
 
 
+    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.PushFailLog">
+        update cc_push_fail_log
+        set uts        = #{uts,jdbcType=BIGINT},
+            push_times = #{pushTimes,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
-  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.PushFailLog">
-    update cc_push_fail_log  set uts = #{uts,jdbcType=BIGINT}, push_times = #{pushTimes,jdbcType=INTEGER}  where id = #{id,jdbcType=BIGINT}
-  </update>
+    <update id="pushSuccess" parameterType="org.cti.cc.entity.PushFailLog">
+        update cc_push_fail_log
+        set uts           = #{uts},
+            status        = 2,
+            push_response = #{pushResponse,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
-  <update id="pushSuccess" parameterType="org.cti.cc.entity.PushFailLog">
-    update cc_push_fail_log set uts = #{uts}, status = 2, push_response = #{pushResponse,jdbcType=VARCHAR}  where id = #{id,jdbcType=BIGINT}
-  </update>
-
-  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap" databaseId="mysql">
-    select
-        <include refid="Base_Column_List" />
-    from
+    <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List"/>
+        from
         cc_push_fail_log
-    <where>
-      <if test="start!=null"> uts > #{start} </if>
-      <if test="end!=null"> and uts &lt;= #{end} </if>
-      <if test="companyId!=null"> and company_id = #{companyId} </if>
-      <if test="status!=null"> and status = #{status} </if>
-    </where>  order by id desc limit 1000
-  </select>
+        <where>
+            <if test="start!=null">uts > #{start}</if>
+            <if test="end!=null">and uts &lt;= #{end}</if>
+            <if test="companyId!=null">and company_id = #{companyId}</if>
+            <if test="status!=null">and status = #{status}</if>
+        </where>
+        order by uts desc limit 10000 offset 0
+    </select>
 
-  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap" databaseId="oracle">
-    select
-        <include refid="Base_Column_List" />
-    from
+    <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap" databaseId="oracle">
+        select
+        <include refid="Base_Column_List"/>
+        from
         cc_push_fail_log
-    <where>
-      <if test="start!=null"> uts > #{start} </if>
-      <if test="end!=null"> and uts &lt;= #{end} </if>
-      <if test="companyId!=null"> and company_id = #{companyId} </if>
-      <if test="status!=null"> and status = #{status} </if>
-    </where> and rownum = 1000  order by id desc
-  </select>
+        <where>
+            <if test="start!=null">uts > #{start}</if>
+            <if test="end!=null">and uts &lt;= #{end}</if>
+            <if test="companyId!=null">and company_id = #{companyId}</if>
+            <if test="status!=null">and status = #{status}</if>
+        </where>
+        and rownum = 10000 order by uts desc
+    </select>
 
-  <delete id="deletePushFailLog" parameterType="Long" >
-    delete from cc_push_fail_log where cts &lt; #{cts}
-  </delete>
+    <delete id="deletePushFailLog" parameterType="Long">
+        delete
+        from cc_push_fail_log
+        where cts &lt; #{cts}
+    </delete>
 </mapper>

@@ -582,6 +582,18 @@ public class CompanyController extends BaseController {
         return new CommonResponse(groupService.deleteGroup(adminAccountInfo.getBindCompanyId(), id));
     }
 
+    /**
+     * 1.6.6 技能组下坐席
+     *
+     * @param adminAccountInfo
+     * @param id
+     * @return
+     */
+    @GetMapping("group/agent/{id}")
+    public CommonResponse groupAgent(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id) {
+        return new CommonResponse(groupService.groupAgentList(adminAccountInfo.getBindCompanyId(), id));
+    }
+
 
     /**
      * 1.7.1 技能列表

@@ -4,6 +4,8 @@ package org.cti.cc.enums;
  * Create by caoliang on 2020/12/6
  */
 public enum NextType {
+
+    NORNAL,
     /**
      * 呼叫另外一侧
      */
@@ -13,6 +15,16 @@ public enum NextType {
      * 桥接
      */
     NEXT_CALL_BRIDGE(),
+
+    /**
+     * 咨询坐席
+     */
+    NEXT_CONSULT_AGENT(),
+
+    /**
+     * 咨询外线
+     */
+    NEXT_CONSULT_CALLOUT(),
 
     /**
      * 转到坐席
@@ -33,6 +45,21 @@ public enum NextType {
      * 电话转接
      */
     NEXT_TRANSFER_CALL(),
+
+    /**
+     * 强插电话
+     */
+    NEXT_INSERT_CALL(),
+
+    /**
+     * 监听电话
+     */
+    NEXT_LISTEN_CALL(),
+
+    /**
+     * 耳语电话
+     */
+    NEXT_WHISPER_CALL(),
 
     /**
      * 进vdn

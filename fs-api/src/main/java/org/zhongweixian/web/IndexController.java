@@ -10,11 +10,11 @@ import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.health.Health;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.service.CallCdrService;
 
 import java.time.Instant;
@@ -39,9 +39,6 @@ public class IndexController {
     @Autowired
     private StringEncryptor encrypt;
 
-    @Autowired
-    private GroupHandler groupHandler;
-
 
     /**
      * @param callId
@@ -52,6 +49,7 @@ public class IndexController {
         return new CommonResponse<>(callCdrService.getCall(null, callId));
     }
 
+
     @GetMapping("/encrypt")
     public CommonResponse encrypt(@RequestParam String text) {
         return new CommonResponse(encrypt.encrypt(text));
@@ -61,6 +59,12 @@ public class IndexController {
     @GetMapping("/decrypt")
     public CommonResponse decrypt(@RequestParam String text) {
         return new CommonResponse(encrypt.decrypt(text));
+    }
+
+
+    @GetMapping("health")
+    public Health health() {
+        return Health.up().build();
     }
 
     /**

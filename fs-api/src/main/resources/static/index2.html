@@ -2,11 +2,11 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>demo1</title>
+    <title>1002@test</title>
     <style type="text/css">
         #connect-container {
             float: left;
-            width: 400px
+            width: 500px
         }
 
         #connect-container div {
@@ -15,7 +15,7 @@
 
         #console-container {
             float: left;
-            margin-left: 15px;
+            margin-left: 100px;
             width: 400px;
         }
 
@@ -24,7 +24,7 @@
             border-right-color: #999999;
             border-bottom-color: #999999;
             height: 380px;
-            width: 800px;
+            width: 900px;
             overflow-y: scroll;
             padding: 5px;
         }
@@ -36,11 +36,12 @@
     </style>
     <script type="application/javascript">
 
-        var ws = null;
+        var socket = null;
+        var token = 'e7ee51962351a38811325444c0da57d9f25ae9ab49e4292762ab8dffbf528d80';
 
         function init() {
             var obj = document.getElementById('ws');
-            obj.value = "ws://" + window.location.hostname + ":7260/ws";
+            obj.value = "ws://" + window.location.hostname + ":7250/ws?token=" + token;
         }
 
         function setConnected(connected) {
@@ -54,50 +55,60 @@
 
         function connect() {
             var target = document.getElementById('ws').value;
+            log('websocket url:' + target);
             if (target == '') {
                 alert('Please select server side connection implementation.');
                 return;
             }
-            if ('WebSocket' in window) {
-                ws = new WebSocket(target);
-            } else if ('MozWebSocket' in window) {
-                ws = new MozWebSocket(target);
+
+            if (window.WebSocket) {
+                socket = new WebSocket(target);
+                socket.onmessage = function (event) {
+                    log('Received: ' + event.data);
+                };
+                var timer;
+                socket.onopen = function (event) {
+                    log('Info: WebSocket connection opened.');
+                    var pingTime = 10 * 1000;
+                    setConnected(true);
+                    timer = window.setInterval(function () {
+                        var ping = "{'cmd':'ping' , 'sequence': " + new Date().getTime() + " }";
+                        socket.send(ping);
+                    }, pingTime);
+                };
+                socket.onclose = function (event) {
+                    setConnected(false);
+                    clearInterval(timer);
+                    log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
+                };
             } else {
-                alert('WebSocket is not supported by this browser.');
-                return;
+                alert("您的浏览器不支持WebSocket协议！");
             }
-            var timer;
-            ws.onopen = function () {
-                log('Info: WebSocket connection opened.');
-                var pingTime = 10 * 1000;
-                setConnected(true);
-                timer = window.setInterval(function () {
-                    var ping = "{'cmd':'ping' , 'sequence': " + new Date().getTime() + " }";
-                    ws.send(ping);
-                }, pingTime);
-            };
-            ws.onmessage = function (event) {
-                log('Received: ' + event.data);
-            };
-            ws.onclose = function (event) {
-                setConnected(false);
-                clearInterval(timer);
-                log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
-            };
         }
 
         function disconnect() {
-            if (ws != null) {
-                ws.close();
-                ws = null;
+            if (socket != null) {
+                var message = '{ "cmd":"LOGOUT", "sequence":1604584634704}';
+                socket.send(message);
             }
             setConnected(false);
         }
 
         function echo(message) {
-            if (ws != null) {
+            if (socket != null) {
                 log('Sent: ' + message);
-                ws.send(message);
+                socket.send(message);
+            } else {
+                alert('WebSocket connection not established, please connect.');
+            }
+        }
+
+        function echoCmd(message, cmd) {
+            var obj = JSON.parse(message);
+            obj["cmd"] = cmd;
+            if (socket != null) {
+                log('Sent: ' + JSON.stringify(obj));
+                socket.send(JSON.stringify(obj));
             } else {
                 alert('WebSocket connection not established, please connect.');
             }
@@ -143,50 +154,34 @@
     Javascript and reload this page!</h2></div>
 <div>
     <div id="connect-container">
+        <input id="callId" value="" type="hidden" size="40" style="width: 500px"/>
 
         <div>
-            <input id="ws" value="ws://127.0.0.1:6800/ws" type="text" size="40" style="width: 350px"/>
+            <input id="ws" value="" type="text" size="40" style="width: 500px"/>
         </div>
         <div>
             <button id="connect" onclick="connect();">Connect</button>
             <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
         </div>
-        <div>
-            <textarea id="loginText" style="width: 350px;height: 30px">{"cmd":"LOGIN","loginType":"1","workType":"1","agentKey":"1002@test","token":"","time":"123456789"}</textarea>
+        <div hidden="hidden">
+            <textarea id="loginText" style="width: 500px;height:30px">{"cmd":"LOGIN","loginType":"1","workType":"1","agentKey":"1002@test","time":"123456789"}</textarea>
         </div>
 
         <div>
-            <textarea id="READY_Text" hidden>{"cmd":"READY","sequence":1604584634704}</textarea>
+            <textarea id="READY_Text" hidden="hidden">{"cmd":"READY","sequence":1604584634704}</textarea>
         </div>
         <div>
             <button id="READY" onclick=echo("{'cmd':'READY','sequence':'1604584634704'}")> READY</button>
             <button id="NOT_READY" onclick=echo("{'cmd':'NOT_READY','sequence':'1604584634704'}")> NOT_READY</button>
-            <button id="answer" onclick=echo("{'cmd':'ANSWER'}")> 应答</button>
-            <button id="hangupCall" onclick=echo("{'cmd':'HANGUP_CALL'}")> 挂机</button>
-
-
+            <button id="ANSWER" onclick=echo("{'cmd':'ANSWER'}")> 应答</button>
+            <button id="HANGUP_CALL" onclick=echo("{'cmd':'HANGUP_CALL'}")> 挂机</button>
         </div>
 
         <div>
-            <textarea id="calloutText" style="width: 350px;height: 50px">{ "cmd":"MAKE_CALL", "caller":"", "called":"14400010002", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"}, "sequence":1604584634704}</textarea>
+            <textarea id="calloutText" style="width: 500px;height: 25px">{ "cmd":"MAKE_CALL", "caller":"", "called":"13300001234", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"},"uuid1":"123456", "sequence":1604584634704}</textarea>
         </div>
         <div>
             <button id="callout" onclick="echo(document.getElementById('calloutText').value);"> 外呼</button>
-        </div>
-
-        <div>
-            <textarea id="consultText" style="width: 350px;height: 50px">{ "cmd":"COONSULT", "caller":"", "called":"14400010002", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"}, "sequence":1604584634704}</textarea>
-        </div>
-        <div>
-            <button id="consult" onclick="echo(document.getElementById('consultText').value);"> 咨询</button>
-        </div>
-        </br>
-
-        <div>
-            <textarea id="transferText" style="width: 350px;height: 50px">{ "cmd":"TRANSFER", "transferValue":"1001@test", "transferType":"1", "sequence":1604584634704}</textarea>
-        </div>
-        <div>
-            <button id="transfer" onclick="echo(document.getElementById('transferText').value);"> 转接</button>
         </div>
         </br>
 
@@ -194,7 +189,35 @@
             <button id="audioReadMute" onclick=echo("{'cmd':'AUDIO_READ_MUTE'}")>静音</button>
             <button id="audioStop" onclick=echo("{'cmd':'AUDIO_STOP'}")>取消静音</button>
             <button id="hold" onclick=echo("{'cmd':'HOLD'}")>保持</button>
-            <button id="cancelHold" onclick=echo("{'cmd':'CANCEL_HOLD'}")>取消保持</button>
+            <button id="cancelHold" onclick=echo("{'cmd':'HOLD_CANCEL'}")>取消保持</button>
+        </div>
+
+        <div>
+            <textarea id="consultText" style="width: 500px;height: 30px">{ "cmd":"CONSULT", "type":2, "consultValue":"1002@test", "sequence":1604584634704}</textarea>
+        </div>
+        <div>
+            <button id="consult" onclick="echo(document.getElementById('consultText').value);"> 咨询</button>
+            <button id="consultCancel" onclick=echo("{'cmd':'CONSULT_CANCEL'}")> 取消咨询</button>
+            <button id="consultToTransfer" onclick=echo("{'cmd':'CONSULT_TRANSFER'}")> 咨询转</button>
+            <button id="consultStop" onclick=echo("{'cmd':'CONSULT_STOP'}")> 结束咨询</button>
+            <button id="consultToParty" onclick=echo("{'cmd':'CONSULT_PARTY'}")> 转多方</button>
+        </div>
+        </br>
+
+        <div>
+            <textarea id="transferText" style="width: 500px;height: 30px">{ "cmd":"TRANSFER", "transferValue":"1002@test", "transferType":"1", "sequence":1604584634704}</textarea>
+        </div>
+        <div>
+            <button id="transfer" onclick="echo(document.getElementById('transferText').value);"> 转接</button>
+        </div>
+        </br>
+
+        <div> 班长监控:<br>
+            <textarea id="monitor" style="width: 500px;height: 30px">{ "cmd":"MONITOR", "monitorAgent":"1002@test", "sequence":1604584634704}</textarea>
+            <button id="insert" onclick="echoCmd(document.getElementById('monitor').value ,'INSERT');">强插</button>
+            <button id="break" onclick="echoCmd(document.getElementById('monitor').value ,'BREAK');">强拆</button>
+            <button id="listen" onclick="echoCmd(document.getElementById('monitor').value ,'LISTEN');">监听</button>
+            <button id="whisp" onclick="echoCmd(document.getElementById('monitor').value , 'WHISPER');">耳语</button>
         </div>
 
         </br>

@@ -18,7 +18,9 @@ import org.cti.cc.util.DateTimeUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.CallLogService;
 import org.zhongweixian.api.vo.excel.ExcelInboundCallLogEntity;
@@ -28,6 +30,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,9 +59,9 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
     private AgentStateLogMapper agentStateLogMapper;
 
     /**
-     * 最大50万下载
+     * 最大10万下载
      */
-    @Value("${calllog.export.limit:500000}")
+    @Value("${calllog.export.limit:100000}")
     private Long calllogLimit;
 
     @Override
@@ -67,25 +71,23 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public void subTable(String month) {
+        //先清空
+        cleaDayOfData(Instant.now().toEpochMilli());
+
         // cc_call_log
         callLogMapper.createNewTable(month);
-        //callLogMapper.clearTable(start, end);
 
         //cc_call_device
         callDeviceMapper.createNewTable(month);
-        //callDeviceMapper.clearTable(start, end);
 
         //cc_call_detail
         callDetailMapper.createNewTable(month);
-        //callDetailMapper.clearTable(start, end);
 
         //cc_call_dtmf
         callDtmfMapper.createNewTable(month);
-        //callDtmfMapper.clearTable(start, end);
 
         //cc_agent_state_log
         agentStateLogMapper.createNewTable(month);
-        //agentStateLogMapper.clearTable(nowMonth);
     }
 
     @Override
@@ -104,6 +106,11 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
         Integer pageSize = (Integer) params.get("pageSize");
         PageHelper.startPage(pageNum, pageSize);
         List<CallLogPo> list = callLogMapper.getCallList(params);
+        if (!CollectionUtils.isEmpty(list)) {
+            list.forEach(callLogPo -> {
+                callLogPo.setOssServer(ossServer);
+            });
+        }
         return new PageInfo<>(list);
     }
 
@@ -136,8 +143,7 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 entity.setRecordTime(DateTimeUtil.format(callLog.getRecordTime()));
                 entityList.add(entity);
             }
-            workbook = ExcelExportUtil.exportExcel(new ExportParams(
-                    null, direction, ExcelType.XSSF), ExcelOutboundCallLogEntity.class, entityList);
+            workbook = ExcelExportUtil.exportExcel(new ExportParams(null, direction, ExcelType.XSSF), ExcelOutboundCallLogEntity.class, entityList);
         } else if (Direction.INBOUND.name().equals(direction)) {
             List<ExcelInboundCallLogEntity> entityList = new ArrayList<>();
             ExcelInboundCallLogEntity entity = null;
@@ -153,11 +159,10 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 entity.setQueueEndTime(DateTimeUtil.format(callLog.getQueueEndTime()));
                 entityList.add(entity);
             }
-            workbook = ExcelExportUtil.exportExcel(new ExportParams(
-                    null, direction, ExcelType.XSSF), ExcelInboundCallLogEntity.class, entityList);
+            workbook = ExcelExportUtil.exportExcel(new ExportParams(null, direction, ExcelType.XSSF), ExcelInboundCallLogEntity.class, entityList);
         }
-        String filename = URLEncoder.encode(direction + Constant.UNDER_LINE + params.getOrDefault("companyId", 0) + Constant.UNDER_LINE + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", "UTF8");
-        response.setHeader("content-disposition", "attachment;Filename=" + filename);
+        String filename = URLEncoder.encode(direction + Constant.UNDER_LINE + params.getOrDefault("companyId", 0) + Constant.UNDER_LINE + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", StandardCharsets.UTF_8);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();
         workbook.write(out);
@@ -165,19 +170,23 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
     }
 
     @Override
-    public int clearCallLog(Long time) {
+    public int cleaDayOfData(Long end) {
         int result = 0;
         // cc_call_log
-        result += callLogMapper.clearTable(time);
+        result += callLogMapper.clearTable(end);
 
         //cc_call_device
-        result += callDeviceMapper.clearTable(time);
+        result += callDeviceMapper.clearTable(end);
 
         //cc_call_detail
-        result += callDetailMapper.clearTable(time);
+        result += callDetailMapper.clearTable(end);
 
         //cc_call_dtmf
-        result += callDtmfMapper.clearTable(time);
+        result += callDtmfMapper.clearTable(end);
+
+        //cc_agent_state_log
+        result += agentStateLogMapper.clearTable(end);
+
         return result;
     }
 

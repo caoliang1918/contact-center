@@ -31,16 +31,16 @@ public class WsNotReadyHandler extends WsBaseHandler<WsNotReadyEvent> {
         }
         if (agentInfo.getAgentState() == AgentState.NOT_READY) {
             logger.warn("agent:{} already NOT_READY, agent state:{}", event.getAgentKey(), agentInfo.getAgentState());
-            sendMessgae(event, new WsResponseEntity<String>(ErrorCode.AGENT_ALREADY_NOT_READY, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<String>(ErrorCode.AGENT_ALREADY_NOT_READY, event.getCmd(), event.getAgentKey()));
             return;
         }
         if (agentInfo.getAgentState().name().contains("CALL") || agentInfo.getAgentState().name().contains("TALK")) {
             logger.warn("agent:{} NOT_READY error, agent state:{}", event.getAgentKey(), agentInfo.getAgentState());
-            sendMessgae(event, new WsResponseEntity<String>(ErrorCode.AGENT_CALLING, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<String>(ErrorCode.AGENT_CALLING, event.getCmd(), event.getAgentKey()));
             return;
         }
 
-        sendMessgae(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
+        sendMessage(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
 
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());

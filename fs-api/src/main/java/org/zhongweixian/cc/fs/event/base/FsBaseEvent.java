@@ -2,7 +2,7 @@ package org.zhongweixian.cc.fs.event.base;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.zhongweixian.esl.internal.Context;
+import org.zhongweixian.cc.fs.esl.internal.Context;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,16 +1,15 @@
 package org.zhongweixian.cc.websocket.handler;
 
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.po.AgentInfo;
-import org.cti.cc.po.AgentState;
-import org.cti.cc.po.CallInfo;
-import org.cti.cc.po.NextCommand;
+import org.cti.cc.enums.NextType;
+import org.cti.cc.po.*;
 import org.springframework.stereotype.Component;
 import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.websocket.event.WsHangupCallEvent;
 import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
-import org.zhongweixian.cc.websocket.response.WsResponseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by caoliang on 2020/11/6
@@ -23,18 +22,60 @@ public class WsHangupCallHandler extends WsBaseHandler<WsHangupCallEvent> {
 
     @Override
     public void handleEvent(WsHangupCallEvent event) {
-        logger.info("{}", event.toString());
         AgentInfo agentInfo = getAgent(event);
-        CallInfo callInfo = cacheService.getCallInfo(agentInfo.getCallId());
-        if (callInfo == null || StringUtils.isBlank(callInfo.getMedia())) {
-            logger.warn("agentKey:{} not find call", event.getAgentKey());
-            agentInfo.setCallId(null);
-            agentInfo.setDeviceId(null);
-            agentInfo.setAgentState(AgentState.NOT_READY);
-            sendMessgae(event, new WsResponseEntity<String>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
+        if (agentInfo.getCallId() == null || StringUtils.isBlank(agentInfo.getDeviceId())) {
+            callNotFound(agentInfo, event);
             return;
         }
-        logger.info("坐席发起挂机 agent:{} callId:{}", event.getAgentKey(), callInfo.getCallId());
-        hangupCall(callInfo.getMedia(), callInfo.getCallId(), agentInfo.getDeviceId());
+
+        CallInfo callInfo = cacheService.getCallInfo(agentInfo.getCallId());
+        DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(agentInfo.getDeviceId());
+
+        if (callInfo == null || deviceInfo == null || StringUtils.isBlank(callInfo.getMediaHost())) {
+            callNotFound(agentInfo, event);
+            return;
+        }
+
+        List<String> strings = new ArrayList<>(callInfo.getDeviceList());
+
+        switch (deviceInfo.getCdrType()) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                logger.info("坐席发起挂机 agent:{} callId:{}", event.getAgentKey(), callInfo.getCallId());
+                hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), agentInfo.getDeviceId());
+                callInfo.setSdkHangup(1);
+                break;
+
+            case 5:
+                strings.remove(deviceInfo.getDeviceId());
+                DeviceInfo deviceInfo1 = null;
+                for (String s : strings) {
+                    deviceInfo1 = callInfo.getDeviceInfoMap().get(s);
+                    if (AgentState.HOLD.name().equals(deviceInfo1.getState())) {
+                        break;
+                    }
+                }
+                if (deviceInfo1 != null) {
+                    strings.remove(deviceInfo1.getDeviceId());
+                    NextCommand nextCommand = null;
+                    if (StringUtils.isBlank(deviceInfo1.getConference())) {
+                        nextCommand = new NextCommand(strings.get(0), NextType.NEXT_CALL_BRIDGE, deviceInfo1.getDeviceId());
+                    } else {
+                        nextCommand = new NextCommand(NextType.NORNAL);
+                    }
+                    callInfo.getNextCommands().add(nextCommand);
+                    hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), agentInfo.getDeviceId());
+                }
+                break;
+            case 6:
+            case 7:
+            case 8:
+                NextCommand nextCommand = new NextCommand(NextType.NORNAL);
+                callInfo.getNextCommands().add(nextCommand);
+                killCall(callInfo.getMediaHost(), callInfo.getCallId(), agentInfo.getDeviceId());
+        }
+        cacheService.addCallInfo(callInfo);
     }
 }

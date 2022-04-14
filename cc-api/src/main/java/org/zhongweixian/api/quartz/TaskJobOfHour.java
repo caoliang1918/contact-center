@@ -67,6 +67,18 @@ public class TaskJobOfHour implements Job {
          */
         agentHourStat(start, end, companyInfoList);
 
+        /**
+         * 坐席电话统计
+         */
+
+        /**
+         * 企业话务统计
+         */
+
+
+        /**
+         * 定时话单补推
+         */
         pushFailLog(start, end);
     }
 
@@ -205,7 +217,7 @@ public class TaskJobOfHour implements Job {
 
 
     /**
-     * 每小时重推最近1000条数据
+     * 每小时重推最近10000条数据
      *
      * @param start
      * @param end

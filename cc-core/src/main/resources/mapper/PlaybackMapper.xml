@@ -10,8 +10,9 @@
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, cts, uts, company_id, playback, status
-  </sql>
+        id
+        , cts, uts, company_id, playback, status
+    </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -19,15 +20,16 @@
         where id = #{id,jdbcType=BIGINT}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from cc_playback
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
+        delete
+        from cc_playback
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
     <insert id="insert" parameterType="org.cti.cc.entity.Playback">
-    insert into cc_playback (id, cts, uts, company_id, 
-      playback, status)
-    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
-      #{playback,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
-  </insert>
+        insert into cc_playback (id, cts, uts, company_id,
+                                 playback, status)
+        values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
+                #{playback,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+    </insert>
     <insert id="insertSelective" parameterType="org.cti.cc.entity.Playback">
         insert into cc_playback
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -93,20 +95,20 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
     <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.Playback">
-    update cc_playback
-    set cts = #{cts,jdbcType=BIGINT},
-      uts = #{uts,jdbcType=BIGINT},
-      company_id = #{companyId,jdbcType=BIGINT},
-      playback = #{playback,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+        update cc_playback
+        set cts        = #{cts,jdbcType=BIGINT},
+            uts        = #{uts,jdbcType=BIGINT},
+            company_id = #{companyId,jdbcType=BIGINT},
+            playback   = #{playback,jdbcType=VARCHAR},
+            status     = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         from
-            cc_playback
+        cc_playback
         <where>
             <if test="companyId!=null">company_id = #{companyId,jdbcType=BIGINT}</if>
             <if test="playback!=null">playback = #{playback,jdbcType=VARCHAR}</if>

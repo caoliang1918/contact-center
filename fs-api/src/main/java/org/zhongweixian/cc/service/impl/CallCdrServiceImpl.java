@@ -75,6 +75,9 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Value("${call.cdr.pressure:0}")
     private Integer callCdrPressure;
 
+    @Value("${oss.server}")
+    private String ossServer;
+
 
     @Override
     BaseMapper<CallLog> baseMapper() {
@@ -158,13 +161,12 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public CallLogPo getCall(Long companyId, Long callId) {
-        /**
-         * 解析callId产生的时间
-         */
-        String binaryString = Long.toBinaryString(callId);
-        Long time = Long.parseLong(binaryString.substring(0, 36), 2) + SnowflakeIdWorker.WORK_START;
-        logger.info("callId:{} callTime:{} ", callId, DateTimeUtil.format(time));
-        return callLogMapper.getCall(companyId, callId, DateTimeUtil.getMonth(time));
+        Long time = DateTimeUtil.getCallTime(callId);
+        CallLogPo callLogPo = callLogMapper.getCall(companyId, callId, DateTimeUtil.isToday(time) ? StringUtils.EMPTY : DateTimeUtil.getMonth(time));
+        if (callLogPo != null) {
+            callLogPo.setOssServer(ossServer);
+        }
+        return callLogPo;
     }
 
 
@@ -180,40 +182,17 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         Long now = Instant.now().toEpochMilli();
         GroupInfo groupInfo = cacheService.getGroupInfo(agentInfo.getGroupId());
 
-        CallInfo callInfo = CallInfo.CallInfoBuilder.builder()
-                .withCallId(callId)
-                .withAgentKey(agentInfo.getAgentKey())
-                .withLoginType(agentInfo.getLoginType())
-                .withCompanyId(agentInfo.getCompanyId())
-                .withGroupId(agentInfo.getGroupId())
-                .withHost(agentInfo.getHost())
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(callId).withAgentKey(agentInfo.getAgentKey()).withLoginType(agentInfo.getLoginType()).withCompanyId(agentInfo.getCompanyId()).withGroupId(agentInfo.getGroupId()).withCtiHost(agentInfo.getHost())
 //                .withCaller(caller)
-                .withCalled(makeCallVo.getCalled().strip())
+                .withCalled(makeCallVo.getCalled())
 //                .withCallerDisplay(callerDisplay)
 //                .withCalledDisplay(calledDisplay)
-                .withDirection(Direction.OUTBOUND)
-                .withCallType(makeCallVo.getCallType())
-                .withCallTime(now)
-                .withGroupId(agentInfo.getGroupId())
-                .withFollowData(makeCallVo.getFollowData())
-                .withUuid1(makeCallVo.getUuid1())
-                .withUuid2(makeCallVo.getUuid2())
-                .build();
+                .withDirection(Direction.OUTBOUND).withCallType(makeCallVo.getCallType()).withCallTime(now).withGroupId(agentInfo.getGroupId()).withFollowData(makeCallVo.getFollowData()).withUuid1(makeCallVo.getUuid1()).withUuid2(makeCallVo.getUuid2()).build();
 
-        DeviceInfo deviceInfo = DeviceInfo.DeviceInfoBuilder.builder()
-                .withDeviceId(deviceId)
-                .withCaller("")
-                .withCalled("")
-                .withCallTime(now)
-                .withCallId(callId)
-                .withCdrType(2)
-                .withDeviceType(1)
-                .withAgentKey(agentInfo.getAgentKey())
-                .build();
+        DeviceInfo deviceInfo = DeviceInfo.DeviceInfoBuilder.builder().withDeviceId(deviceId).withCaller("").withCalled("").withCallTime(now).withCallId(callId).withCdrType(2).withDeviceType(1).withAgentKey(agentInfo.getAgentKey()).build();
 
 
         callInfo.setHiddenCustomer(agentInfo.getHiddenCustomer());
-        callInfo.setCdrNotifyUrl(agentInfo.getCdrNotifyUrl());
         callInfo.getDeviceList().add(deviceId);
         callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_CALL_OTHER, null));
 
@@ -234,27 +213,30 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
     @Override
     public void hangupCall(CallInfo callInfo, String deviceId) {
-        fsListen.hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+        fsListen.hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
     }
 
     @Override
     public void hold(CallInfo callInfo, String deviceId) {
-        fsListen.hold(callInfo.getMedia(), deviceId);
+        List<String> list = callInfo.getDeviceList();
+        list.remove(deviceId);
+        fsListen.bridgeBreak(callInfo.getMediaHost(), list.get(0));
+        fsListen.holdPlay(callInfo.getMediaHost(), list.get(0), "/app/clpms/sounds/hold.wav");
     }
 
     @Override
     public void cancelHold(CallInfo callInfo, String deviceId) {
-        fsListen.callBridge(callInfo.getMedia(), callInfo.getDeviceList().get(0), callInfo.getDeviceList().get(1));
+        fsListen.bridgeCall(callInfo.getMediaHost(), callInfo.getCallId(), callInfo.getDeviceList().get(0), callInfo.getDeviceList().get(1));
     }
 
     @Override
     public void readyMute(CallInfo callInfo, String deviceId) {
-        fsListen.sendBgapiMessage(callInfo.getMedia(), "uuid_audio", deviceId + " start read mute 1");
+        fsListen.sendBgapiMessage(callInfo.getMediaHost(), "uuid_audio", deviceId + " start read mute 1");
     }
 
     @Override
     public void cancelMute(CallInfo callInfo, String deviceId) {
-        fsListen.sendBgapiMessage(callInfo.getMedia(), "uuid_audio", deviceId + " stop");
+        fsListen.sendBgapiMessage(callInfo.getMediaHost(), "uuid_audio", deviceId + " stop");
     }
 
     /**
@@ -320,7 +302,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return;
         }
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", agentInfo.getAgentKey(), callInfo.getCallId(), callerDisplay, caller);
-        fsListen.makeCall(routeGetway, callerDisplay, caller, deviceInfo.getDeviceId());
+        fsListen.makeCall(routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceInfo.getDeviceId());
 
         /**
          * 通知ws坐席请求外呼

@@ -6,14 +6,6 @@ import org.cti.cc.mapper.base.BaseMapper;
 
 public interface AgentStateLogMapper extends BaseMapper<AgentStateLog> {
 
-    /**
-     * 删除历史数据
-     *
-     * @param time
-     * @return
-     */
-    int deleteAgentStateWork(Long time);
-
 
     /**
      * 迁移表
@@ -21,5 +13,13 @@ public interface AgentStateLogMapper extends BaseMapper<AgentStateLog> {
      * @param month
      */
     void createNewTable(@Param("month") String month);
+
+
+    /**
+     * 删除数据
+     *
+     * @param end
+     */
+    int clearTable(@Param("end") Long end);
 
 }

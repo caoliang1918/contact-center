@@ -1,6 +1,5 @@
 package org.cti.cc.mapper;
 
-import org.apache.ibatis.annotations.Param;
 import org.cti.cc.entity.AgentSip;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.AgentSipPo;
@@ -35,14 +34,16 @@ public interface AgentSipMapper extends BaseMapper<AgentSip> {
     List<AgentSipPo> selectAgentSip(Map<String, Object> params);
 
 
-
     /**
-     *
      * @param sip
      * @return
      */
     AgentSip selectBySip(Integer sip);
 
+    /**
+     *
+     * @return
+     */
     Integer maxSip();
 
 

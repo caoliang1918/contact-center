@@ -1,6 +1,7 @@
 package org.zhongweixian.api;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import io.minio.MinioClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,16 +49,6 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
         quartzConfig.stop();
     }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout,
-                                     @Value("${cdr.notify.readTimeout:200}") Integer readTimeout) {
-        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
-        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
-        return new RestTemplate(simpleClientHttpRequestFactory);
-    }
-
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<Object, Object>();
@@ -65,6 +56,26 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
         template.setDefaultSerializer(serializer);
         return template;
+    }
+
+    @LoadBalanced
+    @Bean
+    public RestTemplate httpClient(@Value("${cc.inner.connectTimeout:100}") Integer connectTimeout,
+                                   @Value("${cc.inner.readTimeout:500}") Integer readTimeout) {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+        return new RestTemplate(simpleClientHttpRequestFactory);
+    }
+
+    @Bean
+    public MinioClient minioClient(@Value("${minio.endpoint:}") String endpoint, @Value("${minio.access.key:}") String accessKey, @Value("${minio.secret.key:}") String secretKey) {
+        try {
+            return new MinioClient.Builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return null;
     }
 }
 

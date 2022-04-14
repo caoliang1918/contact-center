@@ -9,6 +9,9 @@ import org.zhongweixian.cc.websocket.event.WsHoldEvent;
 import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by caoliang on 2021/7/19
  * <p>
@@ -26,13 +29,17 @@ public class WsHoldHandler extends WsBaseHandler<WsHoldEvent> {
         String deviceId = agentInfo.getDeviceId();
         CallInfo callInfo = cacheService.getCallInfo(agentInfo.getCallId());
         if (deviceId == null || callInfo == null) {
-
             return;
         }
-        this.hold(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+        List<String> list = new ArrayList<>(callInfo.getDeviceList());
+        list.remove(deviceId);
+        this.bridgeBreak(callInfo.getMediaHost(), callInfo.getCallId(), list.get(0));
+        this.holdPlay(callInfo.getMediaHost(), callInfo.getCallId(), list.get(0), "/app/clpms/sounds/hold.wav");
         agentInfo.setAgentState(AgentState.HOLD);
-        sendMessgae(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
+        sendMessage(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
         callInfo.getDeviceInfoMap().get(deviceId).setState(AgentState.HOLD.name());
+        cacheService.addCallInfo(callInfo);
+        cacheService.addAgentInfo(agentInfo);
     }
 
 }

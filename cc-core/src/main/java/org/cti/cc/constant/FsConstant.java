@@ -7,7 +7,15 @@ public class FsConstant {
 
     public final static String SPACE = " ";
 
+    public final static String SPLIT = ",";
+
     public final static String SET = "set";
+
+    public final static String OK = "OK";
+
+    public final static String SIP_HEADER = "sip_h_";
+
+    public final static String SOFIA = "sofia";
 
     public final static String EXECUTE = "execute";
 
@@ -31,6 +39,17 @@ public class FsConstant {
 
     public final static String EXTERNAL = "external";
 
+    public final static String CONFERENCE = "conference";
+
+    public final static String DETECT_SPEECH = "detect_speech";
+
+    public final static String EAVESDROP = "eavesdrop";
+
+
+    public final static String PARK = " &park";
+
+
+
     public final static String RECORD_STEREO = " RECORD_STEREO true";
 
     public final static String RECORD_SAMPLE_RATE = "record_sample_rate=";
@@ -48,6 +67,15 @@ public class FsConstant {
     public final static String PLAY_AND_GET_DIGITS = "play_and_get_digits";
 
     public final static String PLAYBACK_DELIMITER = "playback_delimiter=!";
+
+
+    public final static String PLAYBACK_TERMINATORS = "playback_terminators=none";
+
+
+    public final static String TTS_ENGINE = "tts_engine=unimrcp";
+
+
+
 
 
     public final static String RE_SCHEDULE = "RE_SCHEDULE";
@@ -77,6 +105,8 @@ public class FsConstant {
     public final static String CHANNEL_UNPARK = "CHANNEL_UNPARK";
 
     public final static String PRIVATE_COMMAND = "PRIVATE_COMMAND";
+
+    public final static String PRESENCE_IN = "PRESENCE_IN";
 
     public final static String CHANNEL_EXECUTE_COMPLETE = "CHANNEL_EXECUTE_COMPLETE";
 
@@ -112,6 +142,8 @@ public class FsConstant {
 
     public final static String DTMF = "DTMF";
 
+    public final static String DEL_SCHEDULE = "DEL_SCHEDULE";
+
     public final static String CHANNEL_PROGRESS_MEDIA = "CHANNEL_PROGRESS_MEDIA";
 
     public final static String RECORD_STOP = "RECORD_STOP";
@@ -119,6 +151,12 @@ public class FsConstant {
     public final static String CUSTOM = "CUSTOM";
 
     public final static String RING_ASR = "RING_ASR";
+
+    public final static String CHANNEL_UNHOLD = "CHANNEL_UNHOLD";
+
+    public final static String CONFIRMED = "confirmed";
+
+    public final static String CONFERENCE_SEND_PRESENCE = "conference_send_presence";
 
 
 }

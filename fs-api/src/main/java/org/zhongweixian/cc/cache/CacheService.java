@@ -16,6 +16,7 @@ import org.cti.cc.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -39,6 +40,9 @@ import java.util.stream.Collectors;
 @Service
 public class CacheService {
     private Logger logger = LoggerFactory.getLogger(CacheService.class);
+
+    @Value("${token.cache.day:7}")
+    private Integer cacheDay;
 
     @Autowired
     private CompanyService companyService;
@@ -119,7 +123,7 @@ public class CacheService {
 
     public void refleshAgentToken(String agentKey, String token) {
         logger.info("agent:{}, create token:{}", agentKey, token);
-        redisTemplate.opsForValue().set(Constant.AGENT_TOKEN + token, agentKey, 48, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set(Constant.AGENT_TOKEN + token, agentKey, 24 * cacheDay, TimeUnit.HOURS);
     }
 
     public void deleteKey(String key) {
@@ -139,7 +143,7 @@ public class CacheService {
      * @param agentInfo
      */
     public void addAgentInfo(AgentInfo agentInfo) {
-        redisTemplate.opsForValue().set(Constant.AGENT_INFO + agentInfo.getAgentKey(), JSON.toJSONString(agentInfo), 48L, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set(Constant.AGENT_INFO + agentInfo.getAgentKey(), JSON.toJSONString(agentInfo), 24 * cacheDay, TimeUnit.HOURS);
     }
 
 
@@ -185,10 +189,8 @@ public class CacheService {
             callInfo.getDeviceInfoMap().forEach((k, v) -> {
                 deviceCall.remove(k);
             });
-            groupHandler.removeCall(callInfo.getGroupId(), callId);
         }
         redisTemplate.delete(Constant.CALL_INFO + callId);
-
     }
 
 

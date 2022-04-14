@@ -84,30 +84,57 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
             return;
         }
 
+        if (deviceInfo1.getCdrType() == 5) {
+            sendAgentState(callInfo, deviceInfo1.getAgentKey(), AgentState.CONSULTED_TALKING);
+            if (deviceInfo2.getCdrType() == 2 && deviceInfo2.getDeviceType() == 1) {
+                sendAgentState(callInfo, deviceInfo2.getAgentKey(), AgentState.CONSULT_TALKING);
+            }
+            return;
+        }
+        if (deviceInfo2.getCdrType() == 5) {
+            sendAgentState(callInfo, deviceInfo2.getAgentKey(), AgentState.CONSULTED_TALKING);
+            if (deviceInfo1.getCdrType() == 2 && deviceInfo1.getDeviceType() == 1) {
+                sendAgentState(callInfo, deviceInfo1.getAgentKey(), AgentState.CONSULT_TALKING);
+            }
+            return;
+        }
+        sendAgentState(callInfo, callInfo.getAgentKey(), AgentState.TALKING);
+    }
+
+
+    /**
+     * 电话桥接成功，给坐席sdk推送状态
+     *
+     * @param callInfo
+     * @param agentKey
+     * @param agentState
+     */
+    private void sendAgentState(CallInfo callInfo, String agentKey, AgentState agentState) {
         /**
          * 发送ws消息
          */
-        WsCallEntity ringEntity = new WsCallEntity();
-        ringEntity.setCallId(callInfo.getCallId());
-        ringEntity.setCallType(callInfo.getCallType());
-        ringEntity.setAgentState(AgentState.TALKING);
-        ringEntity.setCaller(callInfo.getCaller());
-        ringEntity.setCalled(callInfo.getCalled());
-        AgentInfo agentInfo = cacheService.getAgentInfo(deviceInfo1.getAgentKey());
+        WsCallEntity callEntity = new WsCallEntity();
+        callEntity.setCallId(callInfo.getCallId());
+        callEntity.setCallType(callInfo.getCallType());
+        callEntity.setAgentState(agentState);
+        callEntity.setCaller(callInfo.getCaller());
+        callEntity.setCalled(callInfo.getCalled());
+        callEntity.setDirection(callInfo.getDirection());
+        AgentInfo agentInfo = cacheService.getAgentInfo(agentKey);
         if (agentInfo == null) {
-            cacheService.getAgentInfo(deviceInfo2.getAgentKey());
+            return;
         }
         if (agentInfo.getHiddenCustomer() == 1) {
             if (callInfo.getDirection() == Direction.OUTBOUND) {
-                ringEntity.setCalled(hiddenNumber(callInfo.getCalled()));
+                callEntity.setCalled(hiddenNumber(callInfo.getCalled()));
             } else if (callInfo.getDirection() == Direction.INBOUND) {
-                ringEntity.setCaller(hiddenNumber(callInfo.getCaller()));
+                callEntity.setCaller(hiddenNumber(callInfo.getCaller()));
             }
         }
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());
         agentInfo.setStateTime(Instant.now().toEpochMilli());
-        agentInfo.setAgentState(AgentState.TALKING);
-        sendAgentStateMessage(agentInfo, new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), agentInfo.getAgentKey(), ringEntity));
+        agentInfo.setAgentState(agentState);
+        sendWsMessage(agentInfo, new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), agentInfo.getAgentKey(), callEntity));
     }
 }

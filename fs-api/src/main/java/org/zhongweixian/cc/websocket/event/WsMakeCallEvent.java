@@ -57,6 +57,11 @@ public class WsMakeCallEvent extends WsBaseEvent {
      */
     private String callerDiaplay;
 
+    /**
+     * 选择的媒体
+     */
+    private String media;
+
 
     public String getState() {
         return state;
@@ -128,6 +133,14 @@ public class WsMakeCallEvent extends WsBaseEvent {
 
     public void setCallerDiaplay(String callerDiaplay) {
         this.callerDiaplay = callerDiaplay;
+    }
+
+    public String getMedia() {
+        return media;
+    }
+
+    public void setMedia(String media) {
+        this.media = media;
     }
 
     @Override

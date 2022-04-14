@@ -12,11 +12,6 @@ import java.util.List;
 public class WsLoginEvnet extends WsBaseEvent {
 
     /**
-     * token 模式
-     */
-    private String token;
-
-    /**
      * 密码模式
      */
     private String passwd;
@@ -44,23 +39,10 @@ public class WsLoginEvnet extends WsBaseEvent {
     private String sip;
 
     /**
-     * 通话中断开重连时，携带callId
-     */
-    private Long callId;
-
-    /**
      * 坐席签入技能组
      */
     private List<Long> groupIds;
 
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public String getAgentName() {
         return agentName;
@@ -94,14 +76,6 @@ public class WsLoginEvnet extends WsBaseEvent {
         this.sip = sip;
     }
 
-    public Long getCallId() {
-        return callId;
-    }
-
-    public void setCallId(Long callId) {
-        this.callId = callId;
-    }
-
     public List<Long> getGroupIds() {
         return groupIds;
     }
@@ -121,7 +95,6 @@ public class WsLoginEvnet extends WsBaseEvent {
     @Override
     public String toString() {
         return "WsLoginEvnet{" +
-                "token='" + token + '\'' +
                 ", loginType='" + loginType + '\'' +
                 ", workType='" + workType + '\'' +
                 ", sip='" + sip + '\'' +

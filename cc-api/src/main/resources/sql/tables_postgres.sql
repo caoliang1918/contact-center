@@ -1,7 +1,3 @@
--- Thanks to Patrick Lightbody for submitting this...
---
--- In your Quartz properties file, you'll need to set 
--- org.quartz.jobStore.driverDelegateClass = org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
 
 drop table qrtz_fired_triggers;
 DROP TABLE QRTZ_PAUSED_TRIGGER_GRPS;

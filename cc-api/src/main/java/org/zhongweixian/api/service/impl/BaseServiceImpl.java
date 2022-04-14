@@ -3,6 +3,7 @@ package org.zhongweixian.api.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.cti.cc.mapper.CompanyMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +25,20 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 
     abstract BaseMapper<T> baseMapper();
 
+    /**
+     * 批量插入时，每次插入条数
+     */
     @Value("${range.size:500}")
     protected Integer range;
 
+    @Value("${oss.server}")
+    protected String ossServer;
+
     @Autowired
     protected RedisTemplate redisTemplate;
+
+    @Autowired
+    protected CompanyMapper companyMapper;
 
     @Override
     public int add(T record) {

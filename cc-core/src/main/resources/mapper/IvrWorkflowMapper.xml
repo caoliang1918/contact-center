@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.IvrWorkflowMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.IvrWorkflow">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="oss_id" jdbcType="VARCHAR" property="ossId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="verify_user" jdbcType="VARCHAR" property="verifyUser" />
+    <result column="voice_item" jdbcType="VARCHAR" property="voiceItem" />
+    <result column="init_params" jdbcType="VARCHAR" property="initParams" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, name, oss_id, create_user, verify_user, voice_item,init_params, content, type,     status
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_ivr_workflow
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_ivr_workflow
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.IvrWorkflow">
+    insert into cc_ivr_workflow (id, cts, uts, company_id, 
+      name, oss_id, create_user, 
+      verify_user, voice_item, type, 
+      status, init_params, content
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{name,jdbcType=VARCHAR}, #{ossId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{verifyUser,jdbcType=VARCHAR}, #{voiceItem,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{initParams,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.IvrWorkflow">
+    insert into cc_ivr_workflow
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="ossId != null">
+        oss_id,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="verifyUser != null">
+        verify_user,
+      </if>
+      <if test="voiceItem != null">
+        voice_item,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="initParams != null">
+        init_params,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ossId != null">
+        #{ossId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyUser != null">
+        #{verifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="voiceItem != null">
+        #{voiceItem,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="initParams != null">
+        #{initParams,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.IvrWorkflow">
+    update cc_ivr_workflow
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ossId != null">
+        oss_id = #{ossId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyUser != null">
+        verify_user = #{verifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="voiceItem != null">
+        voice_item = #{voiceItem,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="initParams != null">
+        init_params = #{initParams,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.IvrWorkflow">
+    update cc_ivr_workflow
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      oss_id = #{ossId,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      verify_user = #{verifyUser,jdbcType=VARCHAR},
+      voice_item = #{voiceItem,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      init_params = #{initParams,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

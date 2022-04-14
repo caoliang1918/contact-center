@@ -1,10 +1,7 @@
 package org.zhongweixian.api.service.impl;
 
 
-import org.cti.cc.entity.Company;
-import org.cti.cc.entity.Group;
-import org.cti.cc.entity.SkillGroup;
-import org.cti.cc.entity.VdnSchedule;
+import org.cti.cc.entity.*;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.mapper.*;
 import org.cti.cc.mapper.base.BaseMapper;
@@ -40,7 +37,7 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
     private CompanyMapper companyMapper;
 
     @Autowired
-    private VdnScheduleMapper vdnScheduleMapper;
+    private VdnConfigMapper vdnScheduleMapper;
 
     @Override
     BaseMapper<Group> baseMapper() {
@@ -134,7 +131,7 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
         //技能组绑定了不能删
         params.put("routeType", 1);
         params.put("routeValue", id);
-        List<VdnSchedule> vdnSchedules = vdnScheduleMapper.selectListByMap(params);
+        List<VdnConfig> vdnSchedules = vdnScheduleMapper.selectListByMap(params);
         if (!CollectionUtils.isEmpty(vdnSchedules)) {
             throw new BusinessException(ErrorCode.DATA_NOT_EXIST, "技能组已经被vdn引用");
         }
@@ -148,5 +145,13 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
         group.setUts(Instant.now().getEpochSecond());
         group.setName(groups.get(0).getName() + randomDelete());
         return groupMapper.updateByPrimaryKeySelective(group);
+    }
+
+    @Override
+    public List<AgentGroup> groupAgentList(Long companyId, Long groupId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("groupId", groupId);
+        return agentGroupMapper.selectListByMap(params);
     }
 }

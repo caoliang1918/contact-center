@@ -1,8 +1,11 @@
 package org.zhongweixian.api.service;
 
+import org.cti.cc.entity.AgentGroup;
 import org.cti.cc.entity.Group;
 import org.cti.cc.po.GroupInfo;
 import org.cti.cc.vo.GroupInfoVo;
+
+import java.util.List;
 
 public interface GroupService extends BaseService<Group> {
 
@@ -33,4 +36,13 @@ public interface GroupService extends BaseService<Group> {
      * @return
      */
     int deleteGroup(Long companyId, Long id);
+
+    /**
+     * 技能组下坐席
+     *
+     * @param companyId
+     * @param groupId
+     * @return
+     */
+    List<AgentGroup> groupAgentList(Long companyId, Long groupId);
 }

@@ -1,6 +1,6 @@
 package org.zhongweixian.ivr.action;
 
-import org.apache.commons.scxml.SCInstance;
+import org.apache.commons.scxml2.SCInstance;
 import org.cti.cc.po.CallInfo;
 import org.zhongweixian.ivr.action.base.BaseAction;
 
@@ -11,6 +11,8 @@ public class InitAction extends BaseAction {
 
     @Override
     public void execute(SCInstance scInstance, CallInfo callInfo) {
-        logger.info("InitAction run :{}" , callInfo.getCallId());
+        logger.info("initAction run :{}", callInfo.getCallId());
     }
+
+
 }

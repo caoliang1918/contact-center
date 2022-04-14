@@ -1,219 +1,290 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cti.cc.mapper.AdminMenuMapper">
-  <resultMap id="BaseResultMap" type="org.cti.cc.entity.AdminMenu">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="cts" jdbcType="BIGINT" property="cts" />
-    <result column="uts" jdbcType="BIGINT" property="uts" />
-    <result column="menu_id" jdbcType="VARCHAR" property="menuId" />
-    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="path_url" jdbcType="VARCHAR" property="pathUrl" />
-    <result column="path_method" jdbcType="VARCHAR" property="pathMethod" />
-    <result column="menu_level" jdbcType="INTEGER" property="menuLevel" />
-    <result column="menu_order" jdbcType="INTEGER" property="menuOrder" />
-    <result column="create_default" jdbcType="INTEGER" property="createDefault" />
-    <result column="init_default" jdbcType="INTEGER" property="initDefault" />
-    <result column="front_site" jdbcType="INTEGER" property="frontSite" />
-    <result column="end_site" jdbcType="INTEGER" property="endSite" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    id, cts, uts, menu_id, parent_id, name, path_url, path_method, menu_level, menu_order, 
-    create_default, init_default, front_site, end_site, status
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from cc_admin_menu
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from cc_admin_menu
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="org.cti.cc.entity.AdminMenu">
-    insert into cc_admin_menu (id, cts, uts, menu_id, 
-      parent_id, name, path_url, 
-      path_method, menu_level, menu_order, 
-      create_default, init_default, front_site, 
-      end_site, status)
-    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{menuId,jdbcType=VARCHAR}, 
-      #{parentId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{pathUrl,jdbcType=VARCHAR}, 
-      #{pathMethod,jdbcType=VARCHAR}, #{menuLevel,jdbcType=INTEGER}, #{menuOrder,jdbcType=INTEGER}, 
-      #{createDefault,jdbcType=INTEGER}, #{initDefault,jdbcType=INTEGER}, #{frontSite,jdbcType=INTEGER}, 
-      #{endSite,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
-  </insert>
-  <insert id="insertSelective" parameterType="org.cti.cc.entity.AdminMenu">
-    insert into cc_admin_menu
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="cts != null">
-        cts,
-      </if>
-      <if test="uts != null">
-        uts,
-      </if>
-      <if test="menuId != null">
-        menu_id,
-      </if>
-      <if test="parentId != null">
-        parent_id,
-      </if>
-      <if test="name != null">
-        name,
-      </if>
-      <if test="pathUrl != null">
-        path_url,
-      </if>
-      <if test="pathMethod != null">
-        path_method,
-      </if>
-      <if test="menuLevel != null">
-        menu_level,
-      </if>
-      <if test="menuOrder != null">
-        menu_order,
-      </if>
-      <if test="createDefault != null">
-        create_default,
-      </if>
-      <if test="initDefault != null">
-        init_default,
-      </if>
-      <if test="frontSite != null">
-        front_site,
-      </if>
-      <if test="endSite != null">
-        end_site,
-      </if>
-      <if test="status != null">
-        status,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="cts != null">
-        #{cts,jdbcType=BIGINT},
-      </if>
-      <if test="uts != null">
-        #{uts,jdbcType=BIGINT},
-      </if>
-      <if test="menuId != null">
-        #{menuId,jdbcType=VARCHAR},
-      </if>
-      <if test="parentId != null">
-        #{parentId,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="pathUrl != null">
-        #{pathUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="pathMethod != null">
-        #{pathMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="menuLevel != null">
-        #{menuLevel,jdbcType=INTEGER},
-      </if>
-      <if test="menuOrder != null">
-        #{menuOrder,jdbcType=INTEGER},
-      </if>
-      <if test="createDefault != null">
-        #{createDefault,jdbcType=INTEGER},
-      </if>
-      <if test="initDefault != null">
-        #{initDefault,jdbcType=INTEGER},
-      </if>
-      <if test="frontSite != null">
-        #{frontSite,jdbcType=INTEGER},
-      </if>
-      <if test="endSite != null">
-        #{endSite,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AdminMenu">
-    update cc_admin_menu
-    <set>
-      <if test="cts != null">
-        cts = #{cts,jdbcType=BIGINT},
-      </if>
-      <if test="uts != null">
-        uts = #{uts,jdbcType=BIGINT},
-      </if>
-      <if test="menuId != null">
-        menu_id = #{menuId,jdbcType=VARCHAR},
-      </if>
-      <if test="parentId != null">
-        parent_id = #{parentId,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="pathUrl != null">
-        path_url = #{pathUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="pathMethod != null">
-        path_method = #{pathMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="menuLevel != null">
-        menu_level = #{menuLevel,jdbcType=INTEGER},
-      </if>
-      <if test="menuOrder != null">
-        menu_order = #{menuOrder,jdbcType=INTEGER},
-      </if>
-      <if test="createDefault != null">
-        create_default = #{createDefault,jdbcType=INTEGER},
-      </if>
-      <if test="initDefault != null">
-        init_default = #{initDefault,jdbcType=INTEGER},
-      </if>
-      <if test="frontSite != null">
-        front_site = #{frontSite,jdbcType=INTEGER},
-      </if>
-      <if test="endSite != null">
-        end_site = #{endSite,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=INTEGER},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AdminMenu">
-    update cc_admin_menu
-    set cts = #{cts,jdbcType=BIGINT},
-      uts = #{uts,jdbcType=BIGINT},
-      menu_id = #{menuId,jdbcType=VARCHAR},
-      parent_id = #{parentId,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      path_url = #{pathUrl,jdbcType=VARCHAR},
-      path_method = #{pathMethod,jdbcType=VARCHAR},
-      menu_level = #{menuLevel,jdbcType=INTEGER},
-      menu_order = #{menuOrder,jdbcType=INTEGER},
-      create_default = #{createDefault,jdbcType=INTEGER},
-      init_default = #{initDefault,jdbcType=INTEGER},
-      front_site = #{frontSite,jdbcType=INTEGER},
-      end_site = #{endSite,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+    <resultMap id="BaseResultMap" type="org.cti.cc.entity.AdminMenu">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="cts" jdbcType="BIGINT" property="cts"/>
+        <result column="uts" jdbcType="BIGINT" property="uts"/>
+        <result column="menu_id" jdbcType="VARCHAR" property="menuId"/>
+        <result column="parent_id" jdbcType="VARCHAR" property="parentId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="path_url" jdbcType="VARCHAR" property="pathUrl"/>
+        <result column="path_method" jdbcType="VARCHAR" property="pathMethod"/>
+        <result column="menu_level" jdbcType="INTEGER" property="menuLevel"/>
+        <result column="menu_order" jdbcType="INTEGER" property="menuOrder"/>
+        <!--<result column="child_num" jdbcType="INTEGER" property="childNum"/>-->
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="create_default" jdbcType="INTEGER" property="createDefault"/>
+        <result column="init_default" jdbcType="INTEGER" property="initDefault"/>
+        <result column="front_site" jdbcType="INTEGER" property="frontSite"/>
+        <result column="front_icon" jdbcType="VARCHAR" property="frontSite"/>
+        <result column="end_site" jdbcType="INTEGER" property="endSite"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
 
-  <select id="selectList">
-    select
-        <include refid="Base_Column_List" />
-    from
+        <association property="childNum" select="org.cti.cc.mapper.AdminMenuMapper.selectChildMenus"
+                     column="menu_id"></association>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , cts, uts, menu_id, parent_id, name, path_url, path_method, menu_level, menu_order, child_num, icon,
+    create_default, init_default, front_site, front_icon, end_site, status
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cc_admin_menu
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectChildMenus" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(id)
+        from cc_admin_menu
+        where parent_id = #{menuId}
+          and status = 1
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from cc_admin_menu
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="org.cti.cc.entity.AdminMenu">
+        insert into cc_admin_menu (id, cts, uts, menu_id,
+                                   parent_id, name, path_url,
+                                   path_method, menu_level, menu_order, child_num, icon,
+                                   create_default, init_default, front_site,
+                                   end_site, status)
+        values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{menuId,jdbcType=VARCHAR},
+                #{parentId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{pathUrl,jdbcType=VARCHAR},
+                #{pathMethod,jdbcType=VARCHAR}, #{menuLevel,jdbcType=INTEGER}, #{menuOrder,jdbcType=INTEGER},
+                #{childNum,jdbcType=INTEGER},
+                #{icon,jdbcType=VARCHAR}, #{createDefault,jdbcType=INTEGER}, #{initDefault,jdbcType=INTEGER},
+                #{frontSite,jdbcType=INTEGER},
+                #{endSite,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="org.cti.cc.entity.AdminMenu">
+        insert into cc_admin_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="cts != null">
+                cts,
+            </if>
+            <if test="uts != null">
+                uts,
+            </if>
+            <if test="menuId != null">
+                menu_id,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="pathUrl != null">
+                path_url,
+            </if>
+            <if test="pathMethod != null">
+                path_method,
+            </if>
+            <if test="menuLevel != null">
+                menu_level,
+            </if>
+            <if test="menuOrder != null">
+                menu_order,
+            </if>
+            <if test="childNum != null">
+                child_num,
+            </if>
+            <if test="icon != null">
+                icon,
+            </if>
+            <if test="createDefault != null">
+                create_default,
+            </if>
+            <if test="initDefault != null">
+                init_default,
+            </if>
+            <if test="frontSite != null">
+                front_site,
+            </if>
+            <if test="endSite != null">
+                end_site,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="cts != null">
+                #{cts,jdbcType=BIGINT},
+            </if>
+            <if test="uts != null">
+                #{uts,jdbcType=BIGINT},
+            </if>
+            <if test="menuId != null">
+                #{menuId,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="pathUrl != null">
+                #{pathUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="pathMethod != null">
+                #{pathMethod,jdbcType=VARCHAR},
+            </if>
+            <if test="menuLevel != null">
+                #{menuLevel,jdbcType=INTEGER},
+            </if>
+            <if test="menuOrder != null">
+                #{menuOrder,jdbcType=INTEGER},
+            </if>
+            <if test="childNum != null">
+                #{childNum,jdbcType=INTEGER},
+            </if>
+            <if test="icon != null">
+                #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="createDefault != null">
+                #{createDefault,jdbcType=INTEGER},
+            </if>
+            <if test="initDefault != null">
+                #{initDefault,jdbcType=INTEGER},
+            </if>
+            <if test="frontSite != null">
+                #{frontSite,jdbcType=INTEGER},
+            </if>
+            <if test="endSite != null">
+                #{endSite,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AdminMenu">
+        update cc_admin_menu
+        <set>
+            <if test="cts != null">
+                cts = #{cts,jdbcType=BIGINT},
+            </if>
+            <if test="uts != null">
+                uts = #{uts,jdbcType=BIGINT},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="pathUrl != null">
+                path_url = #{pathUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="pathMethod != null">
+                path_method = #{pathMethod,jdbcType=VARCHAR},
+            </if>
+            <if test="menuLevel != null">
+                menu_level = #{menuLevel,jdbcType=INTEGER},
+            </if>
+            <if test="menuOrder != null">
+                menu_order = #{menuOrder,jdbcType=INTEGER},
+            </if>
+            <if test="childNum != null">
+                child_num = #{childNum,jdbcType=INTEGER},
+            </if>
+            <if test="icon != null">
+                icon = #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="createDefault != null">
+                create_default = #{createDefault,jdbcType=INTEGER},
+            </if>
+            <if test="initDefault != null">
+                init_default = #{initDefault,jdbcType=INTEGER},
+            </if>
+            <if test="frontSite != null">
+                front_site = #{frontSite,jdbcType=INTEGER},
+            </if>
+            <if test="endSite != null">
+                end_site = #{endSite,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where menu_id = #{menuId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AdminMenu">
+        update cc_admin_menu
+        set cts            = #{cts,jdbcType=BIGINT},
+            uts            = #{uts,jdbcType=BIGINT},
+            menu_id        = #{menuId,jdbcType=VARCHAR},
+            parent_id      = #{parentId,jdbcType=VARCHAR},
+            name           = #{name,jdbcType=VARCHAR},
+            path_url       = #{pathUrl,jdbcType=VARCHAR},
+            path_method    = #{pathMethod,jdbcType=VARCHAR},
+            menu_level     = #{menuLevel,jdbcType=INTEGER},
+            menu_order     = #{menuOrder,jdbcType=INTEGER},
+            child_num      = #{childNum,jdbcType=INTEGER},
+            icon           = #{icon,jdbcType=VARCHAR},
+            create_default = #{createDefault,jdbcType=INTEGER},
+            init_default   = #{initDefault,jdbcType=INTEGER},
+            front_site     = #{frontSite,jdbcType=INTEGER},
+            end_site       = #{endSite,jdbcType=INTEGER},
+            status         = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="menusList" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
         cc_admin_menu
-    where
-        status = 1 and menu_level = 1 order by menu_order
-  </select>
+        <where>
+            <if test="true">status = 1</if>
+            <if test="menuLevel!=null">and menu_level = #{menuLevel,jdbcType=INTEGER}</if>
+            <if test="parentId!=null">and parent_id = #{parentId,jdbcType=VARCHAR}</if>
+        </where>
+        order by menu_order
+    </select>
+
+    <!-- 登录账号菜单 -->
+    <select id="selectUserMenus" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        a.id, a.cts, a.uts, a.menu_id, a.parent_id, a.name, a.path_url, a.path_method, a.menu_level, a.menu_order,
+        a.icon, a.child_num,
+        a.create_default, a.init_default, a.front_site, a.front_icon, a.end_site, a.status
+        from
+        cc_admin_menu a , cc_admin_role_menu b , cc_admin_user_role c
+        <where>
+            <if test="true">a.id = b.menu_id and b.role_id = c.role_id and c.uid = #{uid} and a.status = 1</if>
+            <if test="menuLevel!=null">and menu_level = #{menuLevel,jdbcType=INTEGER}</if>
+            <if test="parentId!=null">and parent_id = #{parentId,jdbcType=VARCHAR}</if>
+        </where>
+        order by menu_order
+    </select>
+
+    <select id="selectByRoleId" parameterType="Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cc_admin_menu where id in (select menu_id from cc_admin_role_menu where id = #{roleId})
+    </select>
+
+    <update id="deleteMenus" parameterType="String" >
+        delete cc_admin_menu where menu_id = #{menuId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectByMenuId" parameterType="String"  resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+             cc_admin_menu where menu_id = #{menuId,jdbcType=VARCHAR}
+    </select>
 </mapper>

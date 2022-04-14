@@ -3,7 +3,7 @@ package org.cti.cc.entity;
 import java.io.Serializable;
 
 /**
- * 路由字码表
+ * 日程表
  *
  * @author caoliang
  * @date   2020/06/06
@@ -30,59 +30,74 @@ public class VdnSchedule implements Serializable {
     private Long companyId;
 
     /**
-     * 子码日程
+     * 日程名称
      */
     private String name;
 
     /**
-     * vdn_id
+     * 优先级
      */
-    private Long vdnId;
+    private Integer levelValue;
 
     /**
-     * 日程id
+     * 1:指定时间,2:相对时间
      */
-    private Long scheduleId;
+    private Integer type;
 
     /**
-     * 路由类型(1:技能组,2:放音,3:ivr,4:坐席,5:外呼)
+     * 开始日期
      */
-    private Integer routeType;
+    private String startDay;
 
     /**
-     * 路由类型值
+     * 结束日期
      */
-    private String routeValue;
+    private String endDay;
 
     /**
-     * 放音类型(1:按键导航,2:技能组,3:ivr,4:路由字码,5:挂机)
+     * 开始时间
      */
-    private Integer playType;
+    private String startTime;
 
     /**
-     * 放音类型对应值
+     * 结束时间
      */
-    private Long playValue;
+    private String endTime;
 
     /**
-     * 结束音
+     * 周一
      */
-    private String dtmfEnd;
+    private Integer mon;
 
     /**
-     * 重复播放次数
+     * 周二
      */
-    private Integer retry;
+    private Integer tue;
 
     /**
-     * 最大收键长度
+     * 周三
      */
-    private Integer dtmfMax;
+    private Integer wed;
 
     /**
-     * 最小收键长度
+     * 周四
      */
-    private Integer dtmfMin;
+    private Integer thu;
+
+    /**
+     * 周五
+     */
+    private Integer fri;
+
+    /**
+     * 周六
+     */
+    private Integer sat;
+
+    /**
+     * 周天
+     */
+    private Integer sun;
 
     /**
      * 状态
@@ -131,84 +146,108 @@ public class VdnSchedule implements Serializable {
         this.name = name == null ? null : name.trim();
     }
 
-    public Long getVdnId() {
-        return vdnId;
+    public Integer getLevelValue() {
+        return levelValue;
     }
 
-    public void setVdnId(Long vdnId) {
-        this.vdnId = vdnId;
+    public void setLevelValue(Integer levelValue) {
+        this.levelValue = levelValue;
     }
 
-    public Long getScheduleId() {
-        return scheduleId;
+    public Integer getType() {
+        return type;
     }
 
-    public void setScheduleId(Long scheduleId) {
-        this.scheduleId = scheduleId;
+    public void setType(Integer type) {
+        this.type = type;
     }
 
-    public Integer getRouteType() {
-        return routeType;
+    public String getStartDay() {
+        return startDay;
     }
 
-    public void setRouteType(Integer routeType) {
-        this.routeType = routeType;
+    public void setStartDay(String startDay) {
+        this.startDay = startDay == null ? null : startDay.trim();
     }
 
-    public String getRouteValue() {
-        return routeValue;
+    public String getEndDay() {
+        return endDay;
     }
 
-    public void setRouteValue(String routeValue) {
-        this.routeValue = routeValue == null ? null : routeValue.trim();
+    public void setEndDay(String endDay) {
+        this.endDay = endDay == null ? null : endDay.trim();
     }
 
-    public Integer getPlayType() {
-        return playType;
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setPlayType(Integer playType) {
-        this.playType = playType;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime == null ? null : startTime.trim();
     }
 
-    public Long getPlayValue() {
-        return playValue;
+    public String getEndTime() {
+        return endTime;
     }
 
-    public void setPlayValue(Long playValue) {
-        this.playValue = playValue;
+    public void setEndTime(String endTime) {
+        this.endTime = endTime == null ? null : endTime.trim();
     }
 
-    public String getDtmfEnd() {
-        return dtmfEnd;
+    public Integer getMon() {
+        return mon;
     }
 
-    public void setDtmfEnd(String dtmfEnd) {
-        this.dtmfEnd = dtmfEnd == null ? null : dtmfEnd.trim();
+    public void setMon(Integer mon) {
+        this.mon = mon;
     }
 
-    public Integer getRetry() {
-        return retry;
+    public Integer getTue() {
+        return tue;
     }
 
-    public void setRetry(Integer retry) {
-        this.retry = retry;
+    public void setTue(Integer tue) {
+        this.tue = tue;
     }
 
-    public Integer getDtmfMax() {
-        return dtmfMax;
+    public Integer getWed() {
+        return wed;
     }
 
-    public void setDtmfMax(Integer dtmfMax) {
-        this.dtmfMax = dtmfMax;
+    public void setWed(Integer wed) {
+        this.wed = wed;
     }
 
-    public Integer getDtmfMin() {
-        return dtmfMin;
+    public Integer getThu() {
+        return thu;
     }
 
-    public void setDtmfMin(Integer dtmfMin) {
-        this.dtmfMin = dtmfMin;
+    public void setThu(Integer thu) {
+        this.thu = thu;
+    }
+
+    public Integer getFri() {
+        return fri;
+    }
+
+    public void setFri(Integer fri) {
+        this.fri = fri;
+    }
+
+    public Integer getSat() {
+        return sat;
+    }
+
+    public void setSat(Integer sat) {
+        this.sat = sat;
+    }
+
+    public Integer getSun() {
+        return sun;
+    }
+
+    public void setSun(Integer sun) {
+        this.sun = sun;
     }
 
     public Integer getStatus() {
@@ -230,16 +269,19 @@ public class VdnSchedule implements Serializable {
         sb.append(", uts=").append(uts);
         sb.append(", companyId=").append(companyId);
         sb.append(", name=").append(name);
-        sb.append(", vdnId=").append(vdnId);
-        sb.append(", scheduleId=").append(scheduleId);
-        sb.append(", routeType=").append(routeType);
-        sb.append(", routeValue=").append(routeValue);
-        sb.append(", playType=").append(playType);
-        sb.append(", playValue=").append(playValue);
-        sb.append(", dtmfEnd=").append(dtmfEnd);
-        sb.append(", retry=").append(retry);
-        sb.append(", dtmfMax=").append(dtmfMax);
-        sb.append(", dtmfMin=").append(dtmfMin);
+        sb.append(", levelValue=").append(levelValue);
+        sb.append(", type=").append(type);
+        sb.append(", startDay=").append(startDay);
+        sb.append(", endDay=").append(endDay);
+        sb.append(", startTime=").append(startTime);
+        sb.append(", endTime=").append(endTime);
+        sb.append(", mon=").append(mon);
+        sb.append(", tue=").append(tue);
+        sb.append(", wed=").append(wed);
+        sb.append(", thu=").append(thu);
+        sb.append(", fri=").append(fri);
+        sb.append(", sat=").append(sat);
+        sb.append(", sun=").append(sun);
         sb.append(", status=").append(status);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
@@ -259,21 +301,24 @@ public class VdnSchedule implements Serializable {
         }
         VdnSchedule other = (VdnSchedule) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
-                && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
-                && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
-                && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-                && (this.getVdnId() == null ? other.getVdnId() == null : this.getVdnId().equals(other.getVdnId()))
-                && (this.getScheduleId() == null ? other.getScheduleId() == null : this.getScheduleId().equals(other.getScheduleId()))
-                && (this.getRouteType() == null ? other.getRouteType() == null : this.getRouteType().equals(other.getRouteType()))
-                && (this.getRouteValue() == null ? other.getRouteValue() == null : this.getRouteValue().equals(other.getRouteValue()))
-                && (this.getPlayType() == null ? other.getPlayType() == null : this.getPlayType().equals(other.getPlayType()))
-                && (this.getPlayValue() == null ? other.getPlayValue() == null : this.getPlayValue().equals(other.getPlayValue()))
-                && (this.getDtmfEnd() == null ? other.getDtmfEnd() == null : this.getDtmfEnd().equals(other.getDtmfEnd()))
-                && (this.getRetry() == null ? other.getRetry() == null : this.getRetry().equals(other.getRetry()))
-                && (this.getDtmfMax() == null ? other.getDtmfMax() == null : this.getDtmfMax().equals(other.getDtmfMax()))
-                && (this.getDtmfMin() == null ? other.getDtmfMin() == null : this.getDtmfMin().equals(other.getDtmfMin()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+            && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
+            && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
+            && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
+            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+            && (this.getLevelValue() == null ? other.getLevelValue() == null : this.getLevelValue().equals(other.getLevelValue()))
+            && (this.getType() == null ? other.getType() == null : this.getType().equals(other.getType()))
+            && (this.getStartDay() == null ? other.getStartDay() == null : this.getStartDay().equals(other.getStartDay()))
+            && (this.getEndDay() == null ? other.getEndDay() == null : this.getEndDay().equals(other.getEndDay()))
+            && (this.getStartTime() == null ? other.getStartTime() == null : this.getStartTime().equals(other.getStartTime()))
+            && (this.getEndTime() == null ? other.getEndTime() == null : this.getEndTime().equals(other.getEndTime()))
+            && (this.getMon() == null ? other.getMon() == null : this.getMon().equals(other.getMon()))
+            && (this.getTue() == null ? other.getTue() == null : this.getTue().equals(other.getTue()))
+            && (this.getWed() == null ? other.getWed() == null : this.getWed().equals(other.getWed()))
+            && (this.getThu() == null ? other.getThu() == null : this.getThu().equals(other.getThu()))
+            && (this.getFri() == null ? other.getFri() == null : this.getFri().equals(other.getFri()))
+            && (this.getSat() == null ? other.getSat() == null : this.getSat().equals(other.getSat()))
+            && (this.getSun() == null ? other.getSun() == null : this.getSun().equals(other.getSun()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
     @Override
@@ -285,16 +330,19 @@ public class VdnSchedule implements Serializable {
         result = prime * result + ((getUts() == null) ? 0 : getUts().hashCode());
         result = prime * result + ((getCompanyId() == null) ? 0 : getCompanyId().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getVdnId() == null) ? 0 : getVdnId().hashCode());
-        result = prime * result + ((getScheduleId() == null) ? 0 : getScheduleId().hashCode());
-        result = prime * result + ((getRouteType() == null) ? 0 : getRouteType().hashCode());
-        result = prime * result + ((getRouteValue() == null) ? 0 : getRouteValue().hashCode());
-        result = prime * result + ((getPlayType() == null) ? 0 : getPlayType().hashCode());
-        result = prime * result + ((getPlayValue() == null) ? 0 : getPlayValue().hashCode());
-        result = prime * result + ((getDtmfEnd() == null) ? 0 : getDtmfEnd().hashCode());
-        result = prime * result + ((getRetry() == null) ? 0 : getRetry().hashCode());
-        result = prime * result + ((getDtmfMax() == null) ? 0 : getDtmfMax().hashCode());
-        result = prime * result + ((getDtmfMin() == null) ? 0 : getDtmfMin().hashCode());
+        result = prime * result + ((getLevelValue() == null) ? 0 : getLevelValue().hashCode());
+        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+        result = prime * result + ((getStartDay() == null) ? 0 : getStartDay().hashCode());
+        result = prime * result + ((getEndDay() == null) ? 0 : getEndDay().hashCode());
+        result = prime * result + ((getStartTime() == null) ? 0 : getStartTime().hashCode());
+        result = prime * result + ((getEndTime() == null) ? 0 : getEndTime().hashCode());
+        result = prime * result + ((getMon() == null) ? 0 : getMon().hashCode());
+        result = prime * result + ((getTue() == null) ? 0 : getTue().hashCode());
+        result = prime * result + ((getWed() == null) ? 0 : getWed().hashCode());
+        result = prime * result + ((getThu() == null) ? 0 : getThu().hashCode());
+        result = prime * result + ((getFri() == null) ? 0 : getFri().hashCode());
+        result = prime * result + ((getSat() == null) ? 0 : getSat().hashCode());
+        result = prime * result + ((getSun() == null) ? 0 : getSun().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         return result;
     }

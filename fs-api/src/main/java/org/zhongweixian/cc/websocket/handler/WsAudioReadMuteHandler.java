@@ -27,10 +27,10 @@ public class WsAudioReadMuteHandler extends WsBaseHandler<WsAudioReadMuteEvent> 
         String deviceId = agentInfo.getDeviceId();
         CallInfo callInfo = cacheService.getCallInfo(agentInfo.getCallId());
         if (deviceId == null || callInfo == null) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
             return;
         }
-        this.audioReadMute(callInfo.getMedia(), callInfo.getCallId(), deviceId);
-        sendMessgae(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
+        this.audioReadMute(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
+        sendMessage(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
     }
 }

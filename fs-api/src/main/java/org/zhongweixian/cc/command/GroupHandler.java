@@ -39,10 +39,14 @@ public class GroupHandler extends BaseHandler {
     private Map<Long, PriorityQueue<CallQueue>> callInfoMap = new ConcurrentHashMap<>();
 
     /**
-     * 空闲坐席
+     * 空闲坐席 <技能组id, 空闲坐席>
      */
     private Map<Long, PriorityQueue<AgentQueue>> agentInfoMap = new ConcurrentHashMap<>();
 
+    /**
+     * 通话中坐席
+     */
+    private Map<Long, List<String>> callAgents = new ConcurrentHashMap<>();
 
     /**
      * 转接坐席线程
@@ -70,9 +74,6 @@ public class GroupHandler extends BaseHandler {
         logger.info("callId:{} on groupId:{} groupName:{}", callInfo.getCallId(), groupInfo.getId(), groupInfo.getName());
         CallDetail joinGroup = null;
         Long now = Instant.now().toEpochMilli();
-        if (callInfo.getFristQueueTime() == null) {
-            callInfo.setFristQueueTime(now);
-        }
         //电话经过技能组
         joinGroup = new CallDetail();
         joinGroup.setCallId(callInfo.getCallId());
@@ -82,9 +83,7 @@ public class GroupHandler extends BaseHandler {
         joinGroup.setTransferType(3);
         joinGroup.setTransferId(callInfo.getGroupId());
         callInfo.getCallDetails().add(joinGroup);
-        callInfo.setQueueStartTime(now);
 
-        AgentInfo agentInfo = null;
         /**
          * 指定坐席
          */
@@ -98,33 +97,15 @@ public class GroupHandler extends BaseHandler {
         if (memonryAgent(callInfo, groupInfo, deviceId)) {
             return;
         }
-
         Long groupId = callInfo.getGroupId();
-        agentInfo = getAgentQueue(groupId);
-        if (agentInfo != null) {
-            logger.info("callId:{} get free agent:{} on group:{}", callInfo.getCallId(), agentInfo.getAgentKey(), groupId);
-            //呼叫坐席
-            Long end = Instant.now().toEpochMilli();
-            callInfo.setQueueEndTime(end);
-            agentNotReady(agentInfo);
-            if (joinGroup == null) {
-                joinGroup = callInfo.getCallDetails().get(callInfo.getCallDetails().size() - 1);
-            }
-            joinGroup.setEndTime(end);
-            callAgent(agentInfo, callInfo, deviceId);
-            return;
-        }
-        logger.info("callId:{} join group:{} agent busy", callInfo.getCallId(), groupInfo.getId());
-
         //排队溢出策略
         GroupOverflowPo groupOverFlow = getEffectiveOverflow(groupInfo);
         if (groupOverFlow == null) {
             logger.error("callId:{}, groupName:{} 无有效的溢出策略", callInfo.getCallId(), groupInfo.getName());
-            hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+            hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
             return;
         }
         logger.info("callId:{}, group:{} overflow:{}", callInfo.getCallId(), groupInfo.getName(), groupOverFlow.getName());
-
 
         /**
          * 1:排队,2:溢出,3:挂机
@@ -136,16 +117,20 @@ public class GroupHandler extends BaseHandler {
                 if (callQueues == null) {
                     callQueues = new PriorityQueue<CallQueue>();
                 }
+                callInfo.setQueueStartTime(Instant.now().toEpochMilli());
+                if (callInfo.getFristQueueTime() == null) {
+                    callInfo.setFristQueueTime(callInfo.getQueueStartTime());
+                }
                 Long queueLevel = groupOverFlow.getLineupStrategy().calculateLevel(callInfo);
                 callInfo.setQueueLevel(queueLevel);
                 callQueues.add(new CallQueue(callInfo.getQueueLevel(), callInfo.getCallId(), deviceId, callInfo.getQueueStartTime() / 1000, groupId, groupOverFlow));
                 callInfoMap.put(callInfo.getGroupId(), callQueues);
+                cacheService.addCallInfo(callInfo);
 
                 /**
                  * 放音
                  */
-                fsListen.playback(callInfo.getMedia(), deviceId, "sounds/xhy2_0.wav");
-                callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_QUEUE_PLAY, null));
+                //callInfo.getNextCommands().add(new NextCommand(deviceId, NextType.NEXT_QUEUE_PLAY, null));
                 break;
 
             case 2:
@@ -157,7 +142,8 @@ public class GroupHandler extends BaseHandler {
                 //技能组策略挂机
                 callInfo.setHangupDir(3);
                 callInfo.setHangupCode(CauseEnums.OVERFLOW_TIMEOUT.getHuangupCode());
-                hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+                hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
+                cacheService.addCallInfo(callInfo);
                 break;
             default:
                 break;
@@ -172,6 +158,7 @@ public class GroupHandler extends BaseHandler {
      * @param thisDeviceId
      */
     private void callAgent(AgentInfo agentInfo, CallInfo callInfo, String thisDeviceId) {
+        agentNotReady(agentInfo);
         transferAgentHandler.hanlder(callInfo, agentInfo, thisDeviceId);
     }
 
@@ -216,7 +203,7 @@ public class GroupHandler extends BaseHandler {
             case 4:
                 break;
             case 5:
-                hangupCall(callInfo.getMedia(), callInfo.getCallId(), deviceId);
+                hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceId);
                 return true;
 
             default:
@@ -351,6 +338,19 @@ public class GroupHandler extends BaseHandler {
             logger.info("agent:{} not ready for group:{}", agentInfo.getAgentKey(), groupId);
             agentQueues.remove(new AgentQueue(1L, agentInfo.getAgentKey()));
             agentInfoMap.put(groupId, agentQueues);
+            if (agentInfo.getAgentState() == AgentState.TALKING) {
+                List<String> callAgentList = callAgents.get(groupId);
+                if (CollectionUtils.isEmpty(callAgentList)) {
+                    callAgentList = new ArrayList<>();
+                }
+                callAgentList.add(agentInfo.getAgentKey());
+            }
+            if (agentInfo.getAgentState() == AgentState.AFTER) {
+                List<String> callAgentList = callAgents.get(groupId);
+                if (!CollectionUtils.isEmpty(callAgentList)) {
+                    callAgentList.remove(agentInfo.getAgentKey());
+                }
+            }
         });
     }
 
@@ -417,6 +417,10 @@ public class GroupHandler extends BaseHandler {
     private void queueTimeout(CallQueue callQueue) {
         Long now = Instant.now().toEpochMilli();
         CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
+        if (callInfo == null) {
+            return;
+        }
+        callInfo.setQueueEndTime(Instant.now().toEpochMilli());
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.deviceId);
         GroupOverflowPo groupOverflowPo = callQueue.getGroupOverflowPo();
         logger.info("callId:{} queueTimeout, busyTimeoutType:{}", callQueue.getCallId(), groupOverflowPo.getBusyTimeoutType());
@@ -443,7 +447,6 @@ public class GroupHandler extends BaseHandler {
                 //排队超时挂机
                 callInfo.setHangupDir(3);
                 callInfo.setHangupCode(CauseEnums.QUEUE_TIMEOUT.getHuangupCode());
-                callInfo.setQueueEndTime(Instant.now().toEpochMilli());
                 nextCommand = new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_HANGUP, groupOverflowPo.getOverflowValue().toString());
                 break;
 
@@ -458,7 +461,7 @@ public class GroupHandler extends BaseHandler {
                 callDetail.setEndTime(now);
             }
         }
-        fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
+        fsListen.playBreak(callInfo.getMediaHost(), callQueue.getDeviceId());
         doNextCommand(callInfo, deviceInfo, nextCommand);
     }
 
@@ -466,44 +469,66 @@ public class GroupHandler extends BaseHandler {
      * 进入到队列的电话，需要定时找空闲坐席
      */
     private void acd() {
-        Long now = Instant.now().getEpochSecond();
-        for (Map.Entry<Long, PriorityQueue<CallQueue>> entry : callInfoMap.entrySet()) {
-            if (CollectionUtils.isEmpty(entry.getValue())) {
+        Long now = Instant.now().toEpochMilli();
+        //技能组先排序,默认按照技能组优先级，如果优先级相等，则最
+        List<GroupInfo> groupInfos = new ArrayList<>();
+        for (Long id : callInfoMap.keySet()) {
+            groupInfos.add(cacheService.getGroupInfo(id));
+        }
+        Collections.sort(groupInfos, new Comparator<GroupInfo>() {
+            @Override
+            public int compare(GroupInfo o1, GroupInfo o2) {
+                return o1.getLevelValue().equals(o2.getLevelValue()) ?
+                        o2.getLastServiceTime().compareTo(o1.getLastServiceTime()) :
+                        o1.getLevelValue().compareTo(o2.getLevelValue());
+            }
+        });
+
+        for (GroupInfo groupInfo : groupInfos) {
+            PriorityQueue<CallQueue> entry = callInfoMap.get(groupInfo.getId());
+            if (CollectionUtils.isEmpty(entry)) {
                 continue;
             }
-            Iterator<CallQueue> iterator = entry.getValue().iterator();
+
+            Iterator<CallQueue> iterator = entry.iterator();
             while (iterator.hasNext()) {
                 CallQueue callQueue = iterator.next();
-                if (now - callQueue.getStartTime() >= callQueue.getGroupOverflowPo().getQueueTimeout().longValue()) {
+                //正常排队超时
+                if (now / 1000 - callQueue.getStartTime() >= callQueue.getGroupOverflowPo().getQueueTimeout().longValue()) {
                     callAgentService.execute(() -> {
                         queueTimeout(callQueue);
                     });
                     iterator.remove();
                     continue;
                 }
-                if (now - callQueue.getStartTime() >= timeout) {
-                    logger.info("callId:{} queueTimeout, timeout:{}", callQueue.getCallId(), timeout);
-                    iterator.remove();
+
+                //查找空闲坐席
+                AgentInfo agentInfo = this.getAgentQueue(groupInfo.getId());
+                if (agentInfo == null) {
+                    if (!callQueue.isPlay()) {
+                        CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
+                        fsListen.playBack(callInfo.getMediaHost(), callQueue.getDeviceId(), "/app/clpms/sounds/queue.wav");
+                        callQueue.setPlay(true);
+                    }
                     continue;
                 }
-                //查找空闲坐席
-                AgentInfo agentInfo = this.getAgentQueue(entry.getKey());
-                if (agentInfo != null) {
-                    iterator.remove();
-                    //先停止放音
-                    CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
-                    if (callInfo == null) {
-                        continue;
-                    }
-                    DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(callQueue.getDeviceId());
-                    callAgentService.execute(() -> {
-                        fsListen.playbreak(callInfo.getMedia(), callQueue.getDeviceId());
-                        this.callAgent(agentInfo, callInfo, callQueue.getDeviceId());
-                    });
+                iterator.remove();
+                //先停止放音
+                CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
+                if (callInfo == null) {
+                    continue;
                 }
+                callAgentService.execute(() -> {
+                    if (callQueue.isPlay()) {
+                        fsListen.playBreak(callInfo.getMediaHost(), callQueue.getDeviceId());
+                    }
+                    callInfo.setQueueEndTime(now);
+                    this.callAgent(agentInfo, callInfo, callQueue.getDeviceId());
+                });
+                //记录最后服务时间
+                groupInfo.setLastServiceTime(now);
             }
         }
-
     }
 
     public void stop() {
@@ -514,7 +539,7 @@ public class GroupHandler extends BaseHandler {
     public void start() {
         scheduledExecutorService.scheduleAtFixedRate(() -> {
             acd();
-        }, 1000, 500, TimeUnit.MILLISECONDS);
+        }, 5, 1, TimeUnit.SECONDS);
     }
 
 
@@ -557,7 +582,7 @@ public class GroupHandler extends BaseHandler {
     }
 
 
-    class CallQueue {
+    class CallQueue implements Comparable<CallQueue> {
         private Long priority;
 
         private Long callId;
@@ -569,6 +594,8 @@ public class GroupHandler extends BaseHandler {
         private GroupOverflowPo groupOverflowPo;
 
         private String deviceId;
+
+        private boolean play;
 
         public CallQueue(Long priority, Long callId, String deviceId, Long startTime, Long groupId, GroupOverflowPo groupOverflowPo) {
             this.priority = priority;
@@ -627,6 +654,17 @@ public class GroupHandler extends BaseHandler {
             this.deviceId = deviceId;
         }
 
+        public boolean isPlay() {
+            return play;
+        }
 
+        public void setPlay(boolean play) {
+            this.play = play;
+        }
+
+        @Override
+        public int compareTo(CallQueue o) {
+            return priority.compareTo(this.priority);
+        }
     }
 }

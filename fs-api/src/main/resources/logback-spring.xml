@@ -1,9 +1,9 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <springProperty scope="context" name="LOG_NAME" source="spring.application.name"/>
     <springProperty scope="context" name="LOG_HOME" source="logging.file.path"/>
-    <property name="LOG_NAME" value="fs-api"/>
-    <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} - %thread - [%level] - %class->%line: %m%n"/>
+    <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} - %thread - %level - %class->%line: %m%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -18,18 +18,20 @@
         <file>${LOG_HOME}/${LOG_NAME}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_HOME}/${LOG_NAME}.%d{yyyy-MM-dd}.%i.gz}</fileNamePattern>
-            <maxHistory>10</maxHistory>
-            <!-- 日志总保存量为10GB -->
-            <totalSizeCap>10GB</totalSizeCap>
+            <maxHistory>15</maxHistory>
+            <!-- 日志总保存量为50GB -->
+            <totalSizeCap>50GB</totalSizeCap>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>256MB</maxFileSize>
+                <maxFileSize>200MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
 
     <!--<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>192.168.31.1:4560</destination>
-        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder" />
+        <destination>192.168.101.1:5044</destination>
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"app":"fs-api"}</customFields>
+        </encoder>
     </appender>-->
 
     <!-- 开发测试环境 -->
@@ -43,6 +45,7 @@
     <springProfile name="prod|nacos">
         <root level="INFO">
             <appender-ref ref="FILE"/>
+            <!--<appender-ref ref="LOGSTASH"/>-->
         </root>
     </springProfile>
 </configuration>

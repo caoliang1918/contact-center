@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 坐席技能组表
  *
  * @author caoliang
- * @date   2020/06/06
+ * @date   2022/01/25
  */
 public class AgentGroup implements Serializable {
     /**
@@ -33,6 +33,16 @@ public class AgentGroup implements Serializable {
      * 坐席id
      */
     private Long agentId;
+
+    /**
+     * 坐席key
+     */
+    private String agentKey;
+
+    /**
+     *  坐席类型
+     */
+    private Integer agentType;
 
     /**
      * 技能组id
@@ -86,6 +96,22 @@ public class AgentGroup implements Serializable {
         this.agentId = agentId;
     }
 
+    public String getAgentKey() {
+        return agentKey;
+    }
+
+    public void setAgentKey(String agentKey) {
+        this.agentKey = agentKey == null ? null : agentKey.trim();
+    }
+
+    public Integer getAgentType() {
+        return agentType;
+    }
+
+    public void setAgentType(Integer agentType) {
+        this.agentType = agentType;
+    }
+
     public Long getGroupId() {
         return groupId;
     }
@@ -113,6 +139,8 @@ public class AgentGroup implements Serializable {
         sb.append(", uts=").append(uts);
         sb.append(", companyId=").append(companyId);
         sb.append(", agentId=").append(agentId);
+        sb.append(", agentKey=").append(agentKey);
+        sb.append(", agentType=").append(agentType);
         sb.append(", groupId=").append(groupId);
         sb.append(", status=").append(status);
         sb.append(", serialVersionUID=").append(serialVersionUID);
@@ -137,6 +165,8 @@ public class AgentGroup implements Serializable {
             && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
             && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
             && (this.getAgentId() == null ? other.getAgentId() == null : this.getAgentId().equals(other.getAgentId()))
+            && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
+            && (this.getAgentType() == null ? other.getAgentType() == null : this.getAgentType().equals(other.getAgentType()))
             && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
@@ -150,6 +180,8 @@ public class AgentGroup implements Serializable {
         result = prime * result + ((getUts() == null) ? 0 : getUts().hashCode());
         result = prime * result + ((getCompanyId() == null) ? 0 : getCompanyId().hashCode());
         result = prime * result + ((getAgentId() == null) ? 0 : getAgentId().hashCode());
+        result = prime * result + ((getAgentKey() == null) ? 0 : getAgentKey().hashCode());
+        result = prime * result + ((getAgentType() == null) ? 0 : getAgentType().hashCode());
         result = prime * result + ((getGroupId() == null) ? 0 : getGroupId().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         return result;

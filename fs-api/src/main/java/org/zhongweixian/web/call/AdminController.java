@@ -1,6 +1,6 @@
 package org.zhongweixian.web.call;
 
-import org.cti.cc.entity.AdminAccount;
+import org.cti.cc.entity.AdminUser;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.*;
 import org.slf4j.Logger;
@@ -21,29 +21,29 @@ import java.util.List;
  * 需要企业账号访问
  */
 @RestController
-@RequestMapping("/v1/cti/admin")
+@RequestMapping("/cti/admin")
 public class AdminController extends BaseController {
     private Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     @ModelAttribute("adminAccount")
-    public AdminAccount adminAccount() {
+    public AdminUser adminAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return null;
         }
-        return (AdminAccount) authentication.getPrincipal();
+        return (AdminUser) authentication.getPrincipal();
     }
 
     /**
      * 查看话单
      *
-     * @param adminAccount
+     * @param adminUser
      * @param callId
      * @return
      */
     @GetMapping("call")
-    public CommonResponse<CallLogPo> call(@ModelAttribute("adminAccount") AdminAccount adminAccount, @RequestParam Long callId) {
-        CallLogPo callLogPo = callCdrService.getCall(adminAccount.getCompanyId(), callId);
+    public CommonResponse<CallLogPo> call(@ModelAttribute("adminAccount") AdminUser adminUser, @RequestParam Long callId) {
+        CallLogPo callLogPo = callCdrService.getCall(adminUser.getCompanyId(), callId);
         return new CommonResponse<CallLogPo>(callLogPo);
     }
 
@@ -51,12 +51,12 @@ public class AdminController extends BaseController {
     /**
      * 查看通话中话单详情
      *
-     * @param adminAccount
+     * @param adminUser
      * @param callId
      * @return
      */
     @GetMapping("calling")
-    public CommonResponse<CallInfo> calling(@ModelAttribute("adminAccount") AdminAccount adminAccount, @RequestParam Long callId) {
+    public CommonResponse<CallInfo> calling(@ModelAttribute("adminAccount") AdminUser adminUser, @RequestParam Long callId) {
         CallInfo callInfo = cacheService.getCallInfo(callId);
         return new CommonResponse<CallInfo>(callInfo);
     }
@@ -64,16 +64,16 @@ public class AdminController extends BaseController {
     /**
      * 3.1.6 查询坐席状态
      *
-     * @param adminAccount
+     * @param adminUser
      * @param agentKey
      * @return
      */
     @GetMapping("agent/{agentKey}")
-    public CommonResponse<AgentInfo> getAgentState(@ModelAttribute("adminAccount") AdminAccount adminAccount, @PathVariable String agentKey) {
+    public CommonResponse<AgentInfo> getAgentState(@ModelAttribute("adminAccount") AdminUser adminUser, @PathVariable String agentKey) {
         if (agentKey.split("@").length != 2) {
             throw new BusinessException(ErrorCode.PARAMETER_ERROR, "agentKey");
         }
-        if (!adminAccount.getCode().equals(agentKey.split("@")[1])) {
+        if (!adminUser.getCode().equals(agentKey.split("@")[1])) {
             throw new BusinessException(ErrorCode.ACCOUNT_AUTH_ERROR);
         }
         AgentInfo agentInfo = cacheService.getAgentInfo(agentKey);
@@ -97,14 +97,14 @@ public class AdminController extends BaseController {
     /**
      * 3.1.7 技能组空闲坐席
      *
-     * @param adminAccount
+     * @param adminUser
      * @param groupId
      * @return
      */
     @GetMapping("group/{groupId}/ready")
-    public CommonResponse<GroupAgentFree> readyAgent(@ModelAttribute("adminAccount") AdminAccount adminAccount, @PathVariable Long groupId) {
+    public CommonResponse<GroupAgentFree> readyAgent(@ModelAttribute("adminAccount") AdminUser adminUser, @PathVariable Long groupId) {
         GroupInfo groupInfo = cacheService.getGroupInfo(groupId);
-        if (groupInfo == null || !groupInfo.getCompanyId().equals(adminAccount.getCompanyId())) {
+        if (groupInfo == null || !groupInfo.getCompanyId().equals(adminUser.getCompanyId())) {
             throw new BusinessException(ErrorCode.ACCOUNT_AUTH_ERROR);
         }
         GroupAgentFree groupAgentFree = new GroupAgentFree();

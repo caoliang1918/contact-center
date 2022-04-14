@@ -2,7 +2,6 @@ package org.zhongweixian.cc.command;
 
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.RouteGetway;
-import org.cti.cc.enums.CallType;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.DeviceInfo;
@@ -39,7 +38,7 @@ public class TransferCallHandler extends BaseHandler {
         RouteGetway routeGetway = cacheService.getRouteGetway(callInfo.getCompanyId(), callInfo.getCalled());
         if (routeGetway == null) {
             logger.warn("callId:{} origin error, called:{}", callInfo.getCallId(), callInfo.getCalled());
-            fsListen.hangupCall(callInfo.getMedia(), callInfo.getCallId(), thisDeviceId);
+            fsListen.hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), thisDeviceId);
             return;
         }
 
@@ -63,7 +62,7 @@ public class TransferCallHandler extends BaseHandler {
         transferCall.setTransferType(5);
         callInfo.getCallDetails().add(transferCall);
         callInfo.getNextCommands().add(new NextCommand(thisDeviceId, NextType.NEXT_CALL_BRIDGE, deviceId));
-        fsListen.makeCall(routeGetway, callInfo.getCaller(), callInfo.getCalled(), deviceId);
+        fsListen.makeCall(routeGetway, callInfo.getCaller(), callInfo.getCalled(), callInfo.getCallId(), deviceId);
 
     }
 }

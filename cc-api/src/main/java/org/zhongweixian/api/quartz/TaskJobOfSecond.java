@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,10 +42,11 @@ public class TaskJobOfSecond implements Job {
             return;
         }
         logger.info("second job start :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
-        ServiceInstance serviceInstance = loadBalancerClient.choose("fs-api");
+        ServiceInstance serviceInstance = loadBalancerClient.choose("cc-ivr");
         if (serviceInstance == null) {
             return;
         }
-        //restTemplate.getForEntity("http://" + serviceInstance.getServiceId() + ":" + serviceInstance.getPort() + "/fs-api/index/acd", String.class);
+//        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://" + serviceInstance.getServiceId() + ":" + serviceInstance.getPort() + "/cc-ivr/index/health", String.class);
+//        logger.info("{} ", responseEntity.getBody());
     }
 }

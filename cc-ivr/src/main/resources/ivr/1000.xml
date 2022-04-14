@@ -1,5 +1,10 @@
-<scxml initial="idle" name="atm.connRestored" version="0.9" xmlns="http://www.w3.org/2005/07/scxml">
+<scxml initial="idle" name="1000" version="0.9" xmlns="http://www.w3.org/2005/07/scxml">
+
     <state id="idle">
+        <onentry>
+            <assign location="inService" expr="'disconnected'" />
+        </onentry>
+
         <transition event="connected" target="loading"></transition>
     </state>
     <state id="loading">
@@ -12,7 +17,7 @@
         <transition event="connLost" target="disconnected"></transition>
     </state>
     <state id="outOfService">
-        <transition event="startup" target="inService"></transition>
+        <transition event="startup" target="disconnected"></transition>
         <transition event="connLost" target="disconnected"></transition>
     </state>
     <state id="disconnected">

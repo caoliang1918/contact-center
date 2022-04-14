@@ -1,8 +1,8 @@
 package org.cti.cc.po;
 
-import org.cti.cc.entity.AdminAccount;
+import org.cti.cc.entity.AdminUser;
 
-public class AdminAccountInfo extends AdminAccount {
+public class AdminAccountInfo extends AdminUser {
 
     //角色
 

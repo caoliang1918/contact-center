@@ -3,13 +3,13 @@ package org.zhongweixian.cc.fs;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import io.netty.channel.Channel;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constant;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.enums.StationType;
 import org.cti.cc.mapper.StationMapper;
 import org.cti.cc.po.CallInfo;
 import org.slf4j.Logger;
@@ -17,24 +17,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.EventType;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.configration.HandlerContext;
 import org.zhongweixian.cc.exception.BusinessException;
+import org.zhongweixian.cc.fs.esl.inbound.Client;
+import org.zhongweixian.cc.fs.esl.inbound.IEslEventListener;
+import org.zhongweixian.cc.fs.esl.internal.Context;
+import org.zhongweixian.cc.fs.esl.internal.IModEslApi;
+import org.zhongweixian.cc.fs.esl.transport.SendMsg;
+import org.zhongweixian.cc.fs.esl.transport.event.EslEvent;
+import org.zhongweixian.cc.fs.esl.transport.message.EslMessage;
 import org.zhongweixian.cc.fs.event.FsHangupEvent;
 import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
 import org.zhongweixian.cc.util.RandomUtil;
-import org.zhongweixian.esl.inbound.Client;
-import org.zhongweixian.esl.inbound.IEslEventListener;
-import org.zhongweixian.esl.internal.Context;
-import org.zhongweixian.esl.internal.IModEslApi;
-import org.zhongweixian.esl.transport.SendMsg;
-import org.zhongweixian.esl.transport.event.EslEvent;
-import org.zhongweixian.esl.transport.message.EslMessage;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ import java.util.concurrent.*;
 public class FsListen {
     private Logger logger = LoggerFactory.getLogger(FsListen.class);
 
-    @Value("${fs.thread.num:16}")
+    @Value("${fs.thread.num:32}")
     private Integer threadNum;
 
     @Value("${spring.application.group}")
@@ -58,8 +58,6 @@ public class FsListen {
 
     @Value("${audio.codecs:^^:G729:PCMU:PCMA}")
     private String codecs;
-
-    private static final String SPLIT = ",";
 
     @Value("${server.port}")
     private String localPort;
@@ -79,11 +77,6 @@ public class FsListen {
      */
     private Map<Integer, ThreadPoolExecutor> executorMap = new ConcurrentHashMap<>();
 
-    /**
-     * 多线程发送消息
-     */
-    private ThreadPoolExecutor sendThread = new ThreadPoolExecutor(8, 8, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryBuilder().setNameFormat("freeswitch-send-%d").build());
-
 
     @Autowired
     private HandlerContext handlerContext;
@@ -100,20 +93,63 @@ public class FsListen {
         }
 
         Map<String, Object> params = new HashMap<>();
-        params.put("applicationType", StationType.FS_MEDIA.getType());
+        params.put("applicationType", 4);
+        params.put("applicationGroup", group);
+        List<Station> fsStations = stationMapper.selectListByMap(params);
+        for (Station station : fsStations) {
+            if (station.getStatus() == 1) {
+                connect(station.getApplicationHost(), station.getApplicationPort(), station.getPwd());
+            }
+        }
+
+        checkFsThread.scheduleAtFixedRate(() -> {
+            try {
+                checkConnect();
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }, 2, 1, TimeUnit.MINUTES);
+    }
+
+    /**
+     *
+     */
+    private void checkConnect() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("applicationType", 4);
         params.put("applicationGroup", group);
         List<Station> fsStations = stationMapper.selectListByMap(params);
 
-        if (CollectionUtils.isEmpty(fsStations)) {
-            logger.warn("fsStations is empty");
-            return;
-        }
         for (Station station : fsStations) {
-            connect(station.getApplicationHost(), station.getApplicationPort(), station.getPwd());
+            Client client = fsClient.get(station.getHost());
+            try {
+                if (station.getStatus() != 1 && client == null) {
+                    continue;
+                }
+
+                if (station.getStatus() == 1 && client == null) {
+                    connect(station.getApplicationHost(), station.getApplicationPort(), station.getPwd());
+                    continue;
+                }
+
+                //断开连接，fs下线
+                if (station.getStatus() != 1 && client != null) {
+                    logger.info("fs :{} off line", station.getHost());
+                    fsClient.remove(station.getHost());
+                    client.close();
+                    continue;
+                }
+
+                //失败重连
+                if (!client.isActivate()) {
+                    logger.info("freeswitch {}:{} is close", station.getApplicationHost(), station.getApplicationPort());
+                    client.close();
+                    connect(station.getApplicationHost(), station.getApplicationPort(), station.getPwd());
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
         }
-        checkFsThread.scheduleAtFixedRate(() -> {
-            checkConnect();
-        }, 2, 1, TimeUnit.MINUTES);
     }
 
     /**
@@ -124,20 +160,21 @@ public class FsListen {
      * @param password
      * @return
      */
-    private Client connect(String host, Integer port, String password) {
+    private void connect(String host, Integer port, String password) {
         Client client = new Client();
         try {
-            fsClient.put(host + ":" + port, client);
-            client.connect(new InetSocketAddress(host, port), password, 2);
-
+            SocketAddress socketAddress = new InetSocketAddress(host, port);
+            logger.info("Connecting to {} passwd:{}", socketAddress, password);
+            client.connect(socketAddress, password, 3);
             if (localAddress == null) {
                 InetSocketAddress address = (InetSocketAddress) client.getChannel().localAddress();
                 localAddress = address.getHostName() + ":" + localPort;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error(e.getMessage(), e);
-            return null;
+            return;
         }
+        fsClient.put(host + ":" + port, client);
         client.setEventSubscriptions(IModEslApi.EventFormat.PLAIN, "all");
         IEslEventListener listener = new IEslEventListener() {
             @Override
@@ -163,83 +200,70 @@ public class FsListen {
                         return;
                     case FsConstant.CHANNEL_PROGRESS:
                         break;
+                    case FsConstant.PRESENCE_IN:
+                        break;
                     case FsConstant.CHANNEL_CALLSTATE:
                         break;
                     case FsConstant.CALL_UPDATE:
                         break;
                     case FsConstant.CHANNEL_EXECUTE:
-                        logger.debug("CHANNEL_EXECUTE:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.CHANNEL_PARK:
-                        logger.debug("CHANNEL_PARK:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.CHANNEL_UNPARK:
                         break;
                     case FsConstant.PRIVATE_COMMAND:
                         break;
                     case FsConstant.CHANNEL_EXECUTE_COMPLETE:
-                        logger.debug("CHANNEL_EXECUTE_COMPLETE:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.CHANNEL_HANGUP:
-                        logger.debug("CHANNEL_HANGUP:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.CHANNEL_HANGUP_COMPLETE:
-                        logger.debug("CHANNEL_HANGUP_COMPLETE:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.CHANNEL_OUTGOING:
-                        logger.debug("CHANNEL_OUTGOING:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.CHANNEL_ANSWER:
-                        logger.debug("CHANNEL_ANSWER :  {}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.CHANNEL_DESTROY:
                         break;
                     case FsConstant.CHANNEL_BRIDGE:
-                        logger.debug("CHANNEL_BRIDGE :  {}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.RECORD_START:
                         break;
-
                     case FsConstant.MEDIA_BUG_START:
                         break;
-
                     case FsConstant.MEDIA_BUG_STOP:
                         break;
-
                     case FsConstant.PLAYBACK_START:
-                        logger.debug("PLAYBACK_START :{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
 
                     case FsConstant.PLAYBACK_STOP:
-                        logger.debug("PLAYBACK_STOP :{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
 
                     case FsConstant.CHANNEL_UNBRIDGE:
                         break;
-
                     case FsConstant.CODEC:
                         return;
-
                     case FsConstant.RECV_INFO:
-                        logger.debug("RECV_INFO:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         return;
-
                     case FsConstant.DTMF:
                         break;
-
+                    case FsConstant.DEL_SCHEDULE:
+                        return;
                     case FsConstant.CHANNEL_PROGRESS_MEDIA:
                         break;
-
                     case FsConstant.RECORD_STOP:
                         break;
                     case FsConstant.CUSTOM:
+                        break;
+                    case FsConstant.CHANNEL_UNHOLD:
                         break;
                     case FsConstant.RING_ASR:
                         //媒体识别回铃音
                         logger.debug("RING_ASR:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     default:
-                        logger.debug("event:{}, hander:{}", event.getEventName(), event.getEventHeaders().toString());
+                        logger.info("event:{}, hander:{}", event.getEventName(), event.getEventHeaders().toString());
                         return;
                 }
 
@@ -280,16 +304,24 @@ public class FsListen {
             }
 
             @Override
-            public void onClose() {
+            public void onClose(Channel channel) {
+                logger.warn("channel close {}", channel);
                 client.close();
             }
         };
 
         client.addEventListener(listener);
         logger.info("connect {}:{} success", host, port);
-        return client;
     }
 
+    /**
+     * 消息转换
+     *
+     * @param context
+     * @param eslEvent
+     * @param eventName
+     * @return
+     */
     private FsBaseEvent formatEvent(Context context, EslEvent eslEvent, String eventName) {
         try {
             Class clzss = EventType.getClassByCmd(eventName);
@@ -314,29 +346,6 @@ public class FsListen {
     /**
      *
      */
-    private void checkConnect() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("applicationType", 4);
-        params.put("applicationGroup", group);
-        List<Station> fsStations = stationMapper.selectListByMap(params);
-
-        for (Station station : fsStations) {
-            try {
-                Client client = fsClient.get(station.getHost());
-                if (!client.isActivate()) {
-                    logger.info("freeswitch {}:{} is close", station.getApplicationHost(), station.getApplicationPort());
-                    client.close();
-                    connect(station.getApplicationHost(), station.getApplicationPort(), station.getPwd());
-                }
-            } catch (Exception e) {
-
-            }
-        }
-    }
-
-    /**
-     *
-     */
     public void stop() {
         if (!fsClient.isEmpty()) {
             logger.info("freeswitch client stop");
@@ -352,6 +361,19 @@ public class FsListen {
         });
     }
 
+    /**
+     * @param sendMsg
+     */
+    public void sendMessage(String media, SendMsg sendMsg) {
+        if (StringUtils.isBlank(media)) {
+            logger.error("send to media is null, sendMsg:{}", sendMsg);
+            return;
+        }
+//        sendThread.execute(() -> {
+        fsClient.get(media).sendMessage(sendMsg);
+//        });
+    }
+
 
     /**
      * 发起呼叫
@@ -359,15 +381,16 @@ public class FsListen {
      * @param routeGetway
      * @param display
      * @param called
+     * @param callId
      * @param deviceId
      * @param sipHeaders
      */
-    public void makeCall(RouteGetway routeGetway, String display, String called, String deviceId, String... sipHeaders) {
+    public void makeCall(RouteGetway routeGetway, String display, String called, Long callId, String deviceId, String... sipHeaders) {
         String media = RandomUtil.getRandomKey(fsClient.keySet());
         if (StringUtils.isBlank(media)) {
             throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
         }
-        makeCall(media, routeGetway, display, called, deviceId, sipHeaders);
+        makeCall(media, routeGetway, display, called, callId, deviceId, sipHeaders);
     }
 
     /**
@@ -382,7 +405,16 @@ public class FsListen {
      * @param deviceId
      * @param sipHeaders
      */
-    public void makeCall(String media, RouteGetway routeGetway, String display, String called, String deviceId, String... sipHeaders) {
+    public void makeCall(String media, RouteGetway routeGetway, String display, String called, Long callId, String deviceId, String... sipHeaders) {
+        Client client = null;
+        if (StringUtils.isBlank(media)) {
+            media = RandomUtil.getRandomKey(fsClient.keySet());
+        }
+        if (StringUtils.isBlank(media)) {
+            throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
+        }
+        client = fsClient.get(media);
+
         called = called + Constant.AT + routeGetway.getMediaHost() + Constant.CO + routeGetway.getMediaPort();
         if (StringUtils.isNotBlank(routeGetway.getCallerPrefix())) {
             display = routeGetway.getCallerPrefix() + display;
@@ -393,58 +425,56 @@ public class FsListen {
         StringBuffer sipBuffer = new StringBuffer();
         if (sipHeaders != null) {
             for (int i = 0; i < sipHeaders.length; i++) {
-                sipBuffer.append(sipHeaders[i]);
+                sipBuffer.append(FsConstant.SIP_HEADER + sipHeaders[i]);
                 if (i < sipHeaders.length - 1) {
-                    sipBuffer.append(SPLIT);
+                    sipBuffer.append(FsConstant.SPLIT);
                 }
             }
         }
         if (StringUtils.isNoneBlank(routeGetway.getSipHeader1())) {
             if (StringUtils.isNoneBlank(sipBuffer)) {
-                sipBuffer.append(SPLIT);
+                sipBuffer.append(FsConstant.SPLIT);
             }
-            sipBuffer.append(routeGetway.getSipHeader1());
+            String sipHeader1 = routeGetway.getSipHeader1();
+            if (sipHeader1.contains("callId")) {
+                sipHeader1 = sipHeader1.replace("${callId}", callId.toString());
+            }
+            sipBuffer.append(FsConstant.SIP_HEADER + sipHeader1);
         }
         if (StringUtils.isNoneBlank(routeGetway.getSipHeader2())) {
             if (StringUtils.isNoneBlank(sipBuffer)) {
-                sipBuffer.append(SPLIT);
+                sipBuffer.append(FsConstant.SPLIT);
             }
-            sipBuffer.append(routeGetway.getSipHeader2());
+            String sipHeader2 = routeGetway.getSipHeader2();
+            if (sipHeader2.contains("deviceId")) {
+                sipHeader2 = sipHeader2.replace("${deviceId}", deviceId);
+            }
+            sipBuffer.append(FsConstant.SIP_HEADER + sipHeader2);
         }
         if (StringUtils.isNoneBlank(routeGetway.getSipHeader3())) {
             if (StringUtils.isNoneBlank(sipBuffer)) {
-                sipBuffer.append(SPLIT);
+                sipBuffer.append(FsConstant.SPLIT);
             }
-            sipBuffer.append(routeGetway.getSipHeader3());
+            sipBuffer.append(FsConstant.SIP_HEADER + routeGetway.getSipHeader3());
         }
         StringBuilder builder = new StringBuilder();
-        builder.append("{return_ring_ready=true").append(SPLIT)
-                .append("sip_contact_user=").append(display).append(SPLIT)
-                .append("ring_asr=true").append(SPLIT)
-                .append("absolute_codec_string=").append(codecs).append(SPLIT)
-                .append("origination_caller_id_number=").append(display).append(SPLIT)
-                .append("origination_caller_id_name=").append(display).append(SPLIT)
-                .append("origination_uuid=").append(deviceId);
+        builder.append("{return_ring_ready=true").append(FsConstant.SPLIT).append("sip_contact_user=").append(display).append(FsConstant.SPLIT).append("ring_asr=true").append(FsConstant.SPLIT).append("absolute_codec_string=").append(codecs).append(FsConstant.SPLIT).append("origination_caller_id_number=").append(display).append(FsConstant.SPLIT).append("origination_caller_id_name=").append(display).append(FsConstant.SPLIT).append("origination_uuid=").append(deviceId);
         if (StringUtils.isNoneBlank(sipBuffer)) {
-            builder.append(SPLIT).append(sipBuffer);
+            builder.append(FsConstant.SPLIT).append(sipBuffer);
         }
-        builder.append("}").append("sofia/" + routeGetway.getProfile() + "/").append(called).append(" &park");
-        CompletableFuture future = fsClient.get(media).sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
-        try {
-            logger.info("call response: {}", future.get());
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+        builder.append("}").append(FsConstant.SOFIA + Constant.SK + routeGetway.getProfile() + Constant.SK).append(called).append(FsConstant.PARK);
+        client.sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
     }
 
     /**
      * 桥接电话
      *
      * @param media
+     * @param callId
      * @param deviceId1
      * @param deviceId2
      */
-    public void callBridge(String media, String deviceId1, String deviceId2) {
+    public void bridgeCall(String media, Long callId, String deviceId1, String deviceId2) {
         this.sendArgs(media, deviceId1, FsConstant.SET, FsConstant.PARK_AFTER_BRIDGE);
         this.sendArgs(media, deviceId1, FsConstant.SET, FsConstant.HANGUP_AFTER_BRIDGE);
         this.sendArgs(media, deviceId2, FsConstant.SET, FsConstant.HANGUP_AFTER_BRIDGE);
@@ -468,19 +498,6 @@ public class FsListen {
         fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
     }
 
-
-    /**
-     * @param sendMsg
-     */
-    public void sendMessage(String media, SendMsg sendMsg) {
-        if (StringUtils.isBlank(media)) {
-            logger.error("send to media is null, sendMsg:{}", sendMsg);
-            return;
-        }
-        sendThread.execute(() -> {
-            fsClient.get(media).sendMessage(sendMsg);
-        });
-    }
 
     /**
      * 不使用线程池发送
@@ -510,14 +527,102 @@ public class FsListen {
         return fsClient.get(media).sendApiCommand("uuid_phone_event", deviceId + " talk");
     }
 
+
+    /**
+     * 挂机
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    public void hangupCall(String media, Long callId, String deviceId) {
+        if (StringUtils.isBlank(media) || StringUtils.isBlank(deviceId)) {
+            logger.warn("media:{} or deviceId:{} is null", media, deviceId);
+            return;
+        }
+        SendMsg hangupMsg = new SendMsg(deviceId);
+        hangupMsg.addCallCommand(FsConstant.EXECUTE);
+        hangupMsg.addExecuteAppName(FsConstant.HANGUP);
+        hangupMsg.addExecuteAppArg(FsConstant.NORMAL_CLEARING);
+        logger.info("hangup call:{}, device:{}", callId, deviceId);
+        this.sendMessage(media, hangupMsg);
+    }
+
+    /**
+     * 挂机
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    public void killCall(String media, Long callId, String deviceId) {
+        if (StringUtils.isBlank(media) || StringUtils.isBlank(deviceId)) {
+            logger.warn("media:{} or deviceId:{} is null", media, deviceId);
+            return;
+        }
+        logger.info("hangup call:{}, device:{}", callId, deviceId);
+        fsClient.get(media).sendBackgroundApiCommand("uuid_kill ", deviceId);
+    }
+
+    /**
+     * update call
+     *
+     * @param media
+     * @param deviceId
+     * @param name
+     * @param arg
+     */
+    public void sendArgs(String media, String deviceId, String name, String arg) {
+        SendMsg msg = new SendMsg(deviceId);
+        msg.addCallCommand(FsConstant.EXECUTE);
+        msg.addExecuteAppName(name);
+        msg.addExecuteAppArg(arg);
+        msg.addAsync();
+        this.sendMessage(media, msg);
+    }
+
+    public void reneg(String media, String deviceId) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(deviceId).append("  uuid_media_reneg " + deviceId + " = =G729,PCMU,PCMA");
+        fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
+    }
+
+    /**
+     * bgapi uuid_transfer  sswitch-301-60f4c396-59-85 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
+     * <p>
+     * 从bridge 拆线
+     *
+     * @param mediaHost
+     * @param deviceId
+     */
+    public void bridgeBreak(String mediaHost, String deviceId) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(deviceId).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
+        fsClient.get(mediaHost).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
+    }
+
+    /**
+     * 保持放音
+     *
+     * @param media
+     * @param deviceId
+     * @param play
+     */
+    public void holdPlay(String media, String deviceId, String play) {
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_TERMINATORS);
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_ENGINE);
+        this.sendArgs(media, deviceId, FsConstant.PLAYBACK, play);
+    }
+
     /**
      * 放音
      *
      * @param media
      * @param deviceId
-     * @param file
+     * @param file     say:unimrcp:aimei:{Prosody-Volume=50,Prosody-Rate=0}您好，这里是广州农商行致电，感谢您的接听
      */
-    public void playback(String media, String deviceId, String file) {
+    public void playBack(String media, String deviceId, String file) {
         SendMsg playback = new SendMsg(deviceId);
         playback.addCallCommand(FsConstant.EXECUTE);
         playback.addExecuteAppName(FsConstant.PLAYBACK);
@@ -532,44 +637,15 @@ public class FsListen {
      * @param media
      * @param deviceId
      */
-    public void playbreak(String media, String deviceId) {
+    public void playBreak(String media, String deviceId) {
         SendMsg playback = new SendMsg(deviceId);
         playback.addCallCommand(FsConstant.EXECUTE);
         playback.addExecuteAppName(FsConstant.BREAK_);
         this.sendMessage(media, playback);
     }
 
-    public void hangupCall(String media, Long callId, String deviceId) {
-        SendMsg hangupMsg = new SendMsg(deviceId);
-        hangupMsg.addCallCommand(FsConstant.EXECUTE);
-        hangupMsg.addExecuteAppName(FsConstant.HANGUP);
-        hangupMsg.addExecuteAppArg(FsConstant.NORMAL_CLEARING);
-        logger.info("hangup call:{}, device:{}", callId, deviceId);
-        this.sendMessage(media, hangupMsg);
-    }
-
-    public void sendArgs(String media, String deviceId, String name, String arg) {
-        SendMsg msg = new SendMsg(deviceId);
-        msg.addCallCommand(FsConstant.EXECUTE);
-        msg.addExecuteAppName(name);
-        msg.addExecuteAppArg(arg);
-        msg.addAsync();
-        this.sendMessage(media, msg);
-    }
-
     /**
-     * bgapi uuid_transfer  sswitch-301-60f4c396-59-85 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
-     *
-     * @param media
-     * @param deviceId
-     */
-    public void hold(String media, String deviceId) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(deviceId).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
-        fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
-    }
-
-    /**
+     * 强插
      * bgapi uuid_transfer  sswitch-1-61979250-679-22 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
      *
      * @param media
@@ -579,5 +655,60 @@ public class FsListen {
         StringBuilder builder = new StringBuilder();
         builder.append(deviceId).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
         fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
+    }
+
+    /**
+     * 监听
+     *
+     * @param media
+     * @param deviceId
+     * @param deviceId2
+     */
+    public void listen(String media, String deviceId, String deviceId2) {
+        this.sendArgs(media, deviceId, FsConstant.SET, "eavesdrop_bridge_aleg=true");
+        this.sendArgs(media, deviceId, FsConstant.SET, "eavesdrop_bridge_bleg=true");
+        this.sendArgs(media, deviceId, FsConstant.EAVESDROP, deviceId2);
+    }
+
+    /**
+     * 耳语
+     *
+     * @param media
+     * @param deviceId
+     * @param deviceId2
+     */
+    public void whisper(String media, String deviceId, String deviceId2) {
+        this.sendArgs(media, deviceId, FsConstant.SET, "eavesdrop_whisper_bleg=true");
+        this.sendArgs(media, deviceId, FsConstant.EAVESDROP, deviceId2);
+    }
+
+
+    /**
+     * @param media
+     * @param callId
+     * @param deviceId
+     * @param mrcp
+     */
+    public void startAsr(String media, Long callId, String deviceId, String mrcp) {
+        this.sendArgs(media, deviceId, FsConstant.SET, "fire_asr_events=true");
+        this.sendArgs(media, deviceId, FsConstant.DETECT_SPEECH, mrcp);
+        this.sendArgs(media, deviceId, FsConstant.SET, "tts_engine=unimrcp");
+        this.sendArgs(media, deviceId, FsConstant.SET, "tts_voice=xiaoyan");
+        this.sendArgs(media, deviceId, FsConstant.SET, "send_silence_when_idle=1400");
+        this.sendArgs(media, deviceId, FsConstant.PLAY_AND_GET_DIGITS, "1 8 1 8000 # say:'' silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ 5000");
+    }
+
+    /**
+     * 会议
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     * @param conference
+     */
+    public void joinConference(String media, Long callId, String deviceId, String conference) {
+        this.sendArgs(media, deviceId, FsConstant.SET, "conference_enter_sound=silence_stream://10");
+        this.sendArgs(media, deviceId, FsConstant.SET, "hangup_after_conference=false");
+        this.sendArgs(media, deviceId, FsConstant.CONFERENCE, conference);
     }
 }

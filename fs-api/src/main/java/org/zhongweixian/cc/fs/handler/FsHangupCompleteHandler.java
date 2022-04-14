@@ -13,6 +13,5 @@ import org.springframework.stereotype.Component;
 public class FsHangupCompleteHandler extends BaseEventHandler<FsHangupCompleteEvent> {
     @Override
     public void handleEvent(FsHangupCompleteEvent event) {
-
     }
 }

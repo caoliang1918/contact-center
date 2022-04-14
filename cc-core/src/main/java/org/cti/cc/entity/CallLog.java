@@ -6,11 +6,11 @@ import java.io.Serializable;
  * 话单表
  *
  * @author caoliang
- * @date 2020/06/06
+ * @date   2020/06/06
  */
 public class CallLog implements Serializable {
     /**
-     *
+     * 
      */
     private Long id;
 
@@ -53,6 +53,11 @@ public class CallLog implements Serializable {
      * 被叫
      */
     private String called;
+
+    /**
+     * 号码归属地
+     */
+    private String numberLocation;
 
     /**
      * 坐席
@@ -135,6 +140,11 @@ public class CallLog implements Serializable {
     private Integer hangupDir;
 
     /**
+     * 是否sdk挂机(1:sdk挂机)
+     */
+    private Integer sdkHangup;
+
+    /**
      * 挂机原因
      */
     private Integer hangupCode;
@@ -142,12 +152,17 @@ public class CallLog implements Serializable {
     /**
      * 媒体服务器
      */
-    private String media;
+    private String mediaHost;
 
     /**
      * cti地址
      */
-    private String host;
+    private String ctiHost;
+
+    /**
+     * 客户端地址
+     */
+    private String clientHost;
 
     /**
      * 录音地址
@@ -160,12 +175,27 @@ public class CallLog implements Serializable {
     private String record2;
 
     /**
+     * 备用录音地址
+     */
+    private String record3;
+
+    /**
+     * 录音状态
+     */
+    private Integer recordType;
+
+    /**
      * 录音开始时间
+     */
+    private Long recordStartTime;
+
+    /**
+     * 录音时间
      */
     private Long recordTime;
 
     /**
-     * 通话时长(秒)
+     * 通话时长
      */
     private Long talkTime;
 
@@ -175,12 +205,12 @@ public class CallLog implements Serializable {
     private Long fristQueueTime;
 
     /**
-     * 进入技能组时间
+     * 进队列时间
      */
     private Long queueStartTime;
 
     /**
-     * 出技能组时间
+     * 出队列时间
      */
     private Long queueEndTime;
 
@@ -298,6 +328,14 @@ public class CallLog implements Serializable {
         this.called = called == null ? null : called.trim();
     }
 
+    public String getNumberLocation() {
+        return numberLocation;
+    }
+
+    public void setNumberLocation(String numberLocation) {
+        this.numberLocation = numberLocation;
+    }
+
     public String getAgentKey() {
         return agentKey;
     }
@@ -311,7 +349,7 @@ public class CallLog implements Serializable {
     }
 
     public void setAgentName(String agentName) {
-        this.agentName = agentName;
+        this.agentName = agentName == null ? null : agentName.trim();
     }
 
     public Long getGroupId() {
@@ -426,6 +464,14 @@ public class CallLog implements Serializable {
         this.hangupDir = hangupDir;
     }
 
+    public Integer getSdkHangup() {
+        return sdkHangup;
+    }
+
+    public void setSdkHangup(Integer sdkHangup) {
+        this.sdkHangup = sdkHangup;
+    }
+
     public Integer getHangupCode() {
         return hangupCode;
     }
@@ -434,20 +480,28 @@ public class CallLog implements Serializable {
         this.hangupCode = hangupCode;
     }
 
-    public String getMedia() {
-        return media;
+    public String getMediaHost() {
+        return mediaHost;
     }
 
-    public void setMedia(String media) {
-        this.media = media == null ? null : media.trim();
+    public void setMediaHost(String mediaHost) {
+        this.mediaHost = mediaHost == null ? null : mediaHost.trim();
     }
 
-    public String getHost() {
-        return host;
+    public String getCtiHost() {
+        return ctiHost;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setCtiHost(String ctiHost) {
+        this.ctiHost = ctiHost == null ? null : ctiHost.trim();
+    }
+
+    public String getClientHost() {
+        return clientHost;
+    }
+
+    public void setClientHost(String clientHost) {
+        this.clientHost = clientHost == null ? null : clientHost.trim();
     }
 
     public String getRecord() {
@@ -463,7 +517,31 @@ public class CallLog implements Serializable {
     }
 
     public void setRecord2(String record2) {
-        this.record2 = record2;
+        this.record2 = record2 == null ? null : record2.trim();
+    }
+
+    public String getRecord3() {
+        return record3;
+    }
+
+    public void setRecord3(String record3) {
+        this.record3 = record3 == null ? null : record3.trim();
+    }
+
+    public Integer getRecordType() {
+        return recordType;
+    }
+
+    public void setRecordType(Integer recordType) {
+        this.recordType = recordType;
+    }
+
+    public Long getRecordStartTime() {
+        return recordStartTime;
+    }
+
+    public void setRecordStartTime(Long recordStartTime) {
+        this.recordStartTime = recordStartTime;
     }
 
     public Long getRecordTime() {
@@ -511,7 +589,7 @@ public class CallLog implements Serializable {
     }
 
     public void setMonthTime(String monthTime) {
-        this.monthTime = monthTime;
+        this.monthTime = monthTime == null ? null : monthTime.trim();
     }
 
     public String getFollowData() {
@@ -586,6 +664,7 @@ public class CallLog implements Serializable {
         sb.append(", calledDisplay=").append(calledDisplay);
         sb.append(", called=").append(called);
         sb.append(", agentKey=").append(agentKey);
+        sb.append(", agentName=").append(agentName);
         sb.append(", groupId=").append(groupId);
         sb.append(", loginType=").append(loginType);
         sb.append(", taskId=").append(taskId);
@@ -600,10 +679,22 @@ public class CallLog implements Serializable {
         sb.append(", waitTime=").append(waitTime);
         sb.append(", answerCount=").append(answerCount);
         sb.append(", hangupDir=").append(hangupDir);
+        sb.append(", sdkHangup=").append(sdkHangup);
         sb.append(", hangupCode=").append(hangupCode);
-        sb.append(", media=").append(media);
+        sb.append(", mediaHost=").append(mediaHost);
+        sb.append(", ctiHost=").append(ctiHost);
+        sb.append(", clientHost=").append(clientHost);
         sb.append(", record=").append(record);
+        sb.append(", record2=").append(record2);
+        sb.append(", record3=").append(record3);
+        sb.append(", recordType=").append(recordType);
+        sb.append(", recordStartTime=").append(recordStartTime);
+        sb.append(", recordTime=").append(recordTime);
         sb.append(", talkTime=").append(talkTime);
+        sb.append(", fristQueueTime=").append(fristQueueTime);
+        sb.append(", queueStartTime=").append(queueStartTime);
+        sb.append(", queueEndTime=").append(queueEndTime);
+        sb.append(", monthTime=").append(monthTime);
         sb.append(", followData=").append(followData);
         sb.append(", uuid1=").append(uuid1);
         sb.append(", uuid2=").append(uuid2);
@@ -629,40 +720,53 @@ public class CallLog implements Serializable {
         }
         CallLog other = (CallLog) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
-                && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
-                && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
-                && (this.getCallId() == null ? other.getCallId() == null : this.getCallId().equals(other.getCallId()))
-                && (this.getCallerDisplay() == null ? other.getCallerDisplay() == null : this.getCallerDisplay().equals(other.getCallerDisplay()))
-                && (this.getCaller() == null ? other.getCaller() == null : this.getCaller().equals(other.getCaller()))
-                && (this.getCalledDisplay() == null ? other.getCalledDisplay() == null : this.getCalledDisplay().equals(other.getCalledDisplay()))
-                && (this.getCalled() == null ? other.getCalled() == null : this.getCalled().equals(other.getCalled()))
-                && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
-                && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
-                && (this.getLoginType() == null ? other.getLoginType() == null : this.getLoginType().equals(other.getLoginType()))
-                && (this.getTaskId() == null ? other.getTaskId() == null : this.getTaskId().equals(other.getTaskId()))
-                && (this.getIvrId() == null ? other.getIvrId() == null : this.getIvrId().equals(other.getIvrId()))
-                && (this.getBotId() == null ? other.getBotId() == null : this.getBotId().equals(other.getBotId()))
-                && (this.getCallTime() == null ? other.getCallTime() == null : this.getCallTime().equals(other.getCallTime()))
-                && (this.getAnswerTime() == null ? other.getAnswerTime() == null : this.getAnswerTime().equals(other.getAnswerTime()))
-                && (this.getEndTime() == null ? other.getEndTime() == null : this.getEndTime().equals(other.getEndTime()))
-                && (this.getCallType() == null ? other.getCallType() == null : this.getCallType().equals(other.getCallType()))
-                && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
-                && (this.getAnswerFlag() == null ? other.getAnswerFlag() == null : this.getAnswerFlag().equals(other.getAnswerFlag()))
-                && (this.getWaitTime() == null ? other.getWaitTime() == null : this.getWaitTime().equals(other.getWaitTime()))
-                && (this.getAnswerCount() == null ? other.getAnswerCount() == null : this.getAnswerCount().equals(other.getAnswerCount()))
-                && (this.getHangupDir() == null ? other.getHangupDir() == null : this.getHangupDir().equals(other.getHangupDir()))
-                && (this.getHangupCode() == null ? other.getHangupCode() == null : this.getHangupCode().equals(other.getHangupCode()))
-                && (this.getMedia() == null ? other.getMedia() == null : this.getMedia().equals(other.getMedia()))
-                && (this.getRecord() == null ? other.getRecord() == null : this.getRecord().equals(other.getRecord()))
-                && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
-                && (this.getFollowData() == null ? other.getFollowData() == null : this.getFollowData().equals(other.getFollowData()))
-                && (this.getUuid1() == null ? other.getUuid1() == null : this.getUuid1().equals(other.getUuid1()))
-                && (this.getUuid2() == null ? other.getUuid2() == null : this.getUuid2().equals(other.getUuid2()))
-                && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
-                && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
-                && (this.getExt3() == null ? other.getExt3() == null : this.getExt3().equals(other.getExt3()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+            && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
+            && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
+            && (this.getCompanyId() == null ? other.getCompanyId() == null : this.getCompanyId().equals(other.getCompanyId()))
+            && (this.getCallId() == null ? other.getCallId() == null : this.getCallId().equals(other.getCallId()))
+            && (this.getCallerDisplay() == null ? other.getCallerDisplay() == null : this.getCallerDisplay().equals(other.getCallerDisplay()))
+            && (this.getCaller() == null ? other.getCaller() == null : this.getCaller().equals(other.getCaller()))
+            && (this.getCalledDisplay() == null ? other.getCalledDisplay() == null : this.getCalledDisplay().equals(other.getCalledDisplay()))
+            && (this.getCalled() == null ? other.getCalled() == null : this.getCalled().equals(other.getCalled()))
+            && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
+            && (this.getAgentName() == null ? other.getAgentName() == null : this.getAgentName().equals(other.getAgentName()))
+            && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
+            && (this.getLoginType() == null ? other.getLoginType() == null : this.getLoginType().equals(other.getLoginType()))
+            && (this.getTaskId() == null ? other.getTaskId() == null : this.getTaskId().equals(other.getTaskId()))
+            && (this.getIvrId() == null ? other.getIvrId() == null : this.getIvrId().equals(other.getIvrId()))
+            && (this.getBotId() == null ? other.getBotId() == null : this.getBotId().equals(other.getBotId()))
+            && (this.getCallTime() == null ? other.getCallTime() == null : this.getCallTime().equals(other.getCallTime()))
+            && (this.getAnswerTime() == null ? other.getAnswerTime() == null : this.getAnswerTime().equals(other.getAnswerTime()))
+            && (this.getEndTime() == null ? other.getEndTime() == null : this.getEndTime().equals(other.getEndTime()))
+            && (this.getCallType() == null ? other.getCallType() == null : this.getCallType().equals(other.getCallType()))
+            && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
+            && (this.getAnswerFlag() == null ? other.getAnswerFlag() == null : this.getAnswerFlag().equals(other.getAnswerFlag()))
+            && (this.getWaitTime() == null ? other.getWaitTime() == null : this.getWaitTime().equals(other.getWaitTime()))
+            && (this.getAnswerCount() == null ? other.getAnswerCount() == null : this.getAnswerCount().equals(other.getAnswerCount()))
+            && (this.getHangupDir() == null ? other.getHangupDir() == null : this.getHangupDir().equals(other.getHangupDir()))
+            && (this.getSdkHangup() == null ? other.getSdkHangup() == null : this.getSdkHangup().equals(other.getSdkHangup()))
+            && (this.getHangupCode() == null ? other.getHangupCode() == null : this.getHangupCode().equals(other.getHangupCode()))
+            && (this.getMediaHost() == null ? other.getMediaHost() == null : this.getMediaHost().equals(other.getMediaHost()))
+            && (this.getCtiHost() == null ? other.getCtiHost() == null : this.getCtiHost().equals(other.getCtiHost()))
+            && (this.getClientHost() == null ? other.getClientHost() == null : this.getClientHost().equals(other.getClientHost()))
+            && (this.getRecord() == null ? other.getRecord() == null : this.getRecord().equals(other.getRecord()))
+            && (this.getRecord2() == null ? other.getRecord2() == null : this.getRecord2().equals(other.getRecord2()))
+            && (this.getRecord3() == null ? other.getRecord3() == null : this.getRecord3().equals(other.getRecord3()))
+            && (this.getRecordType() == null ? other.getRecordType() == null : this.getRecordType().equals(other.getRecordType()))
+            && (this.getRecordStartTime() == null ? other.getRecordStartTime() == null : this.getRecordStartTime().equals(other.getRecordStartTime()))
+            && (this.getRecordTime() == null ? other.getRecordTime() == null : this.getRecordTime().equals(other.getRecordTime()))
+            && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
+            && (this.getFristQueueTime() == null ? other.getFristQueueTime() == null : this.getFristQueueTime().equals(other.getFristQueueTime()))
+            && (this.getQueueStartTime() == null ? other.getQueueStartTime() == null : this.getQueueStartTime().equals(other.getQueueStartTime()))
+            && (this.getQueueEndTime() == null ? other.getQueueEndTime() == null : this.getQueueEndTime().equals(other.getQueueEndTime()))
+            && (this.getMonthTime() == null ? other.getMonthTime() == null : this.getMonthTime().equals(other.getMonthTime()))
+            && (this.getFollowData() == null ? other.getFollowData() == null : this.getFollowData().equals(other.getFollowData()))
+            && (this.getUuid1() == null ? other.getUuid1() == null : this.getUuid1().equals(other.getUuid1()))
+            && (this.getUuid2() == null ? other.getUuid2() == null : this.getUuid2().equals(other.getUuid2()))
+            && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
+            && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
+            && (this.getExt3() == null ? other.getExt3() == null : this.getExt3().equals(other.getExt3()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
     @Override
@@ -679,6 +783,7 @@ public class CallLog implements Serializable {
         result = prime * result + ((getCalledDisplay() == null) ? 0 : getCalledDisplay().hashCode());
         result = prime * result + ((getCalled() == null) ? 0 : getCalled().hashCode());
         result = prime * result + ((getAgentKey() == null) ? 0 : getAgentKey().hashCode());
+        result = prime * result + ((getAgentName() == null) ? 0 : getAgentName().hashCode());
         result = prime * result + ((getGroupId() == null) ? 0 : getGroupId().hashCode());
         result = prime * result + ((getLoginType() == null) ? 0 : getLoginType().hashCode());
         result = prime * result + ((getTaskId() == null) ? 0 : getTaskId().hashCode());
@@ -693,10 +798,22 @@ public class CallLog implements Serializable {
         result = prime * result + ((getWaitTime() == null) ? 0 : getWaitTime().hashCode());
         result = prime * result + ((getAnswerCount() == null) ? 0 : getAnswerCount().hashCode());
         result = prime * result + ((getHangupDir() == null) ? 0 : getHangupDir().hashCode());
+        result = prime * result + ((getSdkHangup() == null) ? 0 : getSdkHangup().hashCode());
         result = prime * result + ((getHangupCode() == null) ? 0 : getHangupCode().hashCode());
-        result = prime * result + ((getMedia() == null) ? 0 : getMedia().hashCode());
+        result = prime * result + ((getMediaHost() == null) ? 0 : getMediaHost().hashCode());
+        result = prime * result + ((getCtiHost() == null) ? 0 : getCtiHost().hashCode());
+        result = prime * result + ((getClientHost() == null) ? 0 : getClientHost().hashCode());
         result = prime * result + ((getRecord() == null) ? 0 : getRecord().hashCode());
+        result = prime * result + ((getRecord2() == null) ? 0 : getRecord2().hashCode());
+        result = prime * result + ((getRecord3() == null) ? 0 : getRecord3().hashCode());
+        result = prime * result + ((getRecordType() == null) ? 0 : getRecordType().hashCode());
+        result = prime * result + ((getRecordStartTime() == null) ? 0 : getRecordStartTime().hashCode());
+        result = prime * result + ((getRecordTime() == null) ? 0 : getRecordTime().hashCode());
         result = prime * result + ((getTalkTime() == null) ? 0 : getTalkTime().hashCode());
+        result = prime * result + ((getFristQueueTime() == null) ? 0 : getFristQueueTime().hashCode());
+        result = prime * result + ((getQueueStartTime() == null) ? 0 : getQueueStartTime().hashCode());
+        result = prime * result + ((getQueueEndTime() == null) ? 0 : getQueueEndTime().hashCode());
+        result = prime * result + ((getMonthTime() == null) ? 0 : getMonthTime().hashCode());
         result = prime * result + ((getFollowData() == null) ? 0 : getFollowData().hashCode());
         result = prime * result + ((getUuid1() == null) ? 0 : getUuid1().hashCode());
         result = prime * result + ((getUuid2() == null) ? 0 : getUuid2().hashCode());

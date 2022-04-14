@@ -53,6 +53,16 @@ public class MenusPo {
     private Integer menuOrder;
 
     /**
+     * 子节点数
+     */
+    private Integer childNum;
+
+    /**
+     * 图标
+     */
+    private String icon;
+
+    /**
      * 创建时添加权限(1:是,0:否)
      */
     private Integer createDefault;
@@ -71,6 +81,11 @@ public class MenusPo {
      * 后端
      */
     private Integer endSite;
+
+    /**
+     * 用户id
+     */
+    private Long uid;
 
     /**
      * 子节点菜单
@@ -142,6 +157,22 @@ public class MenusPo {
         this.menuLevel = menuLevel;
     }
 
+    public Integer getChildNum() {
+        return childNum;
+    }
+
+    public void setChildNum(Integer childNum) {
+        this.childNum = childNum;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
     public Integer getMenuOrder() {
         return menuOrder;
     }
@@ -188,5 +219,13 @@ public class MenusPo {
 
     public void setChilds(List<MenusPo> childs) {
         this.childs = childs;
+    }
+
+    public Long getUid() {
+        return uid;
+    }
+
+    public void setUid(Long uid) {
+        this.uid = uid;
     }
 }

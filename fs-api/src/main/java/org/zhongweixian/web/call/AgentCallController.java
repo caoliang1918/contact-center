@@ -21,7 +21,7 @@ import org.zhongweixian.web.base.BaseController;
  * rest cti for agent
  */
 @RestController
-@RequestMapping("/v1/cti/call")
+@RequestMapping("/cti/call")
 public class AgentCallController extends BaseController {
     private Logger logger = LoggerFactory.getLogger(AgentCallController.class);
 

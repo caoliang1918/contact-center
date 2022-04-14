@@ -35,7 +35,7 @@ public class PushFailLog implements Serializable {
     private Long callId;
 
     /**
-     * 发送次数
+     * 推送地址
      */
     private String cdrNotifyUrl;
 

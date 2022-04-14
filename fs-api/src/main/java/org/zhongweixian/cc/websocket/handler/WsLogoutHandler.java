@@ -33,12 +33,16 @@ public class WsLogoutHandler extends WsBaseHandler<WsLogoutEvent> {
         if (StringUtils.isBlank(event.getAgentKey())) {
             return;
         }
-        logger.info("agent {} logout", event.getAgentKey());
-        if (event.getChannel() != null && event.getChannel().isOpen()) {
-            event.getChannel().close();
-        }
-
         webSocketHandler.removeAgentChannel(event.getAgentKey());
+        if (event.getChannel() != null) {
+            if (event.getChannel().isOpen()) {
+                event.getChannel().close();
+            } else {
+                return;
+            }
+        }
+        logger.info("agent {} logout", event.getAgentKey());
+
 
         AgentInfo agentInfo = getAgent(event);
         if (agentInfo == null || agentInfo.getAgentState() == AgentState.LOGOUT) {

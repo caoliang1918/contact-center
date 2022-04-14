@@ -70,7 +70,13 @@ public enum EventType {
      */
     RING_ASR(1013, FsRingAsrEvent.class),
 
-    RECORD_START(1014 , FsRecordStartEvent.class),
+    RECORD_START(1014, FsRecordStartEvent.class),
+
+    PRESENCE_IN(1015, FsPresenceInEvent.class),
+    /**
+     * 挂机
+     */
+    CHANNEL_HANGUP_COMPLETE(1016, FsHangupCompleteEvent.class),
 
 
     /***************************************************/
@@ -123,7 +129,7 @@ public enum EventType {
     /**
      * 取消保持
      */
-    WS_CANCEL_HOLD(2010, WsCancelHoldEvent.class),
+    WS_HOLD_CANCEL(2010, WsHoldCancelEvent.class),
 
     /**
      * 坐席静音
@@ -149,78 +155,98 @@ public enum EventType {
     /**
      * 咨询
      */
-    WS_COONSULT(2030, WsConsultEvent.class),
+    WS_CONSULT(2030, WsConsultEvent.class),
 
     /**
      * 取消咨询
      */
-    WS_COONSULT_CANCEL(2031, WsConsultCancelEvent.class),
-
-
-    /**
-     * 转接(包括转接坐席，技能组，IVR)
-     */
-    WS_TRANSFER(2033, WsTransferEvent.class),
+    WS_CONSULT_CANCEL(2031, WsConsultCancelEvent.class),
 
     /**
-     * 取消转接
+     * 结束咨询
      */
-    WS_TRANSFER_CANCEL(2034, WsTransferCancelEvent.class),
+    WS_CONSULT_STOP(2032, WsConsultStopEvent.class),
+
+    /**
+     * 咨询多方
+     */
+    WS_CONSULT_PARTY(2033, WsConsultPartyEvent.class),
+
+    /**
+     * 咨询转
+     */
+    WS_CONSULT_TRANSFER(2034, WsConsultTransferEvent.class),
+
 
     /**
      * 加入会议
      */
     WS_ROOM(2035, WsJoinRoomEvent.class),
+    /**
+     * 转接(包括转接坐席，技能组，IVR)
+     */
+    WS_TRANSFER(2040, WsTransferEvent.class),
+
+    /**
+     * 取消转接
+     */
+    WS_TRANSFER_CANCEL(2041, WsTransferCancelEvent.class),
+
 
     /**
      * 班长监听
      */
-    WS_LISTEN(2036, WsListenEvent.class),
+    WS_LISTEN(2050, WsListenEvent.class),
 
     /**
      * 班长强插
      */
-    WS_FORCE_CALL(2037, WsForceCallEvent.class),
+    WS_INSERT(2051, WsInsertEvent.class),
 
     /**
      * 班长强拆
      */
-    WS_BREAK(2038, WsBreakEvent.class),
+    WS_BREAK(2052, WsBreakEvent.class),
+
+    /**
+     * 班长耳语
+     */
+    WS_WHISPER(2052, WsWhisperEvent.class),
 
     /**
      * 强制空闲
      */
-    WS_FORCE_READY(2039, WsForceReadyEvent.class),
+    WS_FORCE_READY(2055, WsForceReadyEvent.class),
     /**
      * 强制忙碌
      */
-    WS_FORCE_NOT_READY(2040, WsForceNotReadyEvent.class),
+    WS_FORCE_NOT_READY(2056, WsForceNotReadyEvent.class),
 
     /**
      * 强制退出
      */
-    WS_FORCE_LOGOUT(2041, WsForceLogoutEvent.class),
+    WS_FORCE_LOGOUT(2057, WsForceChangeEvent.class),
 
     /**
      * 坐席监控
      */
-    WS_MONITOR(2042, WsMonitorEvent.class),
+    WS_MONITOR(2060, WsMonitorEvent.class),
 
     /**
      * 取消坐席监控
      */
-    WS_MONITOR_CANCEL(2043, WsMonitorCancelEvent.class),
+    WS_MONITOR_CANCEL(2061, WsMonitorCancelEvent.class),
 
 
     /**
      * 挂机
      */
-    WS_HANGUP_CALL(2049, WsHangupCallEvent.class),
+    WS_HANGUP_CALL(2070, WsHangupCallEvent.class),
 
     /**
      * 坐席退出系统
      */
-    WS_LOGOUT(2050, WsLogoutEvent.class),
+    WS_LOGOUT(2071, WsLogoutEvent.class),
 
 
     /*******************tcp subscribe *********************/

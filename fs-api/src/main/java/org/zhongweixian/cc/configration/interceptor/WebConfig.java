@@ -26,7 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/v1/cti/**")
+        registry.addMapping("/cti/**")
                 .allowCredentials(true)
                 .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH")
                 .maxAge(3600);
@@ -35,10 +35,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HttpRequestInteceptor(cacheService, applicationContext))
-                .addPathPatterns("/v1/cti/call/**")
-                .addPathPatterns("/v1/cti/agent/**")
-                .addPathPatterns("/v1/cti/admin/**")
-                .excludePathPatterns("/v1/cti/agent/login", "/**/*.js", "/**/*.css", "/**/*.png");
+                .addPathPatterns("/cti/call/**")
+                .addPathPatterns("/cti/agent/**")
+                .addPathPatterns("/cti/admin/**")
+                .excludePathPatterns("/cti/agent/login","/index/**", "/**/*.js", "/**/*.css", "/**/*.png");
     }
 
 

@@ -10,7 +10,7 @@ import org.zhongweixian.cc.configration.HandlerType;
 import org.zhongweixian.cc.websocket.event.WsAnswerEvent;
 import org.zhongweixian.cc.websocket.handler.base.WsBaseHandler;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
-import org.zhongweixian.esl.transport.message.EslMessage;
+import org.zhongweixian.cc.fs.esl.transport.message.EslMessage;
 
 /**
  * Created by caoliang on 2020/11/6
@@ -23,7 +23,7 @@ public class WsAnswerHandler extends WsBaseHandler<WsAnswerEvent> {
     public void handleEvent(WsAnswerEvent event) {
         AgentInfo agentInfo = getAgent(event);
         if (agentInfo.getCallId() == null || agentInfo.getDeviceId() == null) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
             return;
         }
         /**
@@ -35,7 +35,7 @@ public class WsAnswerHandler extends WsBaseHandler<WsAnswerEvent> {
             agentInfo.setDeviceId(null);
             agentInfo.setAgentState(AgentState.NOT_READY);
             logger.warn("agentKey:{} not find call", event.getAgentKey());
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALL_NOT_EXIST, event.getCmd(), event.getAgentKey()));
             return;
         }
         /**
@@ -43,10 +43,10 @@ public class WsAnswerHandler extends WsBaseHandler<WsAnswerEvent> {
          */
         DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(agentInfo.getDeviceId());
         if (deviceInfo.getAnswerTime()!=null) {
-            sendMessgae(event, new WsResponseEntity<>(ErrorCode.CALL_ANSWERED, event.getCmd(), event.getAgentKey()));
+            sendMessage(event, new WsResponseEntity<>(ErrorCode.CALL_ANSWERED, event.getCmd(), event.getAgentKey()));
             return;
         }
-        EslMessage message = answer(callInfo.getMedia(), agentInfo.getDeviceId());
+        EslMessage message = answer(callInfo.getMediaHost(), agentInfo.getDeviceId());
         if (message != null) {
             logger.info("{}", message.getBodyLines());
         }

@@ -59,11 +59,11 @@ public class TransferAgentHandler extends BaseHandler {
 
         RouteGetway routeGetway = cacheService.getRouteGetway(callInfo.getCompanyId(), caller);
         if (routeGetway == null) {
-            fsListen.hangupCall(callInfo.getMedia(), callInfo.getCallId(), thisDeviceId);
+            fsListen.hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), thisDeviceId);
             return;
         }
         agentInfo.setCallId(callInfo.getCallId());
         agentInfo.setDeviceId(deviceId);
-        fsListen.makeCall(routeGetway, callInfo.getCaller(), caller, deviceId);
+        fsListen.makeCall(routeGetway, callInfo.getCaller(), caller, callInfo.getCallId(), deviceId);
     }
 }

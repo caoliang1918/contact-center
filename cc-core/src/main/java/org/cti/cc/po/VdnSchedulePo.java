@@ -1,9 +1,9 @@
 package org.cti.cc.po;
 
 import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.entity.ScheduleConfig;
 import org.cti.cc.entity.VdnSchedule;
-import org.cti.cc.entity.VdnScheduleDtmf;
+import org.cti.cc.entity.VdnConfig;
+import org.cti.cc.entity.VdnDtmf;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,32 +13,32 @@ import java.util.List;
 /**
  * Create by caoliang on 2020/11/29
  */
-public class VdnSchedulePo extends VdnSchedule implements Comparable<VdnSchedulePo> {
+public class VdnSchedulePo extends VdnConfig implements Comparable<VdnSchedulePo> {
 
     /**
      * 每个字码日程有多个按键导航
      */
-    private List<VdnScheduleDtmf> dtmfList;
+    private List<VdnDtmf> dtmfList;
 
     /**
      * 日程
      */
-    private ScheduleConfig scheduleConfig;
+    private VdnSchedule scheduleConfig;
 
 
-    public List<VdnScheduleDtmf> getDtmfList() {
+    public List<VdnDtmf> getDtmfList() {
         return dtmfList;
     }
 
-    public void setDtmfList(List<VdnScheduleDtmf> dtmfList) {
+    public void setDtmfList(List<VdnDtmf> dtmfList) {
         this.dtmfList = dtmfList;
     }
 
-    public ScheduleConfig getScheduleConfig() {
+    public VdnSchedule getScheduleConfig() {
         return scheduleConfig;
     }
 
-    public void setScheduleConfig(ScheduleConfig scheduleConfig) {
+    public void setScheduleConfig(VdnSchedule scheduleConfig) {
         this.scheduleConfig = scheduleConfig;
     }
 

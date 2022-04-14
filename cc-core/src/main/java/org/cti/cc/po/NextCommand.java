@@ -32,6 +32,10 @@ public class NextCommand implements Serializable {
         this.nextValue = nextValue;
     }
 
+    public NextCommand(  NextType nextType ) {
+        this.nextType = nextType;
+    }
+
     public String getDeviceId() {
         return deviceId;
     }
@@ -54,5 +58,14 @@ public class NextCommand implements Serializable {
 
     public void setNextValue(String nextValue) {
         this.nextValue = nextValue;
+    }
+
+    @Override
+    public String toString() {
+        return "NextCommand{" +
+                "deviceId='" + deviceId + '\'' +
+                ", nextType=" + nextType +
+                ", nextValue='" + nextValue + '\'' +
+                '}';
     }
 }

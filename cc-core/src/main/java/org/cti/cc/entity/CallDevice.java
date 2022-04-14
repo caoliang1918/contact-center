@@ -1,14 +1,12 @@
 package org.cti.cc.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.io.Serializable;
 
 /**
- * 通话参与表
+ * 话单明细表
  *
  * @author caoliang
- * @date 2020/06/06
+ * @date   2020/06/06
  */
 public class CallDevice implements Serializable {
     /**
@@ -52,7 +50,7 @@ public class CallDevice implements Serializable {
     private Integer deviceType;
 
     /**
-     * 1:呼入,2:外呼,3:内呼,4:转接,5:咨询,6:监听,7:强插
+     * 1:呼入,2:外呼,3:内呼,4:转接,5:咨询,6:监听,7:强插,8:耳语
      */
     private Integer cdrType;
 
@@ -84,44 +82,47 @@ public class CallDevice implements Serializable {
     /**
      * 呼叫开始时间
      */
-    @JSONField(defaultValue = "0")
     private Long callTime;
 
     /**
      * 振铃开始时间
      */
-    @JSONField(defaultValue = "0")
     private Long ringStartTime;
 
     /**
      * 振铃结束时间
      */
-    @JSONField(defaultValue = "0")
     private Long ringEndTime;
 
     /**
      * 接通时间
      */
-    @JSONField(defaultValue = "0")
     private Long answerTime;
 
     /**
      * 桥接时间
      */
-    @JSONField(defaultValue = "0")
     private Long bridgeTime;
 
     /**
      * 结束时间
      */
-    @JSONField(defaultValue = "0")
     private Long endTime;
 
     /**
      * 通话时长
      */
-    @JSONField(defaultValue = "0")
     private Long talkTime;
+
+    /**
+     * 录音开始时间
+     */
+    private Long recordStartTime;
+
+    /**
+     * 录音时长
+     */
+    private Long recordTime;
 
     /**
      * 信令协议(tcp/udp)
@@ -139,10 +140,9 @@ public class CallDevice implements Serializable {
     private String record2;
 
     /**
-     * 录音开始时间
+     * 备用录音地址
      */
-    @JSONField(defaultValue = "0")
-    private Long recordTime;
+    private String record3;
 
     /**
      * 呼叫地址
@@ -179,6 +179,9 @@ public class CallDevice implements Serializable {
      */
     private Integer status;
 
+    /**
+     *
+     */
     private String month;
 
     private static final long serialVersionUID = 1L;
@@ -236,7 +239,7 @@ public class CallDevice implements Serializable {
     }
 
     public void setAgentName(String agentName) {
-        this.agentName = agentName;
+        this.agentName = agentName == null ? null : agentName.trim();
     }
 
     public Integer getDeviceType() {
@@ -351,6 +354,22 @@ public class CallDevice implements Serializable {
         this.talkTime = talkTime;
     }
 
+    public Long getRecordStartTime() {
+        return recordStartTime;
+    }
+
+    public void setRecordStartTime(Long recordStartTime) {
+        this.recordStartTime = recordStartTime;
+    }
+
+    public Long getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(Long recordTime) {
+        this.recordTime = recordTime;
+    }
+
     public String getSipProtocol() {
         return sipProtocol;
     }
@@ -364,7 +383,7 @@ public class CallDevice implements Serializable {
     }
 
     public void setRecord(String record) {
-        this.record = record;
+        this.record = record == null ? null : record.trim();
     }
 
     public String getRecord2() {
@@ -372,15 +391,15 @@ public class CallDevice implements Serializable {
     }
 
     public void setRecord2(String record2) {
-        this.record2 = record2;
+        this.record2 = record2 == null ? null : record2.trim();
     }
 
-    public Long getRecordTime() {
-        return recordTime;
+    public String getRecord3() {
+        return record3;
     }
 
-    public void setRecordTime(Long recordTime) {
-        this.recordTime = recordTime;
+    public void setRecord3(String record3) {
+        this.record3 = record3 == null ? null : record3.trim();
     }
 
     public String getChannelName() {
@@ -459,6 +478,7 @@ public class CallDevice implements Serializable {
         sb.append(", callId=").append(callId);
         sb.append(", deviceId=").append(deviceId);
         sb.append(", agentKey=").append(agentKey);
+        sb.append(", agentName=").append(agentName);
         sb.append(", deviceType=").append(deviceType);
         sb.append(", cdrType=").append(cdrType);
         sb.append(", caller=").append(caller);
@@ -473,7 +493,12 @@ public class CallDevice implements Serializable {
         sb.append(", bridgeTime=").append(bridgeTime);
         sb.append(", endTime=").append(endTime);
         sb.append(", talkTime=").append(talkTime);
+        sb.append(", recordStartTime=").append(recordStartTime);
+        sb.append(", recordTime=").append(recordTime);
         sb.append(", sipProtocol=").append(sipProtocol);
+        sb.append(", record=").append(record);
+        sb.append(", record2=").append(record2);
+        sb.append(", record3=").append(record3);
         sb.append(", channelName=").append(channelName);
         sb.append(", hangupCause=").append(hangupCause);
         sb.append(", ringCause=").append(ringCause);
@@ -499,33 +524,39 @@ public class CallDevice implements Serializable {
         }
         CallDevice other = (CallDevice) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
-                && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
-                && (this.getCallId() == null ? other.getCallId() == null : this.getCallId().equals(other.getCallId()))
-                && (this.getDeviceId() == null ? other.getDeviceId() == null : this.getDeviceId().equals(other.getDeviceId()))
-                && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
-                && (this.getDeviceType() == null ? other.getDeviceType() == null : this.getDeviceType().equals(other.getDeviceType()))
-                && (this.getCdrType() == null ? other.getCdrType() == null : this.getCdrType().equals(other.getCdrType()))
-                && (this.getCaller() == null ? other.getCaller() == null : this.getCaller().equals(other.getCaller()))
-                && (this.getCalled() == null ? other.getCalled() == null : this.getCalled().equals(other.getCalled()))
-                && (this.getDisplay() == null ? other.getDisplay() == null : this.getDisplay().equals(other.getDisplay()))
-                && (this.getCalledLocation() == null ? other.getCalledLocation() == null : this.getCalledLocation().equals(other.getCalledLocation()))
-                && (this.getCallerLocation() == null ? other.getCallerLocation() == null : this.getCallerLocation().equals(other.getCallerLocation()))
-                && (this.getCallTime() == null ? other.getCallTime() == null : this.getCallTime().equals(other.getCallTime()))
-                && (this.getRingStartTime() == null ? other.getRingStartTime() == null : this.getRingStartTime().equals(other.getRingStartTime()))
-                && (this.getRingEndTime() == null ? other.getRingEndTime() == null : this.getRingEndTime().equals(other.getRingEndTime()))
-                && (this.getAnswerTime() == null ? other.getAnswerTime() == null : this.getAnswerTime().equals(other.getAnswerTime()))
-                && (this.getBridgeTime() == null ? other.getBridgeTime() == null : this.getBridgeTime().equals(other.getBridgeTime()))
-                && (this.getEndTime() == null ? other.getEndTime() == null : this.getEndTime().equals(other.getEndTime()))
-                && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
-                && (this.getSipProtocol() == null ? other.getSipProtocol() == null : this.getSipProtocol().equals(other.getSipProtocol()))
-                && (this.getChannelName() == null ? other.getChannelName() == null : this.getChannelName().equals(other.getChannelName()))
-                && (this.getHangupCause() == null ? other.getHangupCause() == null : this.getHangupCause().equals(other.getHangupCause()))
-                && (this.getRingCause() == null ? other.getRingCause() == null : this.getRingCause().equals(other.getRingCause()))
-                && (this.getSipStatus() == null ? other.getSipStatus() == null : this.getSipStatus().equals(other.getSipStatus()))
-                && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
-                && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+            && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
+            && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))
+            && (this.getCallId() == null ? other.getCallId() == null : this.getCallId().equals(other.getCallId()))
+            && (this.getDeviceId() == null ? other.getDeviceId() == null : this.getDeviceId().equals(other.getDeviceId()))
+            && (this.getAgentKey() == null ? other.getAgentKey() == null : this.getAgentKey().equals(other.getAgentKey()))
+            && (this.getAgentName() == null ? other.getAgentName() == null : this.getAgentName().equals(other.getAgentName()))
+            && (this.getDeviceType() == null ? other.getDeviceType() == null : this.getDeviceType().equals(other.getDeviceType()))
+            && (this.getCdrType() == null ? other.getCdrType() == null : this.getCdrType().equals(other.getCdrType()))
+            && (this.getCaller() == null ? other.getCaller() == null : this.getCaller().equals(other.getCaller()))
+            && (this.getCalled() == null ? other.getCalled() == null : this.getCalled().equals(other.getCalled()))
+            && (this.getDisplay() == null ? other.getDisplay() == null : this.getDisplay().equals(other.getDisplay()))
+            && (this.getCalledLocation() == null ? other.getCalledLocation() == null : this.getCalledLocation().equals(other.getCalledLocation()))
+            && (this.getCallerLocation() == null ? other.getCallerLocation() == null : this.getCallerLocation().equals(other.getCallerLocation()))
+            && (this.getCallTime() == null ? other.getCallTime() == null : this.getCallTime().equals(other.getCallTime()))
+            && (this.getRingStartTime() == null ? other.getRingStartTime() == null : this.getRingStartTime().equals(other.getRingStartTime()))
+            && (this.getRingEndTime() == null ? other.getRingEndTime() == null : this.getRingEndTime().equals(other.getRingEndTime()))
+            && (this.getAnswerTime() == null ? other.getAnswerTime() == null : this.getAnswerTime().equals(other.getAnswerTime()))
+            && (this.getBridgeTime() == null ? other.getBridgeTime() == null : this.getBridgeTime().equals(other.getBridgeTime()))
+            && (this.getEndTime() == null ? other.getEndTime() == null : this.getEndTime().equals(other.getEndTime()))
+            && (this.getTalkTime() == null ? other.getTalkTime() == null : this.getTalkTime().equals(other.getTalkTime()))
+            && (this.getRecordStartTime() == null ? other.getRecordStartTime() == null : this.getRecordStartTime().equals(other.getRecordStartTime()))
+            && (this.getRecordTime() == null ? other.getRecordTime() == null : this.getRecordTime().equals(other.getRecordTime()))
+            && (this.getSipProtocol() == null ? other.getSipProtocol() == null : this.getSipProtocol().equals(other.getSipProtocol()))
+            && (this.getRecord() == null ? other.getRecord() == null : this.getRecord().equals(other.getRecord()))
+            && (this.getRecord2() == null ? other.getRecord2() == null : this.getRecord2().equals(other.getRecord2()))
+            && (this.getRecord3() == null ? other.getRecord3() == null : this.getRecord3().equals(other.getRecord3()))
+            && (this.getChannelName() == null ? other.getChannelName() == null : this.getChannelName().equals(other.getChannelName()))
+            && (this.getHangupCause() == null ? other.getHangupCause() == null : this.getHangupCause().equals(other.getHangupCause()))
+            && (this.getRingCause() == null ? other.getRingCause() == null : this.getRingCause().equals(other.getRingCause()))
+            && (this.getSipStatus() == null ? other.getSipStatus() == null : this.getSipStatus().equals(other.getSipStatus()))
+            && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
+            && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
     @Override
@@ -538,6 +569,7 @@ public class CallDevice implements Serializable {
         result = prime * result + ((getCallId() == null) ? 0 : getCallId().hashCode());
         result = prime * result + ((getDeviceId() == null) ? 0 : getDeviceId().hashCode());
         result = prime * result + ((getAgentKey() == null) ? 0 : getAgentKey().hashCode());
+        result = prime * result + ((getAgentName() == null) ? 0 : getAgentName().hashCode());
         result = prime * result + ((getDeviceType() == null) ? 0 : getDeviceType().hashCode());
         result = prime * result + ((getCdrType() == null) ? 0 : getCdrType().hashCode());
         result = prime * result + ((getCaller() == null) ? 0 : getCaller().hashCode());
@@ -552,7 +584,12 @@ public class CallDevice implements Serializable {
         result = prime * result + ((getBridgeTime() == null) ? 0 : getBridgeTime().hashCode());
         result = prime * result + ((getEndTime() == null) ? 0 : getEndTime().hashCode());
         result = prime * result + ((getTalkTime() == null) ? 0 : getTalkTime().hashCode());
+        result = prime * result + ((getRecordStartTime() == null) ? 0 : getRecordStartTime().hashCode());
+        result = prime * result + ((getRecordTime() == null) ? 0 : getRecordTime().hashCode());
         result = prime * result + ((getSipProtocol() == null) ? 0 : getSipProtocol().hashCode());
+        result = prime * result + ((getRecord() == null) ? 0 : getRecord().hashCode());
+        result = prime * result + ((getRecord2() == null) ? 0 : getRecord2().hashCode());
+        result = prime * result + ((getRecord3() == null) ? 0 : getRecord3().hashCode());
         result = prime * result + ((getChannelName() == null) ? 0 : getChannelName().hashCode());
         result = prime * result + ((getHangupCause() == null) ? 0 : getHangupCause().hashCode());
         result = prime * result + ((getRingCause() == null) ? 0 : getRingCause().hashCode());

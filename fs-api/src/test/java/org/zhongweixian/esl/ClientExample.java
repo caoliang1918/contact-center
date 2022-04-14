@@ -1,12 +1,13 @@
 package org.zhongweixian.esl;
 
-import org.zhongweixian.esl.inbound.Client;
-import org.zhongweixian.esl.inbound.IEslEventListener;
-import org.zhongweixian.esl.internal.Context;
-import org.zhongweixian.esl.internal.IModEslApi;
+import io.netty.channel.Channel;
+import org.zhongweixian.cc.fs.esl.inbound.Client;
+import org.zhongweixian.cc.fs.esl.inbound.IEslEventListener;
+import org.zhongweixian.cc.fs.esl.internal.Context;
+import org.zhongweixian.cc.fs.esl.internal.IModEslApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.zhongweixian.esl.transport.event.EslEvent;
+import org.zhongweixian.cc.fs.esl.transport.event.EslEvent;
 
 import java.net.InetSocketAddress;
 
@@ -27,7 +28,7 @@ public class ClientExample {
                 }
 
                 @Override
-                public void onClose() {
+                public void onClose(Channel channel) {
 
                 }
             });

@@ -13,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
@@ -26,6 +27,7 @@ import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.tcp.TcpServer;
 import org.zhongweixian.cc.websocket.WebSocketManager;
+import org.zhongweixian.cc.websocket.handler.WsMonitorHandler;
 
 
 @EnableDiscoveryClient
@@ -48,13 +50,14 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     private GroupHandler groupHandler;
 
     @Autowired
+    private WsMonitorHandler wsMonitorHandler;
+
+    @Autowired
     private CacheService cacheService;
 
-    @Value("${spring.instance.id}")
-    private String instanceId;
 
-    @Value("${spring.cloud.nacos.server-addr}")
-    private String nacosAddr;
+    @Value("${subscribe.agent.state:false}")
+    private Boolean agentState;
 
 
     @Bean
@@ -65,6 +68,38 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
         template.setDefaultSerializer(serializer);
         return template;
     }
+
+    /**
+     * 外部调用服务
+     *
+     * @param connectTimeout
+     * @param readTimeout
+     * @return
+     */
+    @Bean
+    public RestTemplate restTemplate(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout, @Value("${cdr.notify.readTimeout:300}") Integer readTimeout) {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+        return new RestTemplate(simpleClientHttpRequestFactory);
+    }
+
+    /**
+     * 内部调用服务
+     *
+     * @param connectTimeout
+     * @param readTimeout
+     * @return
+     */
+    @LoadBalanced
+    @Bean
+    public RestTemplate httpClient(@Value("${cc.inner.connectTimeout:100}") Integer connectTimeout, @Value("${cc.inner.readTimeout:3000}") Integer readTimeout) {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+        return new RestTemplate(simpleClientHttpRequestFactory);
+    }
+
 
     @Bean
     public MinioClient minioClient(@Value("${minio.endpoint:}") String endpoint, @Value("${minio.access.key:}") String accessKey, @Value("${minio.secret.key:}") String secretKey) {
@@ -89,10 +124,15 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     @Override
     public void run(String... args) throws Exception {
         cacheService.initCompany();
-        /*webSocketManager.start();
-        tcpServer.start();
+        webSocketManager.start();
         fsListen.start();
-        groupHandler.start();*/
+        groupHandler.start();
+        wsMonitorHandler.start();
+
+        //开启tcp订阅坐席状态
+        if (agentState) {
+            tcpServer.start();
+        }
     }
 
 
@@ -100,17 +140,9 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
         cacheService.stop();
         webSocketManager.stop();
-        tcpServer.stop();
         fsListen.stop();
         groupHandler.stop();
-    }
-
-    @Bean
-    public RestTemplate restTemplate(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout,
-                                     @Value("${cdr.notify.readTimeout:200}") Integer readTimeout) {
-        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
-        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
-        return new RestTemplate(simpleClientHttpRequestFactory);
+        wsMonitorHandler.stop();
+        tcpServer.stop();
     }
 }

@@ -157,9 +157,6 @@ public class DateTimeUtil {
         SimpleDateFormat format = new SimpleDateFormat(YYYYMM);
         Date date = new Date(time);
         Calendar calendar = Calendar.getInstance();
-        if (getMonthCalendar().getTimeInMillis() < time) {
-            return StringUtils.EMPTY;
-        }
         calendar.setTime(date);
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
         date = calendar.getTime();
@@ -195,7 +192,7 @@ public class DateTimeUtil {
     /**
      * 获取今天开始时间
      */
-    private static Long getStartTime() {
+    public static Long getStartTime() {
         Calendar todayStart = Calendar.getInstance();
         todayStart.set(Calendar.HOUR_OF_DAY, 0);
         todayStart.set(Calendar.MINUTE, 0);
@@ -204,10 +201,18 @@ public class DateTimeUtil {
         return todayStart.getTimeInMillis();
     }
 
+    public static boolean isToday(Long time) {
+        Long todat = getStartTime();
+        if (time > todat && time - todat < 86400000L) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 获取今天结束时间
      */
-    private static Long getEndTime() {
+    public static Long getEndTime() {
         Calendar todayEnd = Calendar.getInstance();
         todayEnd.set(Calendar.HOUR, 23);
         todayEnd.set(Calendar.MINUTE, 59);
@@ -244,5 +249,18 @@ public class DateTimeUtil {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         time = sdf.format(new Date(timestame));
         return time;
+    }
+
+    /**
+     * callId获取拨打时间
+     *
+     * @param callId
+     * @return
+     */
+    public static Long getCallTime(Long callId) {
+        String binaryString = Long.toBinaryString(callId);
+        int timeStart = binaryString.length() < 22 ? 0 : binaryString.length() - 22;
+        String time = timeStart == 0 ? "0" : binaryString.substring(0, timeStart);
+        return Long.parseLong(time, 2) + SnowflakeIdWorker.WORK_START;
     }
 }

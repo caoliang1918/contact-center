@@ -77,6 +77,14 @@
             <artifactId>ojdbc8</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.zhongweixian</groupId>
             <artifactId>cc-core</artifactId>
         </dependency>
@@ -89,17 +97,12 @@
             <artifactId>easypoi-base</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
