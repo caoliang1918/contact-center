@@ -11,7 +11,7 @@ public class RoleMenuVo {
     @NotNull
     private Long roleId;
 
-    private List<Long> menuIds;
+    private List<String> menuIds;
 
 
     public Long getRoleId() {
@@ -22,11 +22,11 @@ public class RoleMenuVo {
         this.roleId = roleId;
     }
 
-    public List<Long> getMenuIds() {
+    public List<String> getMenuIds() {
         return menuIds;
     }
 
-    public void setMenuIds(List<Long> menuIds) {
+    public void setMenuIds(List<String> menuIds) {
         this.menuIds = menuIds;
     }
 }

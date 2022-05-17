@@ -1,6 +1,7 @@
 package org.zhongweixian.ivr;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import io.minio.MinioClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,17 +70,27 @@ public class CcIvrApplication implements CommandLineRunner, ApplicationListener<
         return new RestTemplate(simpleClientHttpRequestFactory);
     }
 
+    @Bean
+    public MinioClient minioClient(@Value("${minio.endpoint:}") String endpoint, @Value("${minio.access.key:}") String accessKey, @Value("${minio.secret.key:}") String secretKey) {
+        try {
+            return new MinioClient.Builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(CcIvrApplication.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-
+        //服务启动，需要初始化的业务逻辑可以写在这里
     }
 
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
-
+        //服务停止，需要手动停止的业务逻辑写到这里
     }
 }

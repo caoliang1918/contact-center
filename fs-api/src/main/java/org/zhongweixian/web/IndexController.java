@@ -3,6 +3,7 @@ package org.zhongweixian.web;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
+import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.po.CommonResponse;
 import org.cti.cc.util.SnowflakeIdWorker;
@@ -11,10 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.service.CallCdrService;
 
 import java.time.Instant;
@@ -29,6 +28,9 @@ import java.util.concurrent.TimeUnit;
 public class IndexController {
     private Logger logger = LoggerFactory.getLogger(IndexController.class);
 
+
+    @Autowired
+    private CacheService cacheService;
 
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
@@ -65,6 +67,24 @@ public class IndexController {
     @GetMapping("health")
     public Health health() {
         return Health.up().build();
+    }
+
+    @GetMapping("clearAgent/{agentKey}")
+    public CommonResponse clearAgent(@PathVariable String agentKey) {
+        AgentInfo agentInfo = cacheService.getAgentInfo(agentKey);
+        if (agentInfo == null) {
+            logger.warn("agentInfo:{} is null", agentKey);
+            return new CommonResponse();
+        }
+        logger.info("agentKey:{}, callId:{}, staet:{}", agentKey, agentInfo.getCallId(), agentInfo.getAgentState());
+        if (agentInfo.getCallId() != null) {
+            cacheService.removeCallInfo(agentInfo.getCallId());
+            agentInfo.setCallId(null);
+            agentInfo.setDeviceId(null);
+            agentInfo.setAgentState(null);
+            cacheService.addAgentInfo(agentInfo);
+        }
+        return new CommonResponse();
     }
 
     /**

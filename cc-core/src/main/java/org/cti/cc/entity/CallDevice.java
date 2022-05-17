@@ -25,6 +25,11 @@ public class CallDevice implements Serializable {
     private Long uts;
 
     /**
+     * 租户id
+     */
+    private Long companyId;
+
+    /**
      * 通话ID
      */
     private Long callId;
@@ -53,6 +58,11 @@ public class CallDevice implements Serializable {
      * 1:呼入,2:外呼,3:内呼,4:转接,5:咨询,6:监听,7:强插,8:耳语
      */
     private Integer cdrType;
+
+    /**
+     * 咨询或者转接来源
+     */
+    private String fromAgent;
 
     /**
      * 主叫
@@ -210,6 +220,14 @@ public class CallDevice implements Serializable {
         this.uts = uts;
     }
 
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
     public Long getCallId() {
         return callId;
     }
@@ -256,6 +274,14 @@ public class CallDevice implements Serializable {
 
     public void setCdrType(Integer cdrType) {
         this.cdrType = cdrType;
+    }
+
+    public String getFromAgent() {
+        return fromAgent;
+    }
+
+    public void setFromAgent(String fromAgent) {
+        this.fromAgent = fromAgent;
     }
 
     public String getCaller() {

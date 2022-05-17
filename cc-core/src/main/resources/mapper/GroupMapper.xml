@@ -17,6 +17,7 @@
         <result column="evaluate" jdbcType="BIGINT" property="evaluate"/>
         <result column="queue_play" jdbcType="BIGINT" property="queuePlay"/>
         <result column="transfer_play" jdbcType="BIGINT" property="transferPlay"/>
+        <result column="call_time_out" jdbcType="INTEGER" property="callTimeOut"/>
         <result column="group_type" jdbcType="INTEGER" property="groupType"/>
         <result column="notify_position" jdbcType="INTEGER" property="notifyPosition"/>
         <result column="notify_rate" jdbcType="INTEGER" property="notifyRate"/>
@@ -55,7 +56,7 @@
         id
         , cts, uts, company_id, name, after_interval, caller_display_id,
     called_display_id, record_type, level_value, tts_engine, play_content, evaluate,
-    queue_play, transfer_play, group_type, notify_position, notify_rate, notify_content,
+    queue_play, transfer_play, call_time_out, group_type, notify_position, notify_rate, notify_content,
     call_memory, ext1, ext2, ext3, ext4, ext5, status
     </sql>
 
@@ -127,6 +128,9 @@
             </if>
             <if test="transferPlay != null">
                 transfer_play,
+            </if>
+            <if test="callTimeOut != null">
+                call_time_out,
             </if>
             <if test="groupType != null">
                 group_type,
@@ -208,6 +212,9 @@
             <if test="transferPlay != null">
                 #{transferPlay,jdbcType=BIGINT},
             </if>
+            <if test="callTimeOut != null">
+                #{callTimeOut,jdbcType=INTEGER},
+            </if>
             <if test="groupType != null">
                 #{groupType,jdbcType=INTEGER},
             </if>
@@ -288,6 +295,9 @@
             <if test="transferPlay != null">
                 transfer_play = #{transferPlay,jdbcType=BIGINT},
             </if>
+            <if test="callTimeOut != null">
+                call_time_out = #{callTimeOut,jdbcType=INTEGER},
+            </if>
             <if test="groupType != null">
                 group_type = #{groupType,jdbcType=INTEGER},
             </if>
@@ -331,9 +341,9 @@
         from
         cc_group
         <where>
-            <if test="name!=null">name = #{name}</if>
-            <if test="companyId!=null">and company_id = #{companyId}</if>
-            <if test="true">and status = 1</if>
+            <if test="name!=null"> name = #{name}</if>
+            <if test="companyId!=null"> and company_id = #{companyId}</if>
+            <if test="true"> and status = 1</if>
         </where>
     </select>
 
@@ -343,7 +353,8 @@
         from
         cc_group
         <where>
-            <if test="name!=null">name like CONCAT(#{name},"%")</if>
+            <if test="name!=null"> name = #{name}</if>
+            <if test="_name!=null"> and name like CONCAT(#{name},"%")</if>
             <if test="companyId!=null">and company_id = #{companyId}</if>
             <if test="true">and status = 1</if>
         </where>
@@ -356,9 +367,9 @@
         cc_group
         <where>
             <if test="id!=null">id = #{id}</if>
-            <if test="name!=null">and name = #{name}</if>
-            <if test="companyId!=null">and company_id = #{companyId}</if>
-            <if test="true">and status = 1</if>
+            <if test="name!=null"> and name = #{name}</if>
+            <if test="companyId!=null"> and company_id = #{companyId}</if>
+            <if test="true"> and status = 1</if>
         </where>
     </select>
 
@@ -370,9 +381,9 @@
         cc_group
         <where>
             <if test="id!=null">id = #{id}</if>
-            <if test="name!=null">name = #{name}</if>
-            <if test="companyId!=null">and company_id = #{companyId}</if>
-            <if test="true">and status = 1</if>
+            <if test="name!=null"> and name = #{name}</if>
+            <if test="companyId!=null"> and company_id = #{companyId}</if>
+            <if test="true"> and status = 1</if>
         </where>
     </select>
 

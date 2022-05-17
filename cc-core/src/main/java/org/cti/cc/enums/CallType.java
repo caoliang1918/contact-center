@@ -25,9 +25,9 @@ public enum CallType {
     AUTO_CALL(3),
 
     /**
-     * 预览外呼
+     * 机器人外呼
      */
-    PREVIEW_CALL(4),
+    BOOT_CALL(4),
 
     /**
      * 双向外呼

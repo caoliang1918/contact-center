@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author caoliang
  * @date   2020/06/06
  */
-public class PushFailLog implements Serializable {
+public class PushLog implements Serializable {
     /**
      * PK
      */
@@ -55,7 +55,7 @@ public class PushFailLog implements Serializable {
     private String pushResponse;
 
     /**
-     * 状态(1:推送，0:不推送)
+     * 状态 1:推送失败；2:推送成功
      */
     private Integer status;
 
@@ -173,7 +173,7 @@ public class PushFailLog implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        PushFailLog other = (PushFailLog) that;
+        PushLog other = (PushLog) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getCts() == null ? other.getCts() == null : this.getCts().equals(other.getCts()))
             && (this.getUts() == null ? other.getUts() == null : this.getUts().equals(other.getUts()))

@@ -103,9 +103,9 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             return;
         }
         deviceInfo.setRingStartTime(event.getTimestamp() / 1000);
-        logger.info("callId:{}, device:{} park, deviceType:{}, cdrType:{}, sipProtocol:{}", deviceInfo.getCallId(), deviceInfo.getDeviceId(), deviceInfo.getDeviceType(), deviceInfo.getCdrType(), event.getSipProtocol());
-
         Direction direction = callInfo.getDirection();
+        logger.info("callId:{} device:{} park deviceType:{} cdrType:{} direction:{} sipProtocol:{}", deviceInfo.getCallId(), deviceInfo.getDeviceId(), deviceInfo.getDeviceType(), deviceInfo.getCdrType(), direction, event.getSipProtocol());
+
         ringEntity.setDirection(callInfo.getDirection());
         if (direction == Direction.OUTBOUND) {
             outboundCall(callInfo, deviceInfo, agentInfo, ringEntity);
@@ -117,7 +117,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             //呼入振铃
             agentInfo.setBeforeState(agentInfo.getAgentState());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
-            agentInfo.setStateTime(Instant.now().toEpochMilli());
+            agentInfo.setStateTime(Instant.now().getEpochSecond());
             agentInfo.setAgentState(AgentState.IN_CALL_RING);
             ringEntity.setAgentState(AgentState.IN_CALL_RING);
             if (agentInfo.getHiddenCustomer() == 1) {
@@ -145,7 +145,7 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
             Long uuid = snowflakeIdWorker.nextId();
             CallLog callLog = new CallLog();
             callLog.setCallId(callId);
-            callLog.setCts(event.getTimestamp() / 1000);
+            callLog.setCts(Instant.now().getEpochSecond());
             callLog.setUts(callLog.getCts());
             callLog.setEndTime(callLog.getCts());
             callLog.setCaller(event.getCaller());

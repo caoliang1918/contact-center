@@ -117,7 +117,7 @@ public class WsTransferHandler extends WsBaseHandler<WsTransferEvent> {
             return;
         }
         logger.info("agent:{} transfer call to {}, callId:{}", event.getAgentKey(), event.getTransferValue(), callInfo.getCallId());
-        fsListen.makeCall(routeGetway, agentInfo.getAgentId(), transferAgent.getCalled(), callInfo.getCallId(), deviceId);
+        fsListen.makeCall(routeGetway, agentInfo.getAgentId(), transferAgent.getCalled(), callInfo.getCallId(), deviceId, null);
 
         /**
          * 通知ws坐席请求外呼
@@ -129,7 +129,7 @@ public class WsTransferHandler extends WsBaseHandler<WsTransferEvent> {
          */
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());
-        agentInfo.setStateTime(Instant.now().toEpochMilli());
+        agentInfo.setStateTime(Instant.now().getEpochSecond());
         agentInfo.setAgentState(AgentState.TRANSFER_CALL);
         agentInfo.setCallId(callInfo.getCallId());
         agentInfo.setDeviceId(deviceId);

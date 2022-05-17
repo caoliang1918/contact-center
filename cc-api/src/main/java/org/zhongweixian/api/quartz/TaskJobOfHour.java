@@ -1,10 +1,14 @@
 package org.zhongweixian.api.quartz;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.cti.cc.entity.*;
+import org.cti.cc.entity.Agent;
+import org.cti.cc.entity.CompanyStat;
+import org.cti.cc.entity.PushLog;
+import org.cti.cc.entity.StatHourAgent;
 import org.cti.cc.mapper.AgentMapper;
 import org.cti.cc.mapper.CompanyMapper;
-import org.cti.cc.mapper.PushFailLogMapper;
+import org.cti.cc.mapper.PushLogMapper;
 import org.cti.cc.po.AgentState;
 import org.cti.cc.po.CompanyInfo;
 import org.cti.cc.util.DateTimeUtil;
@@ -21,11 +25,9 @@ import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.api.service.StatWorkService;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by caoliang on 2021/9/3
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class TaskJobOfHour implements Job {
     private Logger logger = LoggerFactory.getLogger(TaskJobOfHour.class);
 
+    public final static String NAME = "TaskJobOfHour";
     public final static String CRON = "0 0 0/1 * * ?";
 
     @Autowired
@@ -43,10 +46,10 @@ public class TaskJobOfHour implements Job {
     private AgentMapper agentMapper;
 
     @Autowired
-    private StatWorkService agentStateWorkService;
+    private StatWorkService statWorkService;
 
     @Autowired
-    private PushFailLogMapper pushFailLogMapper;
+    private PushLogMapper pushLogMapper;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -54,13 +57,14 @@ public class TaskJobOfHour implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
         Instant instant = Instant.now();
+        //这里开始时间和结束时间都是毫秒
         Long start = instant.toEpochMilli() - 3600 * 1000;
         Long end = instant.toEpochMilli();
+        logger.info("Hour job execute start:{} - end:{}", DateFormatUtils.format(start, DateTimeUtil.YYYYMMDD_HHMMSS), DateFormatUtils.format(end, DateTimeUtil.YYYYMMDD_HHMMSS));
         List<CompanyInfo> companyInfoList = companyMapper.selectCompanyInfoList(null);
         if (CollectionUtils.isEmpty(companyInfoList)) {
             return;
         }
-        logger.info("Hour job execute start:{} - end:{}", DateFormatUtils.format(start, DateTimeUtil.YYYYMMDD_HHMMSS), DateFormatUtils.format(end, DateTimeUtil.YYYYMMDD_HHMMSS));
 
         /**
          * 坐席状态统计
@@ -85,8 +89,8 @@ public class TaskJobOfHour implements Job {
     /**
      * 坐席工作报表统计
      *
-     * @param start 开始时间
-     * @param end   结束时间
+     * @param start 开始时间(毫秒)
+     * @param end   结束时间(毫秒)
      */
     public void agentHourStat(Long start, Long end, List<CompanyInfo> companyInfoList) {
         for (CompanyInfo companyInfo : companyInfoList) {
@@ -94,124 +98,55 @@ public class TaskJobOfHour implements Job {
                 continue;
             }
             List<CompanyStat> companyStats = companyInfo.getCompanyStats();
-            companyStats.forEach(companyStat -> {
-                if (companyStat.getType() == 0) {
-                    return;
+            for (CompanyStat companyStat : companyStats) {
+                //坐席报表
+                if (companyStat.getType() != 1) {
+                    continue;
                 }
                 //如果当前坐席是属于登录在线，但是这段时间的历史表中无记录，则取最近一次状态
                 Map<String, Object> params = new HashMap<>();
                 params.put("companyId", companyInfo.getId());
-                params.put("start", start);
-                params.put("end", end);
-                List<AgentStateLog> agentStateLogs = agentStateWorkService.getListByMap(params);
-                Map<Long, List<AgentStateLog>> listMap = agentStateLogs.stream().collect(Collectors.groupingBy(stateLog -> stateLog.getAgentId()));
-                Long login = 0L, ready = 0L, notReady = 0L, busy = 0L, after = 0L, talk = 0L;
-                List<StatHourAgentWork> agentWorkList = new ArrayList<>();
-                StatHourAgentWork agentWork = null;
-                for (Map.Entry<Long, List<AgentStateLog>> entry : listMap.entrySet()) {
-                    List<AgentStateLog> stateLogs = entry.getValue();
-                    agentWork = new StatHourAgentWork();
-                    agentWork.setCompanyId(companyInfo.getId());
-                    agentWork.setStateTime(start / 1000);
-                    agentWork.setCts(end / 1000);
-                    agentWork.setStatus(1);
+                params.put("start", start / 1000);
+                params.put("end", end / 1000);
+                List<StatHourAgent> statHourAgentList = statWorkService.statHour(params);
 
-                    for (int i = 0; i < stateLogs.size(); i++) {
-                        AgentStateLog stateLog = stateLogs.get(i);
-                        boolean last = stateLogs.size() == i + 1;
-
-                        //login 通过做减法，去除退出系统时间
-                        if (stateLog.getState().equals(AgentState.LOGIN.name())) {
-                            if (i == 0) {
-                                login += 3600000L - (start - stateLog.getStateTime());
-                            } else if (stateLog.getBeforeState() != null) {
-                                login += 3600000L - (stateLog.getStateTime() - stateLog.getBeforeTime());
-                            }
-                        }
-                        //在当前小时内，最后一次logout才需要计算进去
-                        if (last && stateLog.getState().equals(AgentState.LOGOUT.name())) {
-                            login = 3600000L - (end - stateLog.getStateTime());
-                        }
-
-                        if (stateLog.getBeforeState().equals(AgentState.READY.name())) {
-                            ready += stateLog.getStateTime() - stateLog.getBeforeTime();
-                        }
-                        if (last && stateLog.getState().equals(AgentState.READY.name())) {
-                            ready += end - stateLog.getStateTime();
-                        }
-
-                        if (stateLog.getBeforeState().equals(AgentState.NOT_READY.name())) {
-                            notReady += stateLog.getStateTime() - stateLog.getBeforeTime();
-                        }
-                        if (last && stateLog.getState().equals(AgentState.NOT_READY.name())) {
-                            notReady += end - stateLog.getStateTime();
-                        }
-
-                        if (stateLog.getBeforeState().equals(AgentState.BUSY_OTHER.name())) {
-                            busy += stateLog.getStateTime() - stateLog.getBeforeTime();
-                        }
-                        if (last && stateLog.getState().equals(AgentState.BUSY_OTHER.name())) {
-                            busy += end - stateLog.getStateTime();
-                        }
-
-                        if (stateLog.getBeforeState().equals(AgentState.AFTER.name())) {
-                            after += stateLog.getStateTime() - stateLog.getBeforeTime();
-                        }
-                        if (last && stateLog.getState().equals(AgentState.AFTER.name())) {
-                            after += end - stateLog.getStateTime();
-                        }
-
-                        if (stateLog.getBeforeState().equals(AgentState.TALKING.name())) {
-                            talk += stateLog.getStateTime() - stateLog.getBeforeTime();
-                        }
-                        if (last && stateLog.getState().equals(AgentState.TALKING.name())) {
-                            talk += end - stateLog.getStateTime();
-                        }
-                        agentWork.setAgentKey(stateLog.getAgentKey());
-                        agentWork.setAgentName(stateLog.getAgentName());
-                    }
-                    agentWork.setLoginTime(login);
-                    agentWork.setReadyTime(ready);
-                    agentWork.setNotReadyTime(notReady);
-                    agentWork.setBusyTime(busy);
-                    agentWork.setAfterTime(after);
-                    agentWork.setTalkTime(talk);
-                    agentWorkList.add(agentWork);
-                }
                 //查询最近一小时没有变更状态但是在线的坐席
-                List<Agent> agents = agentMapper.selectAgentOnline(params);
+                List<Agent> agents = agentMapper.selectAgentLongOnline(params);
+                StatHourAgent agentWork = null;
                 for (Agent agent : agents) {
-                    if (listMap.containsKey(agent.getId())) {
+                    if (StringUtils.isBlank(agent.getExt1())) {
                         continue;
                     }
-                    agentWork = new StatHourAgentWork();
-                    agentWork.setCompanyId(companyInfo.getId());
+                    agentWork = new StatHourAgent();
                     agentWork.setAgentKey(agent.getAgentKey());
                     agentWork.setAgentName(agent.getAgentName());
-                    agentWork.setStateTime(start / 1000);
-                    agentWork.setCts(end / 1000);
-                    agentWork.setStatus(1);
                     if (AgentState.READY.name().equals(agent.getExt1())) {
-                        agentWork.setReadyTime(3600000L);
+                        agentWork.setReadyTime(3600L);
                     }
                     if (AgentState.NOT_READY.name().equals(agent.getExt1())) {
-                        agentWork.setNotReadyTime(3600000L);
+                        agentWork.setNotReadyTime(3600L);
                     }
                     if (AgentState.BUSY_OTHER.name().equals(agent.getExt1())) {
-                        agentWork.setBusyTime(3600000L);
+                        agentWork.setBusyTime(3600L);
                     }
                     if (AgentState.AFTER.name().equals(agent.getExt1())) {
-                        agentWork.setAfterTime(3600000L);
+                        agentWork.setAfterTime(3600L);
                     }
                     if (AgentState.TALKING.name().equals(agent.getExt1())) {
-                        agentWork.setTalkTime(3600000L);
+                        agentWork.setTalkTime(3600L);
                     }
-                    agentWorkList.add(agentWork);
+                    statHourAgentList.add(agentWork);
                 }
-                if (!CollectionUtils.isEmpty(agentWorkList)) {
-                    agentStateWorkService.saveStateHoutAgentWork(agentWorkList);
+                if (!CollectionUtils.isEmpty(statHourAgentList)) {
+                    statHourAgentList.forEach(statHourAgent -> {
+                        statHourAgent.setCompanyId(companyInfo.getId());
+                        statHourAgent.setStatTime(end / 1000);
+                        statHourAgent.setCts(start / 1000);
+                        statHourAgent.setStatus(1);
+                    });
+                    statWorkService.saveStateHoutAgent(statHourAgentList);
                 }
-            });
+            }
         }
     }
 
@@ -227,26 +162,26 @@ public class TaskJobOfHour implements Job {
         params.put("start", start / 1000);
         params.put("end", end / 1000);
         params.put("status", 1);
-        List<PushFailLog> pushFailLogs = pushFailLogMapper.selectListByMap(params);
+        List<PushLog> pushFailLogs = pushLogMapper.selectListByMap(params);
         if (CollectionUtils.isEmpty(pushFailLogs)) {
             return;
         }
-        for (PushFailLog pushFailLog : pushFailLogs) {
+        for (PushLog pushFailLog : pushFailLogs) {
             try {
                 ResponseEntity<String> responseEntity = restTemplate.postForEntity(pushFailLog.getCdrNotifyUrl(), pushFailLog.getContent(), String.class);
                 if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
                     pushFailLog.setPushResponse(responseEntity.getBody());
                     pushFailLog.setStatus(2);
                     pushFailLog.setCts(Instant.now().getEpochSecond());
-                    pushFailLogMapper.pushSuccess(pushFailLog);
+                    pushLogMapper.pushSuccess(pushFailLog);
                     logger.info("push call:{} to {} success:{}", pushFailLog.getCallId(), pushFailLog.getCdrNotifyUrl(), responseEntity.getBody());
                 }
             } catch (Exception e) {
-                PushFailLog failLog = new PushFailLog();
+                PushLog failLog = new PushLog();
                 failLog.setId(pushFailLog.getId());
                 failLog.setPushTimes(pushFailLog.getPushTimes() + 1);
                 failLog.setUts(end / 1000 + 3600 * calculate(pushFailLog.getPushTimes()));
-                pushFailLogMapper.updateByPrimaryKey(failLog);
+                pushLogMapper.updateByPrimaryKey(failLog);
             }
         }
     }

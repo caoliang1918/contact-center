@@ -1,11 +1,13 @@
 package org.zhongweixian.api.service;
 
 import com.github.pagehelper.PageInfo;
+import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.po.CallLogPo;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,10 +41,18 @@ public interface CallLogService extends BaseService<CallLog> {
     void calllogExport(HttpServletResponse response, Map<String, Object> params) throws IOException;
 
     /**
-     * 删除历史数据
+     * 每天清理当天数据
      *
      * @param time
      * @return
      */
     int cleaDayOfData(Long time);
+
+    /**
+     * 查询call_device列表
+     *
+     * @param params
+     * @return
+     */
+    List<CallDevice> callDeviceList(Map<String, Object> params);
 }

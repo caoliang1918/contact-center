@@ -37,7 +37,7 @@
     <script type="application/javascript">
 
         var socket = null;
-        var token = 'e7ee51962351a38811325444c0da57d9f25ae9ab49e4292762ab8dffbf528d80';
+        var token = '5c6e2fef46f6942bc1e54e22126a3598eeb96c7909448e3e2a22cec6dded438a';
 
         function init() {
             var obj = document.getElementById('ws');
@@ -178,7 +178,7 @@
         </div>
 
         <div>
-            <textarea id="calloutText" style="width: 500px;height: 25px">{ "cmd":"MAKE_CALL", "caller":"", "called":"13300001234", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"},"uuid1":"123456", "sequence":1604584634704}</textarea>
+            <textarea id="calloutText" style="width: 500px;height: 55px">{ "cmd":"MAKE_CALL", "display":"", "called":"13300001234", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"},"uuid1":"123456"}</textarea>
         </div>
         <div>
             <button id="callout" onclick="echo(document.getElementById('calloutText').value);"> 外呼</button>

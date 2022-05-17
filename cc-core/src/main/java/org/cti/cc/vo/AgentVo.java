@@ -1,5 +1,8 @@
 package org.cti.cc.vo;
 
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -16,27 +19,22 @@ public class AgentVo {
     private Long companyId;
 
     /**
-     * 坐席工号
-     */
-    private Long agentId;
-
-    /**
      * 坐席账户
      */
-    @NotNull(message = "坐席不能为空")
+    @NotBlank(message = "坐席不能为空")
     @Size(min = 4, max = 16, message = "坐席工号必须在4-16个字符")
-    private String agentKey;
+    private String agentId;
+
+    /**
+     * 坐席名称
+     */
+    private String agentName;
 
     /**
      * rest 接口回调地址
      */
     @Size(min = 10, max = 100, message = "webHook地址必须在10-100字符")
     private String webHook;
-
-    /**
-     * 坐席名称
-     */
-    private String agentName;
 
     /**
      * 坐席分机号
@@ -49,17 +47,26 @@ public class AgentVo {
      * 3：坐席手机号
      */
     @NotNull(message = "登录方式不能为空")
+    @Range(min = 1, max = 3, message = "登录方式错误")
     private Integer loginType;
 
+
     /**
-     *
+     * 1:普通方式 2:预测方式
      */
+    @Range(min = 1, max = 2, message = "坐席工作方式错误")
     private Integer workType;
+
+    /**
+     * 1:普通坐席,2:班长
+     */
+    @Range(min = 1, max = 2, message = "坐席类型错误")
+    private Integer agentType;
 
     /**
      * 座席密码,前端传过来已经是sha256加密过的。
      */
-    @NotNull(message = "坐席密码不能为空")
+    @NotBlank(message = "坐席密码不能为空")
     @Size(min = 64, message = "密码长度不对")
     private String passwd;
 
@@ -72,21 +79,6 @@ public class AgentVo {
      * 话后自动空闲间隔时长
      */
     private Integer afterInterval;
-
-    /**
-     * 强制登录
-     */
-    private boolean forceLogin;
-
-    /**
-     * 主叫显号
-     */
-    private String diaplay;
-
-    /**
-     * 振铃时长
-     */
-    private Integer ringTime;
 
 
     /**
@@ -128,20 +120,12 @@ public class AgentVo {
         this.companyId = companyId;
     }
 
-    public Long getAgentId() {
+    public String getAgentId() {
         return agentId;
     }
 
-    public void setAgentId(Long agentId) {
+    public void setAgentId(String agentId) {
         this.agentId = agentId;
-    }
-
-    public String getAgentKey() {
-        return agentKey;
-    }
-
-    public void setAgentKey(String agentKey) {
-        this.agentKey = agentKey;
     }
 
     public String getAgentName() {
@@ -176,6 +160,14 @@ public class AgentVo {
         this.workType = workType;
     }
 
+    public Integer getAgentType() {
+        return agentType;
+    }
+
+    public void setAgentType(Integer agentType) {
+        this.agentType = agentType;
+    }
+
     public String getPasswd() {
         return passwd;
     }
@@ -198,30 +190,6 @@ public class AgentVo {
 
     public void setAfterInterval(Integer afterInterval) {
         this.afterInterval = afterInterval;
-    }
-
-    public boolean isForceLogin() {
-        return forceLogin;
-    }
-
-    public void setForceLogin(boolean forceLogin) {
-        this.forceLogin = forceLogin;
-    }
-
-    public String getDiaplay() {
-        return diaplay;
-    }
-
-    public void setDiaplay(String diaplay) {
-        this.diaplay = diaplay;
-    }
-
-    public Integer getRingTime() {
-        return ringTime;
-    }
-
-    public void setRingTime(Integer ringTime) {
-        this.ringTime = ringTime;
     }
 
     public String getExt1() {
@@ -250,6 +218,22 @@ public class AgentVo {
 
     @Override
     public String toString() {
-        return "AgentVo{" + "id=" + id + ", companyId=" + companyId + ", agentId=" + agentId + ", agentKey='" + agentKey + '\'' + ", agentName='" + agentName + '\'' + ", agentCode='" + agentCode + '\'' + ", loginType=" + loginType + ", workType=" + workType + ", passwd='" + passwd + '\'' + ", sipPhone='" + sipPhone + '\'' + ", afterInterval=" + afterInterval + ", diaplay='" + diaplay + '\'' + ", ringTime=" + ringTime + ", ext1='" + ext1 + '\'' + ", ext2='" + ext2 + '\'' + ", ext3='" + ext3 + '\'' + '}';
+        return "AgentVo{" +
+                "id=" + id +
+                ", companyId=" + companyId +
+                ", agentId='" + agentId + '\'' +
+                ", agentName='" + agentName + '\'' +
+                ", webHook='" + webHook + '\'' +
+                ", agentCode='" + agentCode + '\'' +
+                ", loginType=" + loginType +
+                ", workType=" + workType +
+                ", agentType=" + agentType +
+                ", passwd='" + passwd + '\'' +
+                ", sipPhone='" + sipPhone + '\'' +
+                ", afterInterval=" + afterInterval +
+                ", ext1='" + ext1 + '\'' +
+                ", ext2='" + ext2 + '\'' +
+                ", ext3='" + ext3 + '\'' +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package org.cti.cc.crypto;
+package org.cti.cc.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
  * <p>
  * 填充方式[NoPadding/zero，PKCS5Padding , PKCS7Padding ，ISO10126Padding]
  */
-public class AesEncryptUtils {
+public class AesUtils {
 
 
     //参数分别代表 算法名称/加密模式/数据填充方式
@@ -26,7 +26,7 @@ public class AesEncryptUtils {
      * @param password 推荐使用16位
      * @return
      */
-    public static String encryptAES(String data, String password) throws Exception {
+    public static String encrypt(String data, String password) throws Exception {
         if (StringUtils.isBlank(data)) {
             return null;
         }
@@ -44,7 +44,7 @@ public class AesEncryptUtils {
      * @param password
      * @return
      */
-    public static String decryptAES(String decryptCode, String password) throws Exception {
+    public static String decrypt(String decryptCode, String password) throws Exception {
         if (StringUtils.isBlank(decryptCode)) {
             return null;
         }

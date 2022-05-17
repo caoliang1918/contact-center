@@ -5,14 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constant;
-import org.cti.cc.entity.Playback;
-import org.cti.cc.entity.RouteGetway;
-import org.cti.cc.entity.Station;
-import org.cti.cc.entity.VdnPhone;
-import org.cti.cc.mapper.PlaybackMapper;
-import org.cti.cc.mapper.RouteCallMapper;
-import org.cti.cc.mapper.VdnPhoneMapper;
+import org.cti.cc.entity.*;
+import org.cti.cc.mapper.*;
 import org.cti.cc.po.*;
+import org.cti.cc.util.LicenseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.service.CompanyService;
 import org.zhongweixian.cc.service.GroupService;
 
@@ -44,6 +39,12 @@ public class CacheService {
     @Value("${token.cache.day:7}")
     private Integer cacheDay;
 
+    @Value("${spring.datasource.url:}")
+    private String salt;
+
+    @Value("${platform.v9.key:pykqu7qfhcs5gz87}")
+    private String key;
+
     @Autowired
     private CompanyService companyService;
 
@@ -51,7 +52,7 @@ public class CacheService {
     private GroupService groupService;
 
     @Autowired
-    private GroupHandler groupHandler;
+    private PlatformLicenseMapper platformLicenseMapper;
 
     @Autowired
     private RouteCallMapper routeCallMapper;
@@ -61,6 +62,9 @@ public class CacheService {
 
     @Autowired
     private PlaybackMapper playbackMapper;
+
+    @Autowired
+    private AgentMapper agentMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -211,6 +215,23 @@ public class CacheService {
 
 
     public void initCompany() {
+        List<PlatformLicense> licenseList = platformLicenseMapper.selectListByMap(null);
+        Integer agentNum = agentMapper.agentNum(null);
+        Boolean result = false;
+        for (PlatformLicense platformLicense : licenseList) {
+            try {
+                if (LicenseUtil.checkLicense(salt, platformLicense.getPlatformLicense(), key, agentNum)) {
+                    result = true;
+                    break;
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        if (!result) {
+            logger.error("================= license is error, app stop ====================");
+            System.exit(0);
+        }
         this.companyMap = companyService.initAll();
         if (companyMap.isEmpty()) {
             return;
@@ -264,7 +285,7 @@ public class CacheService {
         RouteGroupPo routeGroup = null;
         //先匹配最长的。
         for (String route : companyInfo.getRouteGroupMap().keySet()) {
-            if (called.contains(route)) {
+            if (called.contains(route) || route.equals("*")) {
                 routeGroup = companyInfo.getRouteGroupMap().get(route);
                 break;
             }

@@ -29,6 +29,7 @@ import org.zhongweixian.cc.websocket.WebSocketHandler;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Create by caoliang on 2020/10/28
@@ -52,7 +53,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     private AgentStateLogMapper agentStateLogMapper;
 
     @Autowired
-    private PushFailLogMapper pushFailLogMapper;
+    private PushLogMapper pushLogMapper;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -171,8 +172,8 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
 
 
     @Override
-    public int savePushFailLog(PushFailLog pushFailLog) {
-        return pushFailLogMapper.insertSelective(pushFailLog);
+    public int savePushLog(PushLog pushLog) {
+        return pushLogMapper.insertSelective(pushLog);
     }
 
     @Override
@@ -182,7 +183,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         Long now = Instant.now().toEpochMilli();
         GroupInfo groupInfo = cacheService.getGroupInfo(agentInfo.getGroupId());
 
-        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(callId).withAgentKey(agentInfo.getAgentKey()).withLoginType(agentInfo.getLoginType()).withCompanyId(agentInfo.getCompanyId()).withGroupId(agentInfo.getGroupId()).withCtiHost(agentInfo.getHost())
+        CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(callId).withAgentKey(agentInfo.getAgentKey()).withAgentName(agentInfo.getAgentName()).withLoginType(agentInfo.getLoginType()).withCompanyId(agentInfo.getCompanyId()).withGroupId(agentInfo.getGroupId()).withCtiHost(agentInfo.getHost())
 //                .withCaller(caller)
                 .withCalled(makeCallVo.getCalled())
 //                .withCallerDisplay(callerDisplay)
@@ -239,6 +240,11 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         fsListen.sendBgapiMessage(callInfo.getMediaHost(), "uuid_audio", deviceId + " stop");
     }
 
+    @Override
+    public List<CallDevice> callDeviceList(Map<String, Object> params) {
+        return callDeviceMapper.selectListByMap(params);
+    }
+
     /**
      * @param agentInfo
      * @param makeCallVo
@@ -259,8 +265,8 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
                 caller = agentInfo.getSipPhone();
                 if (StringUtils.isNoneBlank(callerDisplay)) {
                     //先从坐席获取，坐席没有则从技能组获取
-                    if (StringUtils.isNoneBlank(agentInfo.getDiaplay())) {
-                        callerDisplay = agentInfo.getDiaplay();
+                    if (StringUtils.isNoneBlank(agentInfo.getDisplay())) {
+                        callerDisplay = agentInfo.getDisplay();
                     } else {
                         callerDisplay = RandomUtil.getRandom(groupInfo.getCallerDisplays());
                     }
@@ -281,6 +287,11 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         callInfo.setCallerDisplay(callerDisplay);
         callInfo.setCalledDisplay(calledDisplay);
 
+        //设置推送地址
+        CompanyInfo companyInfo = cacheService.getCompany(agentInfo.getCompanyId());
+        callInfo.setHiddenCustomer(companyInfo.getHiddenCustomer());
+        callInfo.setCdrNotifyUrl(companyInfo.getNotifyUrl());
+
         callInfo.getDeviceInfoMap().put(deviceInfo.getDeviceId(), deviceInfo);
         cacheService.addCallInfo(callInfo);
         cacheService.addDevice(deviceInfo.getDeviceId(), callInfo.getCallId());
@@ -290,7 +301,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             logger.error("agent:{} make call:{} origin route error", agentInfo.getAgentKey(), callInfo.getCallId());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setBeforeState(agentInfo.getAgentState());
-            agentInfo.setStateTime(Instant.now().toEpochMilli());
+            agentInfo.setStateTime(Instant.now().getEpochSecond());
             agentInfo.setAgentState(AgentState.AFTER);
             agentInfo.setCallId(null);
 
@@ -302,7 +313,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return;
         }
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", agentInfo.getAgentKey(), callInfo.getCallId(), callerDisplay, caller);
-        fsListen.makeCall(routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceInfo.getDeviceId());
+        fsListen.makeCall(routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceInfo.getDeviceId(), null);
 
         /**
          * 通知ws坐席请求外呼
@@ -315,7 +326,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
          */
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());
-        agentInfo.setStateTime(Instant.now().toEpochMilli());
+        agentInfo.setStateTime(Instant.now().getEpochSecond());
         agentInfo.setAgentState(AgentState.OUT_CALL);
         agentInfo.setCallId(callInfo.getCallId());
         agentInfo.setDeviceId(deviceInfo.getDeviceId());

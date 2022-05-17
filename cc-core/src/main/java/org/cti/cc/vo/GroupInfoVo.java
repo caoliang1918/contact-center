@@ -2,6 +2,7 @@ package org.cti.cc.vo;
 
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -21,7 +22,7 @@ public class GroupInfoVo {
     /**
      * 技能组名称
      */
-    @NotNull(message = "技能组名称不能为空")
+    @NotBlank(message = "技能组名称不能为空")
     @Size(min = 2, max = 16, message = "技能组名称必须在2-16字符")
     private String name;
 

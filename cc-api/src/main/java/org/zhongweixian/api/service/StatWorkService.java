@@ -1,7 +1,7 @@
 package org.zhongweixian.api.service;
 
 import org.cti.cc.entity.AgentStateLog;
-import org.cti.cc.entity.StatHourAgentWork;
+import org.cti.cc.entity.StatHourAgent;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by caoliang on 2021/9/5
  */
-public interface StatWorkService extends BaseService<StatHourAgentWork> {
+public interface StatWorkService extends BaseService<StatHourAgent> {
 
     /**
      * 坐席坐席操作日志
@@ -20,14 +20,22 @@ public interface StatWorkService extends BaseService<StatHourAgentWork> {
     List<AgentStateLog> getListByMap(Map<String, Object> params);
 
     /**
-     * @param agentWorkList
+     * 状态统计
+     *
+     * @param params
      * @return
      */
-    int saveStateHoutAgentWork(List<StatHourAgentWork> agentWorkList);
+    List<StatHourAgent> statHour(Map<String, Object> params);
 
 
     /**
-     *
+     * @param agentWorkList
+     * @return
+     */
+    int saveStateHoutAgent(List<StatHourAgent> agentWorkList);
+
+
+    /**
      * @param statTime
      */
     void deleteAgentHourStat(Long statTime);

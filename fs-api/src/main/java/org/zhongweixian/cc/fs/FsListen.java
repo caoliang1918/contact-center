@@ -262,6 +262,8 @@ public class FsListen {
                         //媒体识别回铃音
                         logger.debug("RING_ASR:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
+                    case FsConstant.RELOADXML:
+                        break;
                     default:
                         logger.info("event:{}, hander:{}", event.getEventName(), event.getEventHeaders().toString());
                         return;
@@ -383,14 +385,15 @@ public class FsListen {
      * @param called
      * @param callId
      * @param deviceId
+     * @param originateTimeout
      * @param sipHeaders
      */
-    public void makeCall(RouteGetway routeGetway, String display, String called, Long callId, String deviceId, String... sipHeaders) {
+    public void makeCall(RouteGetway routeGetway, String display, String called, Long callId, String deviceId, Integer originateTimeout, String... sipHeaders) {
         String media = RandomUtil.getRandomKey(fsClient.keySet());
         if (StringUtils.isBlank(media)) {
             throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
         }
-        makeCall(media, routeGetway, display, called, callId, deviceId, sipHeaders);
+        makeCall(media, routeGetway, display, called, callId, deviceId, originateTimeout, sipHeaders);
     }
 
     /**
@@ -403,9 +406,11 @@ public class FsListen {
      * @param display
      * @param called
      * @param deviceId
+     * @param originateTimeout
      * @param sipHeaders
      */
-    public void makeCall(String media, RouteGetway routeGetway, String display, String called, Long callId, String deviceId, String... sipHeaders) {
+    public void makeCall(String media, RouteGetway routeGetway, String display, String called, Long callId, String deviceId, Integer originateTimeout, String... sipHeaders) {
+        logger.info("callId:{} makeCall routeGetway:{} display:{}  called:{}", callId, routeGetway.getName(), display, called);
         Client client = null;
         if (StringUtils.isBlank(media)) {
             media = RandomUtil.getRandomKey(fsClient.keySet());
@@ -459,6 +464,9 @@ public class FsListen {
         }
         StringBuilder builder = new StringBuilder();
         builder.append("{return_ring_ready=true").append(FsConstant.SPLIT).append("sip_contact_user=").append(display).append(FsConstant.SPLIT).append("ring_asr=true").append(FsConstant.SPLIT).append("absolute_codec_string=").append(codecs).append(FsConstant.SPLIT).append("origination_caller_id_number=").append(display).append(FsConstant.SPLIT).append("origination_caller_id_name=").append(display).append(FsConstant.SPLIT).append("origination_uuid=").append(deviceId);
+        if (originateTimeout != null) {
+            builder.append(FsConstant.SPLIT).append("originate_timeout=" + originateTimeout);
+        }
         if (StringUtils.isNoneBlank(sipBuffer)) {
             builder.append(FsConstant.SPLIT).append(sipBuffer);
         }

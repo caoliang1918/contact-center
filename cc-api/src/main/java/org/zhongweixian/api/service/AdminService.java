@@ -2,11 +2,13 @@ package org.zhongweixian.api.service;
 
 import com.github.pagehelper.PageInfo;
 import org.cti.cc.entity.AdminMenu;
+import org.cti.cc.entity.AdminRole;
 import org.cti.cc.entity.AdminUser;
 import org.cti.cc.po.AdminLoginResult;
 import org.cti.cc.po.RolePo;
 import org.cti.cc.vo.AdminLogin;
 import org.zhongweixian.api.vo.server.MenuVo;
+import org.zhongweixian.api.vo.server.RoleMenuVo;
 import org.zhongweixian.api.vo.server.RoleVo;
 
 import java.util.List;
@@ -55,12 +57,12 @@ public interface AdminService extends BaseService<AdminUser> {
     Integer deleteMenus(String menuId);
 
     /**
-     * 授权菜单
+     * 获取角色菜单
      *
-     * @param ids
+     * @param id
      * @return
      */
-    int updateRoleMenus(List<Long> ids);
+    RolePo getRoleMenus(Long id);
 
     /**
      * 角色列表
@@ -68,7 +70,7 @@ public interface AdminService extends BaseService<AdminUser> {
      * @param params
      * @return
      */
-    PageInfo<RolePo> getRoleList(Map<String, Object> params);
+    PageInfo<AdminRole> getRoleList(Map<String, Object> params);
 
 
     /**
@@ -78,4 +80,25 @@ public interface AdminService extends BaseService<AdminUser> {
      * @return
      */
     Integer saveOrUpdateRole(RoleVo roleVo);
+
+    /**
+     * @param id
+     * @return
+     */
+    Integer deleteRole(Long id);
+
+    /**
+     * 角色绑定菜单
+     *
+     * @param roleMenuVo
+     * @return
+     */
+    Integer roleBindMenu(RoleMenuVo roleMenuVo);
+
+    /**
+     * 初始化license
+     */
+    void initLicense();
+
+
 }

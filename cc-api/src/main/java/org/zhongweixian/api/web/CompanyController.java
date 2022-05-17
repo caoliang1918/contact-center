@@ -31,78 +31,7 @@ public class CompanyController extends BaseController {
     protected Logger logger = LoggerFactory.getLogger(CompanyController.class);
 
 
-    /**
-     * 1.1.1 企业列表
-     *
-     * @param pageInfo
-     * @param query
-     * @return
-     */
-    @GetMapping("company")
-    public CommonResponse<Page<Company>> companyList(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, PageInfo pageInfo, String query) {
-        Map<String, Object> params = parseMap(adminAccountInfo, pageInfo, query);
-        return new CommonResponse(companyService.findByPageParams(params));
-    }
 
-    /**
-     * 1.1.2 企业详情
-     *
-     * @param adminAccountInfo
-     * @param id
-     * @return
-     */
-    @GetMapping("company/{id}")
-    public CommonResponse<CompanyInfo> getCompany(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id) {
-        if (adminAccountInfo.getCompanyId() != 1) {
-            return new CommonResponse(ErrorCode.ACCOUNT_AUTH_ERROR);
-        }
-        return new CommonResponse(companyService.getCompanyInfo(adminAccountInfo.getCompanyId() == 1L ? id : adminAccountInfo.getCompanyId()));
-    }
-
-    /**
-     * 1.1.3 添加企业
-     *
-     * @param adminAccountInfo
-     * @param companyVo
-     * @return
-     */
-    @PostMapping("company")
-    public CommonResponse addCompany(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @Validated @RequestBody CompanyVo companyVo) {
-        companyService.addCompany(companyVo);
-        return new CommonResponse();
-    }
-
-    /**
-     * 1.1.4 修改企业
-     *
-     * @param adminAccountInfo
-     * @param company
-     * @return
-     */
-    @PutMapping("company/{id}")
-    public CommonResponse updateCompany(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id, @Validated @RequestBody Company company) {
-        if (adminAccountInfo.getCompanyId() != 1) {
-            return new CommonResponse(ErrorCode.ACCOUNT_AUTH_ERROR);
-        }
-        company.setId(id);
-        companyService.updateCompany(company);
-        return new CommonResponse();
-    }
-
-
-    /**
-     * 1.1.5 删除企业
-     *
-     * @param adminAccountInfo
-     * @return
-     */
-    @DeleteMapping("company/{id}")
-    public CommonResponse deleteCompany(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id) {
-        if (adminAccountInfo.getCompanyId() != 1) {
-            return new CommonResponse(ErrorCode.ACCOUNT_AUTH_ERROR);
-        }
-        return new CommonResponse(companyService.deleteCompany(id));
-    }
 
     /**
      * 1.3.1 sip列表
@@ -551,24 +480,9 @@ public class CompanyController extends BaseController {
     public CommonResponse addGroup(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
                                    @Validated @RequestBody GroupInfoVo groupInfoVo) {
         groupInfoVo.setCompanyId(adminAccountInfo.getBindCompanyId());
-        groupInfoVo.setId(null);
         return new CommonResponse(groupService.saveOrUpdateGroup(groupInfoVo));
     }
 
-    /**
-     * 1.6.4 修改技能组
-     *
-     * @param adminAccountInfo
-     * @param groupInfoVo
-     * @return
-     */
-    @PutMapping("group/{id}")
-    public CommonResponse updateGroup(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo,
-                                      @PathVariable Long id, @Validated @RequestBody GroupInfoVo groupInfoVo) {
-        groupInfoVo.setId(id);
-        groupInfoVo.setCompanyId(adminAccountInfo.getBindCompanyId());
-        return new CommonResponse(groupService.saveOrUpdateGroup(groupInfoVo));
-    }
 
     /**
      * 1.6.5 删除技能组

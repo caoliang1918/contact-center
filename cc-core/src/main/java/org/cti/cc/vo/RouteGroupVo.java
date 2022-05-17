@@ -1,5 +1,6 @@
 package org.cti.cc.vo;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -14,7 +15,7 @@ public class RouteGroupVo {
     /**
      * 网关组
      */
-    @NotNull
+    @NotBlank
     @Size(min = 2, max = 16, message = "网关组名称必须在2,16字符")
     private String routeGroup;
 

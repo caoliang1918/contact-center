@@ -35,6 +35,8 @@
         from cc_admin_menu
         where id = #{id,jdbcType=BIGINT}
     </select>
+
+    <!--子菜单 -->
     <select id="selectChildMenus" parameterType="java.lang.String" resultType="java.lang.Integer">
         select count(id)
         from cc_admin_menu
@@ -241,21 +243,22 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-
-    <select id="menusList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    <!--菜单列表 -->
+    <select id="selectList" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from
         cc_admin_menu
         <where>
             <if test="true">status = 1</if>
+            <if test="name!=null">and name = #{name,jdbcType=VARCHAR}</if>
             <if test="menuLevel!=null">and menu_level = #{menuLevel,jdbcType=INTEGER}</if>
             <if test="parentId!=null">and parent_id = #{parentId,jdbcType=VARCHAR}</if>
         </where>
         order by menu_order
     </select>
 
-    <!-- 登录账号菜单 -->
+    <!-- 登录时返回的菜单列表 -->
     <select id="selectUserMenus" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
         a.id, a.cts, a.uts, a.menu_id, a.parent_id, a.name, a.path_url, a.path_method, a.menu_level, a.menu_order,
@@ -271,20 +274,30 @@
         order by menu_order
     </select>
 
-    <select id="selectByRoleId" parameterType="Long" resultMap="BaseResultMap">
+    <!--根据角色返回菜单 -->
+    <select id="selectByRoleId" parameterType="Long"  resultType="java.lang.String">
         select
-        <include refid="Base_Column_List"/>
-        from cc_admin_menu where id in (select menu_id from cc_admin_role_menu where id = #{roleId})
+            a.menu_id
+        from
+            cc_admin_menu a , cc_admin_role_menu b
+        where
+            a.menu_id = b.menu_id and  b.id = #{roleId} and a.status = 1
     </select>
 
-    <update id="deleteMenus" parameterType="String" >
-        delete cc_admin_menu where menu_id = #{menuId,jdbcType=VARCHAR}
+    <update id="deleteMenu" parameterType="String">
+        delete from  cc_admin_menu where menu_id = #{menuId,jdbcType=VARCHAR}
     </update>
 
-    <select id="selectByMenuId" parameterType="String"  resultMap="BaseResultMap">
+    <delete id="deleteRoleMenu" parameterType="String">
+        delete from cc_admin_role_menu where  menu_id = #{menuId,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="selectByMenuId" parameterType="String" resultMap="BaseResultMap">
         select
             <include refid="Base_Column_List"/>
         from
-             cc_admin_menu where menu_id = #{menuId,jdbcType=VARCHAR}
+            cc_admin_menu
+        where
+            menu_id = #{menuId,jdbcType=VARCHAR}
     </select>
 </mapper>

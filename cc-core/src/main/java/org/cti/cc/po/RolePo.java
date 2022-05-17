@@ -13,13 +13,13 @@ public class RolePo extends AdminRole {
     /**
      * 菜单权限集合
      */
-    private List<AdminMenu> adminMenuList;
+    private List<MenusPo> adminMenuList;
 
-    public List<AdminMenu> getAdminMenuList() {
+    public List<MenusPo> getAdminMenuList() {
         return adminMenuList;
     }
 
-    public void setAdminMenuList(List<AdminMenu> adminMenuList) {
+    public void setAdminMenuList(List<MenusPo> adminMenuList) {
         this.adminMenuList = adminMenuList;
     }
 }

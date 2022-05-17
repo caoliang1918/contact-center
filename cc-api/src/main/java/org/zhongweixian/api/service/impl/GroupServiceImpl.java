@@ -61,8 +61,9 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
         List<Group> groups = groupMapper.selectListByMap(params);
         //判断是否重复
         if (!CollectionUtils.isEmpty(groups)) {
-            if (groupInfoVo.getId() == null || !groupInfoVo.getId().equals(groups.get(0).getId())) {
-                throw new BusinessException(ErrorCode.DUPLICATE_EXCEPTION, "技能组名称已存在");
+            if (groupInfoVo.getId() == null ||
+                    (groupInfoVo.getId() != null && !groupInfoVo.getId().equals(groups.get(0).getId()))) {
+                throw new BusinessException(ErrorCode.DUPLICATE_EXCEPTION);
             }
         }
 
@@ -109,7 +110,7 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
         }
 
         group.setUts(Instant.now().getEpochSecond());
-        groupMapper.updateByPrimaryKey(group);
+        groupMapper.updateByPrimaryKeySelective(group);
         //排队策略
 
 

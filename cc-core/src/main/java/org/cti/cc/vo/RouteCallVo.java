@@ -2,6 +2,7 @@ package org.cti.cc.vo;
 
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,7 +26,7 @@ public class RouteCallVo {
     /**
      * 字冠号码
      */
-    @NotNull
+    @NotBlank
     @Size(min = 1,max = 32,message = "字冠号码必须在1,32个字符")
     private String routeNum;
 

@@ -21,6 +21,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.api.configration.QuartzConfig;
+import org.zhongweixian.api.service.AdminService;
 
 
 @EnableDiscoveryClient
@@ -31,7 +32,13 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
     private Logger logger = LoggerFactory.getLogger(CcApiApplication.class);
 
     @Autowired
+    private AdminService adminService;
+
+    @Autowired
     private QuartzConfig quartzConfig;
+
+    @Value("${cc.quartz.init:false}")
+    private Boolean quartzFlag;
 
 
     public static void main(String[] args) {
@@ -40,7 +47,8 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
 
     @Override
     public void run(String... args) throws Exception {
-        //quartzConfig.initJob();
+        adminService.initLicense();
+        quartzConfig.initJob(quartzFlag);
     }
 
 
@@ -58,10 +66,33 @@ public class CcApiApplication implements CommandLineRunner, ApplicationListener<
         return template;
     }
 
+    /**
+     * 外部调用服务
+     *
+     * @param connectTimeout
+     * @param readTimeout
+     * @return
+     */
+    @Bean
+    public RestTemplate restTemplate(@Value("${cdr.notify.connectTimeout:100}") Integer connectTimeout,
+                                     @Value("${cdr.notify.readTimeout:300}") Integer readTimeout) {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+        simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+        return new RestTemplate(simpleClientHttpRequestFactory);
+    }
+
+    /**
+     * 内部调用服务
+     *
+     * @param connectTimeout
+     * @param readTimeout
+     * @return
+     */
     @LoadBalanced
     @Bean
     public RestTemplate httpClient(@Value("${cc.inner.connectTimeout:100}") Integer connectTimeout,
-                                   @Value("${cc.inner.readTimeout:500}") Integer readTimeout) {
+                                   @Value("${cc.inner.readTimeout:3000}") Integer readTimeout) {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
         simpleClientHttpRequestFactory.setReadTimeout(readTimeout);

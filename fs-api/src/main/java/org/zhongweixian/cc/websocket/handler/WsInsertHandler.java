@@ -51,7 +51,7 @@ public class WsInsertHandler extends WsBaseHandler<WsInsertEvent> {
             logger.error("agent:{} make call:{} origin route error", agentInfo.getAgentKey(), callInfo.getCallId());
             agentInfo.setBeforeTime(agentInfo.getStateTime());
             agentInfo.setBeforeState(agentInfo.getAgentState());
-            agentInfo.setStateTime(Instant.now().toEpochMilli());
+            agentInfo.setStateTime(Instant.now().getEpochSecond());
             agentInfo.setAgentState(AgentState.AFTER);
             syncAgentStateMessage(agentInfo);
             agentInfo.setCallId(null);
@@ -64,7 +64,7 @@ public class WsInsertHandler extends WsBaseHandler<WsInsertEvent> {
         }
 
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", event.getAgentKey(), callInfo.getCallId(), agentInfo.getAgentId(), caller);
-        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, agentInfo.getAgentId(), caller, callInfo.getCallId(), deviceInfo.getDeviceId());
+        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, agentInfo.getAgentId(), caller, callInfo.getCallId(), deviceInfo.getDeviceId(),null);
 
 
         deviceInfo.setState(AgentState.INSERT.name());

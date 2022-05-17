@@ -67,6 +67,18 @@ public class DateTimeUtil {
     }
 
     /**
+     * 获取上个月的当前时间（时间往前推一个月）
+     * @param n
+     * @return
+     */
+    public static Long getBeforeMonth(int n) {
+        Calendar calendar = getCalendar();
+        calendar.add(Calendar.MONTH, -n);
+        Long beforDay = calendar.getTimeInMillis();
+        return beforDay;
+    }
+
+    /**
      * 获取当天0点
      *
      * @return

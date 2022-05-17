@@ -50,7 +50,7 @@ public class WsLogoutHandler extends WsBaseHandler<WsLogoutEvent> {
         }
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());
-        agentInfo.setStateTime(Instant.now().toEpochMilli());
+        agentInfo.setStateTime(Instant.now().getEpochSecond());
         agentInfo.setLogoutTime(agentInfo.getStateTime());
         agentInfo.setLoginTime(0L);
         agentInfo.setAgentState(AgentState.LOGOUT);

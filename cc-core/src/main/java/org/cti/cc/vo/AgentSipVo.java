@@ -1,5 +1,6 @@
 package org.cti.cc.vo;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -28,7 +29,7 @@ public class AgentSipVo {
     /**
      *
      */
-    @NotNull(message = "sip号码不能为空")
+    @NotBlank(message = "sip号码不能为空")
     @Size(min = 5, max = 16, message = "sip号码必须是5,16字符")
     private String sip;
 

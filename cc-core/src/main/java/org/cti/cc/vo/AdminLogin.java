@@ -1,16 +1,16 @@
 package org.cti.cc.vo;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Created by caoliang on 2022/1/18
  */
 public class AdminLogin {
 
-    @NotNull(message = "username不能为空")
+    @NotBlank(message = "username不能为空")
     private String username;
 
-    @NotNull(message = "passwd不能为空")
+    @NotBlank(message = "passwd不能为空")
     private String passwd;
 
     /**

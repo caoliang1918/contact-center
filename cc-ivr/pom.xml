@@ -15,11 +15,6 @@
 
     <description>project for cc-ivr</description>
 
-    <properties>
-        <commons-scxml2.version>2.0-SNAPSHOT</commons-scxml2.version>
-        <commons-jexl2.version>2.1.1</commons-jexl2.version>
-        <commons-jexl3.version>3.1</commons-jexl3.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -82,6 +77,14 @@
             <artifactId>mssql-jdbc</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.zhongweixian</groupId>
             <artifactId>cc-core</artifactId>
         </dependency>
@@ -92,7 +95,10 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-scxml2</artifactId>
-            <version>${commons-scxml2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.ulisesbocchio</groupId>

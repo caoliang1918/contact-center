@@ -3,18 +3,17 @@ package org.zhongweixian.api.service.impl;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.cti.cc.entity.*;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.mapper.AgentMapper;
-import org.cti.cc.mapper.CompanyMapper;
-import org.cti.cc.mapper.GroupMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.page.Page;
-import org.cti.cc.po.*;
+import org.cti.cc.po.AgentInfo;
+import org.cti.cc.po.CompanyInfo;
+import org.cti.cc.po.GroupInfo;
+import org.cti.cc.po.GroupOverFlow;
+import org.cti.cc.vo.CompanyVo;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.CompanyService;
-import org.cti.cc.vo.CompanyVo;
 
 import java.time.Instant;
 import java.util.List;
@@ -27,14 +26,6 @@ import java.util.Map;
 @Service
 public class CompanyServiceImpl extends BaseServiceImpl<Company> implements CompanyService {
 
-    @Autowired
-    private CompanyMapper companyMapper;
-
-    @Autowired
-    private GroupMapper groupMapper;
-
-    @Autowired
-    private AgentMapper agentMapper;
 
     @Override
     BaseMapper<Company> baseMapper() {
@@ -45,6 +36,8 @@ public class CompanyServiceImpl extends BaseServiceImpl<Company> implements Comp
     public int addCompany(CompanyVo companyVo) {
         Company company = new Company();
         BeanUtils.copyProperties(companyVo, company);
+        company.setSecretKey(RandomStringUtils.randomAlphabetic(16));
+        company.setSecretType(2);
         return companyMapper.insertSelective(company);
     }
 
@@ -59,7 +52,7 @@ public class CompanyServiceImpl extends BaseServiceImpl<Company> implements Comp
 
     @Override
     public List<CompanyInfo> getCompanyList(Map<String, Object> params) {
-        return companyMapper.selectCompanyInfoList(null);
+        return companyMapper.selectCompanyInfoList(params);
     }
 
     @Override

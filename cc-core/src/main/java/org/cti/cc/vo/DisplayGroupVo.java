@@ -2,6 +2,7 @@ package org.cti.cc.vo;
 
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -28,7 +29,7 @@ public class DisplayGroupVo {
     /**
      * 号码池
      */
-    @NotNull(message = "号码池名称不能为空")
+    @NotBlank(message = "号码池名称不能为空")
     @Size(min = 4, max = 16, message = "号码池名称长度必须在4-16位")
     private String name;
 

@@ -15,20 +15,15 @@ public interface AdminMenuMapper extends BaseMapper<AdminMenu> {
      * @param params
      * @return
      */
-    List<AdminMenu> menusList(Map<String, Object> params);
+    List<AdminMenu> selectList(Map<String, Object> params);
 
     /**
+     * 子菜单
      *
      * @param menuId
      * @return
      */
     Integer selectChildMenus(String menuId);
-
-    /**
-     * @param params 获取用户权限菜单
-     * @return
-     */
-    List<AdminMenu> selectRoleMenus(Map<String, Object> params);
 
     /**
      * 登录时返回的菜单列表
@@ -38,12 +33,36 @@ public interface AdminMenuMapper extends BaseMapper<AdminMenu> {
      */
     List<AdminMenu> selectUserMenus(Map<String, Object> params);
 
+    /**
+     * 根据角色返回菜单
+     *
+     * @param roleId
+     * @return
+     */
+    List<String> selectByRoleId(Long roleId);
 
-    List<AdminMenu> selectByRoleId(Long roleId);
+
+    /**
+     * 删除菜单
+     * @param menuId
+     * @return
+     */
+    Integer deleteMenu(String menuId);
+
+    /**
+     * 删除角色绑定的菜单
+     * @param menuId
+     * @return
+     */
+    Integer deleteRoleMenu(String menuId);
 
 
-    Integer deleteMenus(String menuId);
-
-
+    /**
+     * 获取子节点菜单
+     *
+     * @param menuId
+     * @return
+     */
     AdminMenu selectByMenuId(String menuId);
+
 }

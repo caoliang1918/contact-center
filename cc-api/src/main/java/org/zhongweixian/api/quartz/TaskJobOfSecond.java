@@ -22,9 +22,6 @@ import java.util.Date;
 public class TaskJobOfSecond implements Job {
     private Logger logger = LoggerFactory.getLogger(TaskJobOfSecond.class);
 
-    @Value("${spring.cloud.nacos.server-addr}")
-    private String nacosAddr;
-
     @Autowired
     private LoadBalancerClient loadBalancerClient;
 
@@ -32,7 +29,8 @@ public class TaskJobOfSecond implements Job {
     private RestTemplate restTemplate;
 
 
-    public final static String CRON = "0/1 * * * * ?";
+    public final static String NAME = "TaskJobOfSecond";
+    public final static String CRON = "0/2 * * * * ?";
 
 
     @Override
@@ -41,7 +39,7 @@ public class TaskJobOfSecond implements Job {
         if (date.after(jobExecutionContext.getNextFireTime())) {
             return;
         }
-        logger.info("second job start :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
+        logger.debug("second job start :{} , next:{}", jobExecutionContext.getFireTime(), jobExecutionContext.getNextFireTime());
         ServiceInstance serviceInstance = loadBalancerClient.choose("cc-ivr");
         if (serviceInstance == null) {
             return;

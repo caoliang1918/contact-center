@@ -70,6 +70,9 @@ public enum EventType {
      */
     RING_ASR(1013, FsRingAsrEvent.class),
 
+    /**
+     * 录音开始
+     */
     RECORD_START(1014, FsRecordStartEvent.class),
 
     PRESENCE_IN(1015, FsPresenceInEvent.class),
@@ -77,6 +80,11 @@ public enum EventType {
      * 挂机
      */
     CHANNEL_HANGUP_COMPLETE(1016, FsHangupCompleteEvent.class),
+
+    /**
+     * 加载xml
+     */
+    RELOADXML(1017, FsReloadXmlEvent.class),
 
 
     /***************************************************/

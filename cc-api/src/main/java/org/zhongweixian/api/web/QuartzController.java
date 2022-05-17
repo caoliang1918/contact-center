@@ -1,7 +1,5 @@
 package org.zhongweixian.api.web;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.cti.cc.po.CommonResponse;
 import org.cti.cc.po.CompanyInfo;
 import org.cti.cc.util.DateTimeUtil;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.zhongweixian.api.configration.QuartzConfig;
 import org.zhongweixian.api.quartz.TaskJobOfHour;
 import org.zhongweixian.api.service.CompanyService;
 import org.zhongweixian.api.service.StatWorkService;
@@ -30,6 +29,9 @@ public class QuartzController {
 
 
     @Autowired
+    private QuartzConfig quartzConfig;
+
+    @Autowired
     private TaskJobOfHour taskJobOfHour;
 
     @Autowired
@@ -37,6 +39,11 @@ public class QuartzController {
 
     @Autowired
     private StatWorkService statWorkService;
+
+    @GetMapping()
+    public CommonResponse index() {
+        return new CommonResponse(quartzConfig.getJobList());
+    }
 
 
     @GetMapping("/hour/agentstat")
@@ -60,7 +67,7 @@ public class QuartzController {
                 break;
             }
             try {
-                statWorkService.deleteAgentHourStat(startTime);
+                statWorkService.deleteAgentHourStat(startTime / 1000L + 3600L);
                 taskJobOfHour.agentHourStat(startTime, startTime + 3600000, companyInfoList);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

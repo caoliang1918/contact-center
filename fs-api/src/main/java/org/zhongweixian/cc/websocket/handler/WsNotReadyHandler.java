@@ -45,7 +45,7 @@ public class WsNotReadyHandler extends WsBaseHandler<WsNotReadyEvent> {
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());
         agentInfo.setAgentState(AgentState.NOT_READY);
-        agentInfo.setStateTime(Instant.now().toEpochMilli());
+        agentInfo.setStateTime(Instant.now().getEpochSecond());
 
         /**
          * 广播坐席状态

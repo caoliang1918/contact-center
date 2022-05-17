@@ -111,7 +111,7 @@ public class WsConsultHandler extends WsBaseHandler<WsConsultEvent> {
 
 
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", event.getAgentKey(), callInfo.getCallId(), agentInfo.getAgentId(), called);
-        fsListen.makeCall(routeGetway, agentInfo.getAgentId(), called, callInfo.getCallId(), deviceId);
+        fsListen.makeCall(routeGetway, agentInfo.getAgentId(), called, callInfo.getCallId(), deviceId, null);
         callInfo.getNextCommands().add(new NextCommand(agentInfo.getDeviceId(), NextType.NEXT_CONSULT_AGENT, list.get(0)));
 
 
@@ -121,7 +121,7 @@ public class WsConsultHandler extends WsBaseHandler<WsConsultEvent> {
         otherAgent.setBeforeState(otherAgent.getAgentState());
         otherAgent.setBeforeTime(otherAgent.getStateTime());
         otherAgent.setAgentState(AgentState.CONSULT_CALL_RING);
-        otherAgent.setStateTime(Instant.now().toEpochMilli());
+        otherAgent.setStateTime(Instant.now().getEpochSecond());
 
         otherAgent.setCallId(callInfo.getCallId());
         otherAgent.setDeviceId(deviceId);
@@ -174,7 +174,7 @@ public class WsConsultHandler extends WsBaseHandler<WsConsultEvent> {
         agentInfo.setConsultDeviceId(deviceId);
         cacheService.addAgentInfo(agentInfo);
 
-        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, calledDisplay, called, callInfo.getCallId(), deviceId);
+        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, calledDisplay, called, callInfo.getCallId(), deviceId, null);
     }
 
 }

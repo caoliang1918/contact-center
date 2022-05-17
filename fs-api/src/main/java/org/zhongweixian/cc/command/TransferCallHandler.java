@@ -42,16 +42,7 @@ public class TransferCallHandler extends BaseHandler {
             return;
         }
 
-        DeviceInfo device = DeviceInfo.DeviceInfoBuilder.builder()
-                .withDeviceId(deviceId)
-                .withDeviceType(3)
-                .withCdrType(2)
-                .withCaller(callInfo.getCaller())
-                .withCalled(callInfo.getCalled())
-                .withCallId(callInfo.getCallId())
-                .withCallTime(Instant.now().toEpochMilli())
-                .withDisplay(callInfo.getCaller())
-                .build();
+        DeviceInfo device = DeviceInfo.DeviceInfoBuilder.builder().withDeviceId(deviceId).withDeviceType(3).withCdrType(2).withCaller(callInfo.getCaller()).withCalled(callInfo.getCalled()).withCallId(callInfo.getCallId()).withCallTime(Instant.now().toEpochMilli()).withDisplay(callInfo.getCaller()).build();
         callInfo.getDeviceList().add(deviceId);
         callInfo.getDeviceInfoMap().put(deviceId, device);
 
@@ -62,7 +53,7 @@ public class TransferCallHandler extends BaseHandler {
         transferCall.setTransferType(5);
         callInfo.getCallDetails().add(transferCall);
         callInfo.getNextCommands().add(new NextCommand(thisDeviceId, NextType.NEXT_CALL_BRIDGE, deviceId));
-        fsListen.makeCall(routeGetway, callInfo.getCaller(), callInfo.getCalled(), callInfo.getCallId(), deviceId);
+        fsListen.makeCall(routeGetway, callInfo.getCaller(), callInfo.getCalled(), callInfo.getCallId(), deviceId, null);
 
     }
 }

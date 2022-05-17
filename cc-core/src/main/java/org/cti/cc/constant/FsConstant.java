@@ -46,7 +46,7 @@ public class FsConstant {
     public final static String EAVESDROP = "eavesdrop";
 
 
-    public final static String PARK = " &park";
+    public final static String PARK = " &park()";
 
 
 
@@ -151,6 +151,8 @@ public class FsConstant {
     public final static String CUSTOM = "CUSTOM";
 
     public final static String RING_ASR = "RING_ASR";
+
+    public final static String RELOADXML = "RELOADXML";
 
     public final static String CHANNEL_UNHOLD = "CHANNEL_UNHOLD";
 

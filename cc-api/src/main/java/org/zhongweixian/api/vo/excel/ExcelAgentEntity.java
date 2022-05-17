@@ -81,7 +81,7 @@ public class ExcelAgentEntity extends Agent {
      * 主叫显号
      */
     @Excel(name = "主叫显号", width = 20)
-    private String diaplay;
+    private String display;
 
     /**
      * 振铃时长

@@ -460,5 +460,43 @@
         create table cc_agent_state_log${month} like cc_agent_state_log
     </update>
 
+    <!-- 坐席状态和话务统计 -->
+    <select id="statHour" parameterType="java.util.Map" resultType="org.cti.cc.entity.StatHourAgent" >
+        select
+            agent_key as agentKey , agent_name as agentName,
+            sum( IF(state='LOGIN',1, 0)) as loginCnt,
+            sum( IF(state='READY',1, 0)) as readyCnt,
+            sum( IF(state='NOT_READY',1, 0)) as notReadyCnt,
+            sum( IF(state='AFTER',1, 0)) as afterCnt,
+            sum( IF(before_state='READY',state_time - before_time, 0)) as readyTime,
+            sum( IF(before_state='NOT_READY',state_time - before_time, 0)) as notReady,
+            sum( IF(before_state='BUSY_OTHER',state_time - before_time, 0)) as busyTime,
+            sum( IF(before_state='AFTER',state_time - before_time, 0)) as afterTime,
+            sum( IF(before_state='TALKING',state_time - before_time, 0)) as talkTime
+        from
+            cc_agent_state_log
+        where
+            company_id = #{companyId} and state_time > #{start} and state_time &lt;= #{end}  group by agent_key , agent_name
+    </select>
+
+    <!-- 坐席状态和话务统计 -->
+    <select id="statHour" parameterType="java.util.Map" resultType="org.cti.cc.entity.StatHourAgent" databaseId="oracle">
+        select
+            agent_key as agentKey , agent_name as agentName,
+            sum( IF(state='LOGIN',1, 0)) as loginCnt,
+            sum( IF(state='READY',1, 0)) as readyCnt,
+            sum( IF(state='NOT_READY',1, 0)) as notReadyCnt,
+            sum( IF(state='AFTER',1, 0)) as afterCnt,
+            sum( IF(before_state='READY',state_time - before_time, 0)) as readyTime,
+            sum( IF(before_state='NOT_READY',state_time - before_time, 0)) as notReady,
+            sum( IF(before_state='BUSY_OTHER',state_time - before_time, 0)) as busyTime,
+            sum( IF(before_state='AFTER',state_time - before_time, 0)) as afterTime,
+            sum( IF(before_state='TALKING',state_time - before_time, 0)) as talkTime
+        from
+            cc_agent_state_log
+        where
+            company_id = #{companyId} and state_time > #{start} and state_time &lt;= #{end} group by agent_key , agent_name
+    </select>
+
 
 </mapper>

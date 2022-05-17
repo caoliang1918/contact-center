@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.PushFailLogMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.PushFailLog">
+<mapper namespace="org.cti.cc.mapper.PushLogMapper">
+    <resultMap id="BaseResultMap" type="org.cti.cc.entity.PushLog">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -21,24 +21,24 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from cc_push_fail_log
+        from cc_push_log
         where id = #{id,jdbcType=BIGINT}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete
-        from cc_push_fail_log
+        from cc_push_log
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.PushFailLog">
-        insert into cc_push_fail_log (id, cts, uts, company_id,
+    <insert id="insert" parameterType="org.cti.cc.entity.PushLog">
+        insert into cc_push_log (id, cts, uts, company_id,
                                       call_id, cdr_notify_url, content,
                                       push_times, push_response, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
                 #{callId,jdbcType=BIGINT}, #{cdrNotifyUrl,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
                 #{pushTimes,jdbcType=INTEGER}, #{pushResponse,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.PushFailLog">
-        insert into cc_push_fail_log
+    <insert id="insertSelective" parameterType="org.cti.cc.entity.PushLog">
+        insert into cc_push_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -106,15 +106,15 @@
     </insert>
 
 
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.PushFailLog">
-        update cc_push_fail_log
+    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.PushLog">
+        update cc_push_log
         set uts        = #{uts,jdbcType=BIGINT},
             push_times = #{pushTimes,jdbcType=INTEGER}
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <update id="pushSuccess" parameterType="org.cti.cc.entity.PushFailLog">
-        update cc_push_fail_log
+    <update id="pushSuccess" parameterType="org.cti.cc.entity.PushLog">
+        update cc_push_log
         set uts           = #{uts},
             status        = 2,
             push_response = #{pushResponse,jdbcType=VARCHAR}
@@ -125,7 +125,7 @@
         select
         <include refid="Base_Column_List"/>
         from
-        cc_push_fail_log
+        cc_push_log
         <where>
             <if test="start!=null">uts > #{start}</if>
             <if test="end!=null">and uts &lt;= #{end}</if>
@@ -139,7 +139,7 @@
         select
         <include refid="Base_Column_List"/>
         from
-        cc_push_fail_log
+        cc_push_log
         <where>
             <if test="start!=null">uts > #{start}</if>
             <if test="end!=null">and uts &lt;= #{end}</if>
@@ -151,7 +151,7 @@
 
     <delete id="deletePushFailLog" parameterType="Long">
         delete
-        from cc_push_fail_log
+        from cc_push_log
         where cts &lt; #{cts}
     </delete>
 </mapper>

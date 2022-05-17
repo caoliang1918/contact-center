@@ -8,7 +8,6 @@ import org.cti.cc.po.AdminAccountInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -57,11 +56,11 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
             logger.warn("response for 401 status");
             return result;
         }
-        //坐席账号
+
         if (StringUtils.isNotBlank(auth) && checkAuth(auth, request, response)) {
             return true;
         }
-        //企业管理员
+
         if (StringUtils.isNotBlank(token) && checkToken(token, request, response)) {
             return true;
         }
@@ -70,7 +69,6 @@ public class HttpRequestInteceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        logger.info("postHandle:请求后调用");
     }
 
     /**

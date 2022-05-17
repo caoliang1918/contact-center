@@ -1,8 +1,7 @@
-<scxml initial="idle" name="1000" version="0.9" xmlns="http://www.w3.org/2005/07/scxml">
-
-    <state id="idle">
+<scxml xmlns="http://www.w3.org/2005/07/scxml"  xmls:v9="https://www.voice9.com" initial="idle" name="1000" version="1.0">
+<state id="idle">
         <onentry>
-            <assign location="inService" expr="'disconnected'" />
+            <v9:play file="queue.wav" terminator="#" />
         </onentry>
 
         <transition event="connected" target="loading"></transition>
@@ -17,10 +16,10 @@
         <transition event="connLost" target="disconnected"></transition>
     </state>
     <state id="outOfService">
-        <transition event="startup" target="disconnected"></transition>
-        <transition event="connLost" target="disconnected"></transition>
+        <transition event="startup" target="disconnected"/>
+        <transition event="connLost" target="disconnected"/>
     </state>
     <state id="disconnected">
-        <transition event="end" ></transition>
+        <transition event="end"/>
     </state>
 </scxml>

@@ -1,18 +1,22 @@
 package org.zhongweixian.cc.fs.handler.base;
 
 import com.alibaba.fastjson.JSON;
+import io.netty.util.HashedWheelTimer;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CallInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.zhongweixian.cc.command.base.BaseHandler;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.fs.esl.transport.SendMsg;
 import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by caoliang on 2020/8/23
@@ -34,6 +38,10 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
      */
     @Value("${sip.outbound.profile:internal}")
     protected String outboundProfile;
+
+    @Autowired
+    protected HashedWheelTimer hashedWheelTimer;
+
 
     /**
      * 给坐席客户端发送消息

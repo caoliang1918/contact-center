@@ -3,11 +3,11 @@ package org.zhongweixian.ivr.service.impl;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
-import org.cti.cc.entity.PushFailLog;
+import org.cti.cc.entity.PushLog;
 import org.cti.cc.mapper.CallDetailMapper;
 import org.cti.cc.mapper.CallDeviceMapper;
 import org.cti.cc.mapper.CallLogMapper;
-import org.cti.cc.mapper.PushFailLogMapper;
+import org.cti.cc.mapper.PushLogMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.CallLogPo;
 import org.cti.cc.util.DateTimeUtil;
@@ -36,7 +36,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     private CallDeviceMapper callDeviceMapper;
 
     @Autowired
-    private PushFailLogMapper pushFailLogMapper;
+    private PushLogMapper pushLogMapper;
 
 
     @Value("${call.cdr.mq:0}")
@@ -106,7 +106,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     }
 
     @Override
-    public int savePushFailLog(PushFailLog pushFailLog) {
-        return pushFailLogMapper.insertSelective(pushFailLog);
+    public int savePushFailLog(PushLog pushFailLog) {
+        return pushLogMapper.insertSelective(pushFailLog);
     }
 }

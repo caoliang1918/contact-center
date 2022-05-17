@@ -1,8 +1,13 @@
 package org.zhongweixian.api.web;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONValidator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.util.encoders.UrlBase64;
+import org.bouncycastle.util.encoders.UrlBase64Encoder;
 import org.cti.cc.entity.AdminUser;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.AdminAccountInfo;
@@ -15,6 +20,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +62,6 @@ public class BaseController {
         if (authentication == null) {
             throw new BusinessException(ErrorCode.ACCOUNT_AUTH_ERROR);
         }
-        logger.info("authentication:{}", authentication);
         return (AdminUser) authentication.getPrincipal();
     }
 
@@ -69,6 +75,13 @@ public class BaseController {
                 logger.info("query params:{}", query);
             } catch (Exception e) {
                 logger.error("query format to json error, {}", query);
+                query = URLDecoder.decode(query, Charset.defaultCharset());
+                try {
+                    params = mapper.readValue(query, Map.class);
+                } catch (Exception ex) {
+
+                }
+
             }
         }
         if (params == null) {

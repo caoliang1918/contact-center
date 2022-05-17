@@ -1,5 +1,6 @@
 package org.cti.cc.vo;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -18,7 +19,7 @@ public class SkillVo {
      */
     private Long companyId;
 
-    @NotNull(message = "技能名称不能为空")
+    @NotBlank(message = "技能名称不能为空")
     @Size(min = 2, max = 16, message = "技能名称在2-16位")
     private String name;
 

@@ -1,13 +1,11 @@
 package org.cti.cc.mapper;
 
-import org.cti.cc.entity.StatHourAgentWork;
+import org.cti.cc.entity.StatHourAgent;
 import org.cti.cc.mapper.base.BaseMapper;
 
 import java.util.List;
 
-
-public interface StatHourAgentWorkMapper extends BaseMapper<StatHourAgentWork> {
-
+public interface StatHourAgentMapper extends BaseMapper<StatHourAgent> {
 
     /**
      * 批量插入
@@ -15,7 +13,7 @@ public interface StatHourAgentWorkMapper extends BaseMapper<StatHourAgentWork> {
      * @param list
      * @return
      */
-    int batchInsert(List<StatHourAgentWork> list);
+    int batchInsert(List<StatHourAgent> list);
 
     /**
      * 重复统计时，需要先删除

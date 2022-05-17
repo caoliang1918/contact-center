@@ -41,6 +41,11 @@ public class DeviceInfo {
     private Integer cdrType;
 
     /**
+     * 咨询或转接来源
+     */
+    private String fromAgent;
+
+    /**
      * 主叫
      */
     private String caller;
@@ -200,6 +205,14 @@ public class DeviceInfo {
 
     public void setCdrType(Integer cdrType) {
         this.cdrType = cdrType;
+    }
+
+    public String getFromAgent() {
+        return fromAgent;
+    }
+
+    public void setFromAgent(String fromAgent) {
+        this.fromAgent = fromAgent;
     }
 
     public String getCaller() {

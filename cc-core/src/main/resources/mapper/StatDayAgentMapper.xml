@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cti.cc.mapper.StatDayAgentMapper">
+  <resultMap id="BaseResultMap" type="org.cti.cc.entity.StatDayAgent">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="agent_key" jdbcType="VARCHAR" property="agentKey" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+    <result column="stat_time" jdbcType="BIGINT" property="statTime" />
+    <result column="callout_cnt" jdbcType="BIGINT" property="calloutCnt" />
+    <result column="callout_answer_cnt" jdbcType="BIGINT" property="calloutAnswerCnt" />
+    <result column="callin_cnt" jdbcType="BIGINT" property="callinCnt" />
+    <result column="callin_answer_cnt" jdbcType="BIGINT" property="callinAnswerCnt" />
+    <result column="login_cnt" jdbcType="BIGINT" property="loginCnt" />
+    <result column="ready_cnt" jdbcType="BIGINT" property="readyCnt" />
+    <result column="not_ready_cnt" jdbcType="BIGINT" property="notReadyCnt" />
+    <result column="after_cnt" jdbcType="BIGINT" property="afterCnt" />
+    <result column="login_time" jdbcType="BIGINT" property="loginTime" />
+    <result column="ready_time" jdbcType="BIGINT" property="readyTime" />
+    <result column="not_ready_time" jdbcType="BIGINT" property="notReadyTime" />
+    <result column="busy_time" jdbcType="BIGINT" property="busyTime" />
+    <result column="after_time" jdbcType="BIGINT" property="afterTime" />
+    <result column="talk_time" jdbcType="BIGINT" property="talkTime" />
+    <result column="callin_talk_time" jdbcType="BIGINT" property="callinTalkTime" />
+    <result column="callout_talk_time" jdbcType="BIGINT" property="calloutTalkTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, company_id, agent_key, agent_name, stat_time, callout_cnt, callout_answer_cnt, 
+    callin_cnt, callin_answer_cnt, login_cnt, ready_cnt, not_ready_cnt, after_cnt, login_time, 
+    ready_time, not_ready_time, busy_time, after_time, talk_time, callin_talk_time, callout_talk_time, 
+    status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cc_stat_day_agent
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_stat_day_agent
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.cti.cc.entity.StatDayAgent">
+    insert into cc_stat_day_agent (id, cts, company_id, 
+      agent_key, agent_name, stat_time, 
+      callout_cnt, callout_answer_cnt, callin_cnt, 
+      callin_answer_cnt, login_cnt, ready_cnt, 
+      not_ready_cnt, after_cnt, login_time, 
+      ready_time, not_ready_time, busy_time, 
+      after_time, talk_time, callin_talk_time, 
+      callout_talk_time, status)
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR}, #{statTime,jdbcType=BIGINT}, 
+      #{calloutCnt,jdbcType=BIGINT}, #{calloutAnswerCnt,jdbcType=BIGINT}, #{callinCnt,jdbcType=BIGINT}, 
+      #{callinAnswerCnt,jdbcType=BIGINT}, #{loginCnt,jdbcType=BIGINT}, #{readyCnt,jdbcType=BIGINT}, 
+      #{notReadyCnt,jdbcType=BIGINT}, #{afterCnt,jdbcType=BIGINT}, #{loginTime,jdbcType=BIGINT}, 
+      #{readyTime,jdbcType=BIGINT}, #{notReadyTime,jdbcType=BIGINT}, #{busyTime,jdbcType=BIGINT}, 
+      #{afterTime,jdbcType=BIGINT}, #{talkTime,jdbcType=BIGINT}, #{callinTalkTime,jdbcType=BIGINT}, 
+      #{calloutTalkTime,jdbcType=BIGINT}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cti.cc.entity.StatDayAgent">
+    insert into cc_stat_day_agent
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="agentKey != null">
+        agent_key,
+      </if>
+      <if test="agentName != null">
+        agent_name,
+      </if>
+      <if test="statTime != null">
+        stat_time,
+      </if>
+      <if test="calloutCnt != null">
+        callout_cnt,
+      </if>
+      <if test="calloutAnswerCnt != null">
+        callout_answer_cnt,
+      </if>
+      <if test="callinCnt != null">
+        callin_cnt,
+      </if>
+      <if test="callinAnswerCnt != null">
+        callin_answer_cnt,
+      </if>
+      <if test="loginCnt != null">
+        login_cnt,
+      </if>
+      <if test="readyCnt != null">
+        ready_cnt,
+      </if>
+      <if test="notReadyCnt != null">
+        not_ready_cnt,
+      </if>
+      <if test="afterCnt != null">
+        after_cnt,
+      </if>
+      <if test="loginTime != null">
+        login_time,
+      </if>
+      <if test="readyTime != null">
+        ready_time,
+      </if>
+      <if test="notReadyTime != null">
+        not_ready_time,
+      </if>
+      <if test="busyTime != null">
+        busy_time,
+      </if>
+      <if test="afterTime != null">
+        after_time,
+      </if>
+      <if test="talkTime != null">
+        talk_time,
+      </if>
+      <if test="callinTalkTime != null">
+        callin_talk_time,
+      </if>
+      <if test="calloutTalkTime != null">
+        callout_talk_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="agentKey != null">
+        #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="agentName != null">
+        #{agentName,jdbcType=VARCHAR},
+      </if>
+      <if test="statTime != null">
+        #{statTime,jdbcType=BIGINT},
+      </if>
+      <if test="calloutCnt != null">
+        #{calloutCnt,jdbcType=BIGINT},
+      </if>
+      <if test="calloutAnswerCnt != null">
+        #{calloutAnswerCnt,jdbcType=BIGINT},
+      </if>
+      <if test="callinCnt != null">
+        #{callinCnt,jdbcType=BIGINT},
+      </if>
+      <if test="callinAnswerCnt != null">
+        #{callinAnswerCnt,jdbcType=BIGINT},
+      </if>
+      <if test="loginCnt != null">
+        #{loginCnt,jdbcType=BIGINT},
+      </if>
+      <if test="readyCnt != null">
+        #{readyCnt,jdbcType=BIGINT},
+      </if>
+      <if test="notReadyCnt != null">
+        #{notReadyCnt,jdbcType=BIGINT},
+      </if>
+      <if test="afterCnt != null">
+        #{afterCnt,jdbcType=BIGINT},
+      </if>
+      <if test="loginTime != null">
+        #{loginTime,jdbcType=BIGINT},
+      </if>
+      <if test="readyTime != null">
+        #{readyTime,jdbcType=BIGINT},
+      </if>
+      <if test="notReadyTime != null">
+        #{notReadyTime,jdbcType=BIGINT},
+      </if>
+      <if test="busyTime != null">
+        #{busyTime,jdbcType=BIGINT},
+      </if>
+      <if test="afterTime != null">
+        #{afterTime,jdbcType=BIGINT},
+      </if>
+      <if test="talkTime != null">
+        #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="callinTalkTime != null">
+        #{callinTalkTime,jdbcType=BIGINT},
+      </if>
+      <if test="calloutTalkTime != null">
+        #{calloutTalkTime,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.StatDayAgent">
+    update cc_stat_day_agent
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="agentKey != null">
+        agent_key = #{agentKey,jdbcType=VARCHAR},
+      </if>
+      <if test="agentName != null">
+        agent_name = #{agentName,jdbcType=VARCHAR},
+      </if>
+      <if test="statTime != null">
+        stat_time = #{statTime,jdbcType=BIGINT},
+      </if>
+      <if test="calloutCnt != null">
+        callout_cnt = #{calloutCnt,jdbcType=BIGINT},
+      </if>
+      <if test="calloutAnswerCnt != null">
+        callout_answer_cnt = #{calloutAnswerCnt,jdbcType=BIGINT},
+      </if>
+      <if test="callinCnt != null">
+        callin_cnt = #{callinCnt,jdbcType=BIGINT},
+      </if>
+      <if test="callinAnswerCnt != null">
+        callin_answer_cnt = #{callinAnswerCnt,jdbcType=BIGINT},
+      </if>
+      <if test="loginCnt != null">
+        login_cnt = #{loginCnt,jdbcType=BIGINT},
+      </if>
+      <if test="readyCnt != null">
+        ready_cnt = #{readyCnt,jdbcType=BIGINT},
+      </if>
+      <if test="notReadyCnt != null">
+        not_ready_cnt = #{notReadyCnt,jdbcType=BIGINT},
+      </if>
+      <if test="afterCnt != null">
+        after_cnt = #{afterCnt,jdbcType=BIGINT},
+      </if>
+      <if test="loginTime != null">
+        login_time = #{loginTime,jdbcType=BIGINT},
+      </if>
+      <if test="readyTime != null">
+        ready_time = #{readyTime,jdbcType=BIGINT},
+      </if>
+      <if test="notReadyTime != null">
+        not_ready_time = #{notReadyTime,jdbcType=BIGINT},
+      </if>
+      <if test="busyTime != null">
+        busy_time = #{busyTime,jdbcType=BIGINT},
+      </if>
+      <if test="afterTime != null">
+        after_time = #{afterTime,jdbcType=BIGINT},
+      </if>
+      <if test="talkTime != null">
+        talk_time = #{talkTime,jdbcType=BIGINT},
+      </if>
+      <if test="callinTalkTime != null">
+        callin_talk_time = #{callinTalkTime,jdbcType=BIGINT},
+      </if>
+      <if test="calloutTalkTime != null">
+        callout_talk_time = #{calloutTalkTime,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.StatDayAgent">
+    update cc_stat_day_agent
+    set cts = #{cts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      agent_key = #{agentKey,jdbcType=VARCHAR},
+      agent_name = #{agentName,jdbcType=VARCHAR},
+      stat_time = #{statTime,jdbcType=BIGINT},
+      callout_cnt = #{calloutCnt,jdbcType=BIGINT},
+      callout_answer_cnt = #{calloutAnswerCnt,jdbcType=BIGINT},
+      callin_cnt = #{callinCnt,jdbcType=BIGINT},
+      callin_answer_cnt = #{callinAnswerCnt,jdbcType=BIGINT},
+      login_cnt = #{loginCnt,jdbcType=BIGINT},
+      ready_cnt = #{readyCnt,jdbcType=BIGINT},
+      not_ready_cnt = #{notReadyCnt,jdbcType=BIGINT},
+      after_cnt = #{afterCnt,jdbcType=BIGINT},
+      login_time = #{loginTime,jdbcType=BIGINT},
+      ready_time = #{readyTime,jdbcType=BIGINT},
+      not_ready_time = #{notReadyTime,jdbcType=BIGINT},
+      busy_time = #{busyTime,jdbcType=BIGINT},
+      after_time = #{afterTime,jdbcType=BIGINT},
+      talk_time = #{talkTime,jdbcType=BIGINT},
+      callin_talk_time = #{callinTalkTime,jdbcType=BIGINT},
+      callout_talk_time = #{calloutTalkTime,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

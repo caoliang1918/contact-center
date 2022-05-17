@@ -5,12 +5,14 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
+        <result column="company_id" jdbcType="BIGINT" property="companyId"/>
         <result column="call_id" jdbcType="BIGINT" property="callId"/>
         <result column="device_id" jdbcType="VARCHAR" property="deviceId"/>
         <result column="agent_key" jdbcType="VARCHAR" property="agentKey"/>
         <result column="agent_name" jdbcType="VARCHAR" property="agentName"/>
         <result column="device_type" jdbcType="INTEGER" property="deviceType"/>
         <result column="cdr_type" jdbcType="INTEGER" property="cdrType"/>
+        <result column="from_agent" jdbcType="VARCHAR" property="fromAgent"/>
         <result column="caller" jdbcType="VARCHAR" property="caller"/>
         <result column="called" jdbcType="VARCHAR" property="called"/>
         <result column="display" jdbcType="VARCHAR" property="display"/>
@@ -39,7 +41,7 @@
     </resultMap>
     <sql id="Base_Column_List">
         id
-        , cts, uts, call_id, device_id, agent_key, agent_name, device_type, cdr_type, caller,
+        , cts, uts, company_id, call_id, device_id, agent_key, agent_name, device_type, cdr_type, from_agent, caller,
     called, display, called_location, caller_location, call_time, ring_start_time, ring_end_time,
     answer_time, bridge_time, end_time, talk_time, record_start_time, record_time, sip_protocol,
     record, record2, record3, channel_name, hangup_cause, ring_cause, sip_status, ext1,
@@ -57,9 +59,9 @@
         where id = #{id,jdbcType=BIGINT}
     </delete>
     <insert id="insert" parameterType="org.cti.cc.entity.CallDevice">
-        insert into cc_call_device (id, cts, uts, call_id,
+        insert into cc_call_device (id, cts, uts, company_id, call_id,
                                     device_id, agent_key, agent_name,
-                                    device_type, cdr_type, caller,
+                                    device_type, cdr_type, from_agent, caller,
                                     called, display, called_location,
                                     caller_location, call_time, ring_start_time,
                                     ring_end_time, answer_time, bridge_time,
@@ -68,9 +70,9 @@
                                     record2, record3, channel_name,
                                     hangup_cause, ring_cause, sip_status,
                                     ext1, ext2, status)
-        values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT},
+        values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT},
                 #{deviceId,jdbcType=VARCHAR}, #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR},
-                #{deviceType,jdbcType=INTEGER}, #{cdrType,jdbcType=INTEGER}, #{caller,jdbcType=VARCHAR},
+                #{deviceType,jdbcType=INTEGER}, #{cdrType,jdbcType=INTEGER}, #{fromAgent,jdbcType=VARCHAR}, #{caller,jdbcType=VARCHAR},
                 #{called,jdbcType=VARCHAR}, #{display,jdbcType=VARCHAR}, #{calledLocation,jdbcType=VARCHAR},
                 #{callerLocation,jdbcType=VARCHAR}, #{callTime,jdbcType=BIGINT}, #{ringStartTime,jdbcType=BIGINT},
                 #{ringEndTime,jdbcType=BIGINT}, #{answerTime,jdbcType=BIGINT}, #{bridgeTime,jdbcType=BIGINT},
@@ -92,6 +94,9 @@
             <if test="uts != null">
                 uts,
             </if>
+            <if test="companyId != null">
+                company_id,
+            </if>
             <if test="callId != null">
                 call_id,
             </if>
@@ -109,6 +114,9 @@
             </if>
             <if test="cdrType != null">
                 cdr_type,
+            </if>
+            <if test="fromAgent != null">
+                from_agent,
             </if>
             <if test="caller != null">
                 caller,
@@ -196,6 +204,9 @@
             <if test="uts != null">
                 #{uts,jdbcType=BIGINT},
             </if>
+            <if test="companyId != null">
+                #{companyId,jdbcType=BIGINT},
+            </if>
             <if test="callId != null">
                 #{callId,jdbcType=BIGINT},
             </if>
@@ -213,6 +224,9 @@
             </if>
             <if test="cdrType != null">
                 #{cdrType,jdbcType=INTEGER},
+            </if>
+            <if test="fromAgent != null">
+                #{fromAgent,jdbcType=VARCHAR},
             </if>
             <if test="caller != null">
                 #{caller,jdbcType=VARCHAR},
@@ -303,6 +317,9 @@
             <if test="uts != null">
                 uts,
             </if>
+            <if test="companyId != null">
+                company_id,
+            </if>
             <if test="callId != null">
                 call_id,
             </if>
@@ -320,6 +337,9 @@
             </if>
             <if test="cdrType != null">
                 cdr_type,
+            </if>
+            <if test="fromAgent != null">
+                from_agent,
             </if>
             <if test="caller != null">
                 caller,
@@ -407,6 +427,9 @@
             <if test="uts != null">
                 #{uts,jdbcType=BIGINT},
             </if>
+            <if test="companyId != null">
+                #{companyId,jdbcType=BIGINT},
+            </if>
             <if test="callId != null">
                 #{callId,jdbcType=BIGINT},
             </if>
@@ -424,6 +447,9 @@
             </if>
             <if test="cdrType != null">
                 #{cdrType,jdbcType=INTEGER},
+            </if>
+            <if test="fromAgent != null">
+                #{fromAgent,jdbcType=VARCHAR},
             </if>
             <if test="caller != null">
                 #{caller,jdbcType=VARCHAR},
@@ -530,6 +556,9 @@
             <if test="cdrType != null">
                 cdr_type = #{cdrType,jdbcType=INTEGER},
             </if>
+            <if test="fromAgent != null">
+                from_agent = #{fromAgent,jdbcType=VARCHAR},
+            </if>
             <if test="caller != null">
                 caller = #{caller,jdbcType=VARCHAR},
             </if>
@@ -628,4 +657,37 @@
         from cc_call_device
         where call_time &lt; #{end}
     </delete>
+
+
+    <select id="selectListByMap"  parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            cc_call_device${monthTime}
+        <where>
+            <if test="id!=null"> id > #{id,jdbcType=BIGINT}</if>
+            <if test="companyId!=null"> and company_id = #{companyId,jdbcType=BIGINT}</if>
+            <if test="start!=null"> and call_time >= #{start,jdbcType=BIGINT}</if>
+            <if test="end!=null"> and call_time &lt; #{end,jdbcType=BIGINT}</if>
+            <if test="recordStartTime!=null"> and record_start_time > 0 </if>
+        </where>
+         order by call_time asc limit 10000 offset 0
+    </select>
+
+    <select id="selectListByMap"  parameterType="java.util.Map" resultMap="BaseResultMap" databaseId="oracle">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        cc_call_device${monthTime}
+        <where>
+            <if test="id!=null"> id >= #{id,jdbcType=BIGINT}</if>
+            <if test="companyId!=null"> and company_id = #{companyId,jdbcType=BIGINT}</if>
+            <if test="start!=null"> and call_time >= #{start,jdbcType=BIGINT}</if>
+            <if test="end!=null"> and call_time &lt; #{end,jdbcType=BIGINT}</if>
+            <if test="recordStartTime!=null"> and record_start_time > 0 </if>
+            <if test="true"> and rownum &lt;= 10000  </if>
+        </where>
+          order by call_time asc
+    </select>
+
 </mapper>

@@ -16,7 +16,7 @@
         <result column="record" jdbcType="INTEGER" property="record"/>
         <result column="group_id" jdbcType="BIGINT" property="groupId"/>
         <result column="after_interval" jdbcType="INTEGER" property="afterInterval"/>
-        <result column="diaplay" jdbcType="VARCHAR" property="diaplay"/>
+        <result column="display" jdbcType="VARCHAR" property="display"/>
         <result column="ring_time" jdbcType="INTEGER" property="ringTime"/>
         <result column="host" jdbcType="VARCHAR" property="host"/>
         <result column="ext1" jdbcType="VARCHAR" property="ext1"/>
@@ -35,7 +35,7 @@
         <result column="agent_name" jdbcType="VARCHAR" property="agentName"/>
         <result column="agent_code" jdbcType="VARCHAR" property="agentCode"/>
         <result column="agent_type" jdbcType="INTEGER" property="agentType"/>
-        <result column="diaplay" jdbcType="VARCHAR" property="diaplay"/>
+        <result column="display" jdbcType="VARCHAR" property="display"/>
         <result column="sip_phone" jdbcType="VARCHAR" property="sipPhone"/>
         <result column="group_id" jdbcType="BIGINT" property="groupId"/>
         <result column="record" jdbcType="INTEGER" property="record"/>
@@ -52,14 +52,14 @@
     <sql id="Base_Column_List">
         id
         , cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type,
-    sip_phone, record, group_id, after_interval, diaplay, ring_time, host, ext1,
+    sip_phone, record, group_id, after_interval, display, ring_time, host, ext1,
     ext2, ext3, status
     </sql>
 
     <sql id="ALL_Column_List">
         id
         , cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type,
-    passwd, sip_phone, record, group_id, after_interval, diaplay, ring_time, host, ext1,
+    passwd, sip_phone, record, group_id, after_interval, display, ring_time, host, ext1,
     ext2, ext3, status
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -83,13 +83,13 @@
                               agent_id, agent_key, agent_name,
                               agent_code, agent_type, passwd,
                               sip_phone, record, group_id,
-                              after_interval, diaplay, ring_time, host,
+                              after_interval, display, ring_time, host,
                               ext1, ext2, ext3, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
                 #{agentId,jdbcType=VARCHAR}, #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR},
                 #{agentCode,jdbcType=VARCHAR}, #{agentType,jdbcType=INTEGER}, #{passwd,jdbcType=VARCHAR},
                 #{sipPhone,jdbcType=VARCHAR}, #{record,jdbcType=INTEGER}, #{groupId,jdbcType=BIGINT},
-                #{afterInterval,jdbcType=INTEGER}, #{diaplay,jdbcType=VARCHAR}, #{ringTime,jdbcType=INTEGER},
+                #{afterInterval,jdbcType=INTEGER}, #{display,jdbcType=VARCHAR}, #{ringTime,jdbcType=INTEGER},
                 #{host,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR},
                 #{status,jdbcType=INTEGER})
     </insert>
@@ -138,8 +138,8 @@
             <if test="afterInterval != null">
                 after_interval,
             </if>
-            <if test="diaplay != null">
-                diaplay,
+            <if test="display != null">
+                display,
             </if>
             <if test="ringTime != null">
                 ring_time,
@@ -206,8 +206,8 @@
             <if test="afterInterval != null">
                 #{afterInterval,jdbcType=INTEGER},
             </if>
-            <if test="diaplay != null">
-                #{diaplay,jdbcType=VARCHAR},
+            <if test="display != null">
+                #{display,jdbcType=VARCHAR},
             </if>
             <if test="ringTime != null">
                 #{ringTime,jdbcType=INTEGER},
@@ -268,8 +268,8 @@
             <if test="afterInterval != null">
                 after_interval = #{afterInterval,jdbcType=INTEGER},
             </if>
-            <if test="diaplay != null">
-                diaplay = #{diaplay,jdbcType=VARCHAR},
+            <if test="display != null">
+                display = #{display,jdbcType=VARCHAR},
             </if>
             <if test="ringTime != null">
                 ring_time = #{ringTime,jdbcType=INTEGER},
@@ -296,7 +296,7 @@
         where id = #{id,jdbcType=BIGINT} and company_id = #{companyId,jdbcType=BIGINT}
     </update>
 
-    <insert id="batchInsert" parameterType="List" useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
+    <insert id="batchInsert" parameterType="List" useGeneratedKeys="true" keyProperty="id" >
         insert into cc_agent (cts, company_id, agent_id, agent_key, agent_name, agent_type, passwd) values
         <foreach collection="list" item="agent" separator=",">
             (#{agent.cts,jdbcType=BIGINT}, #{agent.companyId,jdbcType=BIGINT},#{agent.agentId,jdbcType=VARCHAR},
@@ -386,7 +386,7 @@
                agent_code,
                agent_type,
                sip_phone,
-               diaplay,
+               display,
                group_id,
                state
         from cc_agent
@@ -405,7 +405,7 @@
                agent_code,
                agent_type,
                sip_phone,
-               diaplay,
+               display,
                group_id,
                state
         from cc_agent
@@ -413,52 +413,57 @@
           and status = 1
     </select>
 
-    <!--坐席在线切无状态变更 -->
-    <select id="selectAgentOnline" parameterType="java.util.Map" resultMap="SimpleResultMap" databaseId="mysql">
-        select id,
-               agent_key,
-               agent_name,
-               (select state
-                from cc_agent_state_log
-                where cc_agent_state_log.agent_key = cc_agent.agent_key limit 1 ) as ext1
-        from cc_agent
-        where exists (select agent_id from cc_agent_state_log where cc_agent_state_log.agent_id = cc_agent.id
-          and cc_agent_state_log.state_time
-            > #{start} )
-          and company_id = #{companyId}
-          and state = 1
+    <!--坐席在线且最近一小时无状态变更 -->
+    <select id="selectAgentLongOnline" parameterType="java.util.Map" resultMap="SimpleResultMap" >
+        select
+            id,
+            agent_key,
+            agent_name,
+            (select state from cc_agent_state_log  where cc_agent_state_log.agent_key = cc_agent.agent_key limit 1 offset 0 ) as ext1
+        from
+            cc_agent
+        where
+             not exists (select agent_id from cc_agent_state_log where cc_agent_state_log.agent_id = cc_agent.id  and cc_agent_state_log.state_time > #{start} )
+             and company_id = #{companyId}
+             and state = 1
     </select>
 
     <select id="selectAgentOnline" parameterType="java.util.Map" resultMap="SimpleResultMap" databaseId="oracle">
-        select id,
-               agent_key,
-               agent_name,
-               (select state
-                from cc_agent_state_log
-                where cc_agent_state_log.agent_key = cc_agent.agent_key and rownum = 1) as ext1
-        from cc_agent
-        where exists(select agent_id
-                     from cc_agent_state_log
-                     where cc_agent_state_log.agent_id = cc_agent.id
-                       and cc_agent_state_log.state_time > #{start})
-          and company_id = #{companyId}
-          and state = 1
+        select
+            id,
+            agent_key,
+            agent_name,
+            (select state from cc_agent_state_log  where cc_agent_state_log.agent_key = cc_agent.agent_key and rownum = 1 ) as ext1
+        from
+            cc_agent
+        where
+            not exists (select agent_id from cc_agent_state_log where cc_agent_state_log.agent_id = cc_agent.id  and cc_agent_state_log.state_time > #{start} )
+            and company_id = #{companyId}
+            and state = 1
     </select>
 
     <select id="agentSize" parameterType="java.lang.Long" resultType="java.lang.Integer">
-        select count(id)
-        from cc_agent
-        where company_id = #{companyId}
-          and status = 1
+        select count(id)  from cc_agent  where company_id = #{companyId} and status = 1
+    </select>
+
+    <select id="agentNum" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+            count(id)
+        from
+            cc_agent
+           <where>
+               <if test="true"> status = 1 </if>
+               <if test="companyId!=null"> and company_id = #{companyId} </if>
+           </where>
     </select>
 
     <select id="selectByIds" resultMap="SimpleResultMap">
         select
-        id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, diaplay, group_id,
-        state
+            id, cts, uts, company_id, agent_id, agent_key, agent_name, agent_code, agent_type, sip_phone, display, group_id, state
         from
-        cc_agent
-        where company_id = #{companyId} and id in
+            cc_agent
+        where
+            company_id = #{companyId} and id in
         <foreach collection="ids" item="id" separator="," open="(" close=")">#{id}</foreach>
     </select>
 

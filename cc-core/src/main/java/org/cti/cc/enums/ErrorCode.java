@@ -12,6 +12,7 @@ public enum ErrorCode {
     DATA_NOT_EXIST(1006, "数据不存在"),
     PARAMETER_ERROR(1010, "%s参数异常"),
     DATA_IS_USED(1011, "数据被引用，请先删除引用数据"),
+    RUNTIME_DATA_EXCEPTION(1050, "%s"),
 
     MEDIA_NOT_AVALIABLE(1100, "媒体不可用"),
     COMPANY_NOT_AVALIABLE(1101, "企业不可用"),
@@ -19,6 +20,7 @@ public enum ErrorCode {
     ACCOUNT_DISABLED(1103, "账号被禁用"),
     ACCOUNT_AUTH_ERROR(1104, "账号权限错误"),
     ACCOUNT_NOT_LOGIN(1105, "账号未登录"),
+    FILE_NOT_EXIST(1106, "文件不存在"),
 
 
     ACCOUNT_SIP_NOTNUL(1201, "坐席sip号不能为空"),

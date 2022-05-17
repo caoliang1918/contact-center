@@ -43,7 +43,7 @@ public class AgentCallController extends BaseController {
     }
 
     /**
-     * 4.1.1 发起呼叫
+     * 5.2.1 发起呼叫
      *
      * @param agentInfo
      * @return
@@ -64,7 +64,7 @@ public class AgentCallController extends BaseController {
     }
 
     /**
-     * 4.1.2 发起呼叫
+     * 5.2.2 发起呼叫
      *
      * @param agentInfo
      * @return
@@ -83,7 +83,7 @@ public class AgentCallController extends BaseController {
 
 
     /**
-     * 4.1.3 保持
+     * 5.2.3 保持
      * 坐席听不到用户声音，用户听到的是保持音
      *
      * @param agentInfo
@@ -101,7 +101,7 @@ public class AgentCallController extends BaseController {
     }
 
     /**
-     * 4.1.4 取消保持
+     * 5.2.4 取消保持
      *
      * @param agentInfo
      * @return
@@ -119,7 +119,7 @@ public class AgentCallController extends BaseController {
 
 
     /**
-     * 4.1.10 静音
+     * 5.2.10 静音
      * 坐席可以听到用户声音，用户听不到坐席声音
      *
      * @param agentInfo
@@ -137,7 +137,7 @@ public class AgentCallController extends BaseController {
     }
 
     /**
-     * 4.1.11 取消静音
+     * 5.2.11 取消静音
      *
      * @param agentInfo
      * @return

@@ -1,11 +1,20 @@
 package org.zhongweixian.api.quartz;
 
-import io.minio.DeleteBucketPolicyArgs;
+import com.google.common.collect.Lists;
 import io.minio.MinioClient;
-import io.minio.errors.*;
+import io.minio.RemoveObjectsArgs;
+import io.minio.messages.DeleteObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.cti.cc.mapper.PushFailLogMapper;
+import org.cti.cc.constant.Constant;
+import org.cti.cc.entity.CallDevice;
+import org.cti.cc.entity.PlatformLicense;
+import org.cti.cc.mapper.AgentMapper;
+import org.cti.cc.mapper.PlatformLicenseMapper;
+import org.cti.cc.mapper.PushLogMapper;
+import org.cti.cc.po.CompanyInfo;
 import org.cti.cc.util.DateTimeUtil;
+import org.cti.cc.util.LicenseUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -13,12 +22,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.api.service.CallLogService;
+import org.zhongweixian.api.service.CompanyService;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by caoliang on 2021/9/5
@@ -28,9 +45,9 @@ public class TaskJobOfDay implements Job {
     private Logger logger = LoggerFactory.getLogger(TaskJobOfDay.class);
 
     /**
-     * 话单保留1天
+     * 当前表的话单保留当天
      */
-    @Value("${call.retain:1}")
+    @Value("${call.retain:0}")
     private Integer callRetain;
 
     /**
@@ -39,25 +56,44 @@ public class TaskJobOfDay implements Job {
     @Value("${push.log.retain:5}")
     private Integer pushLogRetain;
 
-    /**
-     * 录音文件保留时间
-     */
-    @Value("${minio.record.retain:0}")
-    private Integer minioRecordRetain;
+    @Value("${management.endpoints.web.base-path:}")
+    private String endpoindsPath;
+
+    @Value("${spring.datasource.url:}")
+    private String salt;
+
+    @Value("${platform.v9.key:pykqu7qfhcs5gz87}")
+    private String key;
 
     @Autowired
     private CallLogService callLogService;
 
     @Autowired
-    private PushFailLogMapper pushFailLogMapper;
+    private PushLogMapper pushLogMapper;
+
+    @Autowired
+    private PlatformLicenseMapper platformLicenseMapper;
+
+    @Autowired
+    private AgentMapper agentMapper;
+
+    @Autowired
+    private CompanyService companyService;
 
     @Autowired
     private MinioClient minioClient;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     /**
      * 每天定时任务，凌晨延时5分钟执行
      */
     public final static String CRON = "0 5 0 * * ? *";
+    public final static String NAME = "TaskJobOfDay";
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -70,11 +106,14 @@ public class TaskJobOfDay implements Job {
         deleteCallLog();
 
         //删除推送失败的数据
-        deletePushFailLog();
+        deletePushLog();
 
         //删除录音
         deleteMinioRecord();
+
+        checkLicense();
     }
+
 
     public void deleteCallLog() {
         //获取前N天的时间
@@ -84,24 +123,71 @@ public class TaskJobOfDay implements Job {
     }
 
     /**
-     * 删除推送失败的数据
+     * 删除推送的历史数据
      */
-    private void deletePushFailLog() {
+    private void deletePushLog() {
         Long time = DateTimeUtil.getBeforeDay(pushLogRetain);
-        int result = pushFailLogMapper.deletePushFailLog(time);
-        logger.info("delete {} day of {} size push_fail_log", pushLogRetain, result);
+        int result = pushLogMapper.deletePushLog(time / 1000);
+        logger.info("delete {} day of {} size cc_push_log", pushLogRetain, result);
     }
 
+    /**
+     * 删除呼叫的录音,默认保留最后一个月的数据
+     */
     private void deleteMinioRecord() {
-        if (minioRecordRetain == 0) {
-            return;
+        List<CompanyInfo> companies = companyService.getCompanyList(null);
+        Map<String, Object> params = new HashMap<>();
+        for (CompanyInfo companyInfo : companies) {
+            //查询n天前的话单，
+            Long time = DateTimeUtil.getBeforeMonth(companyInfo.getRecordStorage());
+            params.put("companyId", companyInfo.getId());
+            params.put("start", time - 24 * 3600 * 1000);
+            params.put("end", time);
+            params.put("monthTime", DateTimeUtil.getMonth(time));
+
+            List<CallDevice> callDevices = callLogService.callDeviceList(params);
+            while (!CollectionUtils.isEmpty(callDevices)) {
+                //循环批量删除录音
+                List<List<CallDevice>> newList = Lists.partition(callDevices, 100);
+                for (List<CallDevice> list : newList) {
+                    List<DeleteObject> objects = new LinkedList<>();
+                    list.forEach(callDevice -> {
+                        if (StringUtils.isNotBlank(callDevice.getRecord())) {
+                            objects.add(new DeleteObject(callDevice.getRecord()));
+                        }
+                    });
+                    minioClient.removeObjects(RemoveObjectsArgs.builder().bucket(Constant.RRCORD_BUCKET).objects(objects).build());
+                }
+                params.put("id", callDevices.get(callDevices.size() - 1).getId());
+                callDevices = callLogService.callDeviceList(params);
+            }
         }
-        //获取前N天的时间
-        Long time = DateTimeUtil.getBeforeDay(minioRecordRetain);
-        try {
-            minioClient.deleteBucketPolicy(DeleteBucketPolicyArgs.builder().bucket("cc-record").region("20210922").build());
-        } catch ( Exception e) {
-           logger.error(e.getMessage() , e);
+        logger.info("delete minio record");
+    }
+
+    /**
+     * 检查授权
+     */
+    public void checkLicense() {
+        List<PlatformLicense> licenseList = platformLicenseMapper.selectListByMap(null);
+        Integer agentNum = agentMapper.agentNum(null);
+        for (PlatformLicense platformLicense : licenseList) {
+            try {
+                if (LicenseUtil.checkLicense(salt, platformLicense.getPlatformLicense(), key, agentNum)) {
+                    return;
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+        List<ServiceInstance> serviceInstances = discoveryClient.getInstances("fs-api");
+        for (ServiceInstance instance : serviceInstances) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Basic " + Base64Utils.encodeToString(("admin:" + instance.getServiceId()).getBytes()));
+            ResponseEntity<String> responseEntity = restTemplate.exchange("http://" + instance.getHost() + ":" + instance.getPort() + "/fs-api" + endpoindsPath + "/shutdown", HttpMethod.POST, new HttpEntity<>(headers), String.class);
+            logger.info("{} ", responseEntity.getBody());
         }
     }
 }

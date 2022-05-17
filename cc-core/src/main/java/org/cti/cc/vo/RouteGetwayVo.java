@@ -2,6 +2,7 @@ package org.cti.cc.vo;
 
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -10,14 +11,14 @@ public class RouteGetwayVo {
     private Long id;
 
 
-    @NotNull(message = "网关名称不能为空")
+    @NotBlank(message = "网关名称不能为空")
     @Size(min = 2, max = 16, message = "网关名称必须在2,16字符")
     private String name;
 
     /**
      * 媒体地址
      */
-    @NotNull(message = "媒体地址不能为空")
+    @NotBlank(message = "媒体地址不能为空")
     private String mediaHost;
 
     /**

@@ -50,7 +50,7 @@ public class Group implements Serializable {
     private Long calledDisplayId;
 
     /**
-     * 1:振铃录音,2:接通录音
+     * 0:不录音,1:振铃录音,2:接通录音
      */
     private Integer recordType;
 
@@ -83,6 +83,11 @@ public class Group implements Serializable {
      * 转接提示音
      */
     private Long transferPlay;
+
+    /**
+     * 外呼呼叫超时时间
+     */
+    private Integer callTimeOut;
 
     /**
      * 技能组类型
@@ -259,6 +264,14 @@ public class Group implements Serializable {
 
     public void setTransferPlay(Long transferPlay) {
         this.transferPlay = transferPlay;
+    }
+
+    public Integer getCallTimeOut() {
+        return callTimeOut;
+    }
+
+    public void setCallTimeOut(Integer callTimeOut) {
+        this.callTimeOut = callTimeOut;
     }
 
     public Integer getGroupType() {

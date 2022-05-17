@@ -1,11 +1,14 @@
 package org.zhongweixian.cc.fs.handler;
 
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.VdnPhone;
 import org.cti.cc.enums.CallType;
+import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.NextType;
 import org.cti.cc.po.*;
 import org.cti.cc.util.DateTimeUtil;
@@ -18,6 +21,7 @@ import org.zhongweixian.cc.websocket.response.WsCallEntity;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by caoliang on 2020/8/23
@@ -123,7 +127,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
             deviceInfo.setRecordStartTime(deviceInfo.getAnswerTime());
         }
         String deviceId = getDeviceId();
-        logger.info("呼另外一侧电话: callId:{}  display:{}  called:{}  deviceId:{} ", callInfo.getCallId(), callInfo.getCalledDisplay(), callInfo.getCalled(), deviceId);
+        logger.info("呼另外一侧电话: callId:{}  display:{}  called:{}  deviceId:{} ", callInfo.getCallId(), callInfo.getCalledDisplay(), hiddenNumber(callInfo.getCalled()), deviceId);
         callInfo.getDeviceList().add(deviceId);
         String called = callInfo.getCalled();
 
@@ -136,11 +140,10 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         }
         RouteGetway routeGetway = cacheService.getRouteGetway(callInfo.getCompanyId(), called);
         if (routeGetway == null) {
-            logger.warn("callId:{} origin error, called:{}", callInfo.getCallId(), callInfo.getCalled());
+            logger.warn("callId:{} routeGetway error, called:{}", callInfo.getCallId(), callInfo.getCalled());
             hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId());
             return;
         }
-        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, callInfo.getCalledDisplay(), called, callInfo.getCallId(), deviceId);
         DeviceInfo deviceInfo1 = new DeviceInfo();
         //1:坐席,2:客户,3:外线
         deviceInfo1.setDeviceType(callInfo.getCallType() == CallType.INNER_CALL ? 1 : 2);
@@ -156,6 +159,12 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         callInfo.getNextCommands().add(new NextCommand(deviceInfo.getDeviceId(), NextType.NEXT_CALL_BRIDGE, deviceInfo1.getDeviceId()));
         callInfo.getDeviceInfoMap().put(deviceId, deviceInfo1);
         cacheService.addDevice(deviceId, callInfo.getCallId());
+
+        /**
+         * 呼叫外线，设置超时时间
+         */
+        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, callInfo.getCalledDisplay(), called, callInfo.getCallId(), deviceId, groupInfo.getCallTimeOut());
+        timeoutTask(callInfo.getCallId(), deviceId, groupInfo.getCallTimeOut());
     }
 
 
@@ -171,7 +180,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         logger.info("inbount caller:{} called:{} for vdnId:{}", event.getCaller(), event.getCalled(), vdnPhone.getVdnId());
         CompanyInfo companyInfo = cacheService.getCompany(vdnPhone.getCompanyId());
         if (companyInfo == null || companyInfo.getStatus() == 0) {
-            logger.info("vdnPhone is not match:{}  {} " , event.getCaller(), event.getCalled() );
+            logger.info("vdnPhone is not match:{}  {} ", event.getCaller(), event.getCalled());
             hangupCall(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId());
             return;
         }
@@ -212,7 +221,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
      * @param event
      */
     private void callBridge(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, FsAnswerEvent event) {
-        logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCalled(), nextCommand.getDeviceId(), nextCommand.getNextValue());
+        logger.info("开始桥接电话: callId:{} caller:{} called:{} device1:{}, device2:{}", callInfo.getCallId(), callInfo.getCaller(), hiddenNumber(callInfo.getCalled()), nextCommand.getDeviceId(), nextCommand.getNextValue());
         DeviceInfo deviceInfo1 = callInfo.getDeviceInfoMap().get(nextCommand.getDeviceId());
         DeviceInfo deviceInfo2 = callInfo.getDeviceInfoMap().get(nextCommand.getNextValue());
         if (deviceInfo1.getBridgeTime() == null) {
@@ -378,5 +387,34 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         callEntity.setAgentState(AgentState.WHISPER);
         callEntity.setCallId(callInfo.getCallId());
         sendWsMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), callInfo.getAgentKey(), callEntity));
+    }
+
+
+    /**
+     * 呼叫超时主动挂机
+     *
+     * @param callId
+     * @param deviceId
+     * @param timeouts
+     */
+    private void timeoutTask(Long callId, String deviceId, Integer timeouts) {
+        hashedWheelTimer.newTimeout(new TimerTask() {
+            @Override
+            public void run(Timeout timeout) throws Exception {
+                CallInfo callInfo = cacheService.getCallInfo(callId);
+                if (callInfo == null || !callInfo.getDeviceList().contains(deviceId)) {
+                    return;
+                }
+                DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(deviceId);
+                if (deviceInfo != null && deviceInfo.getAnswerTime() == null) {
+                    logger.info("call:{} deviceId:{}  {}s timeout", callId, deviceId, timeouts);
+                    if (callInfo.getDirection() == Direction.OUTBOUND) {
+                        callInfo.setNextCommands(null);
+                        cacheService.addCallInfo(callInfo);
+                    }
+                    hangupCall(callInfo.getMediaHost(), callId, deviceId);
+                }
+            }
+        }, timeouts, TimeUnit.SECONDS);
     }
 }

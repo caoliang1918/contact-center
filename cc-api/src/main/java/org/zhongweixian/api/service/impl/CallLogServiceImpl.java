@@ -8,6 +8,7 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.cti.cc.constant.Constant;
+import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
@@ -185,9 +186,14 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
         result += callDtmfMapper.clearTable(end);
 
         //cc_agent_state_log
-        result += agentStateLogMapper.clearTable(end);
+        result += agentStateLogMapper.clearTable(end / 1000L);
 
         return result;
+    }
+
+    @Override
+    public List<CallDevice> callDeviceList(Map<String, Object> params) {
+        return callDeviceMapper.selectListByMap(params);
     }
 
 

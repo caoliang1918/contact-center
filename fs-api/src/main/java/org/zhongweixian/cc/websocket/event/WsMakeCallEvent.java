@@ -55,7 +55,7 @@ public class WsMakeCallEvent extends WsBaseEvent {
     /**
      * 坐席侧显号，前端没有传就用主技能组配置
      */
-    private String callerDiaplay;
+    private String callerDisplay;
 
     /**
      * 选择的媒体
@@ -127,12 +127,12 @@ public class WsMakeCallEvent extends WsBaseEvent {
         this.display = display;
     }
 
-    public String getCallerDiaplay() {
-        return callerDiaplay;
+    public String getCallerDisplay() {
+        return callerDisplay;
     }
 
-    public void setCallerDiaplay(String callerDiaplay) {
-        this.callerDiaplay = callerDiaplay;
+    public void setCallerDisplay(String callerDisplay) {
+        this.callerDisplay = callerDisplay;
     }
 
     public String getMedia() {
@@ -154,7 +154,7 @@ public class WsMakeCallEvent extends WsBaseEvent {
                 ", caller='" + caller + '\'' +
                 ", called='" + called + '\'' +
                 ", display='" + display + '\'' +
-                ", callerDiaplay='" + callerDiaplay + '\'' +
+                ", callerDisplay='" + callerDisplay + '\'' +
                 '}';
     }
 }

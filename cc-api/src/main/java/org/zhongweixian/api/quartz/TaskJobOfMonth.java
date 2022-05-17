@@ -25,6 +25,7 @@ public class TaskJobOfMonth implements Job {
      * 每月月初凌晨执行，初始化创建表结构
      */
     public final static String CRON = "0 0 0 1 * ?";
+    public final static String NAME = "TaskJobOfMonth";
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

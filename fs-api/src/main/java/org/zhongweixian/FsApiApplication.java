@@ -3,6 +3,7 @@ package org.zhongweixian;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import io.minio.MinioClient;
+import io.netty.util.HashedWheelTimer;
 import org.cti.cc.util.SnowflakeIdWorker;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -28,6 +29,8 @@ import org.zhongweixian.cc.fs.FsListen;
 import org.zhongweixian.cc.tcp.TcpServer;
 import org.zhongweixian.cc.websocket.WebSocketManager;
 import org.zhongweixian.cc.websocket.handler.WsMonitorHandler;
+
+import java.util.concurrent.TimeUnit;
 
 
 @EnableDiscoveryClient
@@ -114,6 +117,11 @@ public class FsApiApplication implements CommandLineRunner, ApplicationListener<
     @Bean
     public SnowflakeIdWorker snowflakeIdWorker() {
         return new SnowflakeIdWorker(0, 0);
+    }
+
+    @Bean
+    public HashedWheelTimer hashedWheelTimer() {
+        return new HashedWheelTimer(100, TimeUnit.MILLISECONDS, 10240);
     }
 
 

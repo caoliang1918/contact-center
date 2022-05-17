@@ -45,7 +45,7 @@ public class IndexController {
     @GetMapping("start2")
     public String index2(Long callId) {
         CallInfo callInfo = CallInfo.CallInfoBuilder.builder().withCallId(callId).build();
-        ivrMachine.executeNext(callInfo.getCallId());
+        // ivrMachine.executeNext(callInfo.getCallId());
         return "is ok";
     }
 

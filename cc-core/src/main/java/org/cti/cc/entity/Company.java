@@ -80,7 +80,7 @@ public class Company implements Serializable {
     private Integer hiddenCustomer;
 
     /**
-     * 坐席密码等级
+     * 坐席密码等级(1:不限制 2:数字和字母 3:大小写字母和数字组合)
      */
     private Integer secretType;
 
@@ -110,9 +110,9 @@ public class Company implements Serializable {
     private Integer groupAgentLimit;
 
     /**
-     * 黑名单
+     * 录音保留x个月
      */
-    private Long blacklist;
+    private Integer recordStorage;
 
     /**
      * 话单回调通知
@@ -311,12 +311,12 @@ public class Company implements Serializable {
         this.groupAgentLimit = groupAgentLimit;
     }
 
-    public Long getBlacklist() {
-        return blacklist;
+    public Integer getRecordStorage() {
+        return recordStorage;
     }
 
-    public void setBlacklist(Long blacklist) {
-        this.blacklist = blacklist;
+    public void setRecordStorage(Integer recordStorage) {
+        this.recordStorage = recordStorage;
     }
 
     public String getNotifyUrl() {
@@ -399,7 +399,7 @@ public class Company implements Serializable {
         sb.append(", agentLimit=").append(agentLimit);
         sb.append(", groupLimit=").append(groupLimit);
         sb.append(", groupAgentLimit=").append(groupAgentLimit);
-        sb.append(", blacklist=").append(blacklist);
+        sb.append(", recordStorage=").append(recordStorage);
         sb.append(", notifyUrl=").append(notifyUrl);
         sb.append(", ext1=").append(ext1);
         sb.append(", ext2=").append(ext2);
@@ -442,7 +442,7 @@ public class Company implements Serializable {
                 && (this.getAgentLimit() == null ? other.getAgentLimit() == null : this.getAgentLimit().equals(other.getAgentLimit()))
                 && (this.getGroupLimit() == null ? other.getGroupLimit() == null : this.getGroupLimit().equals(other.getGroupLimit()))
                 && (this.getGroupAgentLimit() == null ? other.getGroupAgentLimit() == null : this.getGroupAgentLimit().equals(other.getGroupAgentLimit()))
-                && (this.getBlacklist() == null ? other.getBlacklist() == null : this.getBlacklist().equals(other.getBlacklist()))
+                && (this.getRecordStorage() == null ? other.getRecordStorage() == null : this.getRecordStorage().equals(other.getRecordStorage()))
                 && (this.getNotifyUrl() == null ? other.getNotifyUrl() == null : this.getNotifyUrl().equals(other.getNotifyUrl()))
                 && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
                 && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
@@ -474,7 +474,7 @@ public class Company implements Serializable {
         result = prime * result + ((getAgentLimit() == null) ? 0 : getAgentLimit().hashCode());
         result = prime * result + ((getGroupLimit() == null) ? 0 : getGroupLimit().hashCode());
         result = prime * result + ((getGroupAgentLimit() == null) ? 0 : getGroupAgentLimit().hashCode());
-        result = prime * result + ((getBlacklist() == null) ? 0 : getBlacklist().hashCode());
+        result = prime * result + ((getRecordStorage() == null) ? 0 : getRecordStorage().hashCode());
         result = prime * result + ((getNotifyUrl() == null) ? 0 : getNotifyUrl().hashCode());
         result = prime * result + ((getExt1() == null) ? 0 : getExt1().hashCode());
         result = prime * result + ((getExt2() == null) ? 0 : getExt2().hashCode());

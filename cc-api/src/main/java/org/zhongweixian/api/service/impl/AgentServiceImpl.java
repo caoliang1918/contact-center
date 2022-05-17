@@ -107,6 +107,9 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
             agentVo.setPasswd(BcryptUtil.encrypt(agentVo.getPasswd()));
             agent.setAgentKey(agentKey);
             agent.setCts(Instant.now().getEpochSecond());
+            if (agent.getAgentType() == null) {
+                agent.setAgentType(1);
+            }
             return agentMapper.addAgent(agent);
         }
         params.put("id", agentVo.getId());
@@ -211,7 +214,8 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         params.put("sip", agentSipVo.getSip());
         List<AgentSipPo> list = agentSipMapper.selectAgentSip(params);
         if (!CollectionUtils.isEmpty(list)) {
-            if (agentSipVo.getId() == null || !agentSipVo.getId().equals(list.get(0).getId())) {
+            if (agentSipVo.getId() == null ||
+                    (agentSipVo.getId() != null && !agentSipVo.getId().equals(list.get(0).getId()))) {
                 throw new BusinessException(ErrorCode.DUPLICATE_EXCEPTION);
             }
         }

@@ -144,9 +144,10 @@ public class FsParkEvent extends FsBaseEvent {
                 ", sipContactPort='" + sipContactPort + '\'' +
                 ", contactUri='" + contactUri + '\'' +
                 ", sipProtocol='" + sipProtocol + '\'' +
-                ", eventName='" + eventName + '\'' +
-                ", coreUuid='" + coreUuid + '\'' +
                 ", deviceId='" + deviceId + '\'' +
+                ", localAddress='" + localAddress + '\'' +
+                ", remoteAddress='" + remoteAddress + '\'' +
+                ", direction='" + direction + '\'' +
                 '}';
     }
 }

@@ -111,6 +111,7 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
         //通话中不允许挤掉老的连接
         AgentState state = agentInfo.getAgentState();
         if (state != null && (state.name().contains("CALL") || AgentState.TALKING == state)) {
+            logger.warn("agentKey:{}, callId:{} ", agentInfo.getAgentKey(), agentInfo.getCallId());
             sendMessage(event, new WsResponseEntity<String>(ErrorCode.AGENT_CALLING, event.getCmd(), event.getAgentKey()));
             event.getChannel().close();
             return;
@@ -199,7 +200,7 @@ public class WsLoginHandler extends WsBaseHandler<WsLoginEvnet> {
 
         agentInfo.setBeforeTime(agentInfo.getLogoutTime());
         agentInfo.setBeforeState(before);
-        agentInfo.setLoginTime(Instant.now().toEpochMilli());
+        agentInfo.setLoginTime(Instant.now().getEpochSecond());
         agentInfo.setStateTime(agentInfo.getLoginTime());
         agentInfo.setAgentState(now);
         agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));

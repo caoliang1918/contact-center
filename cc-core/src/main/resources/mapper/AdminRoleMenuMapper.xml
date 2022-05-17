@@ -6,7 +6,7 @@
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
         <result column="role_id" jdbcType="BIGINT" property="roleId"/>
-        <result column="menu_id" jdbcType="BIGINT" property="menuId"/>
+        <result column="menu_id" jdbcType="VARCHAR" property="menuId"/>
         <result column="company_id" jdbcType="BIGINT" property="companyId"/>
     </resultMap>
     <sql id="Base_Column_List">
@@ -28,7 +28,7 @@
         insert into cc_admin_role_menu (id, cts, uts, role_id,
                                         menu_id, company_id)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT},
-                #{menuId,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT})
+                #{menuId,jdbcType=VARCHAR}, #{companyId,jdbcType=BIGINT})
     </insert>
     <insert id="insertSelective" parameterType="org.cti.cc.entity.AdminRoleMenu">
         insert into cc_admin_role_menu
@@ -66,7 +66,7 @@
                 #{roleId,jdbcType=BIGINT},
             </if>
             <if test="menuId != null">
-                #{menuId,jdbcType=BIGINT},
+                #{menuId,jdbcType=VARCHAR},
             </if>
             <if test="companyId != null">
                 #{companyId,jdbcType=BIGINT},
@@ -86,7 +86,7 @@
                 role_id = #{roleId,jdbcType=BIGINT},
             </if>
             <if test="menuId != null">
-                menu_id = #{menuId,jdbcType=BIGINT},
+                menu_id = #{menuId,jdbcType=VARCHAR},
             </if>
             <if test="companyId != null">
                 company_id = #{companyId,jdbcType=BIGINT},
@@ -99,7 +99,7 @@
         set cts        = #{cts,jdbcType=BIGINT},
             uts        = #{uts,jdbcType=BIGINT},
             role_id    = #{roleId,jdbcType=BIGINT},
-            menu_id    = #{menuId,jdbcType=BIGINT},
+            menu_id    = #{menuId,jdbcType=VARCHAR},
             company_id = #{companyId,jdbcType=BIGINT}
         where id = #{id,jdbcType=BIGINT}
     </update>

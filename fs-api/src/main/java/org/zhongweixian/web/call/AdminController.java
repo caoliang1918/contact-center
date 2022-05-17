@@ -35,7 +35,7 @@ public class AdminController extends BaseController {
     }
 
     /**
-     * 查看话单
+     * 6.1.1 查看话单
      *
      * @param adminUser
      * @param callId
@@ -49,7 +49,7 @@ public class AdminController extends BaseController {
 
 
     /**
-     * 查看通话中话单详情
+     * 6.1.2 查看通话中话单详情
      *
      * @param adminUser
      * @param callId
@@ -62,7 +62,7 @@ public class AdminController extends BaseController {
     }
 
     /**
-     * 3.1.6 查询坐席状态
+     * 6.2.1 查询坐席状态
      *
      * @param adminUser
      * @param agentKey
@@ -95,7 +95,7 @@ public class AdminController extends BaseController {
     }
 
     /**
-     * 3.1.7 技能组空闲坐席
+     * 6.2.2 技能组空闲坐席
      *
      * @param adminUser
      * @param groupId

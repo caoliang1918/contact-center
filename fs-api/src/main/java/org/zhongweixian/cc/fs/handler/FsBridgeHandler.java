@@ -38,7 +38,7 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
             CallLog callLog = new CallLog();
             BeanUtils.copyProperties(callInfo, callLog);
             callLog.setDirection(callInfo.getDirection().name());
-            callLog.setCts(callInfo.getCallTime());
+            callLog.setCts(callInfo.getCallTime() / 1000);
             if (callInfo.getHiddenCustomer() == 1) {
                 //隐藏客户侧号码
                 if (Direction.INBOUND == callInfo.getDirection()) {
@@ -133,7 +133,7 @@ public class FsBridgeHandler extends BaseEventHandler<FsBridgeEvent> {
         }
         agentInfo.setBeforeState(agentInfo.getAgentState());
         agentInfo.setBeforeTime(agentInfo.getStateTime());
-        agentInfo.setStateTime(Instant.now().toEpochMilli());
+        agentInfo.setStateTime(Instant.now().getEpochSecond());
         agentInfo.setAgentState(agentState);
         sendWsMessage(agentInfo, new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), agentInfo.getAgentKey(), callEntity));
     }

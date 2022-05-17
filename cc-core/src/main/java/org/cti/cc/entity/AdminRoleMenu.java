@@ -32,7 +32,7 @@ public class AdminRoleMenu implements Serializable {
     /**
      * 权限ID
      */
-    private Long menuId;
+    private String menuId;
 
     /**
      * 企业ID
@@ -73,11 +73,11 @@ public class AdminRoleMenu implements Serializable {
         this.roleId = roleId;
     }
 
-    public Long getMenuId() {
+    public String getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Long menuId) {
+    public void setMenuId(String menuId) {
         this.menuId = menuId;
     }
 

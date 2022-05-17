@@ -51,7 +51,7 @@ public class IndexController {
      *
      * @return
      */
-    @GetMapping("health")
+        @GetMapping("health")
     public Health health() {
         return Health.up().build();
     }
@@ -68,6 +68,8 @@ public class IndexController {
         logger.info("{}", payload);
         return new CommonResponse();
     }
+
+
 
 
 }

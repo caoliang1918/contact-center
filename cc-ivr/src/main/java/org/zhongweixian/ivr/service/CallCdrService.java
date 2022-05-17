@@ -3,7 +3,7 @@ package org.zhongweixian.ivr.service;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
-import org.cti.cc.entity.PushFailLog;
+import org.cti.cc.entity.PushLog;
 import org.cti.cc.po.CallLogPo;
 
 import java.util.List;
@@ -46,5 +46,5 @@ public interface CallCdrService extends BaseService<CallLog>{
      * @param pushFailLog
      * @return
      */
-    int savePushFailLog(PushFailLog pushFailLog);
+    int savePushFailLog(PushLog pushFailLog);
 }

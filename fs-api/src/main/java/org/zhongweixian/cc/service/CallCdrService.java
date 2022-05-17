@@ -3,13 +3,14 @@ package org.zhongweixian.cc.service;
 import org.cti.cc.entity.CallDetail;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
-import org.cti.cc.entity.PushFailLog;
+import org.cti.cc.entity.PushLog;
 import org.cti.cc.po.AgentInfo;
 import org.cti.cc.po.CallInfo;
 import org.cti.cc.po.CallLogPo;
 import org.zhongweixian.cc.entity.MakeCallVo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Create by caoliang on 2020/10/28
@@ -43,10 +44,10 @@ public interface CallCdrService extends BaseService<CallLog> {
 
 
     /**
-     * @param pushFailLog
+     * @param pushLog
      * @return
      */
-    int savePushFailLog(PushFailLog pushFailLog);
+    int savePushLog(PushLog pushLog);
 
     /**
      * 接口发起呼叫
@@ -96,4 +97,7 @@ public interface CallCdrService extends BaseService<CallLog> {
      * @param deviceId
      */
     void cancelMute(CallInfo callInfo, String deviceId);
+
+
+    List<CallDevice> callDeviceList(Map<String, Object> params);
 }

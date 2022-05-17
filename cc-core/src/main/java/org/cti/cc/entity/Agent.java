@@ -82,7 +82,7 @@ public class Agent implements Serializable {
     /**
      * 主叫显号
      */
-    private String diaplay;
+    private String display;
 
     /**
      * 振铃时长
@@ -112,7 +112,7 @@ public class Agent implements Serializable {
     private Integer state;
 
     /**
-     * 状态：1 开通，0关闭
+     * 状态：1 开通，0关闭, -1:删除
      */
     private Integer status;
 
@@ -230,12 +230,12 @@ public class Agent implements Serializable {
         this.afterInterval = afterInterval;
     }
 
-    public String getDiaplay() {
-        return diaplay;
+    public String getDisplay() {
+        return display;
     }
 
-    public void setDiaplay(String diaplay) {
-        this.diaplay = diaplay == null ? null : diaplay.trim();
+    public void setDisplay(String display) {
+        this.display = display;
     }
 
     public Integer getRingTime() {
@@ -314,7 +314,7 @@ public class Agent implements Serializable {
         sb.append(", record=").append(record);
         sb.append(", groupId=").append(groupId);
         sb.append(", afterInterval=").append(afterInterval);
-        sb.append(", diaplay=").append(diaplay);
+        sb.append(", display=").append(display);
         sb.append(", ringTime=").append(ringTime);
         sb.append(", ext1=").append(ext1);
         sb.append(", ext2=").append(ext2);
@@ -351,7 +351,7 @@ public class Agent implements Serializable {
             && (this.getRecord() == null ? other.getRecord() == null : this.getRecord().equals(other.getRecord()))
             && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
             && (this.getAfterInterval() == null ? other.getAfterInterval() == null : this.getAfterInterval().equals(other.getAfterInterval()))
-            && (this.getDiaplay() == null ? other.getDiaplay() == null : this.getDiaplay().equals(other.getDiaplay()))
+            && (this.getDisplay() == null ? other.getDisplay() == null : this.getDisplay().equals(other.getDisplay()))
             && (this.getRingTime() == null ? other.getRingTime() == null : this.getRingTime().equals(other.getRingTime()))
             && (this.getExt1() == null ? other.getExt1() == null : this.getExt1().equals(other.getExt1()))
             && (this.getExt2() == null ? other.getExt2() == null : this.getExt2().equals(other.getExt2()))
@@ -377,7 +377,7 @@ public class Agent implements Serializable {
         result = prime * result + ((getRecord() == null) ? 0 : getRecord().hashCode());
         result = prime * result + ((getGroupId() == null) ? 0 : getGroupId().hashCode());
         result = prime * result + ((getAfterInterval() == null) ? 0 : getAfterInterval().hashCode());
-        result = prime * result + ((getDiaplay() == null) ? 0 : getDiaplay().hashCode());
+        result = prime * result + ((getDisplay() == null) ? 0 : getDisplay().hashCode());
         result = prime * result + ((getRingTime() == null) ? 0 : getRingTime().hashCode());
         result = prime * result + ((getExt1() == null) ? 0 : getExt1().hashCode());
         result = prime * result + ((getExt2() == null) ? 0 : getExt2().hashCode());

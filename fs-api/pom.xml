@@ -85,6 +85,10 @@
             <artifactId>minio</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.zhongweixian</groupId>
             <artifactId>cc-core</artifactId>
         </dependency>

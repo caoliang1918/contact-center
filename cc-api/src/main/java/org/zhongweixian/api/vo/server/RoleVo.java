@@ -1,5 +1,10 @@
 package org.zhongweixian.api.vo.server;
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -9,8 +14,9 @@ public class RoleVo {
 
     private Long id;
 
-    @NotNull
-    private String name;
+    @NotBlank( message = "")
+    @Length
+    private String roleName;
 
     @NotNull
     private Long companyId;
@@ -23,12 +29,12 @@ public class RoleVo {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     public Long getCompanyId() {

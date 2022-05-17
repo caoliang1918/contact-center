@@ -28,8 +28,8 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
     /**
      * 批量插入时，每次插入条数
      */
-    @Value("${range.size:500}")
-    protected Integer range;
+    @Value("${batch.insert.cnt:500}")
+    protected Integer batchInsertCnt;
 
     @Value("${oss.server}")
     protected String ossServer;
@@ -39,6 +39,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 
     @Autowired
     protected CompanyMapper companyMapper;
+
 
     @Override
     public int add(T record) {

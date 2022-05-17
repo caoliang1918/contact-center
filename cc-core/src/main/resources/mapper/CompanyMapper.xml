@@ -22,7 +22,7 @@
         <result column="agent_limit" jdbcType="INTEGER" property="agentLimit"/>
         <result column="group_limit" jdbcType="INTEGER" property="groupLimit"/>
         <result column="group_agent_limit" jdbcType="INTEGER" property="groupAgentLimit"/>
-        <result column="blacklist" jdbcType="BIGINT" property="blacklist"/>
+        <result column="record_storage" jdbcType="INTEGER" property="recordStorage"/>
         <result column="notify_url" jdbcType="VARCHAR" property="notifyUrl"/>
         <result column="ext1" jdbcType="VARCHAR" property="ext1"/>
         <result column="ext2" jdbcType="VARCHAR" property="ext2"/>
@@ -34,8 +34,8 @@
     <sql id="Base_Column_List">
         id
         , cts, uts, name, id_path, pid, company_code, gmt, contact, phone, balance, bill_type,
-    pay_type, hidden_customer, secret_type, secret_key, ivr_limit, agent_limit, group_limit, group_agent_limit,
-    blacklist, notify_url, ext1, ext2, ext3, ext4, ext5, status
+    pay_type, hidden_customer, secret_type, secret_key, ivr_limit, agent_limit, group_limit, group_agent_limit, record_storage,
+    notify_url, ext1, ext2, ext3, ext4, ext5, status
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -52,14 +52,14 @@
         insert into cc_company (id, cts, uts, name, id_path, pid, company_code, gmt, contact, phone, balance,
                                 bill_type, pay_type, hidden_customer, secret_type, secret_key, ivr_limit, agent_limit,
                                 group_limit,
-                                group_agent_limit, blacklist, notify_url, ext1, ext2, ext3, ext4, ext5, status)
+                                group_agent_limit, record_storage, notify_url, ext1, ext2, ext3, ext4, ext5, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
                 #{idPath,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, #{companyCode,jdbcType=VARCHAR}, #{gmt,jdbcType=INTEGER},
                 #{contact,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{balance,jdbcType=BIGINT},
                 #{billType,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{hiddenCustomer,jdbcType=INTEGER},
                 #{secretType,jdbcType=INTEGER}, #{secretKey,jdbcType=VARCHAR}, #{ivrLimit,jdbcType=INTEGER},
                 #{agentLimit,jdbcType=INTEGER}, #{groupLimit,jdbcType=INTEGER}, #{groupAgentLimit,jdbcType=INTEGER},
-                #{blacklist,jdbcType=BIGINT}, #{notifyUrl,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR},
+                #{recordStorage,jdbcType=INTEGER}, #{notifyUrl,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR},
                 #{ext2,jdbcType=VARCHAR},
                 #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR},
                 #{status,jdbcType=INTEGER})
@@ -127,8 +127,8 @@
             <if test="groupAgentLimit != null">
                 group_agent_limit,
             </if>
-            <if test="blacklist != null">
-                blacklist,
+            <if test="recordStorage != null">
+                record_storage,
             </if>
             <if test="notifyUrl != null">
                 notify_url,
@@ -213,8 +213,8 @@
             <if test="groupAgentLimit != null">
                 #{groupAgentLimit,jdbcType=INTEGER},
             </if>
-            <if test="blacklist != null">
-                #{blacklist,jdbcType=BIGINT},
+            <if test="recordStorage != null">
+                #{recordStorage,jdbcType=INTEGER},
             </if>
             <if test="notifyUrl != null">
                 #{notifyUrl,jdbcType=VARCHAR},
@@ -296,8 +296,8 @@
             <if test="groupAgentLimit != null">
                 group_agent_limit = #{groupAgentLimit,jdbcType=INTEGER},
             </if>
-            <if test="blacklist != null">
-                blacklist = #{blacklist,jdbcType=BIGINT},
+            <if test="recordStorage != null">
+                record_storage = #{recordStorage,jdbcType=INTEGER},
             </if>
             <if test="notifyUrl != null">
                 notify_url = #{notifyUrl,jdbcType=VARCHAR},
@@ -363,7 +363,7 @@
             <if test="companyId!=null">id = #{id}</if>
             <if test="name!=null">and name like CONCAT(#{name},"%")</if>
             <if test="companyCode!=null">and company_code = #{companyCode}</if>
-            <if test="true">and status = 1</if>
+            <if test="true">and status >= 1 </if>
         </where>
     </select>
 

@@ -16,15 +16,14 @@ public class MenuVo {
 
     private Integer menuLevel;
 
-    @NotNull
     private String pathUrl;
 
-    @NotNull
     private String pathMethod;
 
-
+    @NotNull
     private Integer frontSite;
 
+    @NotNull
     private Integer endSite;
 
     @NotNull

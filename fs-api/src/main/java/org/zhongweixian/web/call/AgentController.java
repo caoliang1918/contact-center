@@ -5,9 +5,9 @@ import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.Agent;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.po.*;
-import org.cti.cc.vo.AgentPreset;
-import org.cti.cc.vo.AgentVo;
 import org.cti.cc.util.AuthUtil;
+import org.cti.cc.vo.AgentLoginVo;
+import org.cti.cc.vo.AgentPreset;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,19 +51,19 @@ public class AgentController extends BaseController {
     }
 
     /**
-     * 3.1.1 坐席登录
+     * 5.1.1 坐席登录
      *
-     * @param agentVo
+     * @param agentLoginVo
      * @return
      */
     @PostMapping("login")
-    public CommonResponse<AgentInfo> login(HttpServletRequest request, @RequestBody @Validated AgentVo agentVo) {
-        AgentInfo agentInfo = agentService.getAgentInfo(agentVo.getAgentKey());
+    public CommonResponse<AgentInfo> login(HttpServletRequest request, @RequestBody @Validated AgentLoginVo agentLoginVo) {
+        AgentInfo agentInfo = agentService.getAgentInfo(agentLoginVo.getAgentKey());
         if (agentInfo == null || agentInfo.getStatus() != 1) {
-            logger.warn("agentKey:{} is not exist", agentVo.getAgentKey());
+            logger.warn("agentKey:{} is not exist", agentLoginVo.getAgentKey());
             throw new BusinessException(ErrorCode.ACCOUNT_ERROR);
         }
-        if (agentInfo.getCallId() != null && !agentVo.isForceLogin()) {
+        if (agentInfo.getCallId() != null && !agentLoginVo.isForceLogin()) {
             logger.warn("agentKey:{} is talking , callId:{}", agentInfo.getAgentKey(), agentInfo.getCallId());
             return new CommonResponse<>(ErrorCode.AGENT_CALLING);
         }
@@ -73,8 +73,8 @@ public class AgentController extends BaseController {
             logger.warn("agentKey:{} group is null", agentInfo.getAgentKey());
             return new CommonResponse<>(ErrorCode.AGENT_GROUP_NULL);
         }
-        if (!BcryptUtil.checkPwd(agentVo.getPasswd(), agentInfo.getPasswd())) {
-            logger.error("agent:{}  password {} is error", agentVo.getAgentKey(), agentVo.getPasswd());
+        if (!BcryptUtil.checkPwd(agentLoginVo.getPasswd(), agentInfo.getPasswd())) {
+            logger.error("agent:{}  password {} is error", agentLoginVo.getAgentKey(), agentLoginVo.getPasswd());
             return new CommonResponse<>(ErrorCode.ACCOUNT_ERROR);
         }
         //删除旧的token
@@ -87,13 +87,13 @@ public class AgentController extends BaseController {
         agentInfo.setBeforeState(AgentState.LOGOUT);
         agentInfo.setBeforeTime(agentInfo.getLogoutTime());
         agentInfo.setStateTime(agentInfo.getLoginTime());
-        agentInfo.setLoginTime(Instant.now().toEpochMilli());
+        agentInfo.setLoginTime(Instant.now().getEpochSecond());
         agentInfo.setAgentState(AgentState.LOGIN);
         agentInfo.setHost(request.getLocalAddr());
         agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
-        agentInfo.setLoginType(agentVo.getLoginType());
-        agentInfo.setWorkType(agentVo.getWorkType());
-        agentInfo.setWebHook(agentVo.getWebHook());
+        agentInfo.setLoginType(agentLoginVo.getLoginType());
+        agentInfo.setWorkType(agentLoginVo.getWorkType());
+        agentInfo.setWebHook(agentLoginVo.getWebHook());
         agentInfo.setToken(token);
         cacheService.refleshAgentToken(agentInfo.getAgentKey(), token);
         cacheService.addAgentInfo(agentInfo);
@@ -121,7 +121,7 @@ public class AgentController extends BaseController {
 
 
     /**
-     * 3.1.2 坐席空闲
+     * 5.1.2 坐席空闲
      *
      * @param agentInfo
      * @return
@@ -137,7 +137,7 @@ public class AgentController extends BaseController {
     }
 
     /**
-     * 3.1.3 坐席忙碌
+     * 5.1.3 坐席忙碌
      *
      * @param agentInfo
      * @return
@@ -153,7 +153,7 @@ public class AgentController extends BaseController {
     }
 
     /**
-     * 3.1.4 坐席退出
+     * 5.1.4 坐席退出
      *
      * @param agentInfo
      * @return
@@ -168,7 +168,7 @@ public class AgentController extends BaseController {
     }
 
     /**
-     * 3.1.5 坐席自定义状态
+     * 5.1.5 坐席自定义状态
      *
      * @param agentInfo
      * @return
@@ -183,7 +183,7 @@ public class AgentController extends BaseController {
     }
 
     /**
-     * 3.1.6 话后状态预测
+     * 5.1.6 话后状态预测
      *
      * @param agentInfo
      * @return

@@ -1,9 +1,11 @@
 package org.zhongweixian.api.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import org.cti.cc.entity.AgentStateLog;
-import org.cti.cc.entity.StatHourAgentWork;
+import org.cti.cc.entity.StatHourAgent;
 import org.cti.cc.mapper.AgentStateLogMapper;
-import org.cti.cc.mapper.StatHourAgentWorkMapper;
+import org.cti.cc.mapper.StatHourAgentMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,17 +19,17 @@ import java.util.Map;
  * Created by caoliang on 2021/9/5
  */
 @Service
-public class StatWorkServiceImpl extends BaseServiceImpl<StatHourAgentWork> implements StatWorkService {
+public class StatWorkServiceImpl extends BaseServiceImpl<StatHourAgent> implements StatWorkService {
 
     @Autowired
-    private StatHourAgentWorkMapper stateHourAgentWorkMapper;
+    private StatHourAgentMapper statHourAgentMapper;
 
     @Autowired
     private AgentStateLogMapper agentStateLogMapper;
 
     @Override
-    BaseMapper<StatHourAgentWork> baseMapper() {
-        return stateHourAgentWorkMapper;
+    BaseMapper<StatHourAgent> baseMapper() {
+        return statHourAgentMapper;
     }
 
 
@@ -37,25 +39,26 @@ public class StatWorkServiceImpl extends BaseServiceImpl<StatHourAgentWork> impl
     }
 
     @Override
-    public int saveStateHoutAgentWork(List<StatHourAgentWork> agentWorkList) {
-        //每次插入500条
+    public List<StatHourAgent> statHour(Map<String, Object> params) {
+        return agentStateLogMapper.statHour(params);
+    }
+
+    @Override
+    public int saveStateHoutAgent(List<StatHourAgent> agentWorkList) {
         if (CollectionUtils.isEmpty(agentWorkList)) {
             return 0;
         }
-        int size = agentWorkList.size();
-        int modulo = size % range;
-        for (int i = 0; i < size / 500; i++) {
-            stateHourAgentWorkMapper.batchInsert(agentWorkList.subList(i * range, (i + 1) * range));
+        List<List<StatHourAgent>> newList = Lists.partition(agentWorkList, batchInsertCnt);
+        Integer cnt = 0;
+        for (List<StatHourAgent> list : newList) {
+            cnt += statHourAgentMapper.batchInsert(list);
         }
-        if (modulo > 0) {
-            stateHourAgentWorkMapper.batchInsert(agentWorkList.subList(size / range * range, size));
-        }
-        return 0;
+        return cnt;
     }
 
     @Override
     public void deleteAgentHourStat(Long statTime) {
-        stateHourAgentWorkMapper.deleteAgentHourStat(statTime);
+        statHourAgentMapper.deleteAgentHourStat(statTime);
     }
 
 }

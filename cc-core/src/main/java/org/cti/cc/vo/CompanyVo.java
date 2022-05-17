@@ -2,6 +2,7 @@ package org.cti.cc.vo;
 
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -10,8 +11,8 @@ import javax.validation.constraints.Size;
  */
 public class CompanyVo {
 
-    @NotNull(message = "企业名称不能为空")
-    @Size(min = 2, max = 16, message = "企业名称必须在2,6字符")
+    @NotBlank(message = "企业名称不能为空")
+    @Size(min = 2, max = 16, message = "企业名称必须在2,16字符")
     private String name;
 
     /**
@@ -63,31 +64,24 @@ public class CompanyVo {
     private Integer hiddenCustomer;
 
     /**
-     * 验证秘钥
-     */
-    @NotNull(message = "验证秘钥不能为空")
-    @Size(min = 16, max = 16, message = "验证秘钥必须16位")
-    private String secretKey;
-
-    /**
      * IVR通道数
      */
     @NotNull(message = "IVR通道数不能为空")
-    @Range(min = 0, max = 1000000, message = "IVR通道数设置错误")
+    @Range(min = 1, max = 1000000, message = "IVR通道数设置错误")
     private Integer ivrLimit;
 
     /**
      * 开通坐席
      */
     @NotNull(message = "开通坐席数不能为空")
-    @Range(min = 0, max = 1000000, message = "开通坐席数设置错误")
+    @Range(min = 1, max = 1000000, message = "开通坐席数设置错误")
     private Integer agentLimit;
 
     /**
      * 开通技能组
      */
     @NotNull(message = "开通技能组数不能为空")
-    @Range(min = 0, max = 10000, message = "开通技能组数设置错误")
+    @Range(min = 1, max = 2000, message = "开通技能组数设置错误")
     private Integer groupLimit;
 
     /**
@@ -182,14 +176,6 @@ public class CompanyVo {
         this.hiddenCustomer = hiddenCustomer;
     }
 
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
     public Integer getIvrLimit() {
         return ivrLimit;
     }
@@ -243,7 +229,6 @@ public class CompanyVo {
                 ", billType=" + billType +
                 ", payType=" + payType +
                 ", hiddenCustomer=" + hiddenCustomer +
-                ", secretKey='" + secretKey + '\'' +
                 ", ivrLimit=" + ivrLimit +
                 ", agentLimit=" + agentLimit +
                 ", groupLimit=" + groupLimit +

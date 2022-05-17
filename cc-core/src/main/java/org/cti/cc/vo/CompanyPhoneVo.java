@@ -2,6 +2,7 @@ package org.cti.cc.vo;
 
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -33,7 +34,7 @@ public class CompanyPhoneVo {
     /**
      * 号码
      */
-    @NotNull
+    @NotBlank
     @Size(min = 4,max = 16,message = "号码长度必须在4-16位")
     private String phone;
 

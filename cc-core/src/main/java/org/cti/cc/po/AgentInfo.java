@@ -48,7 +48,7 @@ public class AgentInfo extends Agent {
     private String consultDeviceId;
 
     /**
-     *
+     * 登录时间(秒)
      */
     private Long loginTime = 0L;
 
@@ -72,7 +72,7 @@ public class AgentInfo extends Agent {
     private AgentState agentState;
 
     /**
-     * 当天状态时间
+     * 当天状态时间(秒)
      */
     private Long stateTime = 0L;
 
@@ -87,17 +87,17 @@ public class AgentInfo extends Agent {
     private AgentState beforeState;
 
     /**
-     * 上一次状态时间
+     * 上一次状态时间(秒)
      */
     private Long beforeTime = 0L;
 
     /**
-     * 下线时间
+     * 下线时间(秒)
      */
     private Long logoutTime = 0L;
 
     /**
-     * 坐席最近的一次服务时间,电话则是振铃时间
+     * 坐席最近的一次服务时间,电话则是振铃时间(秒)
      */
     private Long serviceTime = 0L;
 

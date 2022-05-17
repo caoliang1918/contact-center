@@ -52,13 +52,13 @@ public class MakeCallVo {
      * 主叫显号，接口没有传就用主技能组配置
      */
     @Size(min = 2, max = 16, message = "坐席显号必须在2,16字符")
-    private String callerDiaplay;
+    private String callerDisplay;
 
     /**
      * 被叫显号，接口没传就用主技能配置
      */
     @Size(min = 2, max = 16, message = "显号必须在2,16字符")
-    private String calledDiaplay;
+    private String calledDisplay;
 
 
     public Map<String, Object> getFollowData() {
@@ -109,20 +109,20 @@ public class MakeCallVo {
         this.called = called;
     }
 
-    public String getCallerDiaplay() {
-        return callerDiaplay;
+    public String getCallerDisplay() {
+        return callerDisplay;
     }
 
-    public void setCallerDiaplay(String callerDiaplay) {
-        this.callerDiaplay = callerDiaplay;
+    public void setCallerDisplay(String callerDisplay) {
+        this.callerDisplay = callerDisplay;
     }
 
-    public String getCalledDiaplay() {
-        return calledDiaplay;
+    public String getCalledDisplay() {
+        return calledDisplay;
     }
 
-    public void setCalledDiaplay(String calledDiaplay) {
-        this.calledDiaplay = calledDiaplay;
+    public void setCalledDisplay(String calledDisplay) {
+        this.calledDisplay = calledDisplay;
     }
 
     @Override
@@ -134,8 +134,8 @@ public class MakeCallVo {
                 ", callType=" + callType +
                 ", caller='" + caller + '\'' +
                 ", called='" + called + '\'' +
-                ", callerDiaplay='" + callerDiaplay + '\'' +
-                ", calledDiaplay='" + calledDiaplay + '\'' +
+                ", callerDisplay='" + callerDisplay + '\'' +
+                ", calledDisplay='" + calledDisplay + '\'' +
                 '}';
     }
 }

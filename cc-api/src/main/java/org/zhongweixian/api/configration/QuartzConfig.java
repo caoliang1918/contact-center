@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class QuartzConfig {
     private Logger logger = LoggerFactory.getLogger(QuartzConfig.class);
 
-    private final static String GROUP = "cc.quartz";
+    private final static String CC_QUARTZ_GROUP = "cc.quartz";
     private Scheduler scheduler;
 
     public QuartzConfig(@Autowired SchedulerFactoryBean schedulerFactoryBean) {
@@ -87,26 +87,33 @@ public class QuartzConfig {
     /**
      * @return
      */
-    public List<BaseTask> getJobList() throws SchedulerException {
+    public List<BaseTask> getJobList() {
         List<BaseTask> list = new ArrayList<>();
         SimpleDateFormat sf = new SimpleDateFormat(DateTimeUtil.YYYYMMDD_HHMMSS);
-        for (String group : scheduler.getJobGroupNames()) {
-            for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(group))) {
-                List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
-                if (CollectionUtils.isEmpty(triggers)) {
-                    return null;
-                }
-                for (Trigger trigger : triggers) {
-                    JobDetail jobDetail = scheduler.getJobDetail(new JobKey(trigger.getJobKey().getName(), trigger.getJobKey().getGroup()));
-                    BaseTask baseTask = new BaseTask();
-                    baseTask.setName(trigger.getJobKey().getName());
-                    baseTask.setGroup(trigger.getJobKey().getGroup());
-                    baseTask.setCronExpression(((CronTriggerImpl) trigger).getCronExpression());
-                    baseTask.setJobClass(jobDetail.getJobClass());
-                    baseTask.setNextFireTime(sf.format(trigger.getNextFireTime()));
-                    list.add(baseTask);
+        try {
+            for (String group : scheduler.getJobGroupNames()) {
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(group))) {
+                    List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+                    if (CollectionUtils.isEmpty(triggers)) {
+                        return null;
+                    }
+                    for (Trigger trigger : triggers) {
+                        JobDetail jobDetail = scheduler.getJobDetail(new JobKey(trigger.getJobKey().getName(), trigger.getJobKey().getGroup()));
+                        BaseTask baseTask = new BaseTask();
+                        baseTask.setName(trigger.getJobKey().getName());
+                        baseTask.setGroup(trigger.getJobKey().getGroup());
+                        baseTask.setJobKey(jobKey);
+                        baseTask.setDescription(jobDetail.getDescription());
+                        baseTask.setJobDataMap(jobDetail.getJobDataMap());
+                        baseTask.setCronExpression(((CronTriggerImpl) trigger).getCronExpression());
+                        baseTask.setJobClass(jobDetail.getJobClass());
+                        baseTask.setNextFireTime(sf.format(trigger.getNextFireTime()));
+                        list.add(baseTask);
+                    }
                 }
             }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
         return list;
     }
@@ -126,11 +133,7 @@ public class QuartzConfig {
             CronTrigger cronTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
             JobDataMap jobDataMap = getJobDataMap(define.getJobDataMap());
             if (!cronTrigger.getCronExpression().equalsIgnoreCase(cronExpression)) {
-                CronTrigger trigger = TriggerBuilder.newTrigger()
-                        .withIdentity(triggerKey)
-                        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
-                        .usingJobData(jobDataMap)
-                        .build();
+                CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).usingJobData(jobDataMap).build();
                 scheduler.rescheduleJob(triggerKey, trigger);
             }
         } catch (SchedulerException e) {
@@ -151,14 +154,7 @@ public class QuartzConfig {
      * @param jobClass    {@link org.quartz.Job} 定时任务的 真正执行逻辑定义类
      */
     public JobDetail getJobDetail(JobKey jobKey, String description, JobDataMap jobDataMap, Class<? extends Job> jobClass) {
-        return JobBuilder.newJob(jobClass)
-                .withIdentity(jobKey)
-                .withDescription(description)
-                .setJobData(jobDataMap)
-                .usingJobData(jobDataMap)
-                .requestRecovery()
-                .storeDurably()
-                .build();
+        return JobBuilder.newJob(jobClass).withIdentity(jobKey).withDescription(description).setJobData(jobDataMap).usingJobData(jobDataMap).requestRecovery().storeDurably().build();
     }
 
 
@@ -171,12 +167,7 @@ public class QuartzConfig {
      * @param cronExpression 定时任务的 执行cron表达式
      */
     public Trigger getTrigger(JobKey jobKey, String description, JobDataMap jobDataMap, String cronExpression) {
-        return TriggerBuilder.newTrigger()
-                .withIdentity(jobKey.getName(), jobKey.getGroup())
-                .withDescription(description)
-                .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
-                .usingJobData(jobDataMap)
-                .build();
+        return TriggerBuilder.newTrigger().withIdentity(jobKey.getName(), jobKey.getGroup()).withDescription(description).withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).usingJobData(jobDataMap).build();
     }
 
 
@@ -184,69 +175,58 @@ public class QuartzConfig {
         return map == null ? new JobDataMap() : new JobDataMap(map);
     }
 
-    public void createMonthJob() throws SchedulerException {
-        JobKey jobKey = new JobKey("TaskJobOfMonth", GROUP);
+
+    public void initTask(String taskName, String cron, Class classc) throws SchedulerException {
+        JobKey jobKey = new JobKey(taskName, CC_QUARTZ_GROUP);
         BaseTask task = new BaseTask();
         task.setJobKey(jobKey);
         task.setJobKey(jobKey);
-        task.setCronExpression(TaskJobOfMonth.CRON);
-        task.setJobClass(TaskJobOfMonth.class);
-        task.setDescription("TaskJobOfMonth 任务");
+        task.setCronExpression(cron);
+        task.setJobClass(classc);
+        task.setDescription(taskName + " 任务");
         this.deleteJob(jobKey);
         this.scheduleJob(task);
     }
 
-    public void createDayJob() throws SchedulerException {
-        JobKey jobKey = new JobKey("TaskJobOfDay", GROUP);
+    public void create(String taskName, String cron, Class classc) throws SchedulerException {
+        JobKey jobKey = new JobKey(taskName, CC_QUARTZ_GROUP);
         BaseTask task = new BaseTask();
         task.setJobKey(jobKey);
         task.setJobKey(jobKey);
-        task.setCronExpression(TaskJobOfDay.CRON);
-        task.setJobClass(TaskJobOfDay.class);
-        task.setDescription("TaskJobOfDay 任务");
-        this.deleteJob(jobKey);
+        task.setCronExpression(cron);
+        task.setJobClass(classc);
+        task.setDescription(taskName + " 任务");
         this.scheduleJob(task);
     }
 
-    public void createHourJob() throws SchedulerException {
-        JobKey jobKey = new JobKey("TaskJobOfHour", GROUP);
-        BaseTask task = new BaseTask();
-        task.setJobKey(jobKey);
-        task.setJobKey(jobKey);
-        task.setCronExpression(TaskJobOfHour.CRON);
-        task.setJobClass(TaskJobOfHour.class);
-        task.setDescription("TaskJobOfHour 任务");
-        this.deleteJob(jobKey);
-        this.scheduleJob(task);
-    }
 
-    public void createSecondJob() throws SchedulerException {
-        JobKey jobKey = new JobKey("TaskJobOfSecond", GROUP);
-        BaseTask task = new BaseTask();
-        task.setJobKey(jobKey);
-        task.setJobKey(jobKey);
-        task.setCronExpression(TaskJobOfSecond.CRON);
-        task.setJobClass(TaskJobOfSecond.class);
-        task.setDescription("TaskJobOfSecond 任务");
-        this.deleteJob(jobKey);
-        this.scheduleJob(task);
-    }
-
-    public void initJob() {
+    public void initJob(boolean flag) {
         try {
             List<BaseTask> list = getJobList();
             List<String> jobNames = list.stream().map(BaseTask::getName).collect(Collectors.toList());
-            if (!jobNames.contains("TaskJobOfSecond")) {
-               // createSecondJob();
+            if (flag) {
+                //初始化，先删除再创建
+                initTask(TaskJobOfSecond.NAME, TaskJobOfSecond.CRON, TaskJobOfSecond.class);
+                initTask(TaskJobOfHour.NAME, TaskJobOfHour.CRON, TaskJobOfHour.class);
+                initTask(TaskJobOfDay.NAME, TaskJobOfDay.CRON, TaskJobOfDay.class);
+                initTask(TaskJobOfMonth.NAME, TaskJobOfMonth.CRON, TaskJobOfMonth.class);
+                return;
             }
-            if (!jobNames.contains("TaskJobOfHour")) {
-                createHourJob();
+
+            /**
+             * 任务没有再创建
+             */
+            if (!jobNames.contains(TaskJobOfSecond.NAME)) {
+                create(TaskJobOfSecond.NAME, TaskJobOfSecond.CRON, TaskJobOfSecond.class);
             }
-            if (!jobNames.contains("TaskJobOfDay")) {
-                createDayJob();
+            if (!jobNames.contains(TaskJobOfHour.NAME)) {
+                create(TaskJobOfHour.NAME, TaskJobOfHour.CRON, TaskJobOfHour.class);
             }
-            if (jobNames.contains("TaskJobOfMonth")) {
-                createMonthJob();
+            if (!jobNames.contains(TaskJobOfDay.NAME)) {
+                create(TaskJobOfDay.NAME, TaskJobOfDay.CRON, TaskJobOfDay.class);
+            }
+            if (!jobNames.contains(TaskJobOfMonth.NAME)) {
+                create(TaskJobOfMonth.NAME, TaskJobOfMonth.CRON, TaskJobOfMonth.class);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

@@ -110,12 +110,53 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <select id="selectRoleMenuList" parameterType="java.util.Map" resultMap="BaseResultPo">
+    <select id="selectRoleMenu" parameterType="java.lang.Long" resultMap="BaseResultPo">
         select
-        <include refid="Base_Column_List"/>
-        from cc_admin_role
+            <include refid="Base_Column_List"/>
+        from
+            cc_admin_role
+        where
+            id = #{roleId} and status = 1
+    </select>
+
+    <select id="selectList" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+             cc_admin_role
         <where>
-            <if test="true">status = 1</if>
+            <if test="true"> status = 1</if>
+            <if test="roleName!=null"> and role_name = #{roleName}</if>
+            <if test="companyId!=null"> and company_id = #{companyId}</if>
         </where>
     </select>
+
+    <!-- 删除角色菜单 -->
+    <delete id="deleteMenuByRoleId" parameterType="java.lang.Long">
+        delete from cc_admin_role_menu where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteRole" parameterType="java.lang.Long">
+        delete from cc_admin_role where id = #{id}
+    </delete>
+
+    <!-- 批量插入角色菜单  -->
+    <insert id="batchInserRoleMenus" parameterType="List" useGeneratedKeys="true" keyProperty="id" >
+        insert into cc_admin_role_menu (cts, uts, role_id, menu_id, company_id) values
+        <foreach collection="list" item="roleMenu" separator=",">
+            (#{roleMenu.cts,jdbcType=BIGINT}, #{roleMenu.uts,jdbcType=BIGINT}, #{roleMenu.roleId,jdbcType=BIGINT},#{roleMenu.menuId,jdbcType=BIGINT}, #{roleMenu.companyId,jdbcType=BIGINT} )
+        </foreach>
+    </insert>
+
+    <insert id="batchInserRoleMenus" parameterType="List" databaseId="oracle">
+        BEGIN
+        insert into cc_agent (cts, company_id, agent_id, agent_key, agent_name, agent_type, passwd) values
+        <foreach collection="list" item="agent" separator=",">
+            (#{roleMenu.cts,jdbcType=BIGINT}, #{roleMenu.uts,jdbcType=BIGINT}, #{roleMenu.roleId,jdbcType=BIGINT},#{roleMenu.menuId,jdbcType=BIGINT}, #{roleMenu.companyId,jdbcType=BIGINT} )
+        </foreach>
+        COMMIT;
+        END;
+    </insert>
+
+
 </mapper>
