@@ -98,4 +98,5 @@ public class Constant {
 
 
     public final static String CALL_INFO = "CALL_INFO:";
+    public static String FS_API = "fs-api";
 }

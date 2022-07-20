@@ -64,6 +64,6 @@ public class TransferAgentHandler extends BaseHandler {
         }
         agentInfo.setCallId(callInfo.getCallId());
         agentInfo.setDeviceId(deviceId);
-        fsListen.makeCall(routeGetway, callInfo.getCaller(), caller, callInfo.getCallId(), deviceId, null);
+        fsListen.makeCall(routeGetway, callInfo.getCaller(), caller, callInfo.getCallId(), deviceId, null, null);
     }
 }

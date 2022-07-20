@@ -4,19 +4,29 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.channel.Channel;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constant;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
+import org.cti.cc.enums.CauseEnums;
+import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.mapper.StationMapper;
 import org.cti.cc.po.CallInfo;
+import org.cti.cc.po.DeviceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.common.TemplateParserContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.EventType;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.configration.Handler;
@@ -47,7 +57,7 @@ import java.util.concurrent.*;
 public class FsListen {
     private Logger logger = LoggerFactory.getLogger(FsListen.class);
 
-    @Value("${fs.thread.num:32}")
+    @Value("${fs.thread.num:64}")
     private Integer threadNum;
 
     @Value("${spring.application.group}")
@@ -56,11 +66,14 @@ public class FsListen {
     @Autowired
     private StationMapper stationMapper;
 
+    @Autowired
+    protected HashedWheelTimer hashedWheelTimer;
+
     @Value("${audio.codecs:^^:G729:PCMU:PCMA}")
     private String codecs;
 
     @Value("${server.port}")
-    private String localPort;
+    private Integer localPort;
 
     private String localAddress;
 
@@ -168,7 +181,8 @@ public class FsListen {
             client.connect(socketAddress, password, 3);
             if (localAddress == null) {
                 InetSocketAddress address = (InetSocketAddress) client.getChannel().localAddress();
-                localAddress = address.getHostName() + ":" + localPort;
+                localAddress = Constant.HTTP + address.getAddress().getHostAddress() + Constant.CO + localPort + Constant.SK + Constant.FS_API;
+                //cacheService.setHost(localAddress);
             }
         } catch (Throwable e) {
             logger.error(e.getMessage(), e);
@@ -192,12 +206,20 @@ public class FsListen {
                         return;
                     case FsConstant.RECV_RTCP_MESSAGE:
                         return;
+                    case FsConstant.CODEC:
+                        return;
+                    case FsConstant.DTMF_SEND:
+                        return;
+                    case FsConstant.RECV_INFO:
+                        return;
+                    case FsConstant.CHANNEL_STATE:
+                        return;
+                    case FsConstant.DEL_SCHEDULE:
+                        return;
                     case FsConstant.CHANNEL_CREATE:
                         break;
                     case FsConstant.CHANNEL_ORIGINATE:
                         break;
-                    case FsConstant.CHANNEL_STATE:
-                        return;
                     case FsConstant.CHANNEL_PROGRESS:
                         break;
                     case FsConstant.PRESENCE_IN:
@@ -205,6 +227,11 @@ public class FsListen {
                     case FsConstant.CHANNEL_CALLSTATE:
                         break;
                     case FsConstant.CALL_UPDATE:
+                        break;
+                    case FsConstant.DETECTED_SPEECH:
+                        if (!CollectionUtils.isEmpty(event.getEventBodyLines())) {
+                            event.getEventHeaders().put(FsConstant.DETECTED_SPEECH, JSON.toJSONString((event.getEventBodyLines())));
+                        }
                         break;
                     case FsConstant.CHANNEL_EXECUTE:
                         break;
@@ -236,36 +263,30 @@ public class FsListen {
                         break;
                     case FsConstant.PLAYBACK_START:
                         break;
-
                     case FsConstant.PLAYBACK_STOP:
                         break;
-
                     case FsConstant.CHANNEL_UNBRIDGE:
                         break;
-                    case FsConstant.CODEC:
-                        return;
-                    case FsConstant.RECV_INFO:
-                        return;
                     case FsConstant.DTMF:
                         break;
-                    case FsConstant.DEL_SCHEDULE:
-                        return;
                     case FsConstant.CHANNEL_PROGRESS_MEDIA:
                         break;
                     case FsConstant.RECORD_STOP:
                         break;
                     case FsConstant.CUSTOM:
                         break;
+                    case FsConstant.CHANNEL_HOLD:
+                        break;
                     case FsConstant.CHANNEL_UNHOLD:
                         break;
                     case FsConstant.RING_ASR:
-                        //媒体识别回铃音
-                        logger.debug("RING_ASR:{}", JSONObject.toJSONString(event.getEventHeaders()));
                         break;
                     case FsConstant.RELOADXML:
                         break;
+                    case FsConstant.ADD_SCHEDULE:
+                        break;
                     default:
-                        logger.info("event:{}, hander:{}", event.getEventName(), event.getEventHeaders().toString());
+                        logger.info("event:{}, hander:{}", event.getEventName(), JSON.toJSONString(event.getEventHeaders()));
                         return;
                 }
 
@@ -361,6 +382,7 @@ public class FsListen {
         executorMap.forEach((i, executor) -> {
             executor.shutdown();
         });
+        hashedWheelTimer.stop();
     }
 
     /**
@@ -385,15 +407,16 @@ public class FsListen {
      * @param called
      * @param callId
      * @param deviceId
+     * @param timeout
      * @param originateTimeout
      * @param sipHeaders
      */
-    public void makeCall(RouteGetway routeGetway, String display, String called, Long callId, String deviceId, Integer originateTimeout, String... sipHeaders) {
+    public void makeCall(RouteGetway routeGetway, String display, String called, Long callId, String deviceId, Integer timeout, Integer originateTimeout, String... sipHeaders) {
         String media = RandomUtil.getRandomKey(fsClient.keySet());
         if (StringUtils.isBlank(media)) {
             throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
         }
-        makeCall(media, routeGetway, display, called, callId, deviceId, originateTimeout, sipHeaders);
+        makeCall(media, routeGetway, display, called, callId, deviceId, timeout, originateTimeout, sipHeaders);
     }
 
     /**
@@ -402,19 +425,23 @@ public class FsListen {
      * bgapi originate {return_ring_ready=true,sip_contact_user=01017818388,ring_asr=true,absolute_codec_string=^^:G729:PCMU:PCMA,origination_caller_id_number=01017718388,origination_caller_id_name=01017718388,origination_uuid=192.168.1.1-25-5f8fe34b-1bb-76,sip_auto_answer=true}sofia/external/8731279@192.168.177.183:8880 &park()
      *
      * @param media
-     * @param routeGetway
-     * @param display
-     * @param called
+     * @param routeGetway      网关
+     * @param display          主叫
+     * @param called           被叫
      * @param deviceId
      * @param originateTimeout
      * @param sipHeaders
      */
-    public void makeCall(String media, RouteGetway routeGetway, String display, String called, Long callId, String deviceId, Integer originateTimeout, String... sipHeaders) {
-        logger.info("callId:{} makeCall routeGetway:{} display:{}  called:{}", callId, routeGetway.getName(), display, called);
+    public void makeCall(String media, RouteGetway routeGetway, String display, String called, Long callId, String deviceId, Integer timeout, Integer originateTimeout, String... sipHeaders) {
         Client client = null;
         if (StringUtils.isBlank(media)) {
             media = RandomUtil.getRandomKey(fsClient.keySet());
         }
+        if (StringUtils.isBlank(media)) {
+            throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
+        }
+        logger.info("callId:{} makeCall routeGetway:{} display:{} called:{}, timeout{}, originateTimeout:{}", callId, routeGetway.getName(), display, called, timeout, originateTimeout);
+        callTimeOut(media, callId, deviceId, timeout);
         if (StringUtils.isBlank(media)) {
             throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
         }
@@ -436,14 +463,17 @@ public class FsListen {
                 }
             }
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("callId", callId);
+        params.put("deviceId", deviceId);
+        params.put("caller", display);
+        params.put("called", called);
         if (StringUtils.isNoneBlank(routeGetway.getSipHeader1())) {
             if (StringUtils.isNoneBlank(sipBuffer)) {
                 sipBuffer.append(FsConstant.SPLIT);
             }
             String sipHeader1 = routeGetway.getSipHeader1();
-            if (sipHeader1.contains("callId")) {
-                sipHeader1 = sipHeader1.replace("${callId}", callId.toString());
-            }
+            sipHeader1 = expression(sipHeader1, params);
             sipBuffer.append(FsConstant.SIP_HEADER + sipHeader1);
         }
         if (StringUtils.isNoneBlank(routeGetway.getSipHeader2())) {
@@ -451,9 +481,7 @@ public class FsListen {
                 sipBuffer.append(FsConstant.SPLIT);
             }
             String sipHeader2 = routeGetway.getSipHeader2();
-            if (sipHeader2.contains("deviceId")) {
-                sipHeader2 = sipHeader2.replace("${deviceId}", deviceId);
-            }
+            sipHeader2 = expression(sipHeader2, params);
             sipBuffer.append(FsConstant.SIP_HEADER + sipHeader2);
         }
         if (StringUtils.isNoneBlank(routeGetway.getSipHeader3())) {
@@ -472,6 +500,55 @@ public class FsListen {
         }
         builder.append("}").append(FsConstant.SOFIA + Constant.SK + routeGetway.getProfile() + Constant.SK).append(called).append(FsConstant.PARK);
         client.sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
+    }
+
+    /**
+     * 呼叫超时主动挂机
+     *
+     * @param callId
+     * @param deviceId
+     * @param timeouts
+     */
+    private void callTimeOut(String media, Long callId, String deviceId, Integer timeouts) {
+        hashedWheelTimer.newTimeout(new TimerTask() {
+            @Override
+            public void run(Timeout timeout) throws Exception {
+                CallInfo callInfo = cacheService.getCallInfo(callId);
+                if (callInfo == null || !callInfo.getDeviceList().contains(deviceId)) {
+                    return;
+                }
+                DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(deviceId);
+                if (deviceInfo != null && deviceInfo.getAnswerTime() == null) {
+                    logger.info("call:{} deviceId:{}  {}s timeout", callId, deviceId, timeouts);
+                    deviceInfo.setHangupCause(CauseEnums.CALL_TIMEOUT.name());
+                    callInfo.setNextCommands(null);
+
+                    if (callInfo.getAnswerTime() == null) {
+                        if (callInfo.getDirection() == Direction.OUTBOUND) {
+                            if (deviceInfo.getDeviceType() == 1) {
+                                callInfo.setHangupDir(3);
+                                callInfo.setHangupCode(CauseEnums.CALL_TIMEOUT.getHuangupCode());
+                                callInfo.setAnswerFlag(1);
+                            } else if (deviceInfo.getDeviceType() == 2) {
+                                callInfo.setHangupDir(3);
+                                callInfo.setHangupCode(CauseEnums.CALL_TIMEOUT.getHuangupCode());
+                                callInfo.setAnswerFlag(2);
+                            }
+                        } else if (callInfo.getDirection() == Direction.INBOUND) {
+                            if (deviceInfo.getDeviceType() == 1) {
+                                callInfo.setHangupDir(3);
+                                callInfo.setHangupCode(CauseEnums.CALL_TIMEOUT.getHuangupCode());
+                                callInfo.setAnswerFlag(3);
+                            } else if (deviceInfo.getDeviceType() == 2) {
+
+                            }
+                        }
+                    }
+                    cacheService.addCallInfo(callInfo);
+                    hangupCall(media, callId, deviceId);
+                }
+            }
+        }, timeouts, TimeUnit.SECONDS);
     }
 
     /**
@@ -589,6 +666,10 @@ public class FsListen {
         this.sendMessage(media, msg);
     }
 
+    /**
+     * @param media
+     * @param deviceId
+     */
     public void reneg(String media, String deviceId) {
         StringBuilder builder = new StringBuilder();
         builder.append(deviceId).append("  uuid_media_reneg " + deviceId + " = =G729,PCMU,PCMA");
@@ -630,13 +711,126 @@ public class FsListen {
      * @param deviceId
      * @param file     say:unimrcp:aimei:{Prosody-Volume=50,Prosody-Rate=0}您好，这里是广州农商行致电，感谢您的接听
      */
-    public void playBack(String media, String deviceId, String file) {
-        SendMsg playback = new SendMsg(deviceId);
-        playback.addCallCommand(FsConstant.EXECUTE);
-        playback.addExecuteAppName(FsConstant.PLAYBACK);
-        playback.addExecuteAppArg(file);
-        playback.addAsync();
-        this.sendMessage(media, playback);
+    public void playfile(String media, String deviceId, String file) {
+        SendMsg playfile = new SendMsg(deviceId);
+        playfile.addCallCommand(FsConstant.EXECUTE);
+        playfile.addExecuteAppName(FsConstant.PLAYBACK);
+        playfile.addExecuteAppArg(file);
+        playfile.addAsync();
+        this.sendMessage(media, playfile);
+    }
+
+    /**
+     * mrcp放音
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     * @param arg
+     */
+    public void mrcpSpeak(String media, Long callId, String deviceId, String engine, String voice, String arg) {
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_TERMINATORS);
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
+        if (StringUtils.isNotBlank(engine)) {
+            this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_ENGINE + FsConstant.CO + engine);
+        }
+        if (StringUtils.isNotBlank(voice)) {
+            this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_VOICE + voice);
+        }
+        this.sendArgs(media, deviceId, FsConstant.SPEAK, arg);
+    }
+
+    /**
+     * mrcp混合放音
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     * @param engine
+     * @param voice
+     * @param arg
+     */
+    public void mrcpPlay(String media, Long callId, String deviceId, String engine, String voice, String arg) {
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_TERMINATORS);
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
+        if (StringUtils.isNotBlank(engine)) {
+            this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_ENGINE + FsConstant.CO + engine);
+        }
+        if (StringUtils.isNotBlank(voice)) {
+            this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_VOICE + voice);
+        }
+        this.sendArgs(media, deviceId, FsConstant.PLAYBACK, arg);
+    }
+
+    /**
+     * 本地文件放音收号
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     * @param playfile
+     */
+    public void playfileAndDigits(String media, Long callId, String deviceId, String playfile, Integer min, Integer looptimes, Integer max, Integer digitstime, String terminator) {
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
+        this.sendArgs(media, deviceId, FsConstant.SET, "SEND_SILENCE_WHEN_IDLE" + 1400);
+        this.sendArgs(media, deviceId, FsConstant.PLAY_AND_GET_DIGITS, "" + min + " " + max + " " + looptimes + " 5000 " + terminator + " " + playfile + " silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ " + digitstime);
+    }
+
+    /**
+     * tts mrcp 放音收号
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     * @param playfile
+     * @param min
+     * @param looptimes
+     * @param max
+     * @param digitstime
+     * @param terminator
+     * @param ttsEngine
+     * @param ttsVoice
+     */
+    public void playfileAndDigitsWithMrcp(String media, Long callId, String deviceId, String playfile, Integer min, Integer looptimes, Integer max, Integer digitstime, String terminator, String ttsEngine, String ttsVoice) {
+        this.sendArgs(media, deviceId, FsConstant.SET, "tts_engine=" + ttsEngine);
+        this.sendArgs(media, deviceId, FsConstant.SET, "tts_voice=" + ttsVoice);
+        this.sendArgs(media, deviceId, FsConstant.SET, "SEND_SILENCE_WHEN_IDLE" + 1400);
+        this.sendArgs(media, deviceId, FsConstant.PLAY_AND_GET_DIGITS, "" + min + " " + max + " " + looptimes + " 5000 " + terminator + " " + playfile + " silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ " + digitstime);
+    }
+
+
+    /**
+     * http 放音收号
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     * @param playfile
+     * @param min
+     * @param looptimes
+     * @param max
+     * @param digitstime
+     * @param terminator
+     */
+    public void playfileAndDigitsWithHttp(String media, Long callId, String deviceId, String playfile, Integer min, Integer looptimes, Integer max, Integer digitstime, String terminator) {
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
+        this.sendArgs(media, deviceId, FsConstant.SET, "SEND_SILENCE_WHEN_IDLE" + 1400);
+        this.sendArgs(media, deviceId, FsConstant.PLAY_AND_GET_DIGITS, "" + min + " " + max + " " + looptimes + " 1000  q   " + playfile + " silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ " + digitstime);
+    }
+
+
+    /**
+     * 发送dtmf按键
+     *
+     * @param media
+     * @param deviceId
+     * @param dtmf
+     */
+    public void sendDtmf(String media, String deviceId, String dtmf) {
+        SendMsg sendMsg = new SendMsg(deviceId);
+        sendMsg.addCallCommand(FsConstant.EXECUTE);
+        sendMsg.addExecuteAppName(FsConstant.SEND_DTMF);
+        this.sendMessage(media, sendMsg);
     }
 
     /**
@@ -692,19 +886,32 @@ public class FsListen {
 
 
     /**
+     * 开启asr识别
+     *
      * @param media
      * @param callId
      * @param deviceId
      * @param mrcp
+     * @param arg1
+     * @param arg2
      */
-    public void startAsr(String media, Long callId, String deviceId, String mrcp) {
-        this.sendArgs(media, deviceId, FsConstant.SET, "fire_asr_events=true");
-        this.sendArgs(media, deviceId, FsConstant.DETECT_SPEECH, mrcp);
-        this.sendArgs(media, deviceId, FsConstant.SET, "tts_engine=unimrcp");
-        this.sendArgs(media, deviceId, FsConstant.SET, "tts_voice=xiaoyan");
-        this.sendArgs(media, deviceId, FsConstant.SET, "send_silence_when_idle=1400");
-        this.sendArgs(media, deviceId, FsConstant.PLAY_AND_GET_DIGITS, "1 8 1 8000 # say:'' silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ 5000");
+    public void startAsr(String media, Long callId, String deviceId, String mrcp, String arg1, String arg2) {
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.FIRE_ASR_EVENT);
+        this.sendArgs(media, deviceId, FsConstant.DETECT_SPEECH, FsConstant.UNIMRCP + mrcp + FsConstant.SPACE + arg1 + FsConstant.SPACE + arg2);
     }
+
+    /**
+     * asr循环识别
+     *
+     * @param media
+     * @param callId
+     * @param deviceId
+     */
+    public void asrResume(String media, Long callId, String deviceId) {
+        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.FIRE_ASR_EVENT);
+        this.sendArgs(media, deviceId, FsConstant.DETECT_SPEECH, FsConstant.RESUME);
+    }
+
 
     /**
      * 会议
@@ -718,5 +925,23 @@ public class FsListen {
         this.sendArgs(media, deviceId, FsConstant.SET, "conference_enter_sound=silence_stream://10");
         this.sendArgs(media, deviceId, FsConstant.SET, "hangup_after_conference=false");
         this.sendArgs(media, deviceId, FsConstant.CONFERENCE, conference);
+    }
+
+    /**
+     * 表达式替换
+     *
+     * @param body   #{[name]}
+     * @param params
+     */
+    protected String expression(String body, Map<String, Object> params) {
+        ExpressionParser parser = new SpelExpressionParser();
+        TemplateParserContext parserContext = new TemplateParserContext();
+        String content = null;
+        try {
+            content = parser.parseExpression(body, parserContext).getValue(params, String.class);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return content;
     }
 }

@@ -222,7 +222,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
         List<String> list = callInfo.getDeviceList();
         list.remove(deviceId);
         fsListen.bridgeBreak(callInfo.getMediaHost(), list.get(0));
-        fsListen.holdPlay(callInfo.getMediaHost(), list.get(0), "/app/clpms/sounds/hold.wav");
+        fsListen.holdPlay(callInfo.getMediaHost(), list.get(0), "hold.wav");
     }
 
     @Override
@@ -313,7 +313,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
             return;
         }
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", agentInfo.getAgentKey(), callInfo.getCallId(), callerDisplay, caller);
-        fsListen.makeCall(routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceInfo.getDeviceId(), null);
+        fsListen.makeCall(routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceInfo.getDeviceId(), null, null);
 
         /**
          * 通知ws坐席请求外呼

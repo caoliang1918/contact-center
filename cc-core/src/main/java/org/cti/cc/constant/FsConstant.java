@@ -9,6 +9,8 @@ public class FsConstant {
 
     public final static String SPLIT = ",";
 
+    public static final String CO = ":";
+
     public final static String SET = "set";
 
     public final static String OK = "OK";
@@ -43,6 +45,8 @@ public class FsConstant {
 
     public final static String DETECT_SPEECH = "detect_speech";
 
+    public final static String UNIMRCP = "unimrcp:";
+
     public final static String EAVESDROP = "eavesdrop";
 
 
@@ -68,17 +72,21 @@ public class FsConstant {
 
     public final static String PLAYBACK_DELIMITER = "playback_delimiter=!";
 
+    public final static String SEND_SILENCE_WHEN_IDLE ="send_silence_when_idle=";
 
     public final static String PLAYBACK_TERMINATORS = "playback_terminators=none";
 
+    public final static String SPEAK = "speak";
 
     public final static String TTS_ENGINE = "tts_engine=unimrcp";
 
+    public final static String TTS_VOICE = "tts_voice=";
+
+    public final static String FIRE_ASR_EVENT = "fire_asr_events=true";
+
+    public final static String RESUME = "resume";
 
 
-
-
-    public final static String RE_SCHEDULE = "RE_SCHEDULE";
 
     public final static String API = "API";
 
@@ -142,7 +150,15 @@ public class FsConstant {
 
     public final static String DTMF = "DTMF";
 
+    public final static String DTMF_SEND = "DTMF_SEND";
+
+    public final static String SEND_DTMF = "SEND_DTMF";
+
     public final static String DEL_SCHEDULE = "DEL_SCHEDULE";
+
+    public final static String RE_SCHEDULE = "RE_SCHEDULE";
+
+    public final static String ADD_SCHEDULE = "ADD_SCHEDULE";
 
     public final static String CHANNEL_PROGRESS_MEDIA = "CHANNEL_PROGRESS_MEDIA";
 
@@ -153,6 +169,8 @@ public class FsConstant {
     public final static String RING_ASR = "RING_ASR";
 
     public final static String RELOADXML = "RELOADXML";
+
+    public final static String CHANNEL_HOLD = "CHANNEL_HOLD";
 
     public final static String CHANNEL_UNHOLD = "CHANNEL_UNHOLD";
 

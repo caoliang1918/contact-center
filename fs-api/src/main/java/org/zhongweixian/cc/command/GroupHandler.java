@@ -507,7 +507,7 @@ public class GroupHandler extends BaseHandler {
                 if (agentInfo == null) {
                     if (!callQueue.isPlay()) {
                         CallInfo callInfo = cacheService.getCallInfo(callQueue.getCallId());
-                        fsListen.playBack(callInfo.getMediaHost(), callQueue.getDeviceId(), "/app/clpms/sounds/queue.wav");
+                        fsListen.playfile(callInfo.getMediaHost(), callQueue.getDeviceId(), "queue.wav");
                         callQueue.setPlay(true);
                     }
                     continue;

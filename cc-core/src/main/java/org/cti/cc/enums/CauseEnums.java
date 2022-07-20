@@ -82,6 +82,8 @@ public enum CauseEnums {
      */
     VDN_ERROR(9503),
 
+    CALL_TIMEOUT(9504),
+
     /**
      * 参数错误
      */

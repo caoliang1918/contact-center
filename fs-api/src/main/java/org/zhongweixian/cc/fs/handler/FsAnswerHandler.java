@@ -163,7 +163,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         /**
          * 呼叫外线，设置超时时间
          */
-        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, callInfo.getCalledDisplay(), called, callInfo.getCallId(), deviceId, groupInfo.getCallTimeOut());
+        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, callInfo.getCalledDisplay(), called, callInfo.getCallId(), deviceId, groupInfo.getCallTimeOut(), null);
         timeoutTask(callInfo.getCallId(), deviceId, groupInfo.getCallTimeOut());
     }
 
@@ -280,7 +280,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
 
         if (StringUtils.isBlank(callInfo.getConference())) {
             //客户保持音
-            holdPlay(callInfo.getMediaHost(), nextCommand.getNextValue(), "/app/clpms/sounds/hold.wav");
+            holdPlay(callInfo.getMediaHost(), nextCommand.getNextValue(), "hold.wav");
             DeviceInfo consultDevice = callInfo.getDeviceInfoMap().get(nextCommand.getNextValue());
             consultDevice.setState(AgentState.HOLD.name());
         }
@@ -302,7 +302,7 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
 
         if (StringUtils.isBlank(callInfo.getConference())) {
             //客户保持音
-            holdPlay(callInfo.getMediaHost(), nextCommand.getNextValue(), "/app/clpms/sounds/hold.wav");
+            holdPlay(callInfo.getMediaHost(), nextCommand.getNextValue(), "hold.wav");
             DeviceInfo consultDevice = callInfo.getDeviceInfoMap().get(nextCommand.getNextValue());
             consultDevice.setState(AgentState.HOLD.name());
         }

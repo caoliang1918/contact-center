@@ -34,7 +34,7 @@ public class WsHoldHandler extends WsBaseHandler<WsHoldEvent> {
         List<String> list = new ArrayList<>(callInfo.getDeviceList());
         list.remove(deviceId);
         this.bridgeBreak(callInfo.getMediaHost(), callInfo.getCallId(), list.get(0));
-        this.holdPlay(callInfo.getMediaHost(), callInfo.getCallId(), list.get(0), "/app/clpms/sounds/hold.wav");
+        this.holdPlay(callInfo.getMediaHost(), callInfo.getCallId(), list.get(0), "hold.wav");
         agentInfo.setAgentState(AgentState.HOLD);
         sendMessage(event, new WsResponseEntity<>(event.getCmd(), event.getAgentKey()));
         callInfo.getDeviceInfoMap().get(deviceId).setState(AgentState.HOLD.name());

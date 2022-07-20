@@ -53,7 +53,7 @@ public class TransferCallHandler extends BaseHandler {
         transferCall.setTransferType(5);
         callInfo.getCallDetails().add(transferCall);
         callInfo.getNextCommands().add(new NextCommand(thisDeviceId, NextType.NEXT_CALL_BRIDGE, deviceId));
-        fsListen.makeCall(routeGetway, callInfo.getCaller(), callInfo.getCalled(), callInfo.getCallId(), deviceId, null);
+        fsListen.makeCall(routeGetway, callInfo.getCaller(), callInfo.getCalled(), callInfo.getCallId(), deviceId,null, null);
 
     }
 }

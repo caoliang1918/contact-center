@@ -192,7 +192,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
             return;
         }
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", event.getAgentKey(), callInfo.getCallId(), callerDisplay, caller);
-        fsListen.makeCall(routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceId, null);
+        fsListen.makeCall(routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceId, null, null);
 
 
         /**
@@ -281,7 +281,7 @@ public class WsMakeCallHandler extends WsBaseHandler<WsMakeCallEvent> {
             return;
         }
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", event.getAgentKey(), callInfo.getCallId(), callInfo.getCaller(), hiddenNumber(callInfo.getCalled()));
-        fsListen.makeCall(event.getMedia(), routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceId, null);
+        fsListen.makeCall(event.getMedia(), routeGetway, callerDisplay, caller, callInfo.getCallId(), deviceId, null, null);
 
         /**
          * 通知ws坐席请求外呼

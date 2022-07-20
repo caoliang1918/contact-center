@@ -64,7 +64,7 @@ public class WsInsertHandler extends WsBaseHandler<WsInsertEvent> {
         }
 
         logger.info("agent:{} makecall, callId:{}, caller:{} called:{}", event.getAgentKey(), callInfo.getCallId(), agentInfo.getAgentId(), caller);
-        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, agentInfo.getAgentId(), caller, callInfo.getCallId(), deviceInfo.getDeviceId(),null);
+        fsListen.makeCall(callInfo.getMediaHost(), routeGetway, agentInfo.getAgentId(), caller, callInfo.getCallId(), deviceInfo.getDeviceId(),null,null);
 
 
         deviceInfo.setState(AgentState.INSERT.name());

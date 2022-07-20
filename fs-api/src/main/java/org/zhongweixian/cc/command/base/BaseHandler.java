@@ -28,7 +28,7 @@ import org.zhongweixian.cc.fs.esl.transport.SendMsg;
 public class BaseHandler {
     protected Logger logger = LoggerFactory.getLogger(BaseHandler.class);
 
-    @Value("${record.path:/app/clpms/record/}")
+    @Value("${record.path:/usr/local/freeswitch}")
     protected String recordPath;
 
     @Autowired
@@ -94,7 +94,7 @@ public class BaseHandler {
      * @param playback
      */
     protected void playback(String media, String deviceId, String playback) {
-        fsListen.playBack(media, deviceId, playback);
+        fsListen.playfile(media, deviceId, playback);
     }
 
     /**
@@ -112,7 +112,7 @@ public class BaseHandler {
         SendMsg digits = new SendMsg(deviceId);
         digits.addCallCommand("execute");
         digits.addExecuteAppName("play_and_get_digits");
-        digits.addExecuteAppArg("3 3 2 5000 # /app/clpms/sounds/1295e6a58f9e2115332666.wav silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ 3000");
+        digits.addExecuteAppArg("3 3 2 5000 # 1295e6a58f9e2115332666.wav silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ 3000");
         fsListen.sendMessage(media, digits);
     }
 
@@ -137,7 +137,7 @@ public class BaseHandler {
         callInfo.getNextCommands().remove(nextCommand);
         switch (nextCommand.getNextType()) {
             case NEXT_QUEUE_PLAY:
-                fsListen.playBack(callInfo.getMediaHost(), deviceInfo.getDeviceId(), "/app/clpms/sounds/queue.wav");
+                fsListen.playfile(callInfo.getMediaHost(), deviceInfo.getDeviceId(), "queue.wav");
                 break;
 
             case NEXT_QUEUE_OVERFLOW_GROUP:

@@ -30,7 +30,7 @@ public class FsExecuteComplateHandler extends BaseEventHandler<FsExecuteComplate
                     logger.info("deviceId:{}, playback:{} success", event.getDeviceId(), event.getApplicationData());
                     //正常排队放音在放完之后，需要循环放音
                     if (callInfo.getQueueStartTime() != null && callInfo.getQueueEndTime() == null) {
-                        fsListen.playBack(callInfo.getMediaHost(), event.getDeviceId(), "/app/clpms/sounds/queue.wav");
+                        fsListen.playfile(callInfo.getMediaHost(), event.getDeviceId(), "queue.wav");
                         return;
                     }
 
