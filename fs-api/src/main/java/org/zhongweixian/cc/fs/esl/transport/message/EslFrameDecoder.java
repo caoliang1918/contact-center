@@ -19,10 +19,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
 import io.netty.handler.codec.TooLongFrameException;
-import org.zhongweixian.cc.fs.esl.transport.HeaderParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zhongweixian.cc.fs.esl.transport.HeaderParser;
 
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -51,11 +53,10 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State> {
     static final byte LF = 10;
 
     protected enum State {
-        READ_HEADER,
-        READ_BODY,
+        READ_HEADER, READ_BODY,
     }
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final int maxHeaderSize;
     private EslMessage currentMessage;
     private boolean treatUnknownHeadersAsBody = false;
@@ -63,9 +64,7 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State> {
     public EslFrameDecoder(int maxHeaderSize) {
         super(State.READ_HEADER);
         if (maxHeaderSize <= 0) {
-            throw new IllegalArgumentException(
-                    "maxHeaderSize must be a positive integer: " +
-                            maxHeaderSize);
+            throw new IllegalArgumentException("maxHeaderSize must be a positive integer: " + maxHeaderSize);
         }
         this.maxHeaderSize = maxHeaderSize;
     }
@@ -78,7 +77,8 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
         State state = state();
-        //logger.trace("decode() : state [{}]", state);
+
+        log.trace("decode() : state [{}]", state);
         switch (state) {
             case READ_HEADER:
                 if (currentMessage == null) {
@@ -91,7 +91,7 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State> {
                 while (!reachedDoubleLF) {
                     // this will read or fail
                     String headerLine = readToLineFeedOrFail(buffer, maxHeaderSize);
-                    //logger.debug("read header line [{}]", headerLine);
+                    log.debug("read header line [{}]", headerLine);
                     if (!headerLine.isEmpty()) {
                         // split the header line
                         String[] headerParts = HeaderParser.splitHeader(headerLine);
@@ -114,7 +114,7 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State> {
                 // have read all headers - check for content-length
                 if (currentMessage.hasContentLength()) {
                     checkpoint(State.READ_BODY);
-                    //logger.debug("have content-length, decoding body ..");
+                    log.debug("have content-length, decoding body ..");
                     //  force the next section
 
                     break;
@@ -135,11 +135,11 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State> {
                  */
                 int contentLength = currentMessage.getContentLength();
                 ByteBuf bodyBytes = buffer.readBytes(contentLength);
-                //logger.debug("read [{}] body bytes", bodyBytes.writerIndex());
+                //log.debug("read [{}] body bytes", bodyBytes.writerIndex());
                 // most bodies are line based, so split on LF
                 while (bodyBytes.isReadable()) {
                     String bodyLine = readLine(bodyBytes, contentLength);
-                    //logger.debug("read body line [{}]", bodyLine);
+                    log.debug("read body line [{}]", bodyLine);
                     currentMessage.addBodyLine(bodyLine);
                 }
 
@@ -149,7 +149,7 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State> {
                         bodyBytes = null;
                     }
                 } catch (Exception ex) {
-                    logger.error(ex.getMessage(), ex);
+                    log.error(ex.getMessage(), ex);
                 }
 
                 // end of message
@@ -166,41 +166,50 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State> {
         }
     }
 
-    private String readToLineFeedOrFail(ByteBuf buffer, int maxLineLegth) throws TooLongFrameException {
-        StringBuilder sb = new StringBuilder(64);
+    private String readToLineFeedOrFail(ByteBuf buffer, int maxLineLength) throws TooLongFrameException {
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream(maxLineLength);
+
         while (true) {
             // this read might fail
             byte nextByte = buffer.readByte();
             if (nextByte == LF) {
-                return sb.toString();
+                return byteArrayToString(bos);
             } else {
                 // Abort decoding if the decoded line is too large.
-                if (sb.length() >= maxLineLegth) {
-                    throw new TooLongFrameException(
-                            "ESL header line is longer than " + maxLineLegth + " bytes.");
+                if (bos.size() >= maxLineLength) {
+                    throw new TooLongFrameException("ESL header line is longer than " + maxLineLength + " bytes.");
                 }
-                sb.append((char) nextByte);
+                bos.write(nextByte);
             }
         }
     }
 
+    private String byteArrayToString(final ByteArrayOutputStream bos) {
+        try {
+            return bos.toString("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            log.error("unsupported UTF-8 encoding", e);
+        }
+        return null;
+    }
+
     private String readLine(ByteBuf buffer, int maxLineLength) throws TooLongFrameException {
-        StringBuilder sb = new StringBuilder(64);
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream(maxLineLength);
+
         while (buffer.isReadable()) {
             // this read should always succeed
             byte nextByte = buffer.readByte();
             if (nextByte == LF) {
-                return sb.toString();
+                return byteArrayToString(bos);
             } else {
                 // Abort decoding if the decoded line is too large.
-                if (sb.length() >= maxLineLength) {
-                    throw new TooLongFrameException(
-                            "ESL message line is longer than " + maxLineLength + " bytes.");
+                if (bos.size() >= maxLineLength) {
+                    throw new TooLongFrameException("ESL message line is longer than " + maxLineLength + " bytes.");
                 }
-                sb.append((char) nextByte);
+                bos.write(nextByte);
             }
         }
 
-        return sb.toString();
+        return byteArrayToString(bos);
     }
 }

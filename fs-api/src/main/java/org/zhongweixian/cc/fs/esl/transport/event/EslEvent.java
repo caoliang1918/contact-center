@@ -15,6 +15,7 @@
  */
 package org.zhongweixian.cc.fs.esl.transport.event;
 
+import org.cti.cc.constant.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zhongweixian.cc.fs.esl.transport.HeaderParser;
@@ -162,9 +163,9 @@ public class EslEvent {
                 String[] headerParts = HeaderParser.splitHeader(rawLine);
                 if (decodeEventHeaders) {
                     try {
-                        String decodedValue = URLDecoder.decode(headerParts[1], StandardCharsets.UTF_8);
-                        log.trace("decoded from: [{}]", headerParts[1]);
-                        log.trace("decoded   to: [{}]", decodedValue);
+                        String decodedValue = URLDecoder.decode(headerParts[1], Constant.UTF_8);
+                        //log.trace("decoded from: [{}]", headerParts[1]);
+                        //log.trace("decoded   to: [{}]", decodedValue);
                         eventHeaders.put(headerParts[0], decodedValue);
                     } catch (Exception e) {
                         log.warn("Could not URL decode [{}]", headerParts[1]);
