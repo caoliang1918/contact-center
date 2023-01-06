@@ -13,6 +13,7 @@
 
 ## 依赖的基础服务 
 * MySQL
+* openresty
 * redis
 * Rabbitmq
 * nacos
@@ -25,14 +26,18 @@
 ## 流程图
 
 <p align="center">
-    <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/fs-api.png" alt="流程图">
-    <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/freeswitch流程.png" alt="流程图">
-    <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/outbound.jpg" alt="流程图">
+    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/1.png" >
+    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/2.png" >
+    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/3.jpg" >
 </p>
 
 ## 前端展示
-   <img  src="https://raw.githubusercontent.com/caoliang1918/callcenter/main/fs-api/src/main/resources/static/admin.png" alt="管理端">
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/4.png" >
 
+## 监控
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/APM_1.png">
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/APM_2.png">
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/APM_3.png">
 
 
 ## 初衷
