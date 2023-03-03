@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<include>
+  <context name="default">
+
+    <extension name="sip_uri">
+      <condition field="destination_number" expression="^sip:(.*)$">
+	<action application="bridge" data="sofia/${use_profile}/$1"/>
+      </condition>
+    </extension>
+
+
+    <extension name="conf mod">
+      <condition field="destination_number" expression="^6070-moderator$">
+	<action application="answer"/>
+	<action application="set" data="conference_member_flags=moderator"/>
+	<action application="conference" data="$1-${domain_name}@video-mcu-stereo"/>
+      </condition>
+    </extension>
+
+
+    <extension name="video_record">
+      <condition field="destination_number" expression="^9193$">
+	<action application="answer"/>
+	<action application="record_fsv" data="$${temp_dir}/testrecord.fsv"/>
+      </condition>
+    </extension>
+
+    <extension name="video_playback">
+      <condition field="destination_number" expression="^9194$">
+	<action application="answer"/>
+	<action application="play_fsv" data="$${temp_dir}/testrecord.fsv"/>
+      </condition>
+    </extension>
+
+
+    <extension name="echo">
+      <condition field="destination_number" expression="^9196$">
+	<action application="answer"/>
+	<action application="echo"/>
+      </condition>
+    </extension>
+
+    <extension name="milliwatt">
+      <condition field="destination_number" expression="^9197$">
+	<action application="answer"/>
+	<action application="playback" data="{loops=-1}tone_stream://%(251,0,1004)"/>
+      </condition>
+    </extension>
+
+    <extension name="tone_stream">
+      <condition field="destination_number" expression="^9198$">
+	<action application="answer"/>
+	<action application="playback" data="{loops=10}tone_stream://path=${conf_dir}/tetris.ttml"/>
+      </condition>
+    </extension>
+
+
+
+    <!--
+    <extension name="refer">
+      <condition field="${sip_refer_to}">
+	<expression><![CDATA[<sip:${destination_number}@${domain_name}>]]></expression>
+      </condition>
+      <condition field="${sip_refer_to}">
+	<expression><![CDATA[<sip:(.*)@(.*)>]]></expression>
+	<action application="set" data="refer_user=$1"/>
+	<action application="set" data="refer_domain=$2"/>
+	<action application="info"/>
+	<action application="bridge" data="sofia/${use_profile}/${refer_user}@${refer_domain}"/>
+      </condition>
+    </extension>
+    -->
+    <extension name="ruri">
+      <condition field="destination_number" expression="^ruri$">
+	<action application="bridge" data="sofia/${ruri_profile}/${ruri_user}${regex(${sofia_contact(${ruri_contact})}|^[^\@]+(.*)|%1)}"/>
+      </condition>
+    </extension>
+
+    <extension name="7004">
+      <condition field="destination_number" expression="^7004$">
+	<action application="set" data="ruri_profile=default"/>
+	<action application="set" data="ruri_user=2000"/>
+	<action application="set" data="ruri_contact=1001@${domain_name}"/>
+	<action application="execute_extension" data="ruri"/>
+      </condition>
+    </extension>
+
+
+
+     <!--呼666000自动应答 -->
+     <extension name="666000_auto_answer">
+      <condition field="destination_number" expression="^(666000\d+)$">
+        <action application="set" data="call_timeout=80"/>
+        <action application="set" data="sip_exclude_contact=${network_addr}"/>
+        <action application="set" data="hangup_after_bridge=true"/>
+        <action application="set" data="continue_on_fail=NORMAL_TEMPORARY_FAILURE,USER_BUSY,NO_ANSWER,TIMEOUT,NO_ROUTE_DESTINATION"/>
+        <action application="set" data="continue_on_fail=true"/>
+        <action application="pre_answer"/>
+        <action application="answer"/>
+        <action application="sched_hangup" data="+180"/>
+        <action application="endless_playback" data="$${hold_music}"/>
+      </condition>
+     </extension>
+
+
+      <extension name="callin">
+           <condition field="destination_number" expression="^(.*)$" break="on-true">
+                <action application="park" data=""/>
+           </condition>
+      </extension>
+
+  </context>
+</include>

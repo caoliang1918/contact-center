@@ -1,0 +1,60 @@
+<include>
+  <context name="public">
+
+
+      <!-- 
+     <extension ="video">
+        <condition field="destination_number" expression="^(186\d+)$">
+         <action application="sleep" data="1000"/>
+         <action application="answer"/>
+         <action application="set" data="record_concat_video=true"/> 
+         <action application="record_session" data="av:///app/freeswitch/record/${strftime(%Y-%m-%d-%H-%M-%S)}.mp4"/>
+         <action application="bridge" data="sofia/external/sip:18612983191@172.17.0.2:6685"/>
+        </condition>
+     </extension>
+     -->
+
+
+     <extension name="97_auto_answer">
+      <condition field="destination_number" expression="^(97\d+)$">
+        <action application="set" data="call_timeout=30"/>
+        <action application="set" data="sip_exclude_contact=${network_addr}"/>
+        <action application="set" data="hangup_after_bridge=true"/>
+        <action application="set" data="continue_on_fail=NORMAL_TEMPORARY_FAILURE,USER_BUSY,NO_ANSWER,TIMEOUT,NO_ROUTE_DESTINATION"/>
+        <action application="set" data="continue_on_fail=true"/>
+        <action application="bridge" data="user/$1"/>
+        <action application="ring_ready"/>
+        <action application="sleep" data="2000"/>
+        <action application="answer"/>
+        <action application="sched_hangup" data="+50"/>
+        <action application="endless_playback" data="$${hold_music}"/>
+      </condition>
+     </extension>
+
+
+     <extension name="133_auto_answer">
+      <condition field="destination_number" expression="^(133\d+)$">
+        <action application="set" data="call_timeout=30"/>
+        <action application="set" data="sip_exclude_contact=${network_addr}"/>
+        <action application="set" data="hangup_after_bridge=true"/>
+        <action application="set" data="continue_on_fail=NORMAL_TEMPORARY_FAILURE,USER_BUSY,NO_ANSWER,TIMEOUT,NO_ROUTE_DESTINATION"/>
+        <action application="set" data="continue_on_fail=true"/>
+        <action application="set" data="ringback=file_string:123.wav"/>
+        <action application="bridge" data="user/$1"/>
+        <action application="ring_ready"/>
+        <action application="sleep" data="2000"/>
+        <action application="answer"/>
+        <action application="set" data="execute_on_answer='rst 172.17.0.2 16120'"/>
+        <action application="sched_hangup" data="+130"/>
+        <action application="endless_playback" data="$${hold_music}"/>
+      </condition>
+     </extension>
+
+      <extension name="callin">
+          <condition field="destination_number" expression="^(.*)$" break="on-true">
+              <action application="park" data=""/> 
+          </condition>
+     </extension>
+  </context>
+</include>
+

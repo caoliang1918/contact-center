@@ -1,0 +1,6 @@
+<configuration name="rst.conf" description="rst Configuration">
+  <settings>
+    <param name="udp-server-ip" value="172.17.0.2"/>
+    <param name="udp-server-port" value="9527"/> 
+   </settings>
+</configuration>

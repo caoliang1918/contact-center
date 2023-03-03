@@ -184,6 +184,7 @@ public class WebSocketHandler implements ConnectionListener {
     public void connect(Channel channel, Map<String, Object> map) throws Exception {
         logger.info("channel:{} connect success, params:{}", channel, JSON.toJSONString(map));
         if (!map.containsKey("token")) {
+            channel.close();
             return;
         }
         String token = (String) map.get("token");
