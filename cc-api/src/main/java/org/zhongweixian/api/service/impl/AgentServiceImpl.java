@@ -261,7 +261,7 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent> implements AgentSer
         List<Agent> agentList = agentMapper.selectListByMap(params);
 //        agentList.forEach(agent->agent.setCts(FormatDateUtil.stampToTime(Long.parseLong(e.getUpdateTime()))));
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(null, "坐席列表", ExcelType.XSSF), ExcelAgentEntity.class, agentList);
-        String filename = URLEncoder.encode("坐席列表.xlsx", StandardCharsets.UTF_8);
+        String filename = URLEncoder.encode("坐席列表.xlsx", Constant.UTF_8);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();

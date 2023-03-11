@@ -8,13 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDevice;
-import org.cti.cc.entity.PlatformLicense;
 import org.cti.cc.mapper.AgentMapper;
-import org.cti.cc.mapper.PlatformLicenseMapper;
 import org.cti.cc.mapper.PushLogMapper;
 import org.cti.cc.po.CompanyInfo;
 import org.cti.cc.util.DateTimeUtil;
-import org.cti.cc.util.LicenseUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -22,11 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.api.service.CallLogService;
@@ -56,12 +50,6 @@ public class TaskJobOfDay implements Job {
     @Value("${push.log.retain:5}")
     private Integer pushLogRetain;
 
-    @Value("${management.endpoints.web.base-path:}")
-    private String endpoindsPath;
-
-    @Value("${spring.datasource.url:}")
-    private String salt;
-
     @Value("${platform.v9.key:pykqu7qfhcs5gz87}")
     private String key;
 
@@ -70,9 +58,6 @@ public class TaskJobOfDay implements Job {
 
     @Autowired
     private PushLogMapper pushLogMapper;
-
-    @Autowired
-    private PlatformLicenseMapper platformLicenseMapper;
 
     @Autowired
     private AgentMapper agentMapper;
@@ -110,8 +95,6 @@ public class TaskJobOfDay implements Job {
 
         //删除录音
         deleteMinioRecord();
-
-        checkLicense();
     }
 
 
@@ -163,31 +146,5 @@ public class TaskJobOfDay implements Job {
             }
         }
         logger.info("delete minio record");
-    }
-
-    /**
-     * 检查授权
-     */
-    public void checkLicense() {
-        List<PlatformLicense> licenseList = platformLicenseMapper.selectListByMap(null);
-        Integer agentNum = agentMapper.agentNum(null);
-        for (PlatformLicense platformLicense : licenseList) {
-            try {
-                if (LicenseUtil.checkLicense(salt, platformLicense.getPlatformLicense(), key, agentNum)) {
-                    return;
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-
-        List<ServiceInstance> serviceInstances = discoveryClient.getInstances("fs-api");
-        for (ServiceInstance instance : serviceInstances) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", "Basic " + Base64Utils.encodeToString(("admin:" + instance.getServiceId()).getBytes()));
-            ResponseEntity<String> responseEntity = restTemplate.exchange("http://" + instance.getHost() + ":" + instance.getPort() + "/fs-api" + endpoindsPath + "/shutdown", HttpMethod.POST, new HttpEntity<>(headers), String.class);
-            logger.info("{} ", responseEntity.getBody());
-        }
     }
 }

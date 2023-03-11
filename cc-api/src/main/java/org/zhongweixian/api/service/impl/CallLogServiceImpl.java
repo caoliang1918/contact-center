@@ -162,7 +162,7 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
             }
             workbook = ExcelExportUtil.exportExcel(new ExportParams(null, direction, ExcelType.XSSF), ExcelInboundCallLogEntity.class, entityList);
         }
-        String filename = URLEncoder.encode(direction + Constant.UNDER_LINE + params.getOrDefault("companyId", 0) + Constant.UNDER_LINE + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", StandardCharsets.UTF_8);
+        String filename = URLEncoder.encode(direction + Constant.UNDER_LINE + params.getOrDefault("companyId", 0) + Constant.UNDER_LINE + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx", Constant.UTF_8);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;Filename=" + filename);
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream out = response.getOutputStream();

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -21,36 +20,21 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zhongweixian.api.configration.QuartzConfig;
-import org.zhongweixian.api.service.AdminService;
 
 
 @EnableDiscoveryClient
 @EnableEncryptableProperties
 @MapperScan("org.cti.cc.mapper")
 @SpringBootApplication
-public class CcApiApplication implements CommandLineRunner, ApplicationListener<ContextClosedEvent> {
+public class CcApiApplication implements  ApplicationListener<ContextClosedEvent> {
     private Logger logger = LoggerFactory.getLogger(CcApiApplication.class);
-
-    @Autowired
-    private AdminService adminService;
 
     @Autowired
     private QuartzConfig quartzConfig;
 
-    @Value("${cc.quartz.init:false}")
-    private Boolean quartzFlag;
-
-
     public static void main(String[] args) {
         SpringApplication.run(CcApiApplication.class, args);
     }
-
-    @Override
-    public void run(String... args) throws Exception {
-        adminService.initLicense();
-        quartzConfig.initJob(quartzFlag);
-    }
-
 
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {

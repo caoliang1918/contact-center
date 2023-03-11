@@ -95,10 +95,4 @@ public interface AdminService extends BaseService<AdminUser> {
      */
     Integer roleBindMenu(RoleMenuVo roleMenuVo);
 
-    /**
-     * 初始化license
-     */
-    void initLicense();
-
-
 }

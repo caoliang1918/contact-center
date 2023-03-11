@@ -5,14 +5,18 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constant;
-import org.cti.cc.entity.*;
+import org.cti.cc.entity.AdminMenu;
+import org.cti.cc.entity.AdminRole;
+import org.cti.cc.entity.AdminRoleMenu;
+import org.cti.cc.entity.AdminUser;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.mapper.*;
+import org.cti.cc.mapper.AdminMenuMapper;
+import org.cti.cc.mapper.AdminRoleMapper;
+import org.cti.cc.mapper.AdminUserMapper;
+import org.cti.cc.mapper.AgentMapper;
 import org.cti.cc.mapper.base.BaseMapper;
 import org.cti.cc.po.*;
 import org.cti.cc.util.AuthUtil;
-import org.cti.cc.util.DateTimeUtil;
-import org.cti.cc.util.LicenseUtil;
 import org.cti.cc.vo.AdminLogin;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +31,10 @@ import org.zhongweixian.api.vo.server.RoleMenuVo;
 import org.zhongweixian.api.vo.server.RoleVo;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by caoliang on 2022/1/7
@@ -52,10 +59,6 @@ public class AdminServiceImpl extends BaseServiceImpl<AdminUser> implements Admi
 
     @Autowired
     private AgentMapper agentMapper;
-
-    @Autowired
-    private PlatformLicenseMapper platformLicenseMapper;
-
 
     @Override
     public AdminLoginResult login(AdminLogin adminLogin) {
@@ -303,29 +306,6 @@ public class AdminServiceImpl extends BaseServiceImpl<AdminUser> implements Admi
             roleMenus.add(roleMenu);
         }
         return adminRoleMapper.batchInserRoleMenus(roleMenus);
-    }
-
-    @Override
-    public void initLicense() {
-        Integer agentNum = agentMapper.agentNum(null);
-        //默认30天授权，10坐席
-        List<PlatformLicense> licenseList = platformLicenseMapper.selectListByMap(null);
-        if (CollectionUtils.isEmpty(licenseList)) {
-            if (agentNum > 10) {
-                logger.error("license is error and agent num over 10");
-                System.exit(0);
-            }
-            PlatformLicense platformLicense = new PlatformLicense();
-            platformLicense.setCts(Instant.now().getEpochSecond());
-            platformLicense.setUts(Instant.now().getEpochSecond());
-            try {
-                String license = LicenseUtil.generateLicense(salt, key, 10, DateTimeUtil.addday(new Date(), 30));
-                platformLicense.setPlatformLicense(license);
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-            platformLicenseMapper.insertSelective(platformLicense);
-        }
     }
 
     /**

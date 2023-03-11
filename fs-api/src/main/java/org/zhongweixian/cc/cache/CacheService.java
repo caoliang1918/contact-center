@@ -5,10 +5,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constant;
-import org.cti.cc.entity.*;
-import org.cti.cc.mapper.*;
+import org.cti.cc.entity.Playback;
+import org.cti.cc.entity.RouteGetway;
+import org.cti.cc.entity.Station;
+import org.cti.cc.entity.VdnPhone;
+import org.cti.cc.mapper.AgentMapper;
+import org.cti.cc.mapper.PlaybackMapper;
+import org.cti.cc.mapper.RouteCallMapper;
+import org.cti.cc.mapper.VdnPhoneMapper;
 import org.cti.cc.po.*;
-import org.cti.cc.util.LicenseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +55,6 @@ public class CacheService {
 
     @Autowired
     private GroupService groupService;
-
-    @Autowired
-    private PlatformLicenseMapper platformLicenseMapper;
 
     @Autowired
     private RouteCallMapper routeCallMapper;
@@ -215,23 +217,6 @@ public class CacheService {
 
 
     public void initCompany() {
-        List<PlatformLicense> licenseList = platformLicenseMapper.selectListByMap(null);
-        Integer agentNum = agentMapper.agentNum(null);
-        Boolean result = false;
-        for (PlatformLicense platformLicense : licenseList) {
-            try {
-                if (LicenseUtil.checkLicense(salt, platformLicense.getPlatformLicense(), key, agentNum)) {
-                    result = true;
-                    break;
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-        if (!result) {
-            logger.error("================= license is error, app stop ====================");
-            System.exit(0);
-        }
         this.companyMap = companyService.initAll();
         if (companyMap.isEmpty()) {
             return;

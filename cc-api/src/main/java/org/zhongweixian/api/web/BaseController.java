@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.bouncycastle.util.encoders.UrlBase64;
 import org.bouncycastle.util.encoders.UrlBase64Encoder;
 import org.cti.cc.entity.AdminUser;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.UrlUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.zhongweixian.api.exception.BusinessException;
 import org.zhongweixian.api.service.*;
@@ -75,13 +77,6 @@ public class BaseController {
                 logger.info("query params:{}", query);
             } catch (Exception e) {
                 logger.error("query format to json error, {}", query);
-                query = URLDecoder.decode(query, Charset.defaultCharset());
-                try {
-                    params = mapper.readValue(query, Map.class);
-                } catch (Exception ex) {
-
-                }
-
             }
         }
         if (params == null) {
