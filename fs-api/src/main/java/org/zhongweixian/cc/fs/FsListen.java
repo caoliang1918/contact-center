@@ -5,19 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.channel.Channel;
 import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timeout;
-import io.netty.util.TimerTask;
 import org.apache.commons.lang3.StringUtils;
 import org.cti.cc.constant.Constant;
 import org.cti.cc.constant.FsConstant;
 import org.cti.cc.entity.RouteGetway;
 import org.cti.cc.entity.Station;
-import org.cti.cc.enums.CauseEnums;
-import org.cti.cc.enums.Direction;
 import org.cti.cc.enums.ErrorCode;
 import org.cti.cc.mapper.StationMapper;
 import org.cti.cc.po.CallInfo;
-import org.cti.cc.po.DeviceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +34,7 @@ import org.zhongweixian.cc.fs.esl.internal.IModEslApi;
 import org.zhongweixian.cc.fs.esl.transport.SendMsg;
 import org.zhongweixian.cc.fs.esl.transport.event.EslEvent;
 import org.zhongweixian.cc.fs.esl.transport.message.EslMessage;
-import org.zhongweixian.cc.fs.event.FsHangupEvent;
+import org.zhongweixian.cc.fs.event.FsHangupCompleteEvent;
 import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
 import org.zhongweixian.cc.util.RandomUtil;
 
@@ -301,7 +296,7 @@ public class FsListen {
                  * 一个callId挂机处理必须使用一个相同的线程
                  */
                 ExecutorService executorService = null;
-                if (formatEvent instanceof FsHangupEvent) {
+                if (formatEvent instanceof FsHangupCompleteEvent) {
                     CallInfo callInfo = cacheService.getCallInfo(formatEvent.getDeviceId());
                     if (callInfo == null) {
                         return;
@@ -441,7 +436,6 @@ public class FsListen {
             throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
         }
         logger.info("callId:{} makeCall routeGetway:{} display:{} called:{}, timeout{}, originateTimeout:{}", callId, routeGetway.getName(), display, called, timeout, originateTimeout);
-        callTimeOut(media, callId, deviceId, timeout);
         if (StringUtils.isBlank(media)) {
             throw new BusinessException(ErrorCode.MEDIA_NOT_AVALIABLE);
         }
@@ -502,54 +496,6 @@ public class FsListen {
         client.sendBackgroundApiCommand(FsConstant.ORIGINATE, builder.toString());
     }
 
-    /**
-     * 呼叫超时主动挂机
-     *
-     * @param callId
-     * @param deviceId
-     * @param timeouts
-     */
-    private void callTimeOut(String media, Long callId, String deviceId, Integer timeouts) {
-        hashedWheelTimer.newTimeout(new TimerTask() {
-            @Override
-            public void run(Timeout timeout) throws Exception {
-                CallInfo callInfo = cacheService.getCallInfo(callId);
-                if (callInfo == null || !callInfo.getDeviceList().contains(deviceId)) {
-                    return;
-                }
-                DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(deviceId);
-                if (deviceInfo != null && deviceInfo.getAnswerTime() == null) {
-                    logger.info("call:{} deviceId:{}  {}s timeout", callId, deviceId, timeouts);
-                    deviceInfo.setHangupCause(CauseEnums.CALL_TIMEOUT.name());
-                    callInfo.setNextCommands(null);
-
-                    if (callInfo.getAnswerTime() == null) {
-                        if (callInfo.getDirection() == Direction.OUTBOUND) {
-                            if (deviceInfo.getDeviceType() == 1) {
-                                callInfo.setHangupDir(3);
-                                callInfo.setHangupCode(CauseEnums.CALL_TIMEOUT.getHuangupCode());
-                                callInfo.setAnswerFlag(1);
-                            } else if (deviceInfo.getDeviceType() == 2) {
-                                callInfo.setHangupDir(3);
-                                callInfo.setHangupCode(CauseEnums.CALL_TIMEOUT.getHuangupCode());
-                                callInfo.setAnswerFlag(2);
-                            }
-                        } else if (callInfo.getDirection() == Direction.INBOUND) {
-                            if (deviceInfo.getDeviceType() == 1) {
-                                callInfo.setHangupDir(3);
-                                callInfo.setHangupCode(CauseEnums.CALL_TIMEOUT.getHuangupCode());
-                                callInfo.setAnswerFlag(3);
-                            } else if (deviceInfo.getDeviceType() == 2) {
-
-                            }
-                        }
-                    }
-                    cacheService.addCallInfo(callInfo);
-                    hangupCall(media, callId, deviceId);
-                }
-            }
-        }, timeouts, TimeUnit.SECONDS);
-    }
 
     /**
      * 桥接电话
@@ -666,15 +612,6 @@ public class FsListen {
         this.sendMessage(media, msg);
     }
 
-    /**
-     * @param media
-     * @param deviceId
-     */
-    public void reneg(String media, String deviceId) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(deviceId).append("  uuid_media_reneg " + deviceId + " = =G729,PCMU,PCMA");
-        fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
-    }
 
     /**
      * bgapi uuid_transfer  sswitch-301-60f4c396-59-85 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
@@ -709,7 +646,7 @@ public class FsListen {
      *
      * @param media
      * @param deviceId
-     * @param file     say:unimrcp:aimei:{Prosody-Volume=50,Prosody-Rate=0}您好，这里是广州农商行致电，感谢您的接听
+     * @param file
      */
     public void playfile(String media, String deviceId, String file) {
         SendMsg playfile = new SendMsg(deviceId);
@@ -720,118 +657,6 @@ public class FsListen {
         this.sendMessage(media, playfile);
     }
 
-    /**
-     * mrcp放音
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     * @param arg
-     */
-    public void mrcpSpeak(String media, Long callId, String deviceId, String engine, String voice, String arg) {
-        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_TERMINATORS);
-        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
-        if (StringUtils.isNotBlank(engine)) {
-            this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_ENGINE + FsConstant.CO + engine);
-        }
-        if (StringUtils.isNotBlank(voice)) {
-            this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_VOICE + voice);
-        }
-        this.sendArgs(media, deviceId, FsConstant.SPEAK, arg);
-    }
-
-    /**
-     * mrcp混合放音
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     * @param engine
-     * @param voice
-     * @param arg
-     */
-    public void mrcpPlay(String media, Long callId, String deviceId, String engine, String voice, String arg) {
-        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_TERMINATORS);
-        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
-        if (StringUtils.isNotBlank(engine)) {
-            this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_ENGINE + FsConstant.CO + engine);
-        }
-        if (StringUtils.isNotBlank(voice)) {
-            this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.TTS_VOICE + voice);
-        }
-        this.sendArgs(media, deviceId, FsConstant.PLAYBACK, arg);
-    }
-
-    /**
-     * 本地文件放音收号
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     * @param playfile
-     */
-    public void playfileAndDigits(String media, Long callId, String deviceId, String playfile, Integer min, Integer looptimes, Integer max, Integer digitstime, String terminator) {
-        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
-        this.sendArgs(media, deviceId, FsConstant.SET, "SEND_SILENCE_WHEN_IDLE" + 1400);
-        this.sendArgs(media, deviceId, FsConstant.PLAY_AND_GET_DIGITS, "" + min + " " + max + " " + looptimes + " 5000 " + terminator + " " + playfile + " silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ " + digitstime);
-    }
-
-    /**
-     * tts mrcp 放音收号
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     * @param playfile
-     * @param min
-     * @param looptimes
-     * @param max
-     * @param digitstime
-     * @param terminator
-     * @param ttsEngine
-     * @param ttsVoice
-     */
-    public void playfileAndDigitsWithMrcp(String media, Long callId, String deviceId, String playfile, Integer min, Integer looptimes, Integer max, Integer digitstime, String terminator, String ttsEngine, String ttsVoice) {
-        this.sendArgs(media, deviceId, FsConstant.SET, "tts_engine=" + ttsEngine);
-        this.sendArgs(media, deviceId, FsConstant.SET, "tts_voice=" + ttsVoice);
-        this.sendArgs(media, deviceId, FsConstant.SET, "SEND_SILENCE_WHEN_IDLE" + 1400);
-        this.sendArgs(media, deviceId, FsConstant.PLAY_AND_GET_DIGITS, "" + min + " " + max + " " + looptimes + " 5000 " + terminator + " " + playfile + " silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ " + digitstime);
-    }
-
-
-    /**
-     * http 放音收号
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     * @param playfile
-     * @param min
-     * @param looptimes
-     * @param max
-     * @param digitstime
-     * @param terminator
-     */
-    public void playfileAndDigitsWithHttp(String media, Long callId, String deviceId, String playfile, Integer min, Integer looptimes, Integer max, Integer digitstime, String terminator) {
-        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.PLAYBACK_DELIMITER);
-        this.sendArgs(media, deviceId, FsConstant.SET, "SEND_SILENCE_WHEN_IDLE" + 1400);
-        this.sendArgs(media, deviceId, FsConstant.PLAY_AND_GET_DIGITS, "" + min + " " + max + " " + looptimes + " 1000  q   " + playfile + " silence_stream://250 SYMWRD_DTMF_RETURN [\\*0-9#]+ " + digitstime);
-    }
-
-
-    /**
-     * 发送dtmf按键
-     *
-     * @param media
-     * @param deviceId
-     * @param dtmf
-     */
-    public void sendDtmf(String media, String deviceId, String dtmf) {
-        SendMsg sendMsg = new SendMsg(deviceId);
-        sendMsg.addCallCommand(FsConstant.EXECUTE);
-        sendMsg.addExecuteAppName(FsConstant.SEND_DTMF);
-        this.sendMessage(media, sendMsg);
-    }
 
     /**
      * 停止放音
@@ -846,86 +671,6 @@ public class FsListen {
         this.sendMessage(media, playback);
     }
 
-    /**
-     * 强插
-     * bgapi uuid_transfer  sswitch-1-61979250-679-22 -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline
-     *
-     * @param media
-     * @param deviceId
-     */
-    public void insert(String media, String deviceId) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(deviceId).append("  -both 'set:hangup_after_bridge=false,set:park_after_bridge=true,park:' inline ");
-        fsClient.get(media).sendBackgroundApiCommand(FsConstant.TRANSFER, builder.toString());
-    }
-
-    /**
-     * 监听
-     *
-     * @param media
-     * @param deviceId
-     * @param deviceId2
-     */
-    public void listen(String media, String deviceId, String deviceId2) {
-        this.sendArgs(media, deviceId, FsConstant.SET, "eavesdrop_bridge_aleg=true");
-        this.sendArgs(media, deviceId, FsConstant.SET, "eavesdrop_bridge_bleg=true");
-        this.sendArgs(media, deviceId, FsConstant.EAVESDROP, deviceId2);
-    }
-
-    /**
-     * 耳语
-     *
-     * @param media
-     * @param deviceId
-     * @param deviceId2
-     */
-    public void whisper(String media, String deviceId, String deviceId2) {
-        this.sendArgs(media, deviceId, FsConstant.SET, "eavesdrop_whisper_bleg=true");
-        this.sendArgs(media, deviceId, FsConstant.EAVESDROP, deviceId2);
-    }
-
-
-    /**
-     * 开启asr识别
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     * @param mrcp
-     * @param arg1
-     * @param arg2
-     */
-    public void startAsr(String media, Long callId, String deviceId, String mrcp, String arg1, String arg2) {
-        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.FIRE_ASR_EVENT);
-        this.sendArgs(media, deviceId, FsConstant.DETECT_SPEECH, FsConstant.UNIMRCP + mrcp + FsConstant.SPACE + arg1 + FsConstant.SPACE + arg2);
-    }
-
-    /**
-     * asr循环识别
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     */
-    public void asrResume(String media, Long callId, String deviceId) {
-        this.sendArgs(media, deviceId, FsConstant.SET, FsConstant.FIRE_ASR_EVENT);
-        this.sendArgs(media, deviceId, FsConstant.DETECT_SPEECH, FsConstant.RESUME);
-    }
-
-
-    /**
-     * 会议
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     * @param conference
-     */
-    public void joinConference(String media, Long callId, String deviceId, String conference) {
-        this.sendArgs(media, deviceId, FsConstant.SET, "conference_enter_sound=silence_stream://10");
-        this.sendArgs(media, deviceId, FsConstant.SET, "hangup_after_conference=false");
-        this.sendArgs(media, deviceId, FsConstant.CONFERENCE, conference);
-    }
 
     /**
      * 表达式替换

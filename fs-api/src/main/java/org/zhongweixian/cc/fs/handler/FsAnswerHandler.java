@@ -87,22 +87,6 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
                 consultCallout(callInfo, deviceInfo, nextCommand, event);
                 break;
 
-            case NEXT_INSERT_CALL:
-                //强插
-                callInfo.setConference(getDeviceId());
-                insertCall(callInfo, deviceInfo, nextCommand, event);
-                break;
-            case NEXT_LISTEN_CALL:
-                //班长监听
-                monitorListen(callInfo, deviceInfo, nextCommand, event);
-                break;
-
-            case NEXT_WHISPER_CALL:
-                //班长耳语
-                monitorWhisper(callInfo, deviceInfo, nextCommand, event);
-
-                break;
-
             default:
                 logger.warn("can not match command :{}, callId:{}", nextCommand.getNextType(), callInfo.getCallId());
                 break;
@@ -164,7 +148,6 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
          * 呼叫外线，设置超时时间
          */
         fsListen.makeCall(callInfo.getMediaHost(), routeGetway, callInfo.getCalledDisplay(), called, callInfo.getCallId(), deviceId, groupInfo.getCallTimeOut(), null);
-        timeoutTask(callInfo.getCallId(), deviceId, groupInfo.getCallTimeOut());
     }
 
 
@@ -308,113 +291,4 @@ public class FsAnswerHandler extends BaseEventHandler<FsAnswerEvent> {
         }
     }
 
-    /**
-     * 强插
-     *
-     * @param callInfo
-     * @param deviceInfo1
-     * @param nextCommand
-     * @param event
-     */
-    private void insertCall(CallInfo callInfo, DeviceInfo deviceInfo1, NextCommand nextCommand, FsAnswerEvent event) {
-        /**
-         * 1、原坐席迁出
-         * 2、所有设备拉入会议
-         */
-        bridgeBreak(callInfo.getMediaHost(), nextCommand.getDeviceId());
-        callInfo.getDeviceList().forEach(deviceId -> {
-            DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(deviceId);
-            deviceInfo.setConference(callInfo.getConference());
-            joinConference(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId(), callInfo.getConference());
-        });
-        WsCallEntity callEntity = new WsCallEntity();
-        callEntity.setCallId(callInfo.getCallId());
-        callEntity.setAgentState(AgentState.INSERT);
-        sendWsMessage(cacheService.getAgentInfo(deviceInfo1.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), callInfo.getAgentKey(), callEntity));
-    }
-
-    /**
-     * 监听通话
-     *
-     * @param callInfo
-     * @param deviceInfo
-     * @param nextCommand
-     * @param event
-     */
-    private void monitorListen(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, FsAnswerEvent event) {
-        //班长监听
-        fsListen.listen(callInfo.getMediaHost(), event.getDeviceId(), nextCommand.getDeviceId());
-
-        //录音
-        GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
-        if (groupInfo != null && groupInfo.getRecordType() == 1) {
-            //振铃录音
-            String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
-            super.record(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId(), record);
-            deviceInfo.setRecord(record);
-            deviceInfo.setRecordTime(event.getTimestamp() / 1000);
-        }
-
-        WsCallEntity callEntity = new WsCallEntity();
-        callEntity.setAgentState(AgentState.LISTEN);
-        callEntity.setCallId(callInfo.getCallId());
-        sendWsMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), callInfo.getAgentKey(), callEntity));
-    }
-
-    /**
-     * 班长耳语
-     *
-     * @param callInfo
-     * @param deviceInfo
-     * @param nextCommand
-     * @param event
-     */
-    private void monitorWhisper(CallInfo callInfo, DeviceInfo deviceInfo, NextCommand nextCommand, FsAnswerEvent event) {
-        //班长耳语
-        fsListen.whisper(callInfo.getMediaHost(), event.getDeviceId(), nextCommand.getDeviceId());
-
-        //录音
-        GroupInfo groupInfo = cacheService.getGroupInfo(callInfo.getGroupId());
-        if (groupInfo != null && groupInfo.getRecordType() == 1) {
-            //振铃录音
-            String record = recordPath + DateTimeUtil.format() + Constant.SK + callInfo.getCallId() + Constant.UNDER_LINE + deviceInfo.getDeviceId() + Constant.UNDER_LINE + Instant.now().getEpochSecond() + Constant.POINT + recordFile;
-            super.record(callInfo.getMediaHost(), callInfo.getCallId(), deviceInfo.getDeviceId(), record);
-            deviceInfo.setRecord(record);
-            deviceInfo.setRecordTime(event.getTimestamp() / 1000);
-        }
-
-        WsCallEntity callEntity = new WsCallEntity();
-        callEntity.setAgentState(AgentState.WHISPER);
-        callEntity.setCallId(callInfo.getCallId());
-        sendWsMessage(cacheService.getAgentInfo(deviceInfo.getAgentKey()), new WsResponseEntity<WsCallEntity>(AgentState.TALKING.name(), callInfo.getAgentKey(), callEntity));
-    }
-
-
-    /**
-     * 呼叫超时主动挂机
-     *
-     * @param callId
-     * @param deviceId
-     * @param timeouts
-     */
-    private void timeoutTask(Long callId, String deviceId, Integer timeouts) {
-        hashedWheelTimer.newTimeout(new TimerTask() {
-            @Override
-            public void run(Timeout timeout) throws Exception {
-                CallInfo callInfo = cacheService.getCallInfo(callId);
-                if (callInfo == null || !callInfo.getDeviceList().contains(deviceId)) {
-                    return;
-                }
-                DeviceInfo deviceInfo = callInfo.getDeviceInfoMap().get(deviceId);
-                if (deviceInfo != null && deviceInfo.getAnswerTime() == null) {
-                    logger.info("call:{} deviceId:{}  {}s timeout", callId, deviceId, timeouts);
-                    if (callInfo.getDirection() == Direction.OUTBOUND) {
-                        callInfo.setNextCommands(null);
-                        cacheService.addCallInfo(callInfo);
-                    }
-                    hangupCall(callInfo.getMediaHost(), callId, deviceId);
-                }
-            }
-        }, timeouts, TimeUnit.SECONDS);
-    }
 }

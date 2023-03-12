@@ -85,18 +85,6 @@ public abstract class BaseEventHandler<T extends FsBaseEvent> extends BaseHandle
         fsListen.bridgeBreak(mediaHost, deviceId);
     }
 
-    /**
-     * 加入会议
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     * @param conference
-     */
-    protected void joinConference(String media, Long callId, String deviceId, String conference) {
-        logger.info("callId:{}, deviceId:{} join conference :{} ", callId, deviceId, conference);
-        fsListen.joinConference(media, callId, deviceId, conference);
-    }
 
 
     /**

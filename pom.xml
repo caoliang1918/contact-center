@@ -21,7 +21,8 @@
         <module>cc-core</module>
         <module>cc-api</module>
         <module>fs-api</module>
-        <module>cc-ivr</module>
+        <!-- ivr程序运行有异常 -->
+        <!--<module>cc-ivr</module>-->
     </modules>
 
     <developers>

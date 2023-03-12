@@ -58,11 +58,6 @@ public enum EventType {
     /**
      *
      */
-    CHANNEL_HANGUP(1011, FsHangupEvent.class),
-
-    /**
-     *
-     */
     DTMF(1012, FsDtmfEvent.class),
 
     /**
@@ -176,20 +171,10 @@ public enum EventType {
     WS_CONSULT_STOP(2032, WsConsultStopEvent.class),
 
     /**
-     * 咨询多方
-     */
-    WS_CONSULT_PARTY(2033, WsConsultPartyEvent.class),
-
-    /**
      * 咨询转
      */
     WS_CONSULT_TRANSFER(2034, WsConsultTransferEvent.class),
 
-
-    /**
-     * 加入会议
-     */
-    WS_ROOM(2035, WsJoinRoomEvent.class),
     /**
      * 转接(包括转接坐席，技能组，IVR)
      */

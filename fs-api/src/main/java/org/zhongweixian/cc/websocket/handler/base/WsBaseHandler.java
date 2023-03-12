@@ -19,11 +19,11 @@ import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.command.GroupHandler;
 import org.zhongweixian.cc.configration.Handler;
 import org.zhongweixian.cc.fs.FsListen;
+import org.zhongweixian.cc.fs.esl.transport.message.EslMessage;
 import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
 import org.zhongweixian.cc.websocket.WebSocketHandler;
 import org.zhongweixian.cc.websocket.event.base.WsBaseEvent;
-import org.zhongweixian.cc.fs.esl.transport.message.EslMessage;
 import org.zhongweixian.cc.websocket.response.WsResponseEntity;
 
 /**
@@ -229,33 +229,6 @@ public abstract class WsBaseHandler<T extends WsBaseEvent> implements Handler<T>
         fsListen.holdPlay(media, deviceId, play);
     }
 
-    protected void joinConference(String media, Long callId, String deviceId, String conference) {
-        logger.info("callId:{}, deviceId:{} join conference :{} ", callId, deviceId, conference);
-        fsListen.joinConference(media, callId, deviceId, conference);
-    }
-
-    /**
-     * 强插
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     */
-    protected void insert(String media, Long callId, String deviceId) {
-        fsListen.insert(media, deviceId);
-    }
-
-
-    /**
-     * 取消保持
-     *
-     * @param media
-     * @param callId
-     * @param deviceId
-     */
-    protected void cancelHold(String media, Long callId, String deviceId) {
-        //fsListen.bridgeBreak(media, deviceId);
-    }
 
     /**
      * 随机生成deviceId
