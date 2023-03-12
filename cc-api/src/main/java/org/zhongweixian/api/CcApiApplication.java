@@ -26,20 +26,14 @@ import org.zhongweixian.api.configration.QuartzConfig;
 @EnableEncryptableProperties
 @MapperScan("org.cti.cc.mapper")
 @SpringBootApplication
-public class CcApiApplication implements  ApplicationListener<ContextClosedEvent> {
+public class CcApiApplication {
     private Logger logger = LoggerFactory.getLogger(CcApiApplication.class);
 
-    @Autowired
-    private QuartzConfig quartzConfig;
 
     public static void main(String[] args) {
         SpringApplication.run(CcApiApplication.class, args);
     }
 
-    @Override
-    public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
-        quartzConfig.stop();
-    }
 
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {

@@ -75,6 +75,11 @@ public class Agent implements Serializable {
     private Long groupId;
 
     /**
+     * 总机坐席
+     */
+    private Integer agentOnline;
+
+    /**
      * 话后自动空闲间隔时长
      */
     private Integer afterInterval;
@@ -220,6 +225,14 @@ public class Agent implements Serializable {
 
     public void setGroupId(Long groupId) {
         this.groupId = groupId;
+    }
+
+    public Integer getAgentOnline() {
+        return agentOnline;
+    }
+
+    public void setAgentOnline(Integer agentOnline) {
+        this.agentOnline = agentOnline;
     }
 
     public Integer getAfterInterval() {

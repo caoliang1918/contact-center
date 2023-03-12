@@ -165,7 +165,7 @@
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-scxml2</artifactId>
                 <version>${commons-scxml.version}</version>
@@ -174,7 +174,7 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-jexl</artifactId>
                 <version>${commons-jexl.version}</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>com.github.ulisesbocchio</groupId>
                 <artifactId>jasypt-spring-boot</artifactId>
