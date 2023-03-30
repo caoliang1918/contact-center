@@ -1,24 +1,29 @@
 package org.zhongweixian.web;
 
-import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timeout;
-import io.netty.util.TimerTask;
-import org.cti.cc.po.AgentInfo;
-import org.cti.cc.po.CallLogPo;
-import org.cti.cc.po.CommonResponse;
-import org.cti.cc.util.SnowflakeIdWorker;
+import org.apache.commons.lang3.StringUtils;
+import org.cti.cc.constant.Constant;
+import org.cti.cc.entity.Agent;
+import org.cti.cc.enums.ErrorCode;
+import org.cti.cc.po.*;
+import org.cti.cc.util.AuthUtil;
+import org.cti.cc.vo.AgentLoginVo;
 import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zhongweixian.cc.cache.CacheService;
+import org.zhongweixian.cc.exception.BusinessException;
+import org.zhongweixian.cc.service.AgentService;
 import org.zhongweixian.cc.service.CallCdrService;
+import org.zhongweixian.cc.util.BcryptUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by caoliang on 2020/8/24
@@ -33,7 +38,7 @@ public class IndexController {
     private CacheService cacheService;
 
     @Autowired
-    private SnowflakeIdWorker snowflakeIdWorker;
+    private AgentService agentService;
 
     @Autowired
     private CallCdrService callCdrService;
@@ -87,45 +92,74 @@ public class IndexController {
         return new CommonResponse();
     }
 
+
     /**
-     * 测试
+     * 5.1.1 坐席登录
      *
+     * @param agentLoginVo
      * @return
      */
-    //@GetMapping("timer")
-    public Long hashedWheelTimer() {
-        //设置每个格子是 100ms, 总共 102400 个格子
-        HashedWheelTimer hashedWheelTimer = new HashedWheelTimer(100, TimeUnit.MILLISECONDS, 102400);
-
-        Long now = Instant.now().toEpochMilli();
-        for (int i = 0; i < 10000; i++) {
-            logger.info("加入一个任务，ID = {}, time= {}", i, LocalDateTime.now());
-            hashedWheelTimer.newTimeout(new QueueTime(snowflakeIdWorker.nextId()), i, TimeUnit.SECONDS);
+    @PostMapping("login")
+    public CommonResponse<AgentInfo> login(HttpServletRequest request, @RequestBody @Validated AgentLoginVo agentLoginVo) {
+        AgentInfo agentInfo = agentService.getAgentInfo(agentLoginVo.getAgentKey());
+        if (agentInfo == null || agentInfo.getStatus() != 1) {
+            logger.warn("agentKey:{} is not exist", agentLoginVo.getAgentKey());
+            throw new BusinessException(ErrorCode.ACCOUNT_ERROR);
         }
-        logger.info("创建10000个任务耗时 {} 毫秒", Instant.now().toEpochMilli() - now);
-        return Instant.now().toEpochMilli() - now;
-    }
-
-    class QueueTime implements TimerTask {
-
-        private Long taskId;
-
-        public Long getTaskId() {
-            return taskId;
+        if (agentInfo.getCallId() != null && !agentLoginVo.isForceLogin()) {
+            logger.warn("agentKey:{} is talking , callId:{}", agentInfo.getAgentKey(), agentInfo.getCallId());
+            return new CommonResponse<>(ErrorCode.AGENT_CALLING);
         }
-
-        public void setTaskId(Long taskId) {
-            this.taskId = taskId;
+        //坐席所在的主技能组
+        GroupInfo groupInfo = cacheService.getGroupInfo(agentInfo.getGroupId());
+        if (groupInfo == null || groupInfo.getStatus() == 0 || CollectionUtils.isEmpty(agentInfo.getGroupIds())) {
+            logger.warn("agentKey:{} group is null", agentInfo.getAgentKey());
+            return new CommonResponse<>(ErrorCode.AGENT_GROUP_NULL);
         }
-
-        public QueueTime(Long taskId) {
-            this.taskId = taskId;
+        if (!BcryptUtil.checkPwd(agentLoginVo.getPasswd(), agentInfo.getPasswd())) {
+            logger.error("agent:{}  password {} is error", agentLoginVo.getAgentKey(), agentLoginVo.getPasswd());
+            return new CommonResponse<>(ErrorCode.ACCOUNT_ERROR);
+        }
+        //删除旧的token
+        if (!StringUtils.isBlank(agentInfo.getToken())) {
+            cacheService.deleteKey(Constant.AGENT_TOKEN + agentInfo.getToken());
         }
 
-        @Override
-        public void run(Timeout timeout) throws Exception {
-            logger.info("任务执行, callId = {}, time= {}", taskId, LocalDateTime.now());
-        }
+        CompanyInfo companyInfo = cacheService.getCompany(agentInfo.getCompanyId());
+        String token = AuthUtil.createToken(agentInfo.getAgentKey(), companyInfo.getId(), companyInfo.getSecretKey());
+        agentInfo.setBeforeState(AgentState.LOGOUT);
+        agentInfo.setBeforeTime(agentInfo.getLogoutTime());
+        agentInfo.setStateTime(agentInfo.getLoginTime());
+        agentInfo.setLoginTime(Instant.now().getEpochSecond());
+        agentInfo.setAgentState(AgentState.LOGIN);
+        agentInfo.setHost(request.getLocalAddr());
+        agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
+        agentInfo.setLoginType(agentLoginVo.getLoginType());
+        agentInfo.setWorkType(agentLoginVo.getWorkType());
+        agentInfo.setWebHook(agentLoginVo.getWebHook());
+        agentInfo.setToken(token);
+        cacheService.refleshAgentToken(agentInfo.getAgentKey(), token);
+        cacheService.addAgentInfo(agentInfo);
+        AgentInfo agentInfo1 = new AgentInfo();
+        BeanUtils.copyProperties(agentInfo, agentInfo1);
+        agentInfo1.setPasswd(null);
+        logger.info("agent:{} login success", agentInfo.getAgentKey());
+
+        /**
+         * 广播坐席状态
+         */
+        agentService.syncAgentStateMessage(agentInfo);
+
+        /**
+         * 坐席在线
+         */
+        Agent agent = new Agent();
+        agent.setId(agentInfo.getId());
+        agent.setCompanyId(agentInfo.getCompanyId());
+        agent.setState(1);
+        agent.setHost(request.getRemoteAddr());
+        agentService.editById(agent);
+        return new CommonResponse<AgentInfo>(agentInfo1);
     }
 
 

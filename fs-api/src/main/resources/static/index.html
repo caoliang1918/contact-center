@@ -34,14 +34,34 @@
             margin: 0;
         }
     </style>
-    <script type="application/javascript">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
 
-        var socket = null;
-        var token = '7b0e44fe7b05a5cd15edac64ba8892a395c62b30a63045bb500ab9730371cdfa';
+    <script type="application/javascript">
+        var token = '';
+        var passwd = sha256('123456');
+        var data = {
+            "agentKey": "1001@test",
+            "passwd": passwd,
+            "loginType": "1"
+        }
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                var jsonObj = JSON.parse(this.responseText);
+                if ('0' == jsonObj.code) {
+                    token = jsonObj.data.token;
+                    init();
+                }
+            }
+        }
+        xmlHttp.open('POST', '/fs-api/index/login', true);
+        xmlHttp.setRequestHeader('Content-Type', 'application/json')
+        xmlHttp.send(JSON.stringify(data));
 
         function init() {
             var obj = document.getElementById('ws');
-            obj.value = "ws://" + window.location.hostname + ":7250/ws?token=" + token;
+            obj.value = "ws://" + window.location.hostname + ":7250/ws?token=" + token + "";
         }
 
         function setConnected(connected) {
@@ -65,6 +85,15 @@
                 socket = new WebSocket(target);
                 socket.onmessage = function (event) {
                     log('Received: ' + event.data);
+                    var data = JSON.parse(event.data);
+                    var type = data.type;
+                    if (type == 'pong') {
+                        return;
+                    }
+                    console.log(data);
+                    if (type == 'AFTER') {
+                        echo("{'cmd':'READY','sequence':'" + Date.now() + "'}");
+                    }
                 };
                 var timer;
                 socket.onopen = function (event) {
@@ -148,7 +177,7 @@
         }, false);
     </script>
 </head>
-<body onload="init()">
+<body>
 <div class="noscript"><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websockets rely on
     Javascript being enabled. Please enable
     Javascript and reload this page!</h2></div>
@@ -173,15 +202,17 @@
         <div>
             <button id="READY" onclick=echo("{'cmd':'READY','sequence':'1604584634704'}")> READY</button>
             <button id="NOT_READY" onclick=echo("{'cmd':'NOT_READY','sequence':'1604584634704'}")> NOT_READY</button>
-            <button id="ANSWER" onclick=echo("{'cmd':'ANSWER'}")> 应答</button>
-            <button id="HANGUP_CALL" onclick=echo("{'cmd':'HANGUP_CALL'}")> 挂机</button>
         </div>
 
         <div>
-            <textarea id="calloutText" style="width: 500px;height: 55px">{ "cmd":"MAKE_CALL", "display":"", "called":"13300001234", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"},"uuid1":"123456"}</textarea>
+            <textarea id="makeCallText" style="width: 500px;height: 55px">{ "cmd":"MAKE_CALL", "display":"", "called":"13300001234", "callType":"OUTBOUNT_CALL", "followData":{"autoAnswer":"true"},"uuid1":"123456"}</textarea>
         </div>
         <div>
-            <button id="callout" onclick="echo(document.getElementById('calloutText').value);"> 外呼</button>
+            <button id="callout" onclick="echo(document.getElementById('makeCallText').value);"> 外呼</button>
+            <button id="ANSWER" onclick=echo("{'cmd':'ANSWER'}")> 应答</button>
+            <button id="HANGUP_CALL" onclick=echo("{'cmd':'HANGUP_CALL'}")> 挂机</button>
+            <button id="userdate" onclick=echo("{'cmd':'FOLLOWDATA','followData':'{\"a\":\"b\"}'}")> 设置随路数据</button>
+            <button id="asr" onclick=echo("{'cmd':'ASR'}")> 开启语音识别</button>
         </div>
         </br>
 

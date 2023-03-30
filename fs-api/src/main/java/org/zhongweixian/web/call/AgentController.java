@@ -1,28 +1,22 @@
 package org.zhongweixian.web.call;
 
-import org.apache.commons.lang3.StringUtils;
-import org.cti.cc.constant.Constant;
-import org.cti.cc.entity.Agent;
 import org.cti.cc.enums.ErrorCode;
-import org.cti.cc.po.*;
-import org.cti.cc.util.AuthUtil;
-import org.cti.cc.vo.AgentLoginVo;
+import org.cti.cc.po.AgentInfo;
+import org.cti.cc.po.AgentState;
+import org.cti.cc.po.CommonResponse;
 import org.cti.cc.vo.AgentPreset;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.zhongweixian.cc.exception.BusinessException;
-import org.zhongweixian.cc.util.BcryptUtil;
 import org.zhongweixian.cc.websocket.event.WsLogoutEvent;
 import org.zhongweixian.cc.websocket.event.WsNotReadyEvent;
 import org.zhongweixian.cc.websocket.event.WsReadyEvent;
 import org.zhongweixian.web.base.BaseController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.time.Instant;
 
 /**
  * Created by caoliang on 2020/12/17
@@ -48,75 +42,6 @@ public class AgentController extends BaseController {
             return null;
         }
         return (AgentInfo) authentication.getPrincipal();
-    }
-
-    /**
-     * 5.1.1 坐席登录
-     *
-     * @param agentLoginVo
-     * @return
-     */
-    @PostMapping("login")
-    public CommonResponse<AgentInfo> login(HttpServletRequest request, @RequestBody @Validated AgentLoginVo agentLoginVo) {
-        AgentInfo agentInfo = agentService.getAgentInfo(agentLoginVo.getAgentKey());
-        if (agentInfo == null || agentInfo.getStatus() != 1) {
-            logger.warn("agentKey:{} is not exist", agentLoginVo.getAgentKey());
-            throw new BusinessException(ErrorCode.ACCOUNT_ERROR);
-        }
-        if (agentInfo.getCallId() != null && !agentLoginVo.isForceLogin()) {
-            logger.warn("agentKey:{} is talking , callId:{}", agentInfo.getAgentKey(), agentInfo.getCallId());
-            return new CommonResponse<>(ErrorCode.AGENT_CALLING);
-        }
-        //坐席所在的主技能组
-        GroupInfo groupInfo = cacheService.getGroupInfo(agentInfo.getGroupId());
-        if (groupInfo == null || groupInfo.getStatus() == 0 || CollectionUtils.isEmpty(agentInfo.getGroupIds())) {
-            logger.warn("agentKey:{} group is null", agentInfo.getAgentKey());
-            return new CommonResponse<>(ErrorCode.AGENT_GROUP_NULL);
-        }
-        if (!BcryptUtil.checkPwd(agentLoginVo.getPasswd(), agentInfo.getPasswd())) {
-            logger.error("agent:{}  password {} is error", agentLoginVo.getAgentKey(), agentLoginVo.getPasswd());
-            return new CommonResponse<>(ErrorCode.ACCOUNT_ERROR);
-        }
-        //删除旧的token
-        if (!StringUtils.isBlank(agentInfo.getToken())) {
-            cacheService.deleteKey(Constant.AGENT_TOKEN + agentInfo.getToken());
-        }
-
-        CompanyInfo companyInfo = cacheService.getCompany(agentInfo.getCompanyId());
-        String token = AuthUtil.createToken(agentInfo.getAgentKey(), companyInfo.getId(), companyInfo.getSecretKey());
-        agentInfo.setBeforeState(AgentState.LOGOUT);
-        agentInfo.setBeforeTime(agentInfo.getLogoutTime());
-        agentInfo.setStateTime(agentInfo.getLoginTime());
-        agentInfo.setLoginTime(Instant.now().getEpochSecond());
-        agentInfo.setAgentState(AgentState.LOGIN);
-        agentInfo.setHost(request.getLocalAddr());
-        agentInfo.setGroupIds(agentService.getAgentGroups(agentInfo.getId()));
-        agentInfo.setLoginType(agentLoginVo.getLoginType());
-        agentInfo.setWorkType(agentLoginVo.getWorkType());
-        agentInfo.setWebHook(agentLoginVo.getWebHook());
-        agentInfo.setToken(token);
-        cacheService.refleshAgentToken(agentInfo.getAgentKey(), token);
-        cacheService.addAgentInfo(agentInfo);
-        AgentInfo agentInfo1 = new AgentInfo();
-        BeanUtils.copyProperties(agentInfo, agentInfo1);
-        agentInfo1.setPasswd(null);
-        logger.info("agent:{} login success", agentInfo.getAgentKey());
-
-        /**
-         * 广播坐席状态
-         */
-        agentService.syncAgentStateMessage(agentInfo);
-
-        /**
-         * 坐席在线
-         */
-        Agent agent = new Agent();
-        agent.setId(agentInfo.getId());
-        agent.setCompanyId(agentInfo.getCompanyId());
-        agent.setState(1);
-        agent.setHost(request.getRemoteAddr());
-        agentService.editById(agent);
-        return new CommonResponse<AgentInfo>(agentInfo1);
     }
 
 
