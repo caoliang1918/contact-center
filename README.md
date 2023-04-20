@@ -45,6 +45,6 @@
 
 ---
 ## 演示环境
-   管理端地址：https://dev.voice9.com/admin  admin 12345678 \
-   座席端地址：https://dev.voice9.com/agent  1001@test 12345678，账号1001-1003都可以使用 \
+   管理端地址：https://dev.voice9.com/admin  admin q11111111 \
+   座席端地址：https://dev.voice9.com/agent  1001@test 123456 \
    文档地址:  https://voice9.com/docs.html
