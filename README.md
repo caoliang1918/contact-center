@@ -42,6 +42,7 @@
 ## 初衷
    开源这部分代码，是想让Java开发者很好的入门呼叫中心这个行业；这是我们的测试环境信息(请不要修改账号密码)，可以拨打13300010004，坐席这边会听到彩铃音；注意：webrtc方式登录需要电脑有耳机和耳麦。
    有不懂的可以加我微信:caoliang1918
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/8.jpeg">
 
 ---
 ## 演示环境
