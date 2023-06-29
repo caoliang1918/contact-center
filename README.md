@@ -25,20 +25,17 @@
 
 
 ## 流程图
-<p>
-    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/1.png" >
-    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/2.png" >
-    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/3.jpg" >
-</p>
+   ![process](fs-api/src/main/resources/static/images/1.png)
+   ![process](fs-api/src/main/resources/static/images/2.png)
+   ![process](fs-api/src/main/resources/static/images/3.jpg)
 
 ## 前端展示
-   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/4.png" >
+   ![process](fs-api/src/main/resources/static/images/4.png)
 
 ## 监控
-   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/5.png">
-   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/6.png">
-   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/7.png">
-
+   ![process](fs-api/src/main/resources/static/images/5.png)
+   ![process](fs-api/src/main/resources/static/images/6.png)
+   ![process](fs-api/src/main/resources/static/images/7.png)
 
 ## 初衷
    开源这部分代码，是想让Java开发者很好的入门呼叫中心这个行业；这是我们的测试环境信息(请不要修改账号密码)，可以拨打13300010004，坐席这边会听到彩铃音；注意：webrtc方式登录需要电脑有耳机和耳麦。\
