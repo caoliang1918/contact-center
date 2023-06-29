@@ -21,7 +21,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.zhongweixian.cc.EventType;
 import org.zhongweixian.cc.cache.CacheService;
 import org.zhongweixian.cc.configration.Handler;
@@ -34,6 +33,7 @@ import org.zhongweixian.cc.fs.esl.internal.IModEslApi;
 import org.zhongweixian.cc.fs.esl.transport.SendMsg;
 import org.zhongweixian.cc.fs.esl.transport.event.EslEvent;
 import org.zhongweixian.cc.fs.esl.transport.message.EslMessage;
+import org.zhongweixian.cc.fs.event.DetectedSpeechEvent;
 import org.zhongweixian.cc.fs.event.FsHangupCompleteEvent;
 import org.zhongweixian.cc.fs.event.base.FsBaseEvent;
 import org.zhongweixian.cc.util.RandomUtil;
@@ -224,9 +224,6 @@ public class FsListen {
                     case FsConstant.CALL_UPDATE:
                         break;
                     case FsConstant.DETECTED_SPEECH:
-                        if (!CollectionUtils.isEmpty(event.getEventBodyLines())) {
-                            event.getEventHeaders().put(FsConstant.DETECTED_SPEECH, JSON.toJSONString((event.getEventBodyLines())));
-                        }
                         break;
                     case FsConstant.CHANNEL_EXECUTE:
                         break;
@@ -289,8 +286,11 @@ public class FsListen {
                 if (formatEvent == null) {
                     return;
                 }
-                formatEvent.setRemoteAddress(host + ":" + port);
+                formatEvent.setRemoteAddress(host + Constant.CO + port);
                 formatEvent.setLocalAddress(localAddress);
+                if (formatEvent instanceof DetectedSpeechEvent) {
+                    ((DetectedSpeechEvent) formatEvent).setSpeech(event.getEventBodyLines());
+                }
 
                 /**
                  * 一个callId挂机处理必须使用一个相同的线程

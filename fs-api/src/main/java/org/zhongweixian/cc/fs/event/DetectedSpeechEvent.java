@@ -14,8 +14,6 @@ public class DetectedSpeechEvent extends FsBaseEvent {
     @JSONField(name = "Speech-Type")
     private String type;
 
-
-    @JSONField(name = "DETECTED_SPEECH")
     private List<String> speech;
 
     public String getType() {
