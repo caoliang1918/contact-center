@@ -10,6 +10,7 @@
 * 支持rest接口接入语音平台
 * 支持http ivr接入
 * 支持http NLP响应
+* 任务外呼
 
 ## 依赖的基础服务 
 * MySQL
@@ -25,18 +26,18 @@
 
 ## 流程图
 <p>
-    <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/1.png" >
-    <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/2.png" >
-    <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/3.jpg" >
+    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/1.png" >
+    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/2.png" >
+    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/3.jpg" >
 </p>
 
 ## 前端展示
-   <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/4.png" >
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/4.png" >
 
 ## 监控
-   <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/5.png">
-   <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/6.png">
-   <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/7.png">
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/5.png">
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/6.png">
+   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/7.png">
 
 
 ## 初衷
