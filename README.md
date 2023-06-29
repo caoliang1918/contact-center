@@ -24,19 +24,19 @@
 
 
 ## 流程图
-<p align="center">
-    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/1.png" >
-    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/2.png" >
-    <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/3.jpg" >
+<p>
+    <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/1.png" >
+    <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/2.png" >
+    <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/3.jpg" >
 </p>
 
 ## 前端展示
-   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/4.png" >
+   <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/4.png" >
 
 ## 监控
-   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/5.png">
-   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/6.png">
-   <img  src="https://voice9.oss-cn-hangzhou.aliyuncs.com/images/7.png">
+   <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/5.png">
+   <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/6.png">
+   <img  src="\\voice9.oss-cn-hangzhou.aliyuncs.com/images/7.png">
 
 
 ## 初衷
