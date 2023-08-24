@@ -31,19 +31,17 @@
 
 ## 前端展示
    ![process](fs-api/src/main/resources/static/images/4.png)
+   ![process](fs-api/src/main/resources/static/images/5.png)
 
 ## 监控
-   ![process](fs-api/src/main/resources/static/images/5.png)
    ![process](fs-api/src/main/resources/static/images/6.png)
    ![process](fs-api/src/main/resources/static/images/7.png)
-
-## 初衷
-   开源这部分代码，是想让Java开发者很好的入门呼叫中心这个行业；这是我们的测试环境信息(请不要修改账号密码)，可以拨打13300010004，坐席这边会听到彩铃音；注意：webrtc方式登录需要电脑有耳机和耳麦。\
-   商务合作：13067968908 \
-   技术咨询：caoliang1918
 
 ---
 ## 演示环境
    管理端地址：https://dev.voice9.com/admin  admin q11111111 \
    座席端地址：https://dev.voice9.com/agent  1001@test 123456 \
    文档地址:  https://voice9.com/docs.html
+   
+## 申请使用
+   ![process](fs-api/src/main/resources/static/images/9.png)

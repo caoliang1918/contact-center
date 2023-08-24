@@ -2,11 +2,14 @@ package org.zhongweixian.cc.fs.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClientBuilder;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.cti.cc.constant.Constant;
 import org.cti.cc.entity.CallDevice;
 import org.cti.cc.entity.CallLog;
 import org.cti.cc.po.CallInfo;
@@ -16,6 +19,7 @@ import org.cti.cc.po.DeviceInfo;
 import org.cti.cc.util.DateTimeUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -40,6 +44,8 @@ public class FsHangupCompleteHandler extends BaseEventHandler<FsHangupCompleteEv
 
     @Autowired
     private MinioClient minioClient;
+
+    private OSS ossClient;
 
 
     @Override
@@ -69,7 +75,7 @@ public class FsHangupCompleteHandler extends BaseEventHandler<FsHangupCompleteEv
         if (deviceInfo.getRecordStartTime() != null) {
             deviceInfo.setRecordTime(deviceInfo.getEndTime() - deviceInfo.getRecordStartTime());
         }
-        logger.info("callId:{} deviceId:{} deviceType:{} display:{} called:{} sipStatus:{} sipProtocol:{} hangupCause:{}", callInfo.getCallId(), deviceInfo.getDeviceId(), deviceInfo.getDeviceType(), deviceInfo.getDisplay(), deviceInfo.getCalled(), event.getSipStatus(), event.getSipProtocol(),  event.getHangupCause());
+        logger.info("callId:{} deviceId:{} deviceType:{} display:{} called:{} sipStatus:{} sipProtocol:{} hangupCause:{}", callInfo.getCallId(), deviceInfo.getDeviceId(), deviceInfo.getDeviceType(), deviceInfo.getDisplay(), deviceInfo.getCalled(), event.getSipStatus(), event.getSipProtocol(), event.getHangupCause());
         /**
          * 上传录音
          */
@@ -84,6 +90,14 @@ public class FsHangupCompleteHandler extends BaseEventHandler<FsHangupCompleteEv
                 ObjectWriteResponse writeResponse = minioClient.putObject(PutObjectArgs.builder().stream(new ByteArrayInputStream(responseEntity.getBody()), responseEntity.getBody().length, -1).object(fileName).bucket("cc-record").build());
                 logger.info("callId:{}, record fileName:{}, minioTag:{}", deviceInfo.getCallId(), fileName, writeResponse.etag());
                 deviceInfo.setRecord("/cc-record" + fileName);
+
+                /**
+                 * oss
+                 */
+                String record2 = aliyunOssPut(callInfo, deviceInfo, responseEntity.getBody());
+                if (StringUtils.isNotBlank(record2)) {
+                    callInfo.setRecord(record2);
+                }
             } catch (Exception e) {
                 logger.error("url:" + url + e.getMessage(), e);
             }
@@ -181,5 +195,43 @@ public class FsHangupCompleteHandler extends BaseEventHandler<FsHangupCompleteEv
         } catch (Exception e) {
             logger.error("push call:{} to {} error, payload:{}", callInfo.getCallId(), notifyUrl, payload);
         }
+    }
+
+    @Value("${voice9.oss.aliyun.endpoint:}")
+    private String aliyunOssEndpoint;
+
+    @Value("${voice9.oss.aliyun.accessKeyId:}")
+    private String aliyunOssAccessKeyId;
+
+    @Value("${voice9.oss.aliyun.secretAccessKey:}")
+    private String aliyunOssSecretAccessKey;
+
+    /**
+     * 阿里云oss存储bucket
+     */
+    @Value("${voice9.oss.aliyun.bucket:}")
+    private String aliyunOssBucket;
+
+    /**
+     * 阿里云oss
+     *
+     * @param callInfo
+     * @param deviceInfo
+     * @param bytes
+     */
+    private String aliyunOssPut(CallInfo callInfo, DeviceInfo deviceInfo, byte[] bytes) {
+        if (StringUtils.isBlank(aliyunOssBucket) || StringUtils.isBlank(aliyunOssAccessKeyId)) {
+            return null;
+        }
+        //定义文件名称
+        String objectName = "";
+        if (ossClient == null) {
+            ossClient = new OSSClientBuilder().build(aliyunOssEndpoint, aliyunOssAccessKeyId, aliyunOssSecretAccessKey);
+        }
+
+        //threadPoolExecutor.execute(() -> {
+            ossClient.putObject(aliyunOssBucket, objectName, new ByteArrayInputStream(bytes));
+        //});
+        return Constant.SK + objectName;
     }
 }

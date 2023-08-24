@@ -113,6 +113,11 @@ public class CallInfo implements Serializable {
     private String record;
 
     /**
+     * 第三方存储地址
+     */
+    private String record2;
+
+    /**
      * 录音开始时间
      */
     private Long recordTime;
@@ -407,6 +412,14 @@ public class CallInfo implements Serializable {
 
     public void setRecord(String record) {
         this.record = record;
+    }
+
+    public String getRecord2() {
+        return record2;
+    }
+
+    public void setRecord2(String record2) {
+        this.record2 = record2;
     }
 
     public Long getRecordTime() {

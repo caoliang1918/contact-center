@@ -165,6 +165,11 @@
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>3.17.1</version>
+            </dependency>
             <!--<dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-scxml2</artifactId>
