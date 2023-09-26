@@ -17,14 +17,6 @@ public interface CallLogService extends BaseService<CallLog> {
 
 
     /**
-     * 按月分表
-     *
-     * @param month 当前月份
-     */
-    void subTable(String month);
-
-
-    /**
      * 分页
      *
      * @param params

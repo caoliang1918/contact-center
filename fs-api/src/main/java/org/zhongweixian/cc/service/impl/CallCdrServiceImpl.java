@@ -86,20 +86,6 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     }
 
     @Override
-    public void subTable(String month) {
-        // cc_call_log
-        callLogMapper.createNewTable(month);
-        //cc_call_device
-        callDeviceMapper.createNewTable(month);
-        //cc_call_detail
-        callDetailMapper.createNewTable(month);
-        //cc_call_dtmf
-        callDtmfMapper.createNewTable(month);
-        //cc_agent_state_log
-        agentStateLogMapper.createNewTable(month);
-    }
-
-    @Override
     public int saveCallDevice(CallDevice callDevice) {
         if (callCdrPressure == 0) {
             callDeviceMapper.insertSelective(callDevice);
@@ -163,7 +149,7 @@ public class CallCdrServiceImpl extends BaseServiceImpl<CallLog> implements Call
     @Override
     public CallLogPo getCall(Long companyId, Long callId) {
         Long time = DateTimeUtil.getCallTime(callId);
-        CallLogPo callLogPo = callLogMapper.getCall(companyId, callId, DateTimeUtil.isToday(time) ? StringUtils.EMPTY : DateTimeUtil.getMonth(time));
+        CallLogPo callLogPo = callLogMapper.getCall(companyId, callId, null);
         if (callLogPo != null) {
             callLogPo.setOssServer(ossServer);
         }

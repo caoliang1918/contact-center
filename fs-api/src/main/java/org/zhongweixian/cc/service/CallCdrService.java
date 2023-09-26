@@ -17,8 +17,6 @@ import java.util.Map;
  */
 public interface CallCdrService extends BaseService<CallLog> {
 
-    void subTable(String month);
-
     /**
      * @param callDevice
      * @return

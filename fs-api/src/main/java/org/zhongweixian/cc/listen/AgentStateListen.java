@@ -157,13 +157,6 @@ public class AgentStateListen {
             //当前月份表
             agentStateLogMapper.insertMonthSelective(agentStateLog);
         } catch (Exception e) {
-            if (e.getMessage().contains("doesn't exist")) {
-                /**
-                 * 初始化月表
-                 */
-                callCdrService.subTable(DateTimeUtil.getNowMonth());
-                return;
-            }
             logger.error(e.getMessage(), e);
         }
     }

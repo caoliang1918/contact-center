@@ -209,7 +209,6 @@ public class QuartzConfig {
                 initTask(TaskJobOfSecond.NAME, TaskJobOfSecond.CRON, TaskJobOfSecond.class);
                 initTask(TaskJobOfHour.NAME, TaskJobOfHour.CRON, TaskJobOfHour.class);
                 initTask(TaskJobOfDay.NAME, TaskJobOfDay.CRON, TaskJobOfDay.class);
-                initTask(TaskJobOfMonth.NAME, TaskJobOfMonth.CRON, TaskJobOfMonth.class);
                 return;
             }
 
@@ -225,21 +224,8 @@ public class QuartzConfig {
             if (!jobNames.contains(TaskJobOfDay.NAME)) {
                 create(TaskJobOfDay.NAME, TaskJobOfDay.CRON, TaskJobOfDay.class);
             }
-            if (!jobNames.contains(TaskJobOfMonth.NAME)) {
-                create(TaskJobOfMonth.NAME, TaskJobOfMonth.CRON, TaskJobOfMonth.class);
-            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-        }
-    }
-
-    public void stop() {
-        if (scheduler != null) {
-            try {
-                scheduler.shutdown();
-            } catch (Exception e) {
-
-            }
         }
     }
 

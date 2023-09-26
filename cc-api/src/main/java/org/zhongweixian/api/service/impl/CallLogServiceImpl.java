@@ -71,27 +71,6 @@ public class CallLogServiceImpl extends BaseServiceImpl<CallLog> implements Call
     }
 
     @Override
-    public void subTable(String month) {
-        //先清空
-        cleaDayOfData(Instant.now().toEpochMilli());
-
-        // cc_call_log
-        callLogMapper.createNewTable(month);
-
-        //cc_call_device
-        callDeviceMapper.createNewTable(month);
-
-        //cc_call_detail
-        callDetailMapper.createNewTable(month);
-
-        //cc_call_dtmf
-        callDtmfMapper.createNewTable(month);
-
-        //cc_agent_state_log
-        agentStateLogMapper.createNewTable(month);
-    }
-
-    @Override
     public PageInfo<CallLogPo> calllogList(Map<String, Object> params) {
         Long start = (Long) params.get("start");
         Long end = (Long) params.get("end");

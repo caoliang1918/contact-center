@@ -43,5 +43,5 @@
    座席端地址：https://dev.voice9.com/agent  1001@test 123456 \
    文档地址:  https://voice9.com/docs.html
    
-## 申请使用
+## [申请使用](https://webchat.7moor.com/wapchat.html?accessId=fda1b670-2da9-11ed-839e-99ac6851d202&fromUrl=http://github&urlTitle=github&language=ZHCN)
    ![process](fs-api/src/main/resources/static/images/9.png)

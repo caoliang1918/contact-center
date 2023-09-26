@@ -86,10 +86,6 @@ public class TaskJobOfDay implements Job {
         Long end = DateTimeUtil.getNowDay();
         logger.info("Day job start: {} - end:{}", DateFormatUtils.format(start, DateTimeUtil.YYYYMMDD_HHMMSS), DateFormatUtils.format(end, DateTimeUtil.YYYYMMDD_HHMMSS));
 
-
-        //清理话单数据
-        deleteCallLog();
-
         //删除推送失败的数据
         deletePushLog();
 
