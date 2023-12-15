@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.GroupOverflowMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.GroupOverflow">
+<mapper namespace="com.voice9.core.mapper.GroupOverflowMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.GroupOverflow">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -26,13 +26,13 @@
         from cc_group_overflow
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.GroupOverflow">
+    <insert id="insert" parameterType="com.voice9.core.entity.GroupOverflow">
         insert into cc_group_overflow (id, cts, uts, group_id,
                                        overflow_id, level_value, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
                 #{overflowId,jdbcType=BIGINT}, #{levelValue,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.GroupOverflow">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.GroupOverflow">
         insert into cc_group_overflow
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -81,7 +81,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.GroupOverflow">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.GroupOverflow">
         update cc_group_overflow
         <set>
             <if test="cts != null">
@@ -105,7 +105,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.GroupOverflow">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.GroupOverflow">
         update cc_group_overflow
         set cts         = #{cts,jdbcType=BIGINT},
             uts         = #{uts,jdbcType=BIGINT},
@@ -116,7 +116,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <resultMap id="GroupOverFlowResult" type="org.cti.cc.po.GroupOverFlow">
+    <resultMap id="GroupOverFlowResult" type="com.voice9.core.po.GroupOverFlow">
         <result column="company_id" jdbcType="BIGINT" property="companyId"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="handle_type" jdbcType="INTEGER" property="handleType"/>
@@ -127,15 +127,15 @@
         <result column="overflow_value" jdbcType="INTEGER" property="overflowValue"/>
         <result column="lineup_expression" jdbcType="VARCHAR" property="lineupExpression"/>
         <!-- 前置条件 -->
-        <collection property="overflowFronts" select="org.cti.cc.mapper.OverflowFrontMapper.selectByOverflowId"
+        <collection property="overflowFronts" select="com.voice9.core.mapper.OverflowFrontMapper.selectByOverflowId"
                     column="id"></collection>
         <!-- 自定义策略 -->
-        <collection property="overflowExps" select="org.cti.cc.mapper.OverflowExpMapper.selectByOverflowId"
+        <collection property="overflowExps" select="com.voice9.core.mapper.OverflowExpMapper.selectByOverflowId"
                     column="id"></collection>
 
     </resultMap>
 
-    <resultMap id="BaseResultMapPo" type="org.cti.cc.po.GroupOverflowPo" extends="GroupOverFlowResult">
+    <resultMap id="BaseResultMapPo" type="com.voice9.core.po.GroupOverflowPo" extends="GroupOverFlowResult">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="group_id" jdbcType="BIGINT" property="groupId"/>
         <result column="overflow_id" jdbcType="BIGINT" property="overflowId"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.CompanyStatMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.CompanyStat">
+<mapper namespace="com.voice9.core.mapper.CompanyStatMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.CompanyStat">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -35,12 +35,12 @@
         from cc_company_stat
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.CompanyStat">
+    <insert id="insert" parameterType="com.voice9.core.entity.CompanyStat">
         insert into cc_company_stat (id, cts, uts, company_id, type, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
                 #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.CompanyStat">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.CompanyStat">
         insert into cc_company_stat
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -83,7 +83,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CompanyStat">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.CompanyStat">
         update cc_company_stat
         <set>
             <if test="cts != null">
@@ -104,7 +104,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CompanyStat">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.CompanyStat">
         update cc_company_stat
         set cts        = #{cts,jdbcType=BIGINT},
             uts        = #{uts,jdbcType=BIGINT},

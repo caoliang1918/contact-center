@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.CompanyDisplayMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.po.CompanyDisplayPo">
+<mapper namespace="com.voice9.core.mapper.CompanyDisplayMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.po.CompanyDisplayPo">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -10,7 +10,7 @@
         <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
         <collection property="companyPhoneList" column="id"
-                    select="org.cti.cc.mapper.CompanyPhoneMapper.selectByDisplay"></collection>
+                    select="com.voice9.core.mapper.CompanyPhoneMapper.selectByDisplay"></collection>
     </resultMap>
     <sql id="Base_Column_List">
         id
@@ -27,13 +27,13 @@
         from cc_company_display
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.CompanyDisplay">
+    <insert id="insert" parameterType="com.voice9.core.entity.CompanyDisplay">
         insert into cc_company_display (id, cts, uts, company_id,
                                         name, type, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
                 #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.CompanyDisplay" useGeneratedKeys="true"
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.CompanyDisplay" useGeneratedKeys="true"
             keyProperty="id">
         insert into cc_company_display
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -83,7 +83,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CompanyDisplay">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.CompanyDisplay">
         update cc_company_display
         <set>
             <if test="cts != null">
@@ -107,7 +107,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CompanyDisplay">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.CompanyDisplay">
         update cc_company_display
         set cts = #{cts,jdbcType=BIGINT},
             uts = #{uts,jdbcType=BIGINT},

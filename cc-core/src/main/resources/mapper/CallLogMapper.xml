@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.CallLogMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.CallLog">
+<mapper namespace="com.voice9.core.mapper.CallLogMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.CallLog">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -74,7 +74,7 @@
         where id = #{id,jdbcType=BIGINT}
     </delete>
 
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.CallLog">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.CallLog">
         insert into cc_call_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -375,7 +375,7 @@
             </if>
         </trim>
     </insert>
-    <insert id="insertMonthSelective" parameterType="org.cti.cc.entity.CallLog">
+    <insert id="insertMonthSelective" parameterType="com.voice9.core.entity.CallLog">
         insert into cc_call_log${monthTime}
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -676,7 +676,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallLog">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.CallLog">
         update cc_call_log
         <set>
             <if test="cts != null">
@@ -826,7 +826,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CallLog">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.CallLog">
         update cc_call_log
         set cts               = #{cts,jdbcType=BIGINT},
             uts               = #{uts,jdbcType=BIGINT},
@@ -879,7 +879,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <resultMap id="BaseResultMapPo" type="org.cti.cc.po.CallLogPo">
+    <resultMap id="BaseResultMapPo" type="com.voice9.core.po.CallLogPo">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="company_id" jdbcType="BIGINT" property="companyId"/>
         <result column="call_id" jdbcType="BIGINT" property="callId"/>
@@ -926,9 +926,9 @@
         <result column="ext2" jdbcType="VARCHAR" property="ext2"/>
         <result column="ext3" jdbcType="VARCHAR" property="ext3"/>
         <collection property="callDeviceList" column="{callId=call_id,monthTime=month_time}"
-                    select="org.cti.cc.mapper.CallDeviceMapper.selectByCallId"></collection>
+                    select="com.voice9.core.mapper.CallDeviceMapper.selectByCallId"></collection>
         <collection property="callDetailList" column="{callId=call_id,monthTime=month_time}"
-                    select="org.cti.cc.mapper.CallDetailMapper.selectByCallId"></collection>
+                    select="com.voice9.core.mapper.CallDetailMapper.selectByCallId"></collection>
     </resultMap>
 
     <sql id="Base_Where">
@@ -956,7 +956,7 @@
         </where>
     </sql>
 
-    <update id="updateByCallId" parameterType="org.cti.cc.entity.CallLog">
+    <update id="updateByCallId" parameterType="com.voice9.core.entity.CallLog">
         update cc_call_log
         <set>
             <if test="uts != null">

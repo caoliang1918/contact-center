@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.AdminMenuMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.AdminMenu">
+<mapper namespace="com.voice9.core.mapper.AdminMenuMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.AdminMenu">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -21,7 +21,7 @@
         <result column="end_site" jdbcType="INTEGER" property="endSite"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
 
-        <association property="childNum" select="org.cti.cc.mapper.AdminMenuMapper.selectChildMenus"
+        <association property="childNum" select="com.voice9.core.mapper.AdminMenuMapper.selectChildMenus"
                      column="menu_id"></association>
     </resultMap>
     <sql id="Base_Column_List">
@@ -48,7 +48,7 @@
         from cc_admin_menu
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.AdminMenu">
+    <insert id="insert" parameterType="com.voice9.core.entity.AdminMenu">
         insert into cc_admin_menu (id, cts, uts, menu_id,
                                    parent_id, name, path_url,
                                    path_method, menu_level, menu_order, child_num, icon,
@@ -62,7 +62,7 @@
                 #{frontSite,jdbcType=INTEGER},
                 #{endSite,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.AdminMenu">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.AdminMenu">
         insert into cc_admin_menu
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -171,7 +171,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AdminMenu">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.AdminMenu">
         update cc_admin_menu
         <set>
             <if test="cts != null">
@@ -222,7 +222,7 @@
         </set>
         where menu_id = #{menuId,jdbcType=VARCHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AdminMenu">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.AdminMenu">
         update cc_admin_menu
         set cts            = #{cts,jdbcType=BIGINT},
             uts            = #{uts,jdbcType=BIGINT},

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>webrtc</title>
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .align-center {
+        align-items: center;
+    }
+
+    .w-50 {
+        width: 50%;
+        margin: 5px;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .h-95 {
+        height: 95vh;
+    }
+
+    fieldset {
+        padding: 20px
+    }
+
+    label {
+        width: 130px;
+        margin-right: 10px;
+    }
+
+    button {
+        padding: 5px 15px;
+    }
+
+    #messageBody {
+        height: 100%;
+        overflow: auto;
+    }
+
+    fieldset {
+        margin-bottom: 15px;
+    }
+
+    .divBox {
+        margin-bottom: 20px;
+    }
+</style>
+
+<body>
+<div class="d-flex">
+    <div class="w-50">
+        <fieldset>
+            <legend>登录参数</legend>
+            <div class="d-flex align-center">
+                账号：<input name="agentKey" id="agentKey" value="1001@test"/>
+                密码：<input name="passwd"  id="passwd" value="12345678" type="password"/>
+                接听方式：
+                <select id="loginType" name="loginType">
+                    <option value="1">sip号登录</option>
+                    <option value="2" selected>webrtc</option>
+                    <option value="3">手机号</option>
+                </select>
+                工作类型：
+                <select id="workType" name="workType">
+                    <option value="1" selected>普通</option>
+                    <option value="2">预测</option>
+                </select>
+
+                <audio id="peerVideo" autoplay></audio>
+                <audio id="remoteVideo" autoplay></audio>
+                <!-- <label for="loginData">登录信息</label>
+                 <textarea class="w-100" type="text" rows="13" id="loginData" placeholder="json体"></textarea>-->
+            </div>
+            <div>
+                <button id="connectBtn">连接</button>
+                <button id="logoutBtn">登出</button>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>登录状态</legend>
+            <div>
+                <button id="busyBtn">忙碌</button>
+                <button id="readyBtn">空闲</button>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>通话</legend>
+            <div class="divBox">
+                <div>
+                    <label for="phoneNum">外呼</label>
+                    <input id="phoneNum" type="text" value="13300001234"></input>
+                </div>
+                <div>
+                    <button id="makeCallBtn">外呼</button>
+                    <button id="acceptCallBtn">应答</button>
+                    <button id="closeCallBtn">挂机</button>
+                </div>
+            </div>
+            <div class="divBox">
+                <div>
+                    <label for="phoneTransfertNum">转接</label>
+                    <input id="phoneTransfertNum" type="text" value="1002@test"></input>
+                </div>
+                <div>
+                    <button id="phoneTransferBtn">转接</button>
+                </div>
+            </div>
+            <div class="divBox">
+                <div>
+                    <label for="phoneConsultNum">咨询</label>
+                    <input id="phoneConsultNum" type="text" value="1002@test"></input>
+                </div>
+                <div>
+                    <button id="phoneConsultBtn">咨询</button>
+                    <button id="phoneConsultCancelBtn">取消咨询</button>
+                </div>
+            </div>
+            <div class="divBox">
+                <div>
+                    <label for="phoneConsultTransfer">咨询转接</label>
+                    <input id="phoneConsultTransfer" type="text" value="1002@test"></input>
+                </div>
+                <div>
+                    <button id="phoneConsultTransferBtn">咨询转接</button>
+                    <button id="phoneConsultPartyBtn">转三方</button>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>通话状态</legend>
+            <div>
+                <button id="mutePhoneBtn">静音</button>
+                <button id="cancelMuteBtn">取消静音</button>
+                <button id="holdTalkingBtn">保持</button>
+                <button id="cancelHoldBtn">取消保持</button>
+            </div>
+        </fieldset>
+    </div>
+    <div class="w-50">
+        <fieldset class="h-95">
+            <legend>消息体</legend>
+            <div id="messageBody"></div>
+            <button id="messageClear">清除</button>
+        </fieldset>
+    </div>
+</div>
+</body>
+
+<!-- <script type="text/javascript" src="./bundle.js"></script>
+
+<script>
+  const sdk = new myBundle();
+  console.log(sdk);
+  sdk.init()
+</script> -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
+<script src="https://https://voice9.com/static/voice9.sdk.min.js"></script>
+
+
+<script type="module">
+   // import "./voice9.sdk.min.js"
+    // import Voice9 from './voice9.sdk.js'
+    const voice9 = new Voice9();
+
+    voice9.addEventListener('message', (data) => {
+        let msg = JSON.stringify(data);
+        if (data.type == "pong") {
+            return;
+        }
+        messageBody.innerHTML += `<br>${msg}</br>`;
+    })
+    voice9.addEventListener('logout', (data) => {
+        console.log('logout');
+        messageBody.innerHTML += `<br>logout</br>`;
+    })
+
+    // 登录
+    connectBtn.addEventListener('click', () => {
+        try {
+            let data = {
+                agentKey: $('#agentKey').val(),
+                passwd: CryptoJS.SHA256($('#passwd').val()).toString(),
+                loginType: $('#loginType').val(),
+                workType: $('#workType').val()
+            };
+            $.ajax({
+                type: "POST",
+                url: "/fs-api/index/login",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (res) {
+                    if (res.code != 0) {
+                        alert(res.message);
+                        res;
+                    }
+                    //let loginInfo = JSON.stringify(res.data);
+                    voice9.init(res.data);
+                }
+            });
+        } catch (e) {
+            alert('登录信息格式错误,请检查是否是标准格式的json')
+        }
+    })
+
+    // 登出
+    logoutBtn.addEventListener('click', () => {
+        voice9.logout()
+    })
+
+    // 设置忙碌
+    busyBtn.addEventListener('click', () => {
+        voice9.setBusy()
+    })
+    // 设置空闲
+    readyBtn.addEventListener('click', () => {
+        voice9.setReady()
+    })
+    // 拨打电话
+    makeCallBtn.addEventListener('click', () => {
+        voice9.makeCall(phoneNum.value)
+    })
+    // 接听电话
+    acceptCallBtn.addEventListener('click', () => {
+        voice9.acceptCall()
+    })
+    // 挂断电话
+    closeCallBtn.addEventListener('click', () => {
+        voice9.closeCall()
+    })
+
+    //转接
+    phoneTransferBtn.addEventListener('click', () => {
+        voice9.phoneTransfer(phoneTransfertNum.value)
+    })
+
+    //咨询
+    phoneConsultBtn.addEventListener('click', () => {
+        voice9.phoneConsult(phoneConsultNum.value)
+    })
+    //取消咨询
+    phoneConsultCancelBtn.addEventListener('click', () => {
+        voice9.phoneConsultCancel()
+    })
+    //咨询转接
+    phoneConsultTransferBtn.addEventListener('click', () => {
+        voice9.phoneConsultTransfer(phoneConsultTransfer.value)
+    })
+    //咨询转多方
+    phoneConsultPartyBtn.addEventListener('click', () => {
+        voice9.phoneConsultParty()
+    })
+
+
+    // 静音
+    mutePhoneBtn.addEventListener('click', () => {
+        voice9.mutePhone()
+    })
+    // 取消静音
+    cancelMuteBtn.addEventListener('click', () => {
+        voice9.cancelMute()
+    })
+    // 保持
+    holdTalkingBtn.addEventListener('click', () => {
+        voice9.holdTalking()
+    })
+    // 取消保持
+    cancelHoldBtn.addEventListener('click', () => {
+        voice9.cancelHold()
+    })
+
+
+    /**
+     * 清楚日志
+     */
+    messageClear.addEventListener('click', () => {
+        while (messageBody.childNodes.length > 0) {
+            messageBody.removeChild(messageBody.firstChild);
+        }
+    });
+
+</script>
+
+</html>

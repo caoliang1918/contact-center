@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.SkillAgentMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.SkillAgent">
+<mapper namespace="com.voice9.core.mapper.SkillAgentMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.SkillAgent">
         <result column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -18,7 +18,7 @@
         , cts, uts, company_id, skill_id, agent_id, rank_value, status
     </sql>
 
-    <insert id="insert" parameterType="org.cti.cc.entity.SkillAgent">
+    <insert id="insert" parameterType="com.voice9.core.entity.SkillAgent">
         insert into cc_skill_agent (id, cts, uts, company_id, skill_id, agent_id, rank_value, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
                 #{skillId,jdbcType=BIGINT}, #{agentId,jdbcType=BIGINT}, #{rankValue,jdbcType=INTEGER},
@@ -46,7 +46,7 @@
         END;
     </insert>
 
-    <update id="updateSkillAgent" parameterType="org.cti.cc.entity.SkillAgent">
+    <update id="updateSkillAgent" parameterType="com.voice9.core.entity.SkillAgent">
         update cc_skill_agent
         set uts        = #{uts,jdbcType=BIGINT},
             rank_value = #{rankValue,jdbcType=INTEGER}
@@ -55,7 +55,7 @@
     </update>
 
     <!-- 删除坐席技能 -->
-    <delete id="deleteSkillAgent" parameterType="org.cti.cc.vo.SkillAgentsVo">
+    <delete id="deleteSkillAgent" parameterType="com.voice9.core.vo.SkillAgentsVo">
         delete from cc_skill_agent where company_id = #{companyId} and skill_id = #{skillId} and agent_id in
         <foreach
                 collection="agentIds" separator="," open="(" close=")" item="id">#{id}

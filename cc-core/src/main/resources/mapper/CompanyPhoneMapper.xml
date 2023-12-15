@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.CompanyPhoneMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.CompanyPhone">
+<mapper namespace="com.voice9.core.mapper.CompanyPhoneMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.CompanyPhone">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -25,13 +25,13 @@
         from cc_company_phone
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.CompanyPhone">
+    <insert id="insert" parameterType="com.voice9.core.entity.CompanyPhone">
         insert into cc_company_phone (id, cts, uts, company_id,
                                       phone, type, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
                 #{phone,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.CompanyPhone">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.CompanyPhone">
         insert into cc_company_phone
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -80,7 +80,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CompanyPhone">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.CompanyPhone">
         update cc_company_phone
         <set>
             <if test="cts != null">
@@ -104,7 +104,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CompanyPhone">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.CompanyPhone">
         update cc_company_phone
         set cts        = #{cts,jdbcType=BIGINT},
             uts        = #{uts,jdbcType=BIGINT},

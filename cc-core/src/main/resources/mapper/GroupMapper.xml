@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.GroupMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.Group">
+<mapper namespace="com.voice9.core.mapper.GroupMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.Group">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -31,24 +31,24 @@
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
 
-    <resultMap id="GroupInfoResultMap" extends="BaseResultMap" type="org.cti.cc.po.GroupInfo">
+    <resultMap id="GroupInfoResultMap" extends="BaseResultMap" type="com.voice9.core.po.GroupInfo">
         <!-- 记忆坐席配置 -->
-        <association property="groupMemoryConfig" select="org.cti.cc.mapper.GroupMemoryConfigMapper.selectByGroupId"
+        <association property="groupMemoryConfig" select="com.voice9.core.mapper.GroupMemoryConfigMapper.selectByGroupId"
                      column="id"/>
         <!-- 坐席空闲策略 -->
-        <association property="groupAgentStrategyPo" select="org.cti.cc.mapper.GroupAgentStrategyMapper.selectByGroupId"
+        <association property="groupAgentStrategyPo" select="com.voice9.core.mapper.GroupAgentStrategyMapper.selectByGroupId"
                      column="id"></association>
         <!-- 技能组技能 -->
-        <collection property="skills" select="org.cti.cc.mapper.SkillGroupMapper.selectByGroup"
+        <collection property="skills" select="com.voice9.core.mapper.SkillGroupMapper.selectByGroup"
                     column="id"></collection>
         <!-- 主叫显号 -->
-        <collection property="callerDisplays" select="org.cti.cc.mapper.CompanyPhoneGroupMapper.selectDisplayByGroupId"
+        <collection property="callerDisplays" select="com.voice9.core.mapper.CompanyPhoneGroupMapper.selectDisplayByGroupId"
                     column="caller_display_id"></collection>
         <!-- 被叫显号 -->
-        <collection property="calledDisplays" select="org.cti.cc.mapper.CompanyPhoneGroupMapper.selectDisplayByGroupId"
+        <collection property="calledDisplays" select="com.voice9.core.mapper.CompanyPhoneGroupMapper.selectDisplayByGroupId"
                     column="called_display_id"></collection>
         <!-- 电话排队溢出策略 -->
-        <collection property="groupOverflows" select="org.cti.cc.mapper.GroupOverflowMapper.selectByOverflow"
+        <collection property="groupOverflows" select="com.voice9.core.mapper.GroupOverflowMapper.selectByOverflow"
                     column="id"></collection>
     </resultMap>
 
@@ -81,7 +81,7 @@
         where id = #{id,jdbcType=BIGINT}
     </delete>
 
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.Group">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.Group">
         insert into cc_group
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -250,7 +250,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.Group">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.Group">
         update cc_group
         <set>
             <if test="cts != null">

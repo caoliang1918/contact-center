@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.zhongweixian</groupId>
+    <groupId>com.voice9</groupId>
     <artifactId>contact-center</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
@@ -27,7 +27,7 @@
 
     <developers>
         <developer>
-            <name>zhongweixian</name>
+            <name>caoliang1918</name>
             <email>caoliang1918@gmail.com</email>
         </developer>
     </developers>
@@ -39,44 +39,53 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
-        <springboot.version>2.3.12.RELEASE</springboot.version>
-        <minio.version>8.2.1</minio.version>
-        <mysql.version>8.0.28</mysql.version>
-        <pgsql.version>42.3.2</pgsql.version>
-        <ojdbc.version>21.4.0.0.1</ojdbc.version>
-        <sqlserver.version>10.2.0.jre17</sqlserver.version>
-        <websocket-api.version>2.1.4</websocket-api.version>
-        <jasypt.version>3.0.4</jasypt.version>
-        <springboot.mybatis.version>2.1.4</springboot.mybatis.version>
-        <joda-time.version>2.10.13</joda-time.version>
-        <fastjson.version>1.2.80</fastjson.version>
-        <commons-scxml.version>2.0-M1</commons-scxml.version>
-        <commons-jexl.version>2.1.1</commons-jexl.version>
-        <pagehelper.version>1.4.1</pagehelper.version>
+        <spring-boot.version>2.3.12.RELEASE</spring-boot.version>
+        <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
+        <spring-cloud-alibaba.version>2.2.10-RC1</spring-cloud-alibaba.version>
+        <minio.version>8.0.3</minio.version>
+        <okhttp3.version>4.9.3</okhttp3.version>
+        <mysql.version>8.2.0</mysql.version>
+        <pgsql.version>42.6.0</pgsql.version>
+        <ojdbc.version>23.2.0.0</ojdbc.version>
+        <sqlserver.version>12.4.1.jre8</sqlserver.version>
+        <websocket-api.version>2.1.6</websocket-api.version>
+        <jasypt.version>3.0.5</jasypt.version>
+        <mybatis.version>3.5.14</mybatis.version>
+        <spring-boot.mybatis.version>2.3.1</spring-boot.mybatis.version>
+        <joda-time.version>2.12.5</joda-time.version>
+        <fastjson.version>2.0.43</fastjson.version>
+        <pagehelper.version>1.4.7</pagehelper.version>
         <easypoi.version>4.4.0</easypoi.version>
-        <commons-io.version>2.11.0</commons-io.version>
-        <commons-codec.version>1.15</commons-codec.version>
-        <kafka.version>2.7.8</kafka.version>
-        <prometheus.version>1.8.5</prometheus.version>
-        <logstash-encoder.version>7.0.1</logstash-encoder.version>
+        <commons-io.version>2.15.1</commons-io.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <commons-pool2.version>2.12.0</commons-pool2.version>
+        <commons-codec.version>1.16.0</commons-codec.version>
+        <commons-text.versoin>1.11.0</commons-text.versoin>
+        <kafka.version>3.0.12</kafka.version>
+        <prometheus.version>1.5.5</prometheus.version>
+        <logstash-encoder.version>7.4</logstash-encoder.version>
+        <maven.release.plugin.version>3.0.1</maven.release.plugin.version>
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <maven.assembly.plugin.version>3.6.0</maven.assembly.plugin.version>
+        <maven.docker.plugin.version>0.43.4</maven.docker.plugin.version>
 
         <docker.repostory>192.168.180.37:5000</docker.repostory>
-        <docker.registry.name>caoliang</docker.registry.name>
+        <docker.registry.name>voice9</docker.registry.name>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!--<dependency>
+            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Finchley.SR2</version>
+                <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>-->
+            </dependency>
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>2.2.7.RELEASE</version>
+                <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -86,7 +95,7 @@
                 <version>${prometheus.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.zhongweixian</groupId>
+                <groupId>com.voice9</groupId>
                 <artifactId>cc-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -108,12 +117,12 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
-                <version>${springboot.version}</version>
+                <version>${spring-boot.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-actuator</artifactId>
-                <version>${springboot.version}</version>
+                <version>${spring-boot.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.logstash.logback</groupId>
@@ -126,18 +135,18 @@
                 <version>${joda-time.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${springboot.mybatis.version}</version>
+                <version>${spring-boot.mybatis.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.kafka</groupId>
-                <artifactId>spring-kafka</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
             <dependency>
@@ -159,27 +168,18 @@
                 <groupId>org.zhongweixian</groupId>
                 <artifactId>websocket-api</artifactId>
                 <version>${websocket-api.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.alibaba.fastjson2</groupId>
+                        <artifactId>fastjson2</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.aliyun.oss</groupId>
-                <artifactId>aliyun-sdk-oss</artifactId>
-                <version>3.17.1</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-scxml2</artifactId>
-                <version>${commons-scxml.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-jexl</artifactId>
-                <version>${commons-jexl.version}</version>
-            </dependency>-->
             <dependency>
                 <groupId>com.github.ulisesbocchio</groupId>
                 <artifactId>jasypt-spring-boot</artifactId>

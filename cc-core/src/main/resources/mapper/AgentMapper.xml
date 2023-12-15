@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.AgentMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.Agent">
+<mapper namespace="com.voice9.core.mapper.AgentMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.Agent">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -26,7 +26,7 @@
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
 
-    <resultMap id="SimpleResultMap" type="org.cti.cc.entity.Agent">
+    <resultMap id="SimpleResultMap" type="com.voice9.core.entity.Agent">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="agent_id" jdbcType="VARCHAR" property="agentId"/>
@@ -43,10 +43,10 @@
         <result column="state" jdbcType="INTEGER" property="state"/>
     </resultMap>
 
-    <resultMap id="AgentInfoResultMap" extends="BaseResultMap" type="org.cti.cc.po.AgentInfo">
-        <collection property="groupIds" select="org.cti.cc.mapper.AgentGroupMapper.selectByAgent" column="id"/>
-        <collection property="sips" select="org.cti.cc.mapper.AgentSipMapper.selectByAgent" column="id"/>
-        <collection property="skillAgents" select="org.cti.cc.mapper.SkillAgentMapper.selectByAgent"
+    <resultMap id="AgentInfoResultMap" extends="BaseResultMap" type="com.voice9.core.po.AgentInfo">
+        <collection property="groupIds" select="com.voice9.core.mapper.AgentGroupMapper.selectByAgent" column="id"/>
+        <collection property="sips" select="com.voice9.core.mapper.AgentSipMapper.selectByAgent" column="id"/>
+        <collection property="skillAgents" select="com.voice9.core.mapper.SkillAgentMapper.selectByAgent"
                     column="{companyId=company_id,id=id}"/>
     </resultMap>
     <sql id="Base_Column_List">
@@ -78,7 +78,7 @@
         from cc_agent
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.Agent">
+    <insert id="insert" parameterType="com.voice9.core.entity.Agent">
         insert into cc_agent (id, cts, uts, company_id,
                               agent_id, agent_key, agent_name,
                               agent_code, agent_type, passwd,
@@ -93,7 +93,7 @@
                 #{host,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR},
                 #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.Agent">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.Agent">
         insert into cc_agent
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -232,7 +232,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.Agent">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.Agent">
         update cc_agent
         <set>
             <if test="uts != null">
@@ -317,7 +317,7 @@
         END;
     </insert>
 
-    <insert id="addAgent" parameterType="org.cti.cc.entity.Agent" useGeneratedKeys="true" keyProperty="id">
+    <insert id="addAgent" parameterType="com.voice9.core.entity.Agent" useGeneratedKeys="true" keyProperty="id">
         insert into cc_agent (cts, company_id, agent_id, agent_key, agent_name, agent_type, passwd)
         values (#{cts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, #{agentId,jdbcType=VARCHAR},
                 #{agentKey,jdbcType=VARCHAR}, #{agentName,jdbcType=VARCHAR}, #{agentType,jdbcType=INTEGER},
@@ -341,7 +341,7 @@
         </where>
     </select>
 
-    <delete id="deleteAgent" parameterType="org.cti.cc.entity.Agent">
+    <delete id="deleteAgent" parameterType="com.voice9.core.entity.Agent">
         update cc_agent
         set uts       = #{cts},
             agent_id  = #{agentId},

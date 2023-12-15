@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.PushLogMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.PushLog">
+<mapper namespace="com.voice9.core.mapper.PushLogMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.PushLog">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -29,7 +29,7 @@
         from cc_push_log
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.PushLog">
+    <insert id="insert" parameterType="com.voice9.core.entity.PushLog">
         insert into cc_push_log (id, cts, uts, company_id,
                                       call_id, cdr_notify_url, content,
                                       push_times, push_response, status)
@@ -37,7 +37,7 @@
                 #{callId,jdbcType=BIGINT}, #{cdrNotifyUrl,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
                 #{pushTimes,jdbcType=INTEGER}, #{pushResponse,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.PushLog">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.PushLog">
         insert into cc_push_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -106,14 +106,14 @@
     </insert>
 
 
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.PushLog">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.PushLog">
         update cc_push_log
         set uts        = #{uts,jdbcType=BIGINT},
             push_times = #{pushTimes,jdbcType=INTEGER}
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <update id="pushSuccess" parameterType="org.cti.cc.entity.PushLog">
+    <update id="pushSuccess" parameterType="com.voice9.core.entity.PushLog">
         update cc_push_log
         set uts           = #{uts},
             status        = 2,

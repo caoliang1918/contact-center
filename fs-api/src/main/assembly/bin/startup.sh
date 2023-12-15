@@ -13,8 +13,7 @@ cd "$(dirname "$0")" || exit 1
 jarfile="$WORKING_HOME/lib/*.jar"
 LOG_FOLDER="$WORKING_HOME/logs"
 CONF_FOLDER="$WORKING_HOME/conf"
-# -Xmn3g -Xmx8g -Xms8g -XX:MetaspaceSize=256m
-JAVA_OPTS="-Dfile.encoding=UTF-8 -Xmn256m -Xmx1g -Xms1g -XX:+UseG1GC"
+JAVA_OPTS="-Dfile.encoding=UTF-8 -XX:+UseG1GC -Xmn1g -Xmx2g -Xms2g"
 RUN_ARGS="--spring.config.location=file:../conf/ --spring.profiles.active=nacos"
 
 [[ -n "$APP_NAME" ]] && identity="$APP_NAME"

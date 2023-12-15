@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.SkillGroupMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.SkillGroup">
+<mapper namespace="com.voice9.core.mapper.SkillGroupMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.SkillGroup">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -24,7 +24,7 @@
     </sql>
 
 
-    <insert id="insert" parameterType="org.cti.cc.entity.SkillGroup">
+    <insert id="insert" parameterType="com.voice9.core.entity.SkillGroup">
         insert into cc_skill_group (id, cts, uts, company_id, level_value, skill_id, group_id, rank_type,
                                     rank_value_start, rank_value, match_type, share_value, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},

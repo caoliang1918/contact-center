@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.GroupAgentStrategyMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.GroupAgentStrategy">
+<mapper namespace="com.voice9.core.mapper.GroupAgentStrategyMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.GroupAgentStrategy">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -13,8 +13,8 @@
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapPo" type="org.cti.cc.po.GroupAgentStrategyPo" extends="BaseResultMap">
-        <collection property="strategyExpList" select="org.cti.cc.mapper.GroupStrategyExpMapper.selectList"
+    <resultMap id="BaseResultMapPo" type="com.voice9.core.po.GroupAgentStrategyPo" extends="BaseResultMap">
+        <collection property="strategyExpList" select="com.voice9.core.mapper.GroupStrategyExpMapper.selectList"
                     column="group_id"></collection>
     </resultMap>
     <sql id="Base_Column_List">
@@ -33,7 +33,7 @@
         from cc_group_agent_strategy
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.GroupAgentStrategy">
+    <insert id="insert" parameterType="com.voice9.core.entity.GroupAgentStrategy">
         insert into cc_group_agent_strategy (id, cts, uts, company_id,
                                              group_id, strategy_type, strategy_value,
                                              custom_expression, status)
@@ -41,7 +41,7 @@
                 #{groupId,jdbcType=BIGINT}, #{strategyType,jdbcType=INTEGER}, #{strategyValue,jdbcType=INTEGER},
                 #{customExpression,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.GroupAgentStrategy">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.GroupAgentStrategy">
         insert into cc_group_agent_strategy
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -102,7 +102,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.GroupAgentStrategy">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.GroupAgentStrategy">
         update cc_group_agent_strategy
         <set>
             <if test="cts != null">
@@ -132,7 +132,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.GroupAgentStrategy">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.GroupAgentStrategy">
         update cc_group_agent_strategy
         set cts               = #{cts,jdbcType=BIGINT},
             uts               = #{uts,jdbcType=BIGINT},

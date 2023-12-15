@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.OverflowConfigMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.OverflowConfig">
+<mapper namespace="com.voice9.core.mapper.OverflowConfigMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.OverflowConfig">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -33,7 +33,7 @@
         from cc_overflow_config
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.OverflowConfig">
+    <insert id="insert" parameterType="com.voice9.core.entity.OverflowConfig">
         insert into cc_overflow_config (id, cts, uts, company_id,
                                         name, handle_type, busy_type,
                                         queue_timeout, busy_timeout_type, overflow_type,
@@ -43,7 +43,7 @@
                 #{queueTimeout,jdbcType=INTEGER}, #{busyTimeoutType,jdbcType=INTEGER}, #{overflowType,jdbcType=INTEGER},
                 #{overflowValue,jdbcType=INTEGER}, #{lineupExpression,jdbcType=VARCHAR})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.OverflowConfig">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.OverflowConfig">
         insert into cc_overflow_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -122,7 +122,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.OverflowConfig">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.OverflowConfig">
         update cc_overflow_config
         <set>
             <if test="cts != null">
@@ -161,7 +161,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.OverflowConfig">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.OverflowConfig">
         update cc_overflow_config
         set cts               = #{cts,jdbcType=BIGINT},
             uts               = #{uts,jdbcType=BIGINT},

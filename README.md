@@ -9,18 +9,8 @@
 * 支持webrtc
 * 支持rest接口接入语音平台
 * 支持http ivr接入
-* 支持http NLP响应
+* 支持智能对话
 * 任务外呼
-
-## 依赖的基础服务 
-* MySQL
-* openresty
-* redis
-* Rabbitmq
-* nacos
-* minio
-* freeswitch
-* opensips
 
 
 
@@ -32,16 +22,31 @@
 ## 前端展示
    ![process](fs-api/src/main/resources/static/images/4.png)
    ![process](fs-api/src/main/resources/static/images/5.png)
+   ![process](fs-api/src/main/resources/static/images/6.png)
 
 ## 监控
-   ![process](fs-api/src/main/resources/static/images/6.png)
    ![process](fs-api/src/main/resources/static/images/7.png)
+   ![process](fs-api/src/main/resources/static/images/8.png)
 
 ---
+
+### freeswitch build
+```shell
+cd freeswitch/debian
+
+docker-compose up -d 
+
+#进入freeswitch控制台
+./fs_cli.sh
+```
+   ![process](fs-api/src/main/resources/static/images/9.png)
+
+
+
 ## 演示环境
-   管理端地址：https://dev.voice9.com/admin  admin q11111111 \
-   座席端地址：https://dev.voice9.com/agent  1001@test 123456 \
+   管理端地址：https://dev.voice9.com/admin  admin 12345678 \
+   座席端地址：https://dev.voice9.com/agent  1001@test 12345678 \
    文档地址:  https://voice9.com/docs.html
    
-## [申请使用](https://webchat.7moor.com/wapchat.html?accessId=fda1b670-2da9-11ed-839e-99ac6851d202&fromUrl=http://github&urlTitle=github&language=ZHCN)
-   ![process](fs-api/src/main/resources/static/images/9.png)
+## [申请使用](https://voice9-ai.feishu.cn/share/base/form/shrcnBTPDCb28PW42wVYEHw0Saf)
+   ![process](fs-api/src/main/resources/static/images/10.png)

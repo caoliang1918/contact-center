@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.RouteGroupMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.RouteGroup">
+<mapper namespace="com.voice9.core.mapper.RouteGroupMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.RouteGroup">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -13,7 +13,7 @@
         , cts, uts, route_group, status
     </sql>
 
-    <select id="selectGetway" parameterType="Long" resultType="org.cti.cc.entity.RouteGetway">
+    <select id="selectGetway" parameterType="Long" resultType="com.voice9.core.entity.RouteGetway">
         select a.id,
                a.cts,
                a.uts,
@@ -44,13 +44,13 @@
         from cc_route_group
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.RouteGroup">
+    <insert id="insert" parameterType="com.voice9.core.entity.RouteGroup">
         insert into cc_route_group (id, cts, uts, route_group,
                                     status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{routeGroup,jdbcType=VARCHAR},
                 #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.RouteGroup">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.RouteGroup">
         insert into cc_route_group
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -87,7 +87,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.RouteGroup">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.RouteGroup">
         update cc_route_group
         <set>
             <if test="cts != null">
@@ -105,7 +105,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.RouteGroup">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.RouteGroup">
         update cc_route_group
         set cts         = #{cts,jdbcType=BIGINT},
             uts         = #{uts,jdbcType=BIGINT},
@@ -114,7 +114,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <resultMap id="RouteGroupMap" type="org.cti.cc.po.RouteGroupPo" extends="BaseResultMap">
+    <resultMap id="RouteGroupMap" type="com.voice9.core.po.RouteGroupPo" extends="BaseResultMap">
         <collection property="routeGetways" column="id" select="selectGetway"></collection>
     </resultMap>
 

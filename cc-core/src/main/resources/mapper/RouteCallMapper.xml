@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.RouteCallMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.po.RouteCallInfo" extends="ResultMap">
-        <association property="routeGroupPo" select="org.cti.cc.mapper.RouteGroupMapper.selectById"
+<mapper namespace="com.voice9.core.mapper.RouteCallMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.po.RouteCallInfo" extends="ResultMap">
+        <association property="routeGroupPo" select="com.voice9.core.mapper.RouteGroupMapper.selectById"
                      column="route_group_id"></association>
     </resultMap>
 
-    <resultMap id="ResultMap" type="org.cti.cc.entity.RouteCall">
+    <resultMap id="ResultMap" type="com.voice9.core.entity.RouteCall">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -38,7 +38,7 @@
         from cc_route_call
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.RouteCall">
+    <insert id="insert" parameterType="com.voice9.core.entity.RouteCall">
         insert into cc_route_call (id, cts, uts, company_id,
                                    route_group_id, route_num, num_max,
                                    num_min, caller_change, caller_change_num,
@@ -48,7 +48,7 @@
                 #{numMin,jdbcType=INTEGER}, #{callerChange,jdbcType=INTEGER}, #{callerChangeNum,jdbcType=VARCHAR},
                 #{calledChange,jdbcType=INTEGER}, #{calledChangeNum,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.RouteCall">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.RouteCall">
         insert into cc_route_call
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -133,7 +133,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.RouteCall">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.RouteCall">
         update cc_route_call
         <set>
             <if test="cts != null">
@@ -175,7 +175,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.RouteCall">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.RouteCall">
         update cc_route_call
         set cts               = #{cts,jdbcType=BIGINT},
             uts               = #{uts,jdbcType=BIGINT},

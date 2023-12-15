@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.VdnDtmfMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.VdnDtmf">
+<mapper namespace="com.voice9.core.mapper.VdnDtmfMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.VdnDtmf">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -34,7 +34,7 @@
         from cc_vdn_dtmf
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.VdnDtmf">
+    <insert id="insert" parameterType="com.voice9.core.entity.VdnDtmf">
         insert into cc_vdn_dtmf (id, cts, uts, company_id,
                                           navigate_id, dtmf, route_type,
                                           route_value, status)
@@ -42,7 +42,7 @@
                 #{navigateId,jdbcType=BIGINT}, #{dtmf,jdbcType=VARCHAR}, #{routeType,jdbcType=INTEGER},
                 #{routeValue,jdbcType=BIGINT}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.VdnDtmf">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.VdnDtmf">
         insert into cc_vdn_dtmf
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -103,7 +103,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.VdnDtmf">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.VdnDtmf">
         update cc_vdn_dtmf
         <set>
             <if test="cts != null">
@@ -133,7 +133,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.VdnDtmf">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.VdnDtmf">
         update cc_vdn_dtmf
         set cts         = #{cts,jdbcType=BIGINT},
             uts         = #{uts,jdbcType=BIGINT},

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.AdminRoleMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.AdminRole">
+<mapper namespace="com.voice9.core.mapper.AdminRoleMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.AdminRole">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -10,8 +10,8 @@
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
 
-    <resultMap id="BaseResultPo" type="org.cti.cc.po.RolePo" extends="BaseResultMap">
-        <collection property="adminMenuList" select="org.cti.cc.mapper.AdminMenuMapper.selectByRoleId"
+    <resultMap id="BaseResultPo" type="com.voice9.core.po.RolePo" extends="BaseResultMap">
+        <collection property="adminMenuList" select="com.voice9.core.mapper.AdminMenuMapper.selectByRoleId"
                     column="id"></collection>
     </resultMap>
 
@@ -30,13 +30,13 @@
         from cc_admin_role
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.AdminRole">
+    <insert id="insert" parameterType="com.voice9.core.entity.AdminRole">
         insert into cc_admin_role (id, cts, uts, company_id,
                                    role_name, status)
         values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT},
                 #{roleName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.AdminRole">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.AdminRole">
         insert into cc_admin_role
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -79,7 +79,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AdminRole">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.AdminRole">
         update cc_admin_role
         <set>
             <if test="cts != null">
@@ -100,7 +100,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AdminRole">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.AdminRole">
         update cc_admin_role
         set cts        = #{cts,jdbcType=BIGINT},
             uts        = #{uts,jdbcType=BIGINT},

@@ -30,7 +30,7 @@
     <!--<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>192.168.101.1:5044</destination>
         <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"app":"cc-api"}</customFields>
+            <customFields>{"app":"${LOG_NAME}"}</customFields>
         </encoder>
     </appender>-->
 

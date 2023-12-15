@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.RouteGetwayMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.RouteGetway">
+<mapper namespace="com.voice9.core.mapper.RouteGetwayMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.RouteGetway">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -32,7 +32,7 @@
         from cc_route_getway
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.RouteGetway">
+    <insert id="insert" parameterType="com.voice9.core.entity.RouteGetway">
         insert into cc_route_getway (id, cts, uts, name,
                                      media_host, media_port, caller_prefix,
                                      called_prefix, sip_header1, sip_header2,
@@ -43,7 +43,7 @@
                 #{sipHeader2,jdbcType=VARCHAR},
                 #{sipHeader3,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.RouteGetway">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.RouteGetway">
         insert into cc_route_getway
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -128,7 +128,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.RouteGetway">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.RouteGetway">
         update cc_route_getway
         <set>
             <if test="uts != null">
@@ -164,7 +164,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.RouteGetway">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.RouteGetway">
         update cc_route_getway
         set cts           = #{cts,jdbcType=BIGINT},
             uts           = #{uts,jdbcType=BIGINT},

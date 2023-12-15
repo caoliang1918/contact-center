@@ -1,0 +1,15 @@
+version: "3.6"
+services:
+  freeswitch:
+    image: registry.cn-hangzhou.aliyuncs.com/voice9-x86/freeswitch-centos7:1.10.10
+    container_name: freeswitch
+    restart: always
+    tty: true
+    environment:
+      - TZ=Asia/Shanghai
+      - hostname=voice9
+    #volumes:
+    #  - ./freeswitch/conf:/usr/local/freeswitch/conf
+    #  - ./freeswitch/log:/usr/local/freeswitch/log
+    #  - ./freeswitch/record:/usrlocal/freeswitch/record
+    network_mode: "host"

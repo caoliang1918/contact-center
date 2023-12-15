@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.CallDetailMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.CallDetail">
+<mapper namespace="com.voice9.core.mapper.CallDetailMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.CallDetail">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="start_time" jdbcType="BIGINT" property="startTime"/>
@@ -31,7 +31,7 @@
         from cc_call_detail
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.CallDetail">
+    <insert id="insert" parameterType="com.voice9.core.entity.CallDetail">
         insert into cc_call_detail (id, cts, start_time,
                                     end_time, call_id, detail_index,
                                     transfer_type, transfer_id, reason,
@@ -41,7 +41,7 @@
                 #{transferType,jdbcType=INTEGER}, #{transferId,jdbcType=BIGINT}, #{reason,jdbcType=VARCHAR},
                 #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.CallDetail">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.CallDetail">
         insert into cc_call_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -121,7 +121,7 @@
         </trim>
     </insert>
 
-    <insert id="insertMonthSelective" parameterType="org.cti.cc.entity.CallDetail">
+    <insert id="insertMonthSelective" parameterType="com.voice9.core.entity.CallDetail">
         insert into cc_call_detail${month}
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -202,7 +202,7 @@
     </insert>
 
 
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallDetail">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.CallDetail">
         update cc_call_detail
         <set>
             <if test="cts != null">
@@ -241,7 +241,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CallDetail">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.CallDetail">
         update cc_call_detail
         set cts           = #{cts,jdbcType=BIGINT},
             start_time    = #{startTime,jdbcType=BIGINT},

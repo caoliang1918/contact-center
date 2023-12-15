@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.VdnScheduleMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.VdnSchedule">
+<mapper namespace="com.voice9.core.mapper.VdnScheduleMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.VdnSchedule">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -39,7 +39,7 @@
         from cc_vdn_schedule
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.VdnSchedule">
+    <insert id="insert" parameterType="com.voice9.core.entity.VdnSchedule">
         insert into cc_vdn_schedule (id, cts, uts, company_id,
                                         name, level_value, type,
                                         start_day, end_day, start_time,
@@ -53,7 +53,7 @@
                 #{wed,jdbcType=INTEGER}, #{thu,jdbcType=INTEGER}, #{fri,jdbcType=INTEGER}, #{sat,jdbcType=INTEGER},
                 #{sun,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.VdnSchedule">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.VdnSchedule">
         insert into cc_vdn_schedule
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -174,7 +174,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.VdnSchedule">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.VdnSchedule">
         update cc_vdn_schedule
         <set>
             <if test="cts != null">
@@ -234,7 +234,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.VdnSchedule">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.VdnSchedule">
         update cc_vdn_schedule
         set cts         = #{cts,jdbcType=BIGINT},
             uts         = #{uts,jdbcType=BIGINT},

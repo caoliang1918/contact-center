@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.PhoneLocationMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.PhoneLocation">
+<mapper namespace="com.voice9.core.mapper.PhoneLocationMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.PhoneLocation">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="ruid" jdbcType="VARCHAR" property="ruid"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
@@ -38,7 +38,7 @@
         from location
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.PhoneLocation">
+    <insert id="insert" parameterType="com.voice9.core.entity.PhoneLocation">
         insert into location (id, ruid, username,
                               domain, contact, received,
                               path, expires, q, callid,
@@ -52,7 +52,7 @@
                 #{cflags,jdbcType=INTEGER}, #{userAgent,jdbcType=VARCHAR}, #{socket,jdbcType=VARCHAR},
                 #{methods,jdbcType=INTEGER}, #{instance,jdbcType=VARCHAR}, #{regId,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.PhoneLocation">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.PhoneLocation">
         insert into location
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -173,7 +173,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.PhoneLocation">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.PhoneLocation">
         update location
         <set>
             <if test="ruid != null">
@@ -233,7 +233,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.PhoneLocation">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.PhoneLocation">
         update location
         set ruid          = #{ruid,jdbcType=VARCHAR},
             username      = #{username,jdbcType=VARCHAR},

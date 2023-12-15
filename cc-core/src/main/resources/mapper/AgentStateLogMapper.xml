@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.AgentStateLogMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.AgentStateLog">
+<mapper namespace="com.voice9.core.mapper.AgentStateLogMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.AgentStateLog">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -44,7 +44,7 @@
         where id = #{id,jdbcType=BIGINT}
     </delete>
 
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.AgentStateLog">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.AgentStateLog">
         insert into cc_agent_state_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -189,7 +189,7 @@
             </if>
         </trim>
     </insert>
-    <insert id="insertMonthSelective" parameterType="org.cti.cc.entity.AgentStateLog">
+    <insert id="insertMonthSelective" parameterType="com.voice9.core.entity.AgentStateLog">
         insert into cc_agent_state_log${month}
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -334,7 +334,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.AgentStateLog">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.AgentStateLog">
         update cc_agent_state_log
         <set>
             <if test="cts != null">
@@ -406,7 +406,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.AgentStateLog">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.AgentStateLog">
         update cc_agent_state_log
         set cts            = #{cts,jdbcType=BIGINT},
             uts            = #{uts,jdbcType=BIGINT},
@@ -461,7 +461,7 @@
     </update>
 
     <!-- 坐席状态和话务统计 -->
-    <select id="statHour" parameterType="java.util.Map" resultType="org.cti.cc.entity.StatHourAgent" >
+    <select id="statHour" parameterType="java.util.Map" resultType="com.voice9.core.entity.StatHourAgent" >
         select
             agent_key as agentKey , agent_name as agentName,
             sum( IF(state='LOGIN',1, 0)) as loginCnt,
@@ -480,7 +480,7 @@
     </select>
 
     <!-- 坐席状态和话务统计 -->
-    <select id="statHour" parameterType="java.util.Map" resultType="org.cti.cc.entity.StatHourAgent" databaseId="oracle">
+    <select id="statHour" parameterType="java.util.Map" resultType="com.voice9.core.entity.StatHourAgent" databaseId="oracle">
         select
             agent_key as agentKey , agent_name as agentName,
             sum( IF(state='LOGIN',1, 0)) as loginCnt,

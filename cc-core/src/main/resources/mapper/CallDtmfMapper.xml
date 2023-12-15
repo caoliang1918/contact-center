@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.CallDtmfMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.CallDtmf">
+<mapper namespace="com.voice9.core.mapper.CallDtmfMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.CallDtmf">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="dtmf_key" jdbcType="VARCHAR" property="dtmfKey"/>
@@ -25,7 +25,7 @@
         from cc_call_dtmf
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.CallDtmf">
+    <insert id="insert" parameterType="com.voice9.core.entity.CallDtmf">
         insert into cc_call_dtmf (id, cts, dtmf_key,
                                   process_id, call_id, dtmf_time,
                                   status)
@@ -33,7 +33,7 @@
                 #{processId,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, #{dtmfTime,jdbcType=BIGINT},
                 #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.CallDtmf">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.CallDtmf">
         insert into cc_call_dtmf
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -82,7 +82,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.CallDtmf">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.CallDtmf">
         update cc_call_dtmf
         <set>
             <if test="cts != null">
@@ -106,7 +106,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.CallDtmf">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.CallDtmf">
         update cc_call_dtmf
         set cts        = #{cts,jdbcType=BIGINT},
             dtmf_key   = #{dtmfKey,jdbcType=VARCHAR},

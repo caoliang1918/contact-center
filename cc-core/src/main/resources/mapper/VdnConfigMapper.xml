@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cti.cc.mapper.VdnConfigMapper">
-    <resultMap id="BaseResultMap" type="org.cti.cc.entity.VdnConfig">
+<mapper namespace="com.voice9.core.mapper.VdnConfigMapper">
+    <resultMap id="BaseResultMap" type="com.voice9.core.entity.VdnConfig">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -21,7 +21,7 @@
     </resultMap>
 
 
-    <resultMap id="BaseResultMapPo" type="org.cti.cc.po.VdnSchedulePo">
+    <resultMap id="BaseResultMapPo" type="com.voice9.core.po.VdnSchedulePo">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="cts" jdbcType="BIGINT" property="cts"/>
         <result column="uts" jdbcType="BIGINT" property="uts"/>
@@ -40,10 +40,10 @@
         <result column="status" jdbcType="INTEGER" property="status"/>
 
         <!-- 日程 -->
-        <association property="scheduleConfig" select="org.cti.cc.mapper.VdnScheduleMapper.selectByPrimaryKey"
+        <association property="scheduleConfig" select="com.voice9.core.mapper.VdnScheduleMapper.selectByPrimaryKey"
                      column="schedule_id"></association>
         <!-- 按键导航 -->
-        <collection property="dtmfList" select="org.cti.cc.mapper.VdnDtmfMapper.selectByNavagite"
+        <collection property="dtmfList" select="com.voice9.core.mapper.VdnDtmfMapper.selectByNavagite"
                     column="id"></collection>
     </resultMap>
 
@@ -75,7 +75,7 @@
         from cc_vdn_config
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="org.cti.cc.entity.VdnConfig">
+    <insert id="insert" parameterType="com.voice9.core.entity.VdnConfig">
         insert into cc_vdn_config (id, cts, uts, company_id,
                                      name, vdn_id, schedule_id,
                                      route_type, route_value, play_type,
@@ -87,7 +87,7 @@
                 #{playValue,jdbcType=BIGINT}, #{dtmfEnd,jdbcType=VARCHAR}, #{retry,jdbcType=INTEGER},
                 #{dtmfMax,jdbcType=INTEGER}, #{dtmfMin,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" parameterType="org.cti.cc.entity.VdnConfig">
+    <insert id="insertSelective" parameterType="com.voice9.core.entity.VdnConfig">
         insert into cc_vdn_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -190,7 +190,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cti.cc.entity.VdnConfig">
+    <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.VdnConfig">
         update cc_vdn_config
         <set>
             <if test="cts != null">
@@ -241,7 +241,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cti.cc.entity.VdnConfig">
+    <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.VdnConfig">
         update cc_vdn_config
         set cts         = #{cts,jdbcType=BIGINT},
             uts         = #{uts,jdbcType=BIGINT},
