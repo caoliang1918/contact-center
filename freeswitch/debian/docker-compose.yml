@@ -1,7 +1,6 @@
-version: "3.6"
 services:
   freeswitch:
-    image: registry.cn-hangzhou.aliyuncs.com/voice9-x86/freeswitch-debian:1.10.10
+    image: registry.cn-hangzhou.aliyuncs.com/voice9-x86/freeswitch-debian:1.10.11
     container_name: freeswitch
     restart: always
     tty: true

@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:bookworm
 MAINTAINER caoliang1918 <caoliang@voice9.com>
 
 WORKDIR /usr/local/freeswitch
@@ -6,10 +6,10 @@ ADD docker-entrypoint.sh /usr/local/
 RUN chmod +x /usr/local/docker-entrypoint.sh
 
 RUN echo voice9 >  /etc/hostname
-RUN sed -i 's/http:\/\/deb.debian.org/http:\/\/mirrors.huaweicloud.com/g' /etc/apt/sources.list
+RUN sed -i 's/http:\/\/deb.debian.org/http:\/\/mirrors.huaweicloud.com/g' /etc/apt/sources.list.d/debian.sources
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -yq install vim git sngrep
 
-RUN git clone -b 'v1.10.10' https://github.com/signalwire/freeswitch /usr/src/freeswitch
+RUN git clone -b 'v1.10.11' https://github.com/signalwire/freeswitch /usr/src/freeswitch
 RUN git clone -b 'v2.0.3'   https://github.com/signalwire/libks /usr/src/libs/libks
 RUN git clone -b 'v1.13.17' https://github.com/freeswitch/sofia-sip /usr/src/libs/sofia-sip
 RUN git clone https://github.com/freeswitch/spandsp /usr/src/libs/spandsp && cd /usr/src/libs/spandsp  &&  git  checkout  0d2e6ac
@@ -31,7 +31,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -yq install \
 # mod_python3
     python3-dev \
 # mod_av
-    libavformat-dev libswscale-dev libavresample-dev \
+    libavformat-dev libswscale-dev libva-dev \
 # mod_lua
     liblua5.2-dev \
 # mod_opus
