@@ -28,6 +28,13 @@ public class Constant {
     public static final String VOICE_BUCKET = "cc-voice";
     public static final String IVR_BUCKET = "cc-ivr";
 
+    public final static String SORT = "sort";
+    public final static String ID_DESC = "id desc";
+    public final static String ID_ASC = "id asc";
+
+    public final static String PAGE_NUM = "pageNum";
+    public final static String PAGE_SIZE = "pageSize";
+
     /**
      * vip等级进线
      */

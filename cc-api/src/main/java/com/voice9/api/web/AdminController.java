@@ -4,18 +4,21 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.voice9.core.entity.AdminRole;
 import com.voice9.core.entity.Company;
+import com.voice9.core.entity.SipGateway;
 import com.voice9.core.enums.ErrorCode;
 import com.voice9.core.po.AdminAccountInfo;
 import com.voice9.core.po.CommonResponse;
 import com.voice9.core.po.CompanyInfo;
 import com.voice9.core.po.RolePo;
 import com.voice9.core.vo.CompanyVo;
+import com.voice9.core.vo.SipGatewayReq;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.voice9.api.vo.server.MenuVo;
 import com.voice9.api.vo.server.RoleMenuVo;
 import com.voice9.api.vo.server.RoleVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -93,12 +96,13 @@ public class AdminController extends BaseController {
 
     /**
      * 1.3.3 获取角色菜单
+     *
      * @param adminAccountInfo
      * @param id
      * @return
      */
     @GetMapping("role/{id}")
-    public CommonResponse<RolePo> getRole(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo , @PathVariable Long id){
+    public CommonResponse<RolePo> getRole(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @PathVariable Long id) {
         return new CommonResponse<>(adminService.getRoleMenus(id));
 
     }
@@ -198,5 +202,44 @@ public class AdminController extends BaseController {
             return new CommonResponse(ErrorCode.ACCOUNT_AUTH_ERROR);
         }
         return new CommonResponse(companyService.deleteCompany(id));
+    }
+
+
+    /**
+     * 1.11.1 sip网关列表
+     *
+     * @param adminAccountInfo
+     * @param pageInfo
+     * @param query
+     * @return
+     */
+    @GetMapping("sipGateway")
+    public CommonResponse<PageInfo<SipGateway>> sipGatewayList(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, PageInfo pageInfo, String query) {
+        Map<String, Object> params = parseMap(adminAccountInfo, pageInfo, query);
+        return new CommonResponse(adminService.sipGatewayList(params));
+    }
+
+    /**
+     * 1.11.2 添加或修改sip网关
+     *
+     * @param adminAccountInfo
+     * @param sipGatewayReq
+     * @return
+     */
+    @PostMapping("sipGateway")
+    public CommonResponse saveOrUpdateSipGateway(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @RequestBody @Validated SipGatewayReq sipGatewayReq) {
+        return new CommonResponse(adminService.saveOrUpdateSipGateway(sipGatewayReq));
+    }
+
+    /**
+     * 1.11.3 删除sip网关
+     *
+     * @param adminAccountInfo
+     * @param ids
+     * @return
+     */
+    @DeleteMapping("sipGateway")
+    public CommonResponse deleteSipGateway(@ModelAttribute("adminAccountInfo") AdminAccountInfo adminAccountInfo, @RequestBody List<Long> ids) {
+        return new CommonResponse(adminService.deleteSipGateway(ids));
     }
 }

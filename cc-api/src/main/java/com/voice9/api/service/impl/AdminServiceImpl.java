@@ -8,19 +8,14 @@ import com.voice9.api.util.BcryptUtil;
 import com.voice9.api.vo.server.MenuVo;
 import com.voice9.api.vo.server.RoleMenuVo;
 import com.voice9.api.vo.server.RoleVo;
+import com.voice9.core.entity.*;
+import com.voice9.core.mapper.*;
 import com.voice9.core.po.*;
+import com.voice9.core.vo.SipGatewayReq;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.voice9.core.constant.Constant;
-import com.voice9.core.entity.AdminMenu;
-import com.voice9.core.entity.AdminRole;
-import com.voice9.core.entity.AdminRoleMenu;
-import com.voice9.core.entity.AdminUser;
 import com.voice9.core.enums.ErrorCode;
-import com.voice9.core.mapper.AdminMenuMapper;
-import com.voice9.core.mapper.AdminRoleMapper;
-import com.voice9.core.mapper.AdminUserMapper;
-import com.voice9.core.mapper.AgentMapper;
 import com.voice9.core.mapper.base.BaseMapper;
 import com.voice9.core.util.AuthUtil;
 import com.voice9.core.vo.AdminLogin;
@@ -42,12 +37,6 @@ import java.util.Map;
 @Service
 public class AdminServiceImpl extends BaseServiceImpl<AdminUser> implements AdminService {
 
-    @Value("${spring.datasource.url:}")
-    private String salt;
-
-    @Value("${platform.v9.key:pykqu7qfhcs5gz87}")
-    private String key;
-
     @Autowired
     private AdminMenuMapper adminMenuMapper;
 
@@ -58,7 +47,7 @@ public class AdminServiceImpl extends BaseServiceImpl<AdminUser> implements Admi
     private AdminRoleMapper adminRoleMapper;
 
     @Autowired
-    private AgentMapper agentMapper;
+    private SipGatewayMapper sipGatewayMapper;
 
     @Override
     public AdminLoginResult login(AdminLogin adminLogin) {
@@ -306,6 +295,72 @@ public class AdminServiceImpl extends BaseServiceImpl<AdminUser> implements Admi
             roleMenus.add(roleMenu);
         }
         return adminRoleMapper.batchInserRoleMenus(roleMenus);
+    }
+
+    @Override
+    public PageInfo<SipGateway> sipGatewayList(Map<String, Object> params) {
+        Integer pageNum = (Integer) params.get(Constant.PAGE_NUM);
+        Integer pageSize = (Integer) params.get(Constant.PAGE_SIZE);
+        PageHelper.startPage(pageNum, pageSize);
+        if (params.containsKey(Constant.SORT)) {
+            PageHelper.orderBy(params.get(Constant.SORT).toString());
+        } else {
+            PageHelper.orderBy(Constant.ID_ASC);
+        }
+        return new PageInfo<SipGateway>(sipGatewayMapper.selectListByMap(params));
+    }
+
+    @Override
+    public Long saveOrUpdateSipGateway(SipGatewayReq sipGatewayReq) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", sipGatewayReq.getUsername());
+        List<SipGateway> sipGatewayList = sipGatewayMapper.selectListByMap(params);
+        if (!CollectionUtils.isEmpty(sipGatewayList)) {
+            if (sipGatewayReq.getId() == null || !sipGatewayReq.getId().equals(sipGatewayList.get(0).getId())) {
+                throw new BusinessException(ErrorCode.DUPLICATE_EXCEPTION);
+            }
+        }
+        SipGateway sipGateway = new SipGateway();
+        BeanUtils.copyProperties(sipGatewayReq, sipGateway);
+
+        //绑定企业
+        if (sipGatewayReq.getCompanyId() != null && sipGateway.getCompanyId() > 0L) {
+            Company company = companyMapper.selectById(null, sipGateway.getCompanyId());
+            if (company == null || company.getStatus() < 2) {
+                throw new BusinessException(ErrorCode.COMPANY_NOT_AVALIABLE);
+            }
+            sipGateway.setCompanyName(company.getName());
+            sipGateway.setCompanyCode(company.getCompanyCode());
+        } else {
+            sipGateway.setCompanyName(Constant.EMPTY);
+            sipGateway.setCompanyCode(Constant.EMPTY);
+        }
+        if (sipGatewayReq.getId() == null) {
+            sipGateway.setCts(Instant.now().getEpochSecond());
+            sipGateway.setUts(sipGateway.getCts());
+            sipGatewayMapper.insertSelective(sipGateway);
+            sipGatewayList = sipGatewayMapper.selectListByMap(params);
+            Long id = sipGatewayList.get(0).getId();
+            return id;
+        }
+        sipGateway.setUts(Instant.now().getEpochSecond());
+        sipGatewayMapper.updateByPrimaryKeySelective(sipGateway);
+        return sipGateway.getId();
+    }
+
+    @Override
+    public int deleteSipGateway(List<Long> ids) {
+        for (Long id : ids) {
+            SipGateway sipGateway = sipGatewayMapper.selectByPrimaryKey(id);
+            if (sipGateway == null || sipGateway.getStatus() == 0) {
+                throw new BusinessException(ErrorCode.DATA_NOT_EXIST);
+            }
+            sipGateway.setStatus(0);
+            sipGateway.setUts(Instant.now().getEpochSecond());
+            sipGateway.setUsername(sipGateway.getUsername() + randomDelete());
+            sipGatewayMapper.updateByPrimaryKeySelective(sipGateway);
+        }
+        return ids.size();
     }
 
     /**

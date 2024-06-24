@@ -1662,6 +1662,29 @@ CREATE TABLE `cc_vdn_schedule` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='日程表';
 
+
+-- ----------------------------
+-- Table structure for cc_sip_gateway
+-- ----------------------------
+DROP TABLE IF EXISTS `cc_sip_gateway`;
+create table cc_sip_gateway
+(
+    id            bigint auto_increment comment 'PK' primary key,
+    cts           bigint       default 0  not null comment '创建时间',
+    uts           bigint       default 0  not null comment '修改时间',
+    company_id    bigint       default 0  not null comment '企业id',
+    company_code  varchar(255) default '' null comment '企业编码',
+    company_name  varchar(255) default '' null comment '企业名称',
+    username      varchar(255) default '' not null comment '账号',
+    passwd        varchar(255) default '' not null comment '密码',
+    internal      varchar(255) default '' null comment '网关内网',
+    external      varchar(255) default '' null comment '网关外网',
+    register_addr varchar(255) default '' null comment '注册地址',
+    register_time int          default 0  null comment '注册时间',
+    expire        int          default 0  null comment '注册周期(秒)',
+    status        int          default 1  null comment '状态(0:删除,1:不在线,2:在线)'
+) comment '网关注册账号表';
+
 -- ----------------------------
 -- Records of cc_vdn_schedule
 -- ----------------------------

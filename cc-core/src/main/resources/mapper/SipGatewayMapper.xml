@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voice9.core.mapper.SipGatewayMapper">
+  <resultMap id="BaseResultMap" type="com.voice9.core.entity.SipGateway">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cts" jdbcType="BIGINT" property="cts" />
+    <result column="uts" jdbcType="BIGINT" property="uts" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="company_code" jdbcType="VARCHAR" property="companyCode" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="passwd" jdbcType="VARCHAR" property="passwd" />
+    <result column="internal" jdbcType="VARCHAR" property="internal" />
+    <result column="external" jdbcType="VARCHAR" property="external" />
+    <result column="register_addr" jdbcType="VARCHAR" property="registerAddr" />
+    <result column="register_time" jdbcType="INTEGER" property="registerTime" />
+    <result column="expire" jdbcType="INTEGER" property="expire" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cts, uts, company_id, company_code, company_name, username, passwd, internal, 
+    external, register_addr, register_time, expire, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+        <include refid="Base_Column_List" />
+    from
+        cc_sip_gateway
+    where
+        id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cc_sip_gateway
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.voice9.core.entity.SipGateway">
+    insert into cc_sip_gateway (id, cts, uts, company_id, 
+      company_code, company_name, username, 
+      passwd, internal, external, 
+      register_addr, register_time, expire, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{cts,jdbcType=BIGINT}, #{uts,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{companyCode,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{passwd,jdbcType=VARCHAR}, #{internal,jdbcType=VARCHAR}, #{external,jdbcType=VARCHAR}, 
+      #{registerAddr,jdbcType=VARCHAR}, #{registerTime,jdbcType=INTEGER}, #{expire,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.voice9.core.entity.SipGateway">
+    insert into cc_sip_gateway
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cts != null">
+        cts,
+      </if>
+      <if test="uts != null">
+        uts,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="companyCode != null">
+        company_code,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="passwd != null">
+        passwd,
+      </if>
+      <if test="internal != null">
+        internal,
+      </if>
+      <if test="external != null">
+        external,
+      </if>
+      <if test="registerAddr != null">
+        register_addr,
+      </if>
+      <if test="registerTime != null">
+        register_time,
+      </if>
+      <if test="expire != null">
+        expire,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cts != null">
+        #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="companyCode != null">
+        #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="passwd != null">
+        #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="internal != null">
+        #{internal,jdbcType=VARCHAR},
+      </if>
+      <if test="external != null">
+        #{external,jdbcType=VARCHAR},
+      </if>
+      <if test="registerAddr != null">
+        #{registerAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="registerTime != null">
+        #{registerTime,jdbcType=INTEGER},
+      </if>
+      <if test="expire != null">
+        #{expire,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voice9.core.entity.SipGateway">
+    update cc_sip_gateway
+    <set>
+      <if test="cts != null">
+        cts = #{cts,jdbcType=BIGINT},
+      </if>
+      <if test="uts != null">
+        uts = #{uts,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="companyCode != null">
+        company_code = #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="passwd != null">
+        passwd = #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="internal != null">
+        internal = #{internal,jdbcType=VARCHAR},
+      </if>
+      <if test="external != null">
+        external = #{external,jdbcType=VARCHAR},
+      </if>
+      <if test="registerAddr != null">
+        register_addr = #{registerAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="registerTime != null">
+        register_time = #{registerTime,jdbcType=INTEGER},
+      </if>
+      <if test="expire != null">
+        expire = #{expire,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voice9.core.entity.SipGateway">
+    update cc_sip_gateway
+    set cts = #{cts,jdbcType=BIGINT},
+      uts = #{uts,jdbcType=BIGINT},
+      company_id = #{companyId,jdbcType=BIGINT},
+      company_code = #{companyCode,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      passwd = #{passwd,jdbcType=VARCHAR},
+      internal = #{internal,jdbcType=VARCHAR},
+      external = #{external,jdbcType=VARCHAR},
+      register_addr = #{registerAddr,jdbcType=VARCHAR},
+      register_time = #{registerTime,jdbcType=INTEGER},
+      expire = #{expire,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        cc_sip_gateway
+    where
+        username = #{username,jdbcType=VARCHAR} and status > 0
+  </select>
+
+  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        cc_sip_gateway
+    <where>
+      <if test="username!=null"> username = #{username,jdbcType=VARCHAR} </if>
+      <if test="companyCode!=null"> and company_code = #{companyCode,jdbcType=VARCHAR} </if>
+      <if test="companyId!=null"> and company_id = #{companyId,jdbcType=BIGINT} </if>
+      <if test="true"> and status > 0 </if>
+    </where>
+  </select>
+
+  <update id="checkSipGatewayRegister" parameterType="java.lang.Long">
+      update cc_sip_gateway set internal = '', external = '', register_time = 0,  expire = 0, status = 1, uts = #{time} where status = 2 and #{time} > register_time + expire
+  </update>
+</mapper>

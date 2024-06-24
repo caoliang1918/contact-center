@@ -4,12 +4,14 @@ import com.github.pagehelper.PageInfo;
 import com.voice9.core.entity.AdminMenu;
 import com.voice9.core.entity.AdminRole;
 import com.voice9.core.entity.AdminUser;
+import com.voice9.core.entity.SipGateway;
 import com.voice9.core.po.AdminLoginResult;
 import com.voice9.core.po.RolePo;
 import com.voice9.core.vo.AdminLogin;
 import com.voice9.api.vo.server.MenuVo;
 import com.voice9.api.vo.server.RoleMenuVo;
 import com.voice9.api.vo.server.RoleVo;
+import com.voice9.core.vo.SipGatewayReq;
 
 import java.util.List;
 import java.util.Map;
@@ -94,5 +96,31 @@ public interface AdminService extends BaseService<AdminUser> {
      * @return
      */
     Integer roleBindMenu(RoleMenuVo roleMenuVo);
+
+
+    /**
+     * sip网关
+     *
+     * @param params
+     * @return
+     */
+    PageInfo<SipGateway> sipGatewayList(Map<String, Object> params);
+
+    /**
+     * 添加或修改sip网关
+     *
+     * @param sipGatewayReq
+     * @return
+     */
+    Long saveOrUpdateSipGateway(SipGatewayReq sipGatewayReq);
+
+    /**
+     * 删除sip网关
+     *
+     * @param ids
+     * @return
+     */
+    int deleteSipGateway(List<Long> ids);
+
 
 }
