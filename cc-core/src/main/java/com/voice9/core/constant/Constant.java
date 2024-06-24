@@ -35,6 +35,11 @@ public class Constant {
     public final static String PAGE_NUM = "pageNum";
     public final static String PAGE_SIZE = "pageSize";
 
+    public static final String FORBIDDEN = "FORBIDDEN";
+    public static final String UNKNOWN = "unknown";
+
+
+
     /**
      * vip等级进线
      */
