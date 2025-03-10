@@ -14,10 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.voice9.cc.fs.handler.base.BaseEventHandler;
-import org.voice9.cc.util.RandomUtil;
 import org.voice9.cc.configration.HandlerType;
 import org.voice9.cc.fs.event.FsParkEvent;
+import org.voice9.cc.fs.handler.base.BaseEventHandler;
+import org.voice9.cc.util.RandomUtil;
 import org.voice9.cc.websocket.response.WsCallEntity;
 import org.voice9.cc.websocket.response.WsResponseEntity;
 
@@ -48,6 +48,11 @@ public class FsParkHandler extends BaseEventHandler<FsParkEvent> {
                 return;
             }
             if (!event.getSipContactPort().equals(event.getSipPort())) {
+                //有一些话机需要做代接(比如用户打呼入电话转接到了1001坐席，此时话机无人接听，但是1002坐席希望代接1001的客户电话，此时1002坐席可以拨打“*1001”, 电话就接到来电用户的电话了。)
+                /*if (event.getCalled().startsWith("*")) {
+                    logger.info("话机代接");
+                    return;
+                }*/
                 //硬话机外呼
                 sipOutboundCall(event);
                 return;

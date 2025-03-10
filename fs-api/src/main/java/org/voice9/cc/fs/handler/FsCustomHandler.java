@@ -66,7 +66,7 @@ public class FsCustomHandler extends BaseEventHandler<FsCustomEvent> {
         }
         sipGateway.setRegisterTime(Instant.now().getEpochSecond());
         sipGatewayMapper.updateByPrimaryKeySelective(sipGateway);
-        String protocol = event.getStatus().contains("UDP") ? "udp" : "tcp";
+        String protocol = event.getStatus().toUpperCase().contains("UDP") ? "udp" : "tcp";
         logger.info("username:{} register {}:{} success, internal:{}  external:{} expire:{}", event.getUsername(), protocol, sipGateway.getRegisterAddr(), internal, external, event.getExpires());
     }
 
